@@ -1,0 +1,18 @@
+name: "ada"
+display_name: "Ada"
+version: 0.0.1
+column_kind: "utf8"
+legacy_qltest_extraction: true
+build_modes:
+  - none
+github_api_languages:
+  - Ada
+scc_languages:
+  - Ada
+file_types:
+  - name: ada
+    display_name: Ada sources
+    extensions:
+      - .ads
+      - .adb
+      - .ada

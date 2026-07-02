@@ -1,0 +1,19 @@
+# CodeQL databases and build artifacts
+*.testproj
+test-db/
+*-db/
+.cache/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Ada / GNAT
+obj/
+*.ali
+*.o
+
+# Editors
+.vscode/
+.idea/

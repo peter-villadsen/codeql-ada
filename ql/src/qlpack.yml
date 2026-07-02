@@ -1,0 +1,4 @@
+name: codeql-ada/ada-queries
+version: 0.0.1
+dependencies:
+  codeql-ada/ada-all: "*"

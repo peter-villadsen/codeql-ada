@@ -1,0 +1,55 @@
+/*
+ * Spike dbscheme for the Ada extractor pipeline proof (burndown 1.2).
+ * Deliberately minimal: files/folders/locations plus one Ada table.
+ * The real schema will be generated from Libadalang introspection (D-004).
+ */
+
+/*- Standard fragment: source location prefix -*/
+
+sourceLocationPrefix(
+  string prefix: string ref
+);
+
+/*- Standard fragment: files and folders -*/
+
+@container = @file | @folder
+
+files(
+  unique int id: @file,
+  string name: string ref
+);
+
+folders(
+  unique int id: @folder,
+  string name: string ref
+);
+
+containerparent(
+  int parent: @container ref,
+  unique int child: @container ref
+);
+
+/*- Standard fragment: locations -*/
+
+@location = @location_default
+
+locations_default(
+  unique int id: @location_default,
+  int file: @file ref,
+  int beginLine: int ref,
+  int beginColumn: int ref,
+  int endLine: int ref,
+  int endColumn: int ref
+);
+
+/*- Ada (spike) -*/
+
+compilation_units(
+  unique int id: @compilation_unit,
+  string name: string ref
+);
+
+compilation_unit_file(
+  unique int id: @compilation_unit ref,
+  int file: @file ref
+);

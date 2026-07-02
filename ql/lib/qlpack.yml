@@ -1,0 +1,6 @@
+name: codeql-ada/ada-all
+version: 0.0.1
+library: true
+warnOnImplicitThis: true
+dbscheme: ada.dbscheme
+extractor: ada
