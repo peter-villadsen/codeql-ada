@@ -34,9 +34,9 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - name: Cache Libadalang build
+      - name: Restore Libadalang build cache
         id: lal-cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: |
             ~/adacore
@@ -47,9 +47,23 @@ jobs:
         if: steps.lal-cache.outputs.cache-hit != 'true'
         run: bash scripts/build-libadalang.sh
 
-      - name: Cache CodeQL CLI
+      # Split restore/save (rather than one actions/cache step) so the cache is written as
+      # soon as the build succeeds. actions/cache's save-post-step only runs if the whole job
+      # succeeds, so a later, unrelated failure (e.g. QL tests, corpus regression) would
+      # otherwise silently discard a good build every time and force a full ~45min rebuild
+      # on every subsequent run.
+      - name: Save Libadalang build cache
+        if: steps.lal-cache.outputs.cache-hit != 'true' && success()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/adacore
+            ~/src
+          key: ${{ steps.lal-cache.outputs.cache-primary-key }}
+
+      - name: Restore CodeQL CLI cache
         id: codeql-cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ~/codeql-cli
           key: codeql-cli-${{ env.CODEQL_CLI_VERSION }}
@@ -61,6 +75,13 @@ jobs:
             "https://github.com/github/codeql-cli-binaries/releases/download/v${CODEQL_CLI_VERSION}/codeql-linux64.zip"
           mkdir -p ~/codeql-cli
           unzip -q /tmp/codeql.zip -d ~/codeql-cli
+
+      - name: Save CodeQL CLI cache
+        if: steps.codeql-cache.outputs.cache-hit != 'true' && success()
+        uses: actions/cache/save@v4
+        with:
+          path: ~/codeql-cli
+          key: ${{ steps.codeql-cache.outputs.cache-primary-key }}
 
       - name: Add CodeQL to PATH
         run: echo "$HOME/codeql-cli/codeql" >> "$GITHUB_PATH"

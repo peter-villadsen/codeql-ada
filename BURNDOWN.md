@@ -185,9 +185,10 @@ Status of the field (verified 2026-07-02):
 
 ## Phase 5 — Queries, tests, CI
 
-- [x] 5.1 *Started 2026-07-02 — 4 queries shipped:* ExceptionSwallowing, PragmaSuppress,
-  UncheckedConversion, UnusedVariable (xref-based). Still open: Unchecked_Deallocation,
-  hardcoded credentials, TODO/FIXME, SPARK-adjacent checks.
+- [x] 5.1 *Started 2026-07-02 — 5 queries shipped:* ExceptionSwallowing, PragmaSuppress,
+  UncheckedConversion, UnusedVariable (xref-based), UncheckedDeallocation
+  (*2026-07-03*, same GenericSubpInstantiation-name-match pattern as UncheckedConversion).
+  Still open: hardcoded credentials, TODO/FIXME, SPARK-adjacent checks.
 - [x] 5.2 *Done 2026-07-02.* `codeql test run` harness live: `ql/test/queries/<Q>/` with
   `.qlref` + Ada snippets + `.expected`; extractor's qltest entry point is
   `tools/index.sh` (legacy_qltest_extraction). All 4 tests green. Still open:
@@ -210,19 +211,31 @@ Status of the field (verified 2026-07-02):
     whose `.gpr` needs a generated `gprconfig_kb` dir); the extractor's own
     auto-unit-provider fallback handles all of them without crashing, at the
     cost of weaker name resolution than a fully-configured build would give.
-- [x] 5.4 *Done 2026-07-03.* `.github/workflows/ci.yml`: single job on
-  `container: debian:13` (matching burndown 1.1/D-008 — this is the only
-  environment the extractor has been verified on; plain `ubuntu-latest` was
-  not attempted and may hit the same GNAT-version traps `build-libadalang.sh`
-  works around). Steps: apt prereqs → checkout → cache-or-build Libadalang
-  (`actions/cache` keyed on the build script's hash plus a manually-bumped
-  `LAL_CACHE_VERSION`, since upstream `master` can drift without the script
-  text changing) → cache-or-download the pinned CodeQL CLI release → `codeql
-  test run ql/test` (Phase 5.2 harness) → `corpus_regression.py` → upload the
-  JSON report as an artifact. **Not yet verified on actual GitHub Actions** —
-  this repo has no GitHub remote configured yet, so the workflow has only been
-  validated by (a) running every step's command manually in the WSL Debian 13
-  env this session and confirming it works, and (b) YAML-parsing the file.
+- [x] 5.4 *Done 2026-07-03, verified green on GitHub Actions 2026-07-03.*
+  `.github/workflows/ci.yml`: single job on `container: debian:13` (matching
+  burndown 1.1/D-008 — this is the only environment the extractor has been
+  verified on; plain `ubuntu-latest` was not attempted and may hit the same
+  GNAT-version traps `build-libadalang.sh` works around). Steps: apt prereqs →
+  checkout → restore-or-build Libadalang (`actions/cache/restore`+`/save`
+  keyed on the build script's hash plus a manually-bumped `LAL_CACHE_VERSION`,
+  since upstream `master` can drift without the script text changing) →
+  restore-or-download the pinned CodeQL CLI release → `codeql test run
+  ql/test` (Phase 5.2 harness) → `corpus_regression.py` → upload the JSON
+  report as an artifact.
+  - Two bugs found only by running on real GitHub Actions (not reproducible by
+    validating the YAML or running steps manually in WSL): (1) `index.sh`/
+    `autobuild.sh` were committed with git mode `100644` — Windows doesn't
+    track the Unix executable bit, so this was invisible locally but caused
+    `EACCES` when the Linux runner tried to exec them directly; fixed via
+    `git update-index --chmod=+x`. (2) `actions/cache@v4`'s save step is
+    `post-if: success()` on the *whole job* — since bug (1) always failed the
+    QL test suite step, the Libadalang/CodeQL-CLI caches were silently never
+    saved on any run, forcing a full ~45min rebuild every time. Fixed by
+    splitting each into `actions/cache/restore@v4` (early) +
+    `actions/cache/save@v4` (`if: cache-hit != 'true' && success()`,
+    immediately after the build/download step) so a good build is cached
+    regardless of unrelated later failures (e.g. corpus-regression network
+    flakes). Confirmed both caches populate on the first green run.
   Windows/macOS packaging (the rest of 5.4's original scope) is still open —
   revisit at Phase 6.
 
