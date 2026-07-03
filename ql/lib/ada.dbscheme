@@ -4191,3 +4191,11 @@ ada_generic_instantiation(
   unique int inst: @ada_generic_instantiation ref,
   int generic_decl: @ada_basic_decl ref
 );
+
+/*- Ada trivia: comments (not part of the AST tree) -*/
+
+ada_comments(
+  unique int id: @ada_comment,
+  string text: string ref,
+  int location: @location_default ref
+);

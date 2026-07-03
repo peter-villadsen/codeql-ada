@@ -233,6 +233,13 @@ def gen_dbscheme(m: Model) -> str:
         f"  unique int inst: {m.ref('GenericInstantiation')} ref,\n"
         f"  int generic_decl: {m.ref('BasicDecl')} ref\n);\n"
     )
+    out.append("/*- Ada trivia: comments (not part of the AST tree) -*/\n")
+    out.append(
+        "ada_comments(\n"
+        "  unique int id: @ada_comment,\n"
+        "  string text: string ref,\n"
+        "  int location: @location_default ref\n);\n"
+    )
     return "\n".join(out)
 
 
@@ -268,6 +275,15 @@ def gen_raw_qll(m: Model) -> str:
         "    string getAbsolutePath() { files(this, result) }",
         "",
         "    string toString() { result = this.getAbsolutePath() }",
+        "  }",
+        "",
+        "  /** A source comment (`--...` trivia; not part of the AST tree). */",
+        "  class Comment extends @ada_comment {",
+        "    string getText() { ada_comments(this, result, _) }",
+        "",
+        "    Location getLocation() { ada_comments(this, _, result) }",
+        "",
+        "    string toString() { result = \"Comment\" }",
         "  }",
         "",
     ]

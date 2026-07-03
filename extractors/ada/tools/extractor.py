@@ -90,7 +90,7 @@ class Extractor:
     def __init__(self, sources):
         self.sources = {norm(s) for s in sources}
         self.stats = {"nodes": 0, "xref": 0, "types": 0, "diags": 0,
-                      "nameres_errors": 0}
+                      "nameres_errors": 0, "comments": 0}
 
     def emit_file_tree(self, w: TrapWriter, path: str) -> str:
         """files() row plus folder chain; returns the file label."""
@@ -144,8 +144,21 @@ class Extractor:
         if unit.root is not None:
             self.walk(w, file_lbl, path, unit.root, None, 0)
 
+        self.emit_comments(w, file_lbl, path, unit)
+
         name = path.replace(":", "_").replace("/", "_") + ".trap"
         (trap_dir / name).write_text(w.text(), encoding="utf-8")
+
+    def emit_comments(self, w, file_lbl, path, unit: lal.AnalysisUnit):
+        """Comment trivia isn't part of the AST tree; walk tokens directly."""
+        tok = unit.first_token
+        while tok is not None:
+            if tok.is_trivia and tok.kind == "Comment":
+                loc = self.location(w, file_lbl, path, tok)
+                c = w.fresh()
+                w.row("ada_comments", c, q(tok.text), loc)
+                self.stats["comments"] += 1
+            tok = tok.next
 
     def walk(self, w, file_lbl, path, node, parent_lbl, index):
         kind = node.kind_name
@@ -270,7 +283,7 @@ def main() -> int:
                               str(os.cpu_count() or 1)))
     jobs = max(1, min(jobs, len(files) or 1))
     totals = dict.fromkeys(
-        ("nodes", "xref", "types", "diags", "nameres_errors"), 0)
+        ("nodes", "xref", "types", "diags", "nameres_errors", "comments"), 0)
 
     if jobs == 1 or not hasattr(os, "fork"):
         _init_worker(gpr, files, trap_dir, archive_dir)

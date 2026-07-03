@@ -30,6 +30,15 @@ module Raw {
     string toString() { result = this.getAbsolutePath() }
   }
 
+  /** A source comment (`--...` trivia; not part of the AST tree). */
+  class Comment extends @ada_comment {
+    string getText() { ada_comments(this, result, _) }
+
+    Location getLocation() { ada_comments(this, _, result) }
+
+    string toString() { result = "Comment" }
+  }
+
   class AdaNode extends @ada_ast_node {
     string getAPrimaryQlClass() { result = "AdaNode" }
 

@@ -1,0 +1,2 @@
+| test.adb:1:1:1:26 | Comment | --  Leading file comment. |
+| test.adb:3:23:3:41 | Comment | --  inline comment |

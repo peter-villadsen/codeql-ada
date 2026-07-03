@@ -1,0 +1,1 @@
+| test.adb:2:4:2:28 | PragmaNode | pragma SPARK_Mode (Off) disables SPARK formal verification for this scope. |

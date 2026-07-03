@@ -1,0 +1,2 @@
+| test.adb:1:1:1:55 | Comment | Comment marks incomplete or known-wrong code: --  TODO: replace this stub with a real implementation |
+| test.adb:6:11:6:43 | Comment | Comment marks incomplete or known-wrong code: --  FIXME: handle the error case |

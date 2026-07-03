@@ -140,7 +140,9 @@ Status of the field (verified 2026-07-02):
   subclasses, unlike tree-sitter), one table per declared field (uniform optional-style;
   required-ness is an extractor guarantee since parse errors can null any field), and
   umbrella `ada_ast_node_location` / `ada_ast_node_parent` (which also encodes list
-  children — no per-kind child tables). Comments/trivia: deferred to Phase 3 decision.
+  children — no per-kind child tables). Comments/trivia: resolved 2026-07-03
+  (burndown 5.1) — a standalone hand-written `ada_comments` relation, not part
+  of the AST tree/generated tables.
 - [x] 2.3 Semantic relations: `ada_xref`, `ada_expr_type`, `ada_generic_instantiation`
   defined in the dbscheme (population is Phase 3; generic instance-body model still open).
 - [ ] 2.4 Upgrade/downgrade story: policy = regenerate + hand-write upgrade scripts once
@@ -185,14 +187,30 @@ Status of the field (verified 2026-07-02):
 
 ## Phase 5 — Queries, tests, CI
 
-- [x] 5.1 *Started 2026-07-02 — 5 queries shipped:* ExceptionSwallowing, PragmaSuppress,
-  UncheckedConversion, UnusedVariable (xref-based), UncheckedDeallocation
-  (*2026-07-03*, same GenericSubpInstantiation-name-match pattern as UncheckedConversion).
-  Still open: hardcoded credentials, TODO/FIXME, SPARK-adjacent checks.
-- [x] 5.2 *Done 2026-07-02.* `codeql test run` harness live: `ql/test/queries/<Q>/` with
+- [x] 5.1 *Done 2026-07-03 — 8 queries shipped:* ExceptionSwallowing, PragmaSuppress,
+  UncheckedConversion, UnusedVariable (xref-based), UncheckedDeallocation,
+  HardcodedCredential (name-pattern + string-literal-initializer heuristic),
+  SparkModeOff (`pragma SPARK_Mode (Off)`), TodoComment (TODO/FIXME/XXX/HACK).
+  TodoComment required adding comment/trivia extraction, which Phase 2.2 had
+  deferred: comments aren't LAL AST nodes (they're token trivia), so they get a
+  small hand-written `ada_comments(id, text, location)` relation (added to
+  `generator/gen.py`'s hand-written prelude, *not* the LAL-introspection-driven
+  generated tables) plus a `Raw::Comment` QL class and an `emit_comments` pass
+  in the extractor that walks `unit.first_token`/`.next`/`.is_trivia` directly,
+  independent of the AST `walk()`. `ql/lib/ada.dbscheme.stats` regenerated via
+  `codeql dataset measure` to match (required — stale stats missing a relation
+  didn't break compilation but should stay in sync). No further "still open"
+  query ideas queued; more can be added anytime following the existing patterns.
+- [x] 5.2 *Done 2026-07-03.* `codeql test run` harness live: `ql/test/queries/<Q>/` with
   `.qlref` + Ada snippets + `.expected`; extractor's qltest entry point is
-  `tools/index.sh` (legacy_qltest_extraction). All 4 tests green. Still open:
-  golden-output extractor tests (TRAP/AST dumps).
+  `tools/index.sh` (legacy_qltest_extraction). All 8 query tests green, plus
+  2 golden-output extractor regression tests added in `ql/test/extractor/`
+  (test-local `.ql` files, no `.qlref`, generated via `codeql test run --learn`):
+  `PrintAst` dumps every AST node's kind/parent/index (guards the Phase 3
+  `walk()`/dbscheme node-parent pipeline even where no security query happens
+  to touch the affected relation), `PrintComments` dumps extracted comment text
+  (guards the new `emit_comments` path specifically, since it's structurally
+  separate from `walk()`).
 - [x] 5.3 *Done 2026-07-03.* `scripts/corpus_regression.py` drives the real
   `codeql database create` pipeline (not a Libadalang-only spike) over 5 pinned
   real projects in `scripts/corpus.json`: gpr2, AdaSAT (both already known from
