@@ -281,12 +281,18 @@ Status of the field (verified 2026-07-02):
   file, not assumed — GNATcoll/libgpr/XML-Ada/GNAT-runtime turned out to be GPLv3 +
   GCC Runtime Library Exception, not Apache-2.0 like Libadalang/Langkit/VSS/prettier-ada/
   AdaSAT/gpr2.
-- [ ] 6.2 Release workflow on tag `v*`: version-consistency gate → tests → tarball →
+- [x] 6.2 Release workflow on tag `v*`: version-consistency gate → tests → tarball →
   GitHub Release → `codeql pack publish` of `ada-all` + `ada-queries` to GHCR.
-  Written and committed 2026-07-03 (`.github/workflows/release.yml`); version-gate script
-  and `codeql pack publish --dry-run` verified locally. Still open: push and confirm a
-  green `workflow_dispatch` dry run on GitHub Actions (blocked on 6.4's CI run finishing
-  so the LAL cache is warm).
+  *Done 2026-07-03* — `workflow_dispatch` dry run green on GitHub Actions (cache hits on
+  the pinned LAL/CodeQL CLI builds, ~2 min), tarball uploaded as an 81.5MB workflow
+  artifact, Release/publish steps correctly skipped (no tag). Version-gate script verified
+  locally for all four cases: no tag, matching tag, wrong tag, and manifest-to-manifest
+  mismatch. **Found and fixed along the way: the repo's default branch was `main` (a
+  stub with only the auto-generated initial commit) while all real history lived on
+  `master`; GitHub Actions silently refuses to register `workflow_dispatch` for a
+  workflow that only exists off the default branch, so `release.yml` never showed up in
+  the workflow list until `master` was made the default branch.** Also added an
+  `actions/upload-artifact` step that the first dry run was missing.
 - [ ] 6.3 Docs: README rewrite, user guide, query-writing guide, CONTRIBUTING (dev env,
   regeneration pipeline, release checklist, pin-bump procedure).
   **Audience/quality bar (set 2026-07-03, applies to all four files): textbook quality,
