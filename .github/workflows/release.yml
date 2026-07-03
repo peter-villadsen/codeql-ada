@@ -1,0 +1,132 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+env:
+  CODEQL_CLI_VERSION: "2.25.6"
+  # Keep in sync with ci.yml's value -- both jobs cache-key off the same
+  # scripts/build-libadalang.sh, and a stale mismatch here would just mean an
+  # avoidable rebuild, not a correctness bug, but keep them aligned anyway.
+  LAL_CACHE_VERSION: "v1"
+
+permissions:
+  contents: write   # create the GitHub Release
+  packages: write   # publish QL packs to GHCR
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    container: debian:13
+    timeout-minutes: 90
+    steps:
+      - name: Install OS packages
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            git ca-certificates curl unzip \
+            build-essential gnat gprbuild python3 python3-venv python3-dev \
+            libgmp-dev pkg-config libxmlada-dom-dev libxmlada-input-dev \
+            libxmlada-sax-dev libxmlada-schema-dev libxmlada-unicode-dev
+
+      - uses: actions/checkout@v4
+
+      - name: Restore Libadalang build cache
+        id: lal-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ~/adacore
+            ~/src
+          key: lal-${{ env.LAL_CACHE_VERSION }}-${{ hashFiles('scripts/build-libadalang.sh') }}
+
+      - name: Build Libadalang
+        if: steps.lal-cache.outputs.cache-hit != 'true'
+        run: bash scripts/build-libadalang.sh
+
+      - name: Save Libadalang build cache
+        if: steps.lal-cache.outputs.cache-hit != 'true' && success()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/adacore
+            ~/src
+          key: ${{ steps.lal-cache.outputs.cache-primary-key }}
+
+      - name: Restore CodeQL CLI cache
+        id: codeql-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/codeql-cli
+          key: codeql-cli-${{ env.CODEQL_CLI_VERSION }}
+
+      - name: Download CodeQL CLI
+        if: steps.codeql-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -sSL -o /tmp/codeql.zip \
+            "https://github.com/github/codeql-cli-binaries/releases/download/v${CODEQL_CLI_VERSION}/codeql-linux64.zip"
+          mkdir -p ~/codeql-cli
+          unzip -q /tmp/codeql.zip -d ~/codeql-cli
+
+      - name: Save CodeQL CLI cache
+        if: steps.codeql-cache.outputs.cache-hit != 'true' && success()
+        uses: actions/cache/save@v4
+        with:
+          path: ~/codeql-cli
+          key: ${{ steps.codeql-cache.outputs.cache-primary-key }}
+
+      - name: Add CodeQL to PATH
+        run: echo "$HOME/codeql-cli/codeql" >> "$GITHUB_PATH"
+
+      # D-011: the extractor pack and both QL packs share one version; a `vX.Y.Z` tag
+      # must match all three manifests exactly, or the release is refused. On a
+      # workflow_dispatch dry run (no tag) this only checks the three manifests agree
+      # with each other, so the tarball-build steps below can still be validated.
+      - name: Version-consistency gate
+        run: |
+          set -euo pipefail
+          v_extractor="$(grep -m1 '^version:' extractors/ada/codeql-extractor.yml | awk '{print $2}' | tr -d '"')"
+          v_lib="$(grep -m1 '^version:' ql/lib/qlpack.yml | awk '{print $2}')"
+          v_src="$(grep -m1 '^version:' ql/src/qlpack.yml | awk '{print $2}')"
+          echo "manifest versions: extractor=$v_extractor lib=$v_lib src=$v_src"
+          if [ "$v_extractor" != "$v_lib" ] || [ "$v_lib" != "$v_src" ]; then
+            echo "::error::version mismatch across manifests: extractor=$v_extractor lib=$v_lib src=$v_src"
+            exit 1
+          fi
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            tag_version="${GITHUB_REF#refs/tags/v}"
+            if [ "$v_extractor" != "$tag_version" ]; then
+              echo "::error::tag v$tag_version does not match manifest version $v_extractor"
+              exit 1
+            fi
+          fi
+
+      - name: Run QL test suite (Phase 5.2)
+        run: codeql test run ql/test --search-path=extractors --additional-packs=ql
+
+      - name: Build extractor tarball (burndown 6.1)
+        run: bash scripts/create-extractor-pack.sh
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: codeql-extractor-ada-linux64.tar.gz
+          generate_release_notes: true
+
+      # Lib before src: src's qlpack.yml depends on peter-villadsen/ada-all, and a
+      # consumer installing ada-queries later must find ada-all already in the
+      # registry. `codeql pack install`/`publish` resolve that dependency locally via
+      # --additional-packs=ql here, so publish order (not install order) is what matters.
+      - name: Publish QL packs
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          set -euo pipefail
+          codeql pack install ql/src --additional-packs=ql
+          codeql pack publish ql/lib --github-auth-stdin <<< "$GITHUB_TOKEN"
+          codeql pack publish ql/src --additional-packs=ql --github-auth-stdin <<< "$GITHUB_TOKEN"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
