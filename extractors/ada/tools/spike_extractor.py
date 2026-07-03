@@ -53,13 +53,9 @@ def main() -> int:
         shutil.copyfile(path, dest)
 
         file_label = f'@"{db_path};sourcefile"'
-        unit_label = f'@"{db_path};unit"'
         lines = [
             f"#10000={file_label}",
             f"files(#10000,{trap_quote(db_path)})",
-            f"#10001={unit_label}",
-            f"compilation_units(#10001,{trap_quote(path.name)})",
-            "compilation_unit_file(#10001,#10000)",
         ]
         trap_file = trap_dir / (db_path.replace(":", "_").replace("/", "_") + ".trap")
         trap_file.write_text("\n".join(lines) + "\n", encoding="utf-8")

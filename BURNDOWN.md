@@ -124,14 +124,27 @@ Status of the field (verified 2026-07-02):
 
 ## Phase 2 — Database schema (design doc before code)
 
-- [ ] 2.1 Core relations: files, folders, locations, lines, diagnostics/extraction errors,
-  compilation units, `sourceLocationPrefix` — copy conventions from an existing dbscheme.
-- [ ] 2.2 AST relations: node kind hierarchy → union types (`@ada_expr`, `@ada_stmt`, …),
-  parent/child-index tables, token/trivia storage (needed for comments & exact locations).
-- [ ] 2.3 Semantic relations: `ref → decl` xref table, expression-type table, generic
-  instantiation links (Ada generics are the hard part — decide instance-body handling).
-- [ ] 2.4 Upgrade/downgrade story: dbscheme versioning policy from day one
-  (`upgrades/` machinery), even if v1 ships empty.
+> **Status 2026-07-02: generator built and validated.** `generator/gen.py` turns
+> `schema/lal-nodes.json` into `ada.dbscheme` (4,163 lines), `ql/lib/codeql/ada/ast/
+> internal/Raw.qll` (2,267 lines, 405 QL classes), and `extractors/ada/tools/
+> ada_tables.json` (333 kinds with per-field table mapping for the extractor).
+> Validated end-to-end: `codeql database create` imports the generated dbscheme and
+> a query importing the full Raw library compiles and runs.
+
+- [x] 2.1 Core relations: standard prelude (locations, files/folders, empty_location,
+  sourceLocationPrefix, diagnostics + severity, databaseMetadata, overlayChangedFiles)
+  copied from Ruby's conventions. Spike-era `compilation_units` tables dropped — LAL's
+  own `CompilationUnit` node kind covers it.
+- [x] 2.2 AST relations: per-kind `_def` tables (tokens carry `value`), hierarchy unions
+  (concrete non-leaf classes get `_or_sub` unions — LAL has concrete classes with
+  subclasses, unlike tree-sitter), one table per declared field (uniform optional-style;
+  required-ness is an extractor guarantee since parse errors can null any field), and
+  umbrella `ada_ast_node_location` / `ada_ast_node_parent` (which also encodes list
+  children — no per-kind child tables). Comments/trivia: deferred to Phase 3 decision.
+- [x] 2.3 Semantic relations: `ada_xref`, `ada_expr_type`, `ada_generic_instantiation`
+  defined in the dbscheme (population is Phase 3; generic instance-body model still open).
+- [ ] 2.4 Upgrade/downgrade story: policy = regenerate + hand-write upgrade scripts once
+  there are external users; pre-1.0 databases are rebuilt, not upgraded. Revisit at Phase 6.
 
 ## Phase 3 — Extractor
 

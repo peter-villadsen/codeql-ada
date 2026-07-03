@@ -1,0 +1,4737 @@
+{
+ "AbortAbsent": {
+  "def_table": "ada_abort_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "AbortPresent": {
+  "def_table": "ada_abort_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "AbortStmt": {
+  "def_table": "ada_abort_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_names",
+    "table": "ada_abort_stmt_names",
+    "nullable": false
+   }
+  ]
+ },
+ "AbstractAbsent": {
+  "def_table": "ada_abstract_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "AbstractFormalSubpDecl": {
+  "def_table": "ada_abstract_formal_subp_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_overriding",
+    "table": "ada_classic_subp_decl_overriding",
+    "nullable": false
+   },
+   {
+    "name": "f_subp_spec",
+    "table": "ada_classic_subp_decl_subp_spec",
+    "nullable": false
+   },
+   {
+    "name": "f_default_expr",
+    "table": "ada_formal_subp_decl_default_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "AbstractPresent": {
+  "def_table": "ada_abstract_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "AbstractStateDecl": {
+  "def_table": "ada_abstract_state_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_abstract_state_decl_name",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "AbstractStateDeclExpr": {
+  "def_table": "ada_abstract_state_decl_expr_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_state_decl",
+    "table": "ada_abstract_state_decl_expr_state_decl",
+    "nullable": false
+   }
+  ]
+ },
+ "AbstractStateDeclList": {
+  "def_table": "ada_abstract_state_decl_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "AbstractSubpDecl": {
+  "def_table": "ada_abstract_subp_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_overriding",
+    "table": "ada_classic_subp_decl_overriding",
+    "nullable": false
+   },
+   {
+    "name": "f_subp_spec",
+    "table": "ada_classic_subp_decl_subp_spec",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "AcceptStmt": {
+  "def_table": "ada_accept_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_body_decl",
+    "table": "ada_accept_stmt_body_decl",
+    "nullable": false
+   },
+   {
+    "name": "f_entry_index_expr",
+    "table": "ada_accept_stmt_entry_index_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_params",
+    "table": "ada_accept_stmt_params",
+    "nullable": false
+   }
+  ]
+ },
+ "AcceptStmtBody": {
+  "def_table": "ada_accept_stmt_body_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_accept_stmt_body_name",
+    "nullable": false
+   }
+  ]
+ },
+ "AcceptStmtWithStmts": {
+  "def_table": "ada_accept_stmt_with_stmts_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_body_decl",
+    "table": "ada_accept_stmt_body_decl",
+    "nullable": false
+   },
+   {
+    "name": "f_entry_index_expr",
+    "table": "ada_accept_stmt_entry_index_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_params",
+    "table": "ada_accept_stmt_params",
+    "nullable": false
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_accept_stmt_with_stmts_stmts",
+    "nullable": false
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_accept_stmt_with_stmts_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "AccessToSubpDef": {
+  "def_table": "ada_access_to_subp_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_not_null",
+    "table": "ada_access_def_has_not_null",
+    "nullable": true
+   },
+   {
+    "name": "f_has_protected",
+    "table": "ada_access_to_subp_def_has_protected",
+    "nullable": false
+   },
+   {
+    "name": "f_subp_spec",
+    "table": "ada_access_to_subp_def_subp_spec",
+    "nullable": false
+   }
+  ]
+ },
+ "AdaNodeList": {
+  "def_table": "ada_ada_node_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "Aggregate": {
+  "def_table": "ada_aggregate_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ancestor_expr",
+    "table": "ada_base_aggregate_ancestor_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_assocs",
+    "table": "ada_base_aggregate_assocs",
+    "nullable": false
+   }
+  ]
+ },
+ "AggregateAssoc": {
+  "def_table": "ada_aggregate_assoc_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_designators",
+    "table": "ada_aggregate_assoc_designators",
+    "nullable": false
+   },
+   {
+    "name": "f_r_expr",
+    "table": "ada_aggregate_assoc_r_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "AliasedAbsent": {
+  "def_table": "ada_aliased_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "AliasedPresent": {
+  "def_table": "ada_aliased_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "AllAbsent": {
+  "def_table": "ada_all_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "AllPresent": {
+  "def_table": "ada_all_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "Allocator": {
+  "def_table": "ada_allocator_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_subpool",
+    "table": "ada_allocator_subpool",
+    "nullable": true
+   },
+   {
+    "name": "f_type_or_expr",
+    "table": "ada_allocator_type_or_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "AlternativesList": {
+  "def_table": "ada_alternatives_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "AnonymousExprDecl": {
+  "def_table": "ada_anonymous_expr_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_anonymous_expr_decl_name",
+    "nullable": false
+   },
+   {
+    "name": "f_expr",
+    "table": "ada_anonymous_expr_decl_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "AnonymousType": {
+  "def_table": "ada_anonymous_type_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_type_decl",
+    "table": "ada_anonymous_type_type_decl",
+    "nullable": false
+   }
+  ]
+ },
+ "AnonymousTypeAccessDef": {
+  "def_table": "ada_anonymous_type_access_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_not_null",
+    "table": "ada_access_def_has_not_null",
+    "nullable": true
+   },
+   {
+    "name": "f_type_decl",
+    "table": "ada_anonymous_type_access_def_type_decl",
+    "nullable": false
+   }
+  ]
+ },
+ "AnonymousTypeDecl": {
+  "def_table": "ada_anonymous_type_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_base_type_decl_name",
+    "nullable": true
+   },
+   {
+    "name": "f_discriminants",
+    "table": "ada_type_decl_discriminants",
+    "nullable": true
+   },
+   {
+    "name": "f_type_def",
+    "table": "ada_type_decl_type_def",
+    "nullable": false
+   }
+  ]
+ },
+ "ArraySubcomponentChoiceName": {
+  "def_table": "ada_array_subcomponent_choice_name_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_array_subcomponent_choice_name_name",
+    "nullable": true
+   },
+   {
+    "name": "f_suffix",
+    "table": "ada_array_subcomponent_choice_name_suffix",
+    "nullable": false
+   }
+  ]
+ },
+ "ArrayTypeDef": {
+  "def_table": "ada_array_type_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_indices",
+    "table": "ada_array_type_def_indices",
+    "nullable": false
+   },
+   {
+    "name": "f_component_type",
+    "table": "ada_array_type_def_component_type",
+    "nullable": false
+   }
+  ]
+ },
+ "AspectAssoc": {
+  "def_table": "ada_aspect_assoc_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_id",
+    "table": "ada_aspect_assoc_id",
+    "nullable": false
+   },
+   {
+    "name": "f_expr",
+    "table": "ada_aspect_assoc_expr",
+    "nullable": true
+   }
+  ]
+ },
+ "AspectAssocList": {
+  "def_table": "ada_aspect_assoc_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "AspectSpec": {
+  "def_table": "ada_aspect_spec_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_aspect_assocs",
+    "table": "ada_aspect_spec_aspect_assocs",
+    "nullable": false
+   }
+  ]
+ },
+ "AssertionLevelDecl": {
+  "def_table": "ada_assertion_level_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_assertion_level_decl_name",
+    "nullable": false
+   }
+  ]
+ },
+ "AssignStmt": {
+  "def_table": "ada_assign_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_dest",
+    "table": "ada_assign_stmt_dest",
+    "nullable": false
+   },
+   {
+    "name": "f_expr",
+    "table": "ada_assign_stmt_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "AssocList": {
+  "def_table": "ada_assoc_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "AtClause": {
+  "def_table": "ada_at_clause_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_at_clause_name",
+    "nullable": false
+   },
+   {
+    "name": "f_expr",
+    "table": "ada_at_clause_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "AttributeDefClause": {
+  "def_table": "ada_attribute_def_clause_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_attribute_expr",
+    "table": "ada_attribute_def_clause_attribute_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_expr",
+    "table": "ada_attribute_def_clause_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "AttributeRef": {
+  "def_table": "ada_attribute_ref_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_prefix",
+    "table": "ada_attribute_ref_prefix",
+    "nullable": false
+   },
+   {
+    "name": "f_attribute",
+    "table": "ada_attribute_ref_attribute",
+    "nullable": false
+   },
+   {
+    "name": "f_args",
+    "table": "ada_attribute_ref_args",
+    "nullable": false
+   }
+  ]
+ },
+ "BaseAssocList": {
+  "def_table": "ada_base_assoc_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "BeginBlock": {
+  "def_table": "ada_begin_block_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_stmts",
+    "table": "ada_begin_block_stmts",
+    "nullable": false
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_begin_block_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "BinOp": {
+  "def_table": "ada_bin_op_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_left",
+    "table": "ada_bin_op_left",
+    "nullable": false
+   },
+   {
+    "name": "f_op",
+    "table": "ada_bin_op_op",
+    "nullable": false
+   },
+   {
+    "name": "f_right",
+    "table": "ada_bin_op_right",
+    "nullable": false
+   }
+  ]
+ },
+ "BoxExpr": {
+  "def_table": "ada_box_expr_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "BracketAggregate": {
+  "def_table": "ada_bracket_aggregate_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ancestor_expr",
+    "table": "ada_base_aggregate_ancestor_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_assocs",
+    "table": "ada_base_aggregate_assocs",
+    "nullable": false
+   }
+  ]
+ },
+ "BracketDeltaAggregate": {
+  "def_table": "ada_bracket_delta_aggregate_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ancestor_expr",
+    "table": "ada_base_aggregate_ancestor_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_assocs",
+    "table": "ada_base_aggregate_assocs",
+    "nullable": false
+   }
+  ]
+ },
+ "CallExpr": {
+  "def_table": "ada_call_expr_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_call_expr_name",
+    "nullable": false
+   },
+   {
+    "name": "f_suffix",
+    "table": "ada_call_expr_suffix",
+    "nullable": false
+   }
+  ]
+ },
+ "CallStmt": {
+  "def_table": "ada_call_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_call",
+    "table": "ada_call_stmt_call",
+    "nullable": false
+   }
+  ]
+ },
+ "CaseExpr": {
+  "def_table": "ada_case_expr_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_expr",
+    "table": "ada_case_expr_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_cases",
+    "table": "ada_case_expr_cases",
+    "nullable": false
+   }
+  ]
+ },
+ "CaseExprAlternative": {
+  "def_table": "ada_case_expr_alternative_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_choices",
+    "table": "ada_case_expr_alternative_choices",
+    "nullable": false
+   },
+   {
+    "name": "f_expr",
+    "table": "ada_case_expr_alternative_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "CaseExprAlternativeList": {
+  "def_table": "ada_case_expr_alternative_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "CaseStmt": {
+  "def_table": "ada_case_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_expr",
+    "table": "ada_case_stmt_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_pragmas",
+    "table": "ada_case_stmt_pragmas",
+    "nullable": false
+   },
+   {
+    "name": "f_alternatives",
+    "table": "ada_case_stmt_alternatives",
+    "nullable": false
+   }
+  ]
+ },
+ "CaseStmtAlternative": {
+  "def_table": "ada_case_stmt_alternative_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_choices",
+    "table": "ada_case_stmt_alternative_choices",
+    "nullable": false
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_case_stmt_alternative_stmts",
+    "nullable": false
+   }
+  ]
+ },
+ "CaseStmtAlternativeList": {
+  "def_table": "ada_case_stmt_alternative_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "CharLiteral": {
+  "def_table": "ada_char_literal_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "ClasswideTypeDecl": {
+  "def_table": "ada_classwide_type_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_base_type_decl_name",
+    "nullable": true
+   }
+  ]
+ },
+ "CompilationUnit": {
+  "def_table": "ada_compilation_unit_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_prelude",
+    "table": "ada_compilation_unit_prelude",
+    "nullable": false
+   },
+   {
+    "name": "f_body",
+    "table": "ada_compilation_unit_body",
+    "nullable": false
+   },
+   {
+    "name": "f_pragmas",
+    "table": "ada_compilation_unit_pragmas",
+    "nullable": false
+   }
+  ]
+ },
+ "CompilationUnitList": {
+  "def_table": "ada_compilation_unit_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "ComponentClause": {
+  "def_table": "ada_component_clause_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_id",
+    "table": "ada_component_clause_id",
+    "nullable": false
+   },
+   {
+    "name": "f_position",
+    "table": "ada_component_clause_position",
+    "nullable": false
+   },
+   {
+    "name": "f_range",
+    "table": "ada_component_clause_range",
+    "nullable": false
+   }
+  ]
+ },
+ "ComponentDecl": {
+  "def_table": "ada_component_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ids",
+    "table": "ada_component_decl_ids",
+    "nullable": false
+   },
+   {
+    "name": "f_component_def",
+    "table": "ada_component_decl_component_def",
+    "nullable": false
+   },
+   {
+    "name": "f_default_expr",
+    "table": "ada_component_decl_default_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "ComponentDef": {
+  "def_table": "ada_component_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_aliased",
+    "table": "ada_component_def_has_aliased",
+    "nullable": false
+   },
+   {
+    "name": "f_has_constant",
+    "table": "ada_component_def_has_constant",
+    "nullable": false
+   },
+   {
+    "name": "f_type_expr",
+    "table": "ada_component_def_type_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "ComponentList": {
+  "def_table": "ada_component_list_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_components",
+    "table": "ada_component_list_components",
+    "nullable": false
+   },
+   {
+    "name": "f_variant_part",
+    "table": "ada_component_list_variant_part",
+    "nullable": true
+   }
+  ]
+ },
+ "CompositeConstraint": {
+  "def_table": "ada_composite_constraint_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_constraints",
+    "table": "ada_composite_constraint_constraints",
+    "nullable": false
+   }
+  ]
+ },
+ "CompositeConstraintAssoc": {
+  "def_table": "ada_composite_constraint_assoc_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ids",
+    "table": "ada_composite_constraint_assoc_ids",
+    "nullable": false
+   },
+   {
+    "name": "f_constraint_expr",
+    "table": "ada_composite_constraint_assoc_constraint_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "ConcatOp": {
+  "def_table": "ada_concat_op_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_first_operand",
+    "table": "ada_concat_op_first_operand",
+    "nullable": false
+   },
+   {
+    "name": "f_other_operands",
+    "table": "ada_concat_op_other_operands",
+    "nullable": false
+   }
+  ]
+ },
+ "ConcatOperand": {
+  "def_table": "ada_concat_operand_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_operator",
+    "table": "ada_concat_operand_operator",
+    "nullable": false
+   },
+   {
+    "name": "f_operand",
+    "table": "ada_concat_operand_operand",
+    "nullable": false
+   }
+  ]
+ },
+ "ConcatOperandList": {
+  "def_table": "ada_concat_operand_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "ConcreteFormalSubpDecl": {
+  "def_table": "ada_concrete_formal_subp_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_overriding",
+    "table": "ada_classic_subp_decl_overriding",
+    "nullable": false
+   },
+   {
+    "name": "f_subp_spec",
+    "table": "ada_classic_subp_decl_subp_spec",
+    "nullable": false
+   },
+   {
+    "name": "f_default_expr",
+    "table": "ada_formal_subp_decl_default_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "ConcreteTypeDecl": {
+  "def_table": "ada_concrete_type_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_base_type_decl_name",
+    "nullable": true
+   },
+   {
+    "name": "f_discriminants",
+    "table": "ada_type_decl_discriminants",
+    "nullable": true
+   },
+   {
+    "name": "f_type_def",
+    "table": "ada_type_decl_type_def",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "ConstantAbsent": {
+  "def_table": "ada_constant_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "ConstantPresent": {
+  "def_table": "ada_constant_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "ConstrainedArrayIndices": {
+  "def_table": "ada_constrained_array_indices_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_list",
+    "table": "ada_constrained_array_indices_list",
+    "nullable": false
+   }
+  ]
+ },
+ "ConstrainedSubtypeIndication": {
+  "def_table": "ada_constrained_subtype_indication_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_not_null",
+    "table": "ada_subtype_indication_has_not_null",
+    "nullable": false
+   },
+   {
+    "name": "f_name",
+    "table": "ada_subtype_indication_name",
+    "nullable": false
+   },
+   {
+    "name": "f_constraint",
+    "table": "ada_subtype_indication_constraint",
+    "nullable": true
+   }
+  ]
+ },
+ "ConstraintList": {
+  "def_table": "ada_constraint_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "DecimalFixedPointDef": {
+  "def_table": "ada_decimal_fixed_point_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_delta",
+    "table": "ada_decimal_fixed_point_def_delta",
+    "nullable": false
+   },
+   {
+    "name": "f_digits",
+    "table": "ada_decimal_fixed_point_def_digits",
+    "nullable": false
+   },
+   {
+    "name": "f_range",
+    "table": "ada_decimal_fixed_point_def_range",
+    "nullable": true
+   }
+  ]
+ },
+ "DeclBlock": {
+  "def_table": "ada_decl_block_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decls",
+    "table": "ada_decl_block_decls",
+    "nullable": false
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_decl_block_stmts",
+    "nullable": false
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_decl_block_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "DeclExpr": {
+  "def_table": "ada_decl_expr_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decls",
+    "table": "ada_decl_expr_decls",
+    "nullable": false
+   },
+   {
+    "name": "f_expr",
+    "table": "ada_decl_expr_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "DeclList": {
+  "def_table": "ada_decl_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "DeclarativePart": {
+  "def_table": "ada_declarative_part_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decls",
+    "table": "ada_declarative_part_decls",
+    "nullable": false
+   }
+  ]
+ },
+ "DefiningName": {
+  "def_table": "ada_defining_name_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_defining_name_name",
+    "nullable": false
+   }
+  ]
+ },
+ "DefiningNameList": {
+  "def_table": "ada_defining_name_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "DelayStmt": {
+  "def_table": "ada_delay_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_until",
+    "table": "ada_delay_stmt_has_until",
+    "nullable": false
+   },
+   {
+    "name": "f_expr",
+    "table": "ada_delay_stmt_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "DeltaAggregate": {
+  "def_table": "ada_delta_aggregate_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ancestor_expr",
+    "table": "ada_base_aggregate_ancestor_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_assocs",
+    "table": "ada_base_aggregate_assocs",
+    "nullable": false
+   }
+  ]
+ },
+ "DeltaConstraint": {
+  "def_table": "ada_delta_constraint_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_delta",
+    "table": "ada_delta_constraint_delta",
+    "nullable": false
+   },
+   {
+    "name": "f_range",
+    "table": "ada_delta_constraint_range",
+    "nullable": true
+   }
+  ]
+ },
+ "DerivedTypeDef": {
+  "def_table": "ada_derived_type_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_abstract",
+    "table": "ada_derived_type_def_has_abstract",
+    "nullable": false
+   },
+   {
+    "name": "f_has_limited",
+    "table": "ada_derived_type_def_has_limited",
+    "nullable": false
+   },
+   {
+    "name": "f_has_synchronized",
+    "table": "ada_derived_type_def_has_synchronized",
+    "nullable": false
+   },
+   {
+    "name": "f_subtype_indication",
+    "table": "ada_derived_type_def_subtype_indication",
+    "nullable": false
+   },
+   {
+    "name": "f_interfaces",
+    "table": "ada_derived_type_def_interfaces",
+    "nullable": false
+   },
+   {
+    "name": "f_record_extension",
+    "table": "ada_derived_type_def_record_extension",
+    "nullable": true
+   },
+   {
+    "name": "f_has_with_private",
+    "table": "ada_derived_type_def_has_with_private",
+    "nullable": false
+   }
+  ]
+ },
+ "DigitsConstraint": {
+  "def_table": "ada_digits_constraint_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_digits",
+    "table": "ada_digits_constraint_digits",
+    "nullable": false
+   },
+   {
+    "name": "f_range",
+    "table": "ada_digits_constraint_range",
+    "nullable": true
+   }
+  ]
+ },
+ "DiscreteBaseSubtypeDecl": {
+  "def_table": "ada_discrete_base_subtype_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_base_type_decl_name",
+    "nullable": true
+   }
+  ]
+ },
+ "DiscreteSubtypeIndication": {
+  "def_table": "ada_discrete_subtype_indication_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_not_null",
+    "table": "ada_subtype_indication_has_not_null",
+    "nullable": false
+   },
+   {
+    "name": "f_name",
+    "table": "ada_subtype_indication_name",
+    "nullable": false
+   },
+   {
+    "name": "f_constraint",
+    "table": "ada_subtype_indication_constraint",
+    "nullable": true
+   }
+  ]
+ },
+ "DiscreteSubtypeName": {
+  "def_table": "ada_discrete_subtype_name_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_subtype",
+    "table": "ada_discrete_subtype_name_subtype",
+    "nullable": false
+   }
+  ]
+ },
+ "DiscriminantChoiceList": {
+  "def_table": "ada_discriminant_choice_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "DiscriminantSpec": {
+  "def_table": "ada_discriminant_spec_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ids",
+    "table": "ada_discriminant_spec_ids",
+    "nullable": false
+   },
+   {
+    "name": "f_type_expr",
+    "table": "ada_discriminant_spec_type_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_default_expr",
+    "table": "ada_discriminant_spec_default_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "DiscriminantSpecList": {
+  "def_table": "ada_discriminant_spec_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "DottedName": {
+  "def_table": "ada_dotted_name_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_prefix",
+    "table": "ada_dotted_name_prefix",
+    "nullable": false
+   },
+   {
+    "name": "f_suffix",
+    "table": "ada_dotted_name_suffix",
+    "nullable": false
+   }
+  ]
+ },
+ "ElsePart": {
+  "def_table": "ada_else_part_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_stmts",
+    "table": "ada_else_part_stmts",
+    "nullable": false
+   }
+  ]
+ },
+ "ElsifExprPart": {
+  "def_table": "ada_elsif_expr_part_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_cond_expr",
+    "table": "ada_elsif_expr_part_cond_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_then_expr",
+    "table": "ada_elsif_expr_part_then_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "ElsifExprPartList": {
+  "def_table": "ada_elsif_expr_part_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "ElsifStmtPart": {
+  "def_table": "ada_elsif_stmt_part_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_cond_expr",
+    "table": "ada_elsif_stmt_part_cond_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_elsif_stmt_part_stmts",
+    "nullable": false
+   }
+  ]
+ },
+ "ElsifStmtPartList": {
+  "def_table": "ada_elsif_stmt_part_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "EndName": {
+  "def_table": "ada_end_name_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_end_name_name",
+    "nullable": false
+   }
+  ]
+ },
+ "EntryBody": {
+  "def_table": "ada_entry_body_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_entry_name",
+    "table": "ada_entry_body_entry_name",
+    "nullable": false
+   },
+   {
+    "name": "f_index_spec",
+    "table": "ada_entry_body_index_spec",
+    "nullable": true
+   },
+   {
+    "name": "f_params",
+    "table": "ada_entry_body_params",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   },
+   {
+    "name": "f_barrier",
+    "table": "ada_entry_body_barrier",
+    "nullable": false
+   },
+   {
+    "name": "f_decls",
+    "table": "ada_entry_body_decls",
+    "nullable": false
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_entry_body_stmts",
+    "nullable": false
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_entry_body_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "EntryCompletionFormalParams": {
+  "def_table": "ada_entry_completion_formal_params_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_params",
+    "table": "ada_entry_completion_formal_params_params",
+    "nullable": true
+   }
+  ]
+ },
+ "EntryDecl": {
+  "def_table": "ada_entry_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_overriding",
+    "table": "ada_entry_decl_overriding",
+    "nullable": false
+   },
+   {
+    "name": "f_spec",
+    "table": "ada_entry_decl_spec",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "EntryIndexSpec": {
+  "def_table": "ada_entry_index_spec_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_id",
+    "table": "ada_entry_index_spec_id",
+    "nullable": false
+   },
+   {
+    "name": "f_subtype",
+    "table": "ada_entry_index_spec_subtype",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "EntrySpec": {
+  "def_table": "ada_entry_spec_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_entry_name",
+    "table": "ada_entry_spec_entry_name",
+    "nullable": false
+   },
+   {
+    "name": "f_family_type",
+    "table": "ada_entry_spec_family_type",
+    "nullable": true
+   },
+   {
+    "name": "f_entry_params",
+    "table": "ada_entry_spec_entry_params",
+    "nullable": true
+   }
+  ]
+ },
+ "EnumLitSynthTypeExpr": {
+  "def_table": "ada_enum_lit_synth_type_expr_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "EnumLiteralDecl": {
+  "def_table": "ada_enum_literal_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_enum_literal_decl_name",
+    "nullable": true
+   }
+  ]
+ },
+ "EnumLiteralDeclList": {
+  "def_table": "ada_enum_literal_decl_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "EnumRepClause": {
+  "def_table": "ada_enum_rep_clause_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_type_name",
+    "table": "ada_enum_rep_clause_type_name",
+    "nullable": false
+   },
+   {
+    "name": "f_aggregate",
+    "table": "ada_enum_rep_clause_aggregate",
+    "nullable": false
+   }
+  ]
+ },
+ "EnumSubpSpec": {
+  "def_table": "ada_enum_subp_spec_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "EnumTypeDef": {
+  "def_table": "ada_enum_type_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_enum_literals",
+    "table": "ada_enum_type_def_enum_literals",
+    "nullable": false
+   }
+  ]
+ },
+ "ErrorDecl": {
+  "def_table": "ada_error_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "ErrorStmt": {
+  "def_table": "ada_error_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "ExceptionDecl": {
+  "def_table": "ada_exception_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ids",
+    "table": "ada_exception_decl_ids",
+    "nullable": false
+   },
+   {
+    "name": "f_renames",
+    "table": "ada_exception_decl_renames",
+    "nullable": true
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "ExceptionHandler": {
+  "def_table": "ada_exception_handler_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_exception_name",
+    "table": "ada_exception_handler_exception_name",
+    "nullable": true
+   },
+   {
+    "name": "f_handled_exceptions",
+    "table": "ada_exception_handler_handled_exceptions",
+    "nullable": false
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_exception_handler_stmts",
+    "nullable": false
+   }
+  ]
+ },
+ "ExitStmt": {
+  "def_table": "ada_exit_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_loop_name",
+    "table": "ada_exit_stmt_loop_name",
+    "nullable": true
+   },
+   {
+    "name": "f_cond_expr",
+    "table": "ada_exit_stmt_cond_expr",
+    "nullable": true
+   }
+  ]
+ },
+ "ExplicitDeref": {
+  "def_table": "ada_explicit_deref_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_prefix",
+    "table": "ada_explicit_deref_prefix",
+    "nullable": false
+   }
+  ]
+ },
+ "ExprAlternativesList": {
+  "def_table": "ada_expr_alternatives_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "ExprFunction": {
+  "def_table": "ada_expr_function_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_overriding",
+    "table": "ada_base_subp_body_overriding",
+    "nullable": false
+   },
+   {
+    "name": "f_subp_spec",
+    "table": "ada_base_subp_body_subp_spec",
+    "nullable": false
+   },
+   {
+    "name": "f_expr",
+    "table": "ada_expr_function_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "ExtendedReturnStmt": {
+  "def_table": "ada_extended_return_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decl",
+    "table": "ada_extended_return_stmt_decl",
+    "nullable": false
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_extended_return_stmt_stmts",
+    "nullable": true
+   }
+  ]
+ },
+ "ExtendedReturnStmtObjectDecl": {
+  "def_table": "ada_extended_return_stmt_object_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ids",
+    "table": "ada_object_decl_ids",
+    "nullable": false
+   },
+   {
+    "name": "f_has_aliased",
+    "table": "ada_object_decl_has_aliased",
+    "nullable": false
+   },
+   {
+    "name": "f_has_constant",
+    "table": "ada_object_decl_has_constant",
+    "nullable": false
+   },
+   {
+    "name": "f_mode",
+    "table": "ada_object_decl_mode",
+    "nullable": true
+   },
+   {
+    "name": "f_type_expr",
+    "table": "ada_object_decl_type_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_default_expr",
+    "table": "ada_object_decl_default_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_renaming_clause",
+    "table": "ada_object_decl_renaming_clause",
+    "nullable": true
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "FinallyPart": {
+  "def_table": "ada_finally_part_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_stmts",
+    "table": "ada_finally_part_stmts",
+    "nullable": false
+   }
+  ]
+ },
+ "FloatingPointDef": {
+  "def_table": "ada_floating_point_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_num_digits",
+    "table": "ada_floating_point_def_num_digits",
+    "nullable": false
+   },
+   {
+    "name": "f_range",
+    "table": "ada_floating_point_def_range",
+    "nullable": true
+   }
+  ]
+ },
+ "ForLoopIterFilter": {
+  "def_table": "ada_for_loop_iter_filter_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_expr",
+    "table": "ada_for_loop_iter_filter_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "ForLoopSpec": {
+  "def_table": "ada_for_loop_spec_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_var_decl",
+    "table": "ada_for_loop_spec_var_decl",
+    "nullable": false
+   },
+   {
+    "name": "f_loop_type",
+    "table": "ada_for_loop_spec_loop_type",
+    "nullable": false
+   },
+   {
+    "name": "f_has_reverse",
+    "table": "ada_for_loop_spec_has_reverse",
+    "nullable": false
+   },
+   {
+    "name": "f_iter_expr",
+    "table": "ada_for_loop_spec_iter_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_iter_filter",
+    "table": "ada_for_loop_spec_iter_filter",
+    "nullable": true
+   }
+  ]
+ },
+ "ForLoopStmt": {
+  "def_table": "ada_for_loop_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_spec",
+    "table": "ada_base_loop_stmt_spec",
+    "nullable": true
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_base_loop_stmt_stmts",
+    "nullable": false
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_base_loop_stmt_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "ForLoopVarDecl": {
+  "def_table": "ada_for_loop_var_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_id",
+    "table": "ada_for_loop_var_decl_id",
+    "nullable": false
+   },
+   {
+    "name": "f_id_type",
+    "table": "ada_for_loop_var_decl_id_type",
+    "nullable": true
+   }
+  ]
+ },
+ "FormalDiscreteTypeDef": {
+  "def_table": "ada_formal_discrete_type_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "FormalTypeDecl": {
+  "def_table": "ada_formal_type_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_base_type_decl_name",
+    "nullable": true
+   },
+   {
+    "name": "f_discriminants",
+    "table": "ada_type_decl_discriminants",
+    "nullable": true
+   },
+   {
+    "name": "f_type_def",
+    "table": "ada_type_decl_type_def",
+    "nullable": false
+   },
+   {
+    "name": "f_default_type",
+    "table": "ada_formal_type_decl_default_type",
+    "nullable": true
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "FormatStringChunk": {
+  "def_table": "ada_format_string_chunk_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_expr",
+    "table": "ada_format_string_chunk_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_string_tok",
+    "table": "ada_format_string_chunk_string_tok",
+    "nullable": false
+   }
+  ]
+ },
+ "FormatStringChunkList": {
+  "def_table": "ada_format_string_chunk_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "FormatStringLiteral": {
+  "def_table": "ada_format_string_literal_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_opening_chunk",
+    "table": "ada_format_string_literal_opening_chunk",
+    "nullable": false
+   },
+   {
+    "name": "f_mid_exprs",
+    "table": "ada_format_string_literal_mid_exprs",
+    "nullable": false
+   },
+   {
+    "name": "f_trailing_expr",
+    "table": "ada_format_string_literal_trailing_expr",
+    "nullable": true
+   }
+  ]
+ },
+ "FormatStringTokEnd": {
+  "def_table": "ada_format_string_tok_end_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "FormatStringTokMid": {
+  "def_table": "ada_format_string_tok_mid_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "FormatStringTokStart": {
+  "def_table": "ada_format_string_tok_start_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "FormatStringTokString": {
+  "def_table": "ada_format_string_tok_string_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "GenericFormalObjDecl": {
+  "def_table": "ada_generic_formal_obj_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decl",
+    "table": "ada_generic_formal_decl",
+    "nullable": false
+   }
+  ]
+ },
+ "GenericFormalPackage": {
+  "def_table": "ada_generic_formal_package_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decl",
+    "table": "ada_generic_formal_decl",
+    "nullable": false
+   }
+  ]
+ },
+ "GenericFormalPart": {
+  "def_table": "ada_generic_formal_part_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decls",
+    "table": "ada_generic_formal_part_decls",
+    "nullable": false
+   }
+  ]
+ },
+ "GenericFormalSubpDecl": {
+  "def_table": "ada_generic_formal_subp_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decl",
+    "table": "ada_generic_formal_decl",
+    "nullable": false
+   }
+  ]
+ },
+ "GenericFormalTypeDecl": {
+  "def_table": "ada_generic_formal_type_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decl",
+    "table": "ada_generic_formal_decl",
+    "nullable": false
+   }
+  ]
+ },
+ "GenericPackageDecl": {
+  "def_table": "ada_generic_package_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_formal_part",
+    "table": "ada_generic_decl_formal_part",
+    "nullable": false
+   },
+   {
+    "name": "f_package_decl",
+    "table": "ada_generic_package_decl_package_decl",
+    "nullable": false
+   }
+  ]
+ },
+ "GenericPackageInstantiation": {
+  "def_table": "ada_generic_package_instantiation_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_generic_package_instantiation_name",
+    "nullable": false
+   },
+   {
+    "name": "f_generic_pkg_name",
+    "table": "ada_generic_package_instantiation_generic_pkg_name",
+    "nullable": false
+   },
+   {
+    "name": "f_params",
+    "table": "ada_generic_package_instantiation_params",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "GenericPackageInternal": {
+  "def_table": "ada_generic_package_internal_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_package_name",
+    "table": "ada_base_package_decl_package_name",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   },
+   {
+    "name": "f_public_part",
+    "table": "ada_base_package_decl_public_part",
+    "nullable": false
+   },
+   {
+    "name": "f_private_part",
+    "table": "ada_base_package_decl_private_part",
+    "nullable": true
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_base_package_decl_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "GenericPackageRenamingDecl": {
+  "def_table": "ada_generic_package_renaming_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_generic_package_renaming_decl_name",
+    "nullable": false
+   },
+   {
+    "name": "f_renames",
+    "table": "ada_generic_package_renaming_decl_renames",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "GenericSubpDecl": {
+  "def_table": "ada_generic_subp_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_formal_part",
+    "table": "ada_generic_decl_formal_part",
+    "nullable": false
+   },
+   {
+    "name": "f_subp_decl",
+    "table": "ada_generic_subp_decl_subp_decl",
+    "nullable": false
+   }
+  ]
+ },
+ "GenericSubpInstantiation": {
+  "def_table": "ada_generic_subp_instantiation_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_overriding",
+    "table": "ada_generic_subp_instantiation_overriding",
+    "nullable": false
+   },
+   {
+    "name": "f_kind",
+    "table": "ada_generic_subp_instantiation_kind",
+    "nullable": false
+   },
+   {
+    "name": "f_subp_name",
+    "table": "ada_generic_subp_instantiation_subp_name",
+    "nullable": false
+   },
+   {
+    "name": "f_generic_subp_name",
+    "table": "ada_generic_subp_instantiation_generic_subp_name",
+    "nullable": false
+   },
+   {
+    "name": "f_params",
+    "table": "ada_generic_subp_instantiation_params",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "GenericSubpInternal": {
+  "def_table": "ada_generic_subp_internal_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_subp_spec",
+    "table": "ada_generic_subp_internal_subp_spec",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "GenericSubpRenamingDecl": {
+  "def_table": "ada_generic_subp_renaming_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_kind",
+    "table": "ada_generic_subp_renaming_decl_kind",
+    "nullable": false
+   },
+   {
+    "name": "f_name",
+    "table": "ada_generic_subp_renaming_decl_name",
+    "nullable": false
+   },
+   {
+    "name": "f_renames",
+    "table": "ada_generic_subp_renaming_decl_renames",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "GotoStmt": {
+  "def_table": "ada_goto_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_label_name",
+    "table": "ada_goto_stmt_label_name",
+    "nullable": false
+   }
+  ]
+ },
+ "HandledStmts": {
+  "def_table": "ada_handled_stmts_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_stmts",
+    "table": "ada_handled_stmts_stmts",
+    "nullable": false
+   },
+   {
+    "name": "f_exceptions",
+    "table": "ada_handled_stmts_exceptions",
+    "nullable": false
+   },
+   {
+    "name": "f_finally_part",
+    "table": "ada_handled_stmts_finally_part",
+    "nullable": true
+   }
+  ]
+ },
+ "Identifier": {
+  "def_table": "ada_identifier_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "IfExpr": {
+  "def_table": "ada_if_expr_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_cond_expr",
+    "table": "ada_if_expr_cond_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_then_expr",
+    "table": "ada_if_expr_then_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_alternatives",
+    "table": "ada_if_expr_alternatives",
+    "nullable": false
+   },
+   {
+    "name": "f_else_expr",
+    "table": "ada_if_expr_else_expr",
+    "nullable": true
+   }
+  ]
+ },
+ "IfStmt": {
+  "def_table": "ada_if_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_cond_expr",
+    "table": "ada_if_stmt_cond_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_then_stmts",
+    "table": "ada_if_stmt_then_stmts",
+    "nullable": false
+   },
+   {
+    "name": "f_alternatives",
+    "table": "ada_if_stmt_alternatives",
+    "nullable": false
+   },
+   {
+    "name": "f_else_part",
+    "table": "ada_if_stmt_else_part",
+    "nullable": true
+   }
+  ]
+ },
+ "IncompleteFormalTypeDecl": {
+  "def_table": "ada_incomplete_formal_type_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_base_type_decl_name",
+    "nullable": true
+   },
+   {
+    "name": "f_discriminants",
+    "table": "ada_incomplete_type_decl_discriminants",
+    "nullable": true
+   },
+   {
+    "name": "f_is_tagged",
+    "table": "ada_incomplete_formal_type_decl_is_tagged",
+    "nullable": true
+   },
+   {
+    "name": "f_default_type",
+    "table": "ada_incomplete_formal_type_decl_default_type",
+    "nullable": true
+   }
+  ]
+ },
+ "IncompleteTaggedTypeDecl": {
+  "def_table": "ada_incomplete_tagged_type_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_base_type_decl_name",
+    "nullable": true
+   },
+   {
+    "name": "f_discriminants",
+    "table": "ada_incomplete_type_decl_discriminants",
+    "nullable": true
+   },
+   {
+    "name": "f_has_abstract",
+    "table": "ada_incomplete_tagged_type_decl_has_abstract",
+    "nullable": false
+   }
+  ]
+ },
+ "IncompleteTypeDecl": {
+  "def_table": "ada_incomplete_type_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_base_type_decl_name",
+    "nullable": true
+   },
+   {
+    "name": "f_discriminants",
+    "table": "ada_incomplete_type_decl_discriminants",
+    "nullable": true
+   }
+  ]
+ },
+ "IntLiteral": {
+  "def_table": "ada_int_literal_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "InterfaceKindLimited": {
+  "def_table": "ada_interface_kind_limited_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "InterfaceKindProtected": {
+  "def_table": "ada_interface_kind_protected_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "InterfaceKindSynchronized": {
+  "def_table": "ada_interface_kind_synchronized_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "InterfaceKindTask": {
+  "def_table": "ada_interface_kind_task_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "InterfaceTypeDef": {
+  "def_table": "ada_interface_type_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_interface_kind",
+    "table": "ada_interface_type_def_interface_kind",
+    "nullable": true
+   },
+   {
+    "name": "f_interfaces",
+    "table": "ada_interface_type_def_interfaces",
+    "nullable": false
+   }
+  ]
+ },
+ "IterTypeIn": {
+  "def_table": "ada_iter_type_in_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "IterTypeOf": {
+  "def_table": "ada_iter_type_of_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "IteratedAssoc": {
+  "def_table": "ada_iterated_assoc_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_spec",
+    "table": "ada_iterated_assoc_spec",
+    "nullable": false
+   },
+   {
+    "name": "f_key_expr",
+    "table": "ada_iterated_assoc_key_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_r_expr",
+    "table": "ada_iterated_assoc_r_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "KnownDiscriminantPart": {
+  "def_table": "ada_known_discriminant_part_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_discr_specs",
+    "table": "ada_known_discriminant_part_discr_specs",
+    "nullable": false
+   }
+  ]
+ },
+ "Label": {
+  "def_table": "ada_label_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decl",
+    "table": "ada_label_decl",
+    "nullable": false
+   }
+  ]
+ },
+ "LabelDecl": {
+  "def_table": "ada_label_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_label_decl_name",
+    "nullable": false
+   }
+  ]
+ },
+ "LibraryItem": {
+  "def_table": "ada_library_item_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_private",
+    "table": "ada_library_item_has_private",
+    "nullable": false
+   },
+   {
+    "name": "f_item",
+    "table": "ada_library_item_item",
+    "nullable": false
+   }
+  ]
+ },
+ "LimitedAbsent": {
+  "def_table": "ada_limited_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "LimitedPresent": {
+  "def_table": "ada_limited_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "LoopStmt": {
+  "def_table": "ada_loop_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_spec",
+    "table": "ada_base_loop_stmt_spec",
+    "nullable": true
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_base_loop_stmt_stmts",
+    "nullable": false
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_base_loop_stmt_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "MembershipExpr": {
+  "def_table": "ada_membership_expr_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_expr",
+    "table": "ada_membership_expr_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_op",
+    "table": "ada_membership_expr_op",
+    "nullable": false
+   },
+   {
+    "name": "f_membership_exprs",
+    "table": "ada_membership_expr_membership_exprs",
+    "nullable": false
+   }
+  ]
+ },
+ "ModIntTypeDef": {
+  "def_table": "ada_mod_int_type_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_expr",
+    "table": "ada_mod_int_type_def_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "ModeDefault": {
+  "def_table": "ada_mode_default_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "ModeIn": {
+  "def_table": "ada_mode_in_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "ModeInOut": {
+  "def_table": "ada_mode_in_out_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "ModeOut": {
+  "def_table": "ada_mode_out_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "MultiAbstractStateDecl": {
+  "def_table": "ada_multi_abstract_state_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decls",
+    "table": "ada_multi_abstract_state_decl_decls",
+    "nullable": false
+   }
+  ]
+ },
+ "MultiDimArrayAssoc": {
+  "def_table": "ada_multi_dim_array_assoc_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_designators",
+    "table": "ada_aggregate_assoc_designators",
+    "nullable": false
+   },
+   {
+    "name": "f_r_expr",
+    "table": "ada_aggregate_assoc_r_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "NameList": {
+  "def_table": "ada_name_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "NamedStmt": {
+  "def_table": "ada_named_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decl",
+    "table": "ada_named_stmt_decl",
+    "nullable": false
+   },
+   {
+    "name": "f_stmt",
+    "table": "ada_named_stmt_stmt",
+    "nullable": false
+   }
+  ]
+ },
+ "NamedStmtDecl": {
+  "def_table": "ada_named_stmt_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_named_stmt_decl_name",
+    "nullable": false
+   }
+  ]
+ },
+ "NoTypeObjectRenamingDecl": {
+  "def_table": "ada_no_type_object_renaming_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ids",
+    "table": "ada_object_decl_ids",
+    "nullable": false
+   },
+   {
+    "name": "f_has_aliased",
+    "table": "ada_object_decl_has_aliased",
+    "nullable": false
+   },
+   {
+    "name": "f_has_constant",
+    "table": "ada_object_decl_has_constant",
+    "nullable": false
+   },
+   {
+    "name": "f_mode",
+    "table": "ada_object_decl_mode",
+    "nullable": true
+   },
+   {
+    "name": "f_type_expr",
+    "table": "ada_object_decl_type_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_default_expr",
+    "table": "ada_object_decl_default_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_renaming_clause",
+    "table": "ada_object_decl_renaming_clause",
+    "nullable": true
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "NotNullAbsent": {
+  "def_table": "ada_not_null_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "NotNullPresent": {
+  "def_table": "ada_not_null_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "NullComponentDecl": {
+  "def_table": "ada_null_component_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "NullLiteral": {
+  "def_table": "ada_null_literal_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "NullRecordAggregate": {
+  "def_table": "ada_null_record_aggregate_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ancestor_expr",
+    "table": "ada_base_aggregate_ancestor_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_assocs",
+    "table": "ada_base_aggregate_assocs",
+    "nullable": false
+   }
+  ]
+ },
+ "NullRecordDef": {
+  "def_table": "ada_null_record_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_components",
+    "table": "ada_base_record_def_components",
+    "nullable": false
+   }
+  ]
+ },
+ "NullStmt": {
+  "def_table": "ada_null_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "NullSubpDecl": {
+  "def_table": "ada_null_subp_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_overriding",
+    "table": "ada_base_subp_body_overriding",
+    "nullable": false
+   },
+   {
+    "name": "f_subp_spec",
+    "table": "ada_base_subp_body_subp_spec",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "NumberDecl": {
+  "def_table": "ada_number_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ids",
+    "table": "ada_number_decl_ids",
+    "nullable": false
+   },
+   {
+    "name": "f_expr",
+    "table": "ada_number_decl_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "ObjectDecl": {
+  "def_table": "ada_object_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ids",
+    "table": "ada_object_decl_ids",
+    "nullable": false
+   },
+   {
+    "name": "f_has_aliased",
+    "table": "ada_object_decl_has_aliased",
+    "nullable": false
+   },
+   {
+    "name": "f_has_constant",
+    "table": "ada_object_decl_has_constant",
+    "nullable": false
+   },
+   {
+    "name": "f_mode",
+    "table": "ada_object_decl_mode",
+    "nullable": true
+   },
+   {
+    "name": "f_type_expr",
+    "table": "ada_object_decl_type_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_default_expr",
+    "table": "ada_object_decl_default_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_renaming_clause",
+    "table": "ada_object_decl_renaming_clause",
+    "nullable": true
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "OpAbs": {
+  "def_table": "ada_op_abs_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpAnd": {
+  "def_table": "ada_op_and_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpAndThen": {
+  "def_table": "ada_op_and_then_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpConcat": {
+  "def_table": "ada_op_concat_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpDiv": {
+  "def_table": "ada_op_div_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpDoubleDot": {
+  "def_table": "ada_op_double_dot_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpEq": {
+  "def_table": "ada_op_eq_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpGt": {
+  "def_table": "ada_op_gt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpGte": {
+  "def_table": "ada_op_gte_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpIn": {
+  "def_table": "ada_op_in_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpLt": {
+  "def_table": "ada_op_lt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpLte": {
+  "def_table": "ada_op_lte_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpMinus": {
+  "def_table": "ada_op_minus_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpMod": {
+  "def_table": "ada_op_mod_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpMult": {
+  "def_table": "ada_op_mult_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpNeq": {
+  "def_table": "ada_op_neq_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpNot": {
+  "def_table": "ada_op_not_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpNotIn": {
+  "def_table": "ada_op_not_in_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpOr": {
+  "def_table": "ada_op_or_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpOrElse": {
+  "def_table": "ada_op_or_else_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpPlus": {
+  "def_table": "ada_op_plus_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpPow": {
+  "def_table": "ada_op_pow_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpRem": {
+  "def_table": "ada_op_rem_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OpXor": {
+  "def_table": "ada_op_xor_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OrdinaryFixedPointDef": {
+  "def_table": "ada_ordinary_fixed_point_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_delta",
+    "table": "ada_ordinary_fixed_point_def_delta",
+    "nullable": false
+   },
+   {
+    "name": "f_range",
+    "table": "ada_ordinary_fixed_point_def_range",
+    "nullable": true
+   }
+  ]
+ },
+ "OthersDesignator": {
+  "def_table": "ada_others_designator_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OverridingNotOverriding": {
+  "def_table": "ada_overriding_not_overriding_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OverridingOverriding": {
+  "def_table": "ada_overriding_overriding_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "OverridingUnspecified": {
+  "def_table": "ada_overriding_unspecified_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "PackageBody": {
+  "def_table": "ada_package_body_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_package_name",
+    "table": "ada_package_body_package_name",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   },
+   {
+    "name": "f_decls",
+    "table": "ada_package_body_decls",
+    "nullable": false
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_package_body_stmts",
+    "nullable": true
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_package_body_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "PackageBodyStub": {
+  "def_table": "ada_package_body_stub_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_package_body_stub_name",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "PackageDecl": {
+  "def_table": "ada_package_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_package_name",
+    "table": "ada_base_package_decl_package_name",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   },
+   {
+    "name": "f_public_part",
+    "table": "ada_base_package_decl_public_part",
+    "nullable": false
+   },
+   {
+    "name": "f_private_part",
+    "table": "ada_base_package_decl_private_part",
+    "nullable": true
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_base_package_decl_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "PackageRenamingDecl": {
+  "def_table": "ada_package_renaming_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_package_renaming_decl_name",
+    "nullable": false
+   },
+   {
+    "name": "f_renames",
+    "table": "ada_package_renaming_decl_renames",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "ParamAssoc": {
+  "def_table": "ada_param_assoc_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_designator",
+    "table": "ada_param_assoc_designator",
+    "nullable": true
+   },
+   {
+    "name": "f_r_expr",
+    "table": "ada_param_assoc_r_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "ParamSpec": {
+  "def_table": "ada_param_spec_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_ids",
+    "table": "ada_param_spec_ids",
+    "nullable": false
+   },
+   {
+    "name": "f_has_aliased",
+    "table": "ada_param_spec_has_aliased",
+    "nullable": false
+   },
+   {
+    "name": "f_mode",
+    "table": "ada_param_spec_mode",
+    "nullable": true
+   },
+   {
+    "name": "f_type_expr",
+    "table": "ada_param_spec_type_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_default_expr",
+    "table": "ada_param_spec_default_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "ParamSpecList": {
+  "def_table": "ada_param_spec_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "Params": {
+  "def_table": "ada_params_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_params",
+    "table": "ada_params_params",
+    "nullable": false
+   }
+  ]
+ },
+ "ParenAbstractStateDecl": {
+  "def_table": "ada_paren_abstract_state_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decl",
+    "table": "ada_paren_abstract_state_decl_decl",
+    "nullable": false
+   }
+  ]
+ },
+ "ParenExpr": {
+  "def_table": "ada_paren_expr_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_expr",
+    "table": "ada_paren_expr_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "ParentList": {
+  "def_table": "ada_parent_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "PpElseDirective": {
+  "def_table": "ada_pp_else_directive_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "PpElsifDirective": {
+  "def_table": "ada_pp_elsif_directive_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_expr",
+    "table": "ada_pp_elsif_directive_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_then_kw",
+    "table": "ada_pp_elsif_directive_then_kw",
+    "nullable": true
+   }
+  ]
+ },
+ "PpEndIfDirective": {
+  "def_table": "ada_pp_end_if_directive_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "PpIfDirective": {
+  "def_table": "ada_pp_if_directive_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_expr",
+    "table": "ada_pp_if_directive_expr",
+    "nullable": false
+   },
+   {
+    "name": "f_then_kw",
+    "table": "ada_pp_if_directive_then_kw",
+    "nullable": true
+   }
+  ]
+ },
+ "PpThenKw": {
+  "def_table": "ada_pp_then_kw_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "PragmaArgumentAssoc": {
+  "def_table": "ada_pragma_argument_assoc_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_pragma_argument_assoc_name",
+    "nullable": true
+   },
+   {
+    "name": "f_expr",
+    "table": "ada_pragma_argument_assoc_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "PragmaNode": {
+  "def_table": "ada_pragma_node_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_id",
+    "table": "ada_pragma_node_id",
+    "nullable": false
+   },
+   {
+    "name": "f_args",
+    "table": "ada_pragma_node_args",
+    "nullable": false
+   }
+  ]
+ },
+ "PragmaNodeList": {
+  "def_table": "ada_pragma_node_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "PrivateAbsent": {
+  "def_table": "ada_private_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "PrivatePart": {
+  "def_table": "ada_private_part_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decls",
+    "table": "ada_declarative_part_decls",
+    "nullable": false
+   }
+  ]
+ },
+ "PrivatePresent": {
+  "def_table": "ada_private_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "PrivateTypeDef": {
+  "def_table": "ada_private_type_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_abstract",
+    "table": "ada_private_type_def_has_abstract",
+    "nullable": false
+   },
+   {
+    "name": "f_has_tagged",
+    "table": "ada_private_type_def_has_tagged",
+    "nullable": false
+   },
+   {
+    "name": "f_has_limited",
+    "table": "ada_private_type_def_has_limited",
+    "nullable": false
+   }
+  ]
+ },
+ "ProtectedAbsent": {
+  "def_table": "ada_protected_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "ProtectedBody": {
+  "def_table": "ada_protected_body_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_protected_body_name",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   },
+   {
+    "name": "f_decls",
+    "table": "ada_protected_body_decls",
+    "nullable": false
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_protected_body_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "ProtectedBodyStub": {
+  "def_table": "ada_protected_body_stub_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_protected_body_stub_name",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "ProtectedDef": {
+  "def_table": "ada_protected_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_public_part",
+    "table": "ada_protected_def_public_part",
+    "nullable": false
+   },
+   {
+    "name": "f_private_part",
+    "table": "ada_protected_def_private_part",
+    "nullable": true
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_protected_def_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "ProtectedPresent": {
+  "def_table": "ada_protected_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "ProtectedTypeDecl": {
+  "def_table": "ada_protected_type_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_base_type_decl_name",
+    "nullable": true
+   },
+   {
+    "name": "f_discriminants",
+    "table": "ada_protected_type_decl_discriminants",
+    "nullable": true
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   },
+   {
+    "name": "f_interfaces",
+    "table": "ada_protected_type_decl_interfaces",
+    "nullable": false
+   },
+   {
+    "name": "f_definition",
+    "table": "ada_protected_type_decl_definition",
+    "nullable": false
+   }
+  ]
+ },
+ "PublicPart": {
+  "def_table": "ada_public_part_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decls",
+    "table": "ada_declarative_part_decls",
+    "nullable": false
+   }
+  ]
+ },
+ "QualExpr": {
+  "def_table": "ada_qual_expr_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_prefix",
+    "table": "ada_qual_expr_prefix",
+    "nullable": false
+   },
+   {
+    "name": "f_suffix",
+    "table": "ada_qual_expr_suffix",
+    "nullable": false
+   }
+  ]
+ },
+ "QuantifiedExpr": {
+  "def_table": "ada_quantified_expr_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_quantifier",
+    "table": "ada_quantified_expr_quantifier",
+    "nullable": false
+   },
+   {
+    "name": "f_loop_spec",
+    "table": "ada_quantified_expr_loop_spec",
+    "nullable": false
+   },
+   {
+    "name": "f_expr",
+    "table": "ada_quantified_expr_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "QuantifierAll": {
+  "def_table": "ada_quantifier_all_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "QuantifierSome": {
+  "def_table": "ada_quantifier_some_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "RaiseExpr": {
+  "def_table": "ada_raise_expr_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_exception_name",
+    "table": "ada_raise_expr_exception_name",
+    "nullable": true
+   },
+   {
+    "name": "f_error_message",
+    "table": "ada_raise_expr_error_message",
+    "nullable": true
+   }
+  ]
+ },
+ "RaiseStmt": {
+  "def_table": "ada_raise_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_exception_name",
+    "table": "ada_raise_stmt_exception_name",
+    "nullable": true
+   },
+   {
+    "name": "f_error_message",
+    "table": "ada_raise_stmt_error_message",
+    "nullable": true
+   }
+  ]
+ },
+ "RangeConstraint": {
+  "def_table": "ada_range_constraint_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_range",
+    "table": "ada_range_constraint_range",
+    "nullable": false
+   }
+  ]
+ },
+ "RangeSpec": {
+  "def_table": "ada_range_spec_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_range",
+    "table": "ada_range_spec_range",
+    "nullable": false
+   }
+  ]
+ },
+ "RealLiteral": {
+  "def_table": "ada_real_literal_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "RecordDef": {
+  "def_table": "ada_record_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_components",
+    "table": "ada_base_record_def_components",
+    "nullable": false
+   }
+  ]
+ },
+ "RecordRepClause": {
+  "def_table": "ada_record_rep_clause_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_record_rep_clause_name",
+    "nullable": false
+   },
+   {
+    "name": "f_at_expr",
+    "table": "ada_record_rep_clause_at_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_components",
+    "table": "ada_record_rep_clause_components",
+    "nullable": false
+   }
+  ]
+ },
+ "RecordTypeDef": {
+  "def_table": "ada_record_type_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_abstract",
+    "table": "ada_record_type_def_has_abstract",
+    "nullable": false
+   },
+   {
+    "name": "f_has_tagged",
+    "table": "ada_record_type_def_has_tagged",
+    "nullable": false
+   },
+   {
+    "name": "f_has_limited",
+    "table": "ada_record_type_def_has_limited",
+    "nullable": false
+   },
+   {
+    "name": "f_record_def",
+    "table": "ada_record_type_def_record_def",
+    "nullable": false
+   }
+  ]
+ },
+ "ReduceAttributeRef": {
+  "def_table": "ada_reduce_attribute_ref_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_prefix",
+    "table": "ada_reduce_attribute_ref_prefix",
+    "nullable": false
+   },
+   {
+    "name": "f_attribute",
+    "table": "ada_reduce_attribute_ref_attribute",
+    "nullable": false
+   },
+   {
+    "name": "f_args",
+    "table": "ada_reduce_attribute_ref_args",
+    "nullable": false
+   }
+  ]
+ },
+ "RelationOp": {
+  "def_table": "ada_relation_op_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_left",
+    "table": "ada_bin_op_left",
+    "nullable": false
+   },
+   {
+    "name": "f_op",
+    "table": "ada_bin_op_op",
+    "nullable": false
+   },
+   {
+    "name": "f_right",
+    "table": "ada_bin_op_right",
+    "nullable": false
+   }
+  ]
+ },
+ "RenamingClause": {
+  "def_table": "ada_renaming_clause_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_renamed_object",
+    "table": "ada_renaming_clause_renamed_object",
+    "nullable": false
+   }
+  ]
+ },
+ "RequeueStmt": {
+  "def_table": "ada_requeue_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_call_name",
+    "table": "ada_requeue_stmt_call_name",
+    "nullable": false
+   },
+   {
+    "name": "f_has_abort",
+    "table": "ada_requeue_stmt_has_abort",
+    "nullable": false
+   }
+  ]
+ },
+ "ReturnStmt": {
+  "def_table": "ada_return_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_return_expr",
+    "table": "ada_return_stmt_return_expr",
+    "nullable": true
+   }
+  ]
+ },
+ "ReverseAbsent": {
+  "def_table": "ada_reverse_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "ReversePresent": {
+  "def_table": "ada_reverse_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "SelectStmt": {
+  "def_table": "ada_select_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_guards",
+    "table": "ada_select_stmt_guards",
+    "nullable": false
+   },
+   {
+    "name": "f_else_part",
+    "table": "ada_select_stmt_else_part",
+    "nullable": true
+   },
+   {
+    "name": "f_then_abort_part",
+    "table": "ada_select_stmt_then_abort_part",
+    "nullable": true
+   }
+  ]
+ },
+ "SelectWhenPart": {
+  "def_table": "ada_select_when_part_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_cond_expr",
+    "table": "ada_select_when_part_cond_expr",
+    "nullable": true
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_select_when_part_stmts",
+    "nullable": false
+   }
+  ]
+ },
+ "SelectWhenPartList": {
+  "def_table": "ada_select_when_part_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "SignedIntTypeDef": {
+  "def_table": "ada_signed_int_type_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_range",
+    "table": "ada_signed_int_type_def_range",
+    "nullable": false
+   }
+  ]
+ },
+ "SimpleDeclStmt": {
+  "def_table": "ada_simple_decl_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_decl",
+    "table": "ada_simple_decl_stmt_decl",
+    "nullable": false
+   }
+  ]
+ },
+ "SingleProtectedDecl": {
+  "def_table": "ada_single_protected_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_single_protected_decl_name",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   },
+   {
+    "name": "f_interfaces",
+    "table": "ada_single_protected_decl_interfaces",
+    "nullable": false
+   },
+   {
+    "name": "f_definition",
+    "table": "ada_single_protected_decl_definition",
+    "nullable": false
+   }
+  ]
+ },
+ "SingleTaskDecl": {
+  "def_table": "ada_single_task_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_task_type",
+    "table": "ada_single_task_decl_task_type",
+    "nullable": false
+   }
+  ]
+ },
+ "SingleTaskTypeDecl": {
+  "def_table": "ada_single_task_type_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_base_type_decl_name",
+    "nullable": true
+   },
+   {
+    "name": "f_discriminants",
+    "table": "ada_task_type_decl_discriminants",
+    "nullable": true
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   },
+   {
+    "name": "f_definition",
+    "table": "ada_task_type_decl_definition",
+    "nullable": true
+   }
+  ]
+ },
+ "StmtList": {
+  "def_table": "ada_stmt_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "StringLiteral": {
+  "def_table": "ada_string_literal_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "SubpBody": {
+  "def_table": "ada_subp_body_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_overriding",
+    "table": "ada_base_subp_body_overriding",
+    "nullable": false
+   },
+   {
+    "name": "f_subp_spec",
+    "table": "ada_base_subp_body_subp_spec",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   },
+   {
+    "name": "f_decls",
+    "table": "ada_subp_body_decls",
+    "nullable": false
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_subp_body_stmts",
+    "nullable": false
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_subp_body_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "SubpBodyStub": {
+  "def_table": "ada_subp_body_stub_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_overriding",
+    "table": "ada_subp_body_stub_overriding",
+    "nullable": false
+   },
+   {
+    "name": "f_subp_spec",
+    "table": "ada_subp_body_stub_subp_spec",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "SubpDecl": {
+  "def_table": "ada_subp_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_overriding",
+    "table": "ada_classic_subp_decl_overriding",
+    "nullable": false
+   },
+   {
+    "name": "f_subp_spec",
+    "table": "ada_classic_subp_decl_subp_spec",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "SubpKindFunction": {
+  "def_table": "ada_subp_kind_function_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "SubpKindProcedure": {
+  "def_table": "ada_subp_kind_procedure_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "SubpRenamingDecl": {
+  "def_table": "ada_subp_renaming_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_overriding",
+    "table": "ada_base_subp_body_overriding",
+    "nullable": false
+   },
+   {
+    "name": "f_subp_spec",
+    "table": "ada_base_subp_body_subp_spec",
+    "nullable": false
+   },
+   {
+    "name": "f_renames",
+    "table": "ada_subp_renaming_decl_renames",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "SubpSpec": {
+  "def_table": "ada_subp_spec_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_subp_kind",
+    "table": "ada_subp_spec_subp_kind",
+    "nullable": false
+   },
+   {
+    "name": "f_subp_name",
+    "table": "ada_subp_spec_subp_name",
+    "nullable": true
+   },
+   {
+    "name": "f_subp_params",
+    "table": "ada_subp_spec_subp_params",
+    "nullable": true
+   },
+   {
+    "name": "f_subp_returns",
+    "table": "ada_subp_spec_subp_returns",
+    "nullable": true
+   }
+  ]
+ },
+ "SubtypeDecl": {
+  "def_table": "ada_subtype_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_base_type_decl_name",
+    "nullable": true
+   },
+   {
+    "name": "f_subtype",
+    "table": "ada_subtype_decl_subtype",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "SubtypeIndication": {
+  "def_table": "ada_subtype_indication_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_not_null",
+    "table": "ada_subtype_indication_has_not_null",
+    "nullable": false
+   },
+   {
+    "name": "f_name",
+    "table": "ada_subtype_indication_name",
+    "nullable": false
+   },
+   {
+    "name": "f_constraint",
+    "table": "ada_subtype_indication_constraint",
+    "nullable": true
+   }
+  ]
+ },
+ "Subunit": {
+  "def_table": "ada_subunit_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_subunit_name",
+    "nullable": false
+   },
+   {
+    "name": "f_body",
+    "table": "ada_subunit_body",
+    "nullable": false
+   }
+  ]
+ },
+ "SynchronizedAbsent": {
+  "def_table": "ada_synchronized_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "SynchronizedPresent": {
+  "def_table": "ada_synchronized_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "SynthAnonymousTypeDecl": {
+  "def_table": "ada_synth_anonymous_type_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_base_type_decl_name",
+    "nullable": true
+   },
+   {
+    "name": "f_discriminants",
+    "table": "ada_type_decl_discriminants",
+    "nullable": true
+   },
+   {
+    "name": "f_type_def",
+    "table": "ada_type_decl_type_def",
+    "nullable": false
+   }
+  ]
+ },
+ "SyntheticBinarySpec": {
+  "def_table": "ada_synthetic_binary_spec_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_left_param",
+    "table": "ada_synthetic_binary_spec_left_param",
+    "nullable": false
+   },
+   {
+    "name": "f_right_param",
+    "table": "ada_synthetic_binary_spec_right_param",
+    "nullable": false
+   },
+   {
+    "name": "f_return_type_expr",
+    "table": "ada_synthetic_binary_spec_return_type_expr",
+    "nullable": true
+   }
+  ]
+ },
+ "SyntheticCharEnumLit": {
+  "def_table": "ada_synthetic_char_enum_lit_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_enum_literal_decl_name",
+    "nullable": true
+   }
+  ]
+ },
+ "SyntheticDefiningName": {
+  "def_table": "ada_synthetic_defining_name_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_defining_name_name",
+    "nullable": false
+   }
+  ]
+ },
+ "SyntheticFormalParamDecl": {
+  "def_table": "ada_synthetic_formal_param_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_param_type",
+    "table": "ada_synthetic_formal_param_decl_param_type",
+    "nullable": false
+   }
+  ]
+ },
+ "SyntheticIdentifier": {
+  "def_table": "ada_synthetic_identifier_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "SyntheticObjectDecl": {
+  "def_table": "ada_synthetic_object_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "SyntheticRenamingClause": {
+  "def_table": "ada_synthetic_renaming_clause_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_renamed_object",
+    "table": "ada_renaming_clause_renamed_object",
+    "nullable": false
+   }
+  ]
+ },
+ "SyntheticSubpDecl": {
+  "def_table": "ada_synthetic_subp_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_spec",
+    "table": "ada_synthetic_subp_decl_spec",
+    "nullable": false
+   }
+  ]
+ },
+ "SyntheticTypeExpr": {
+  "def_table": "ada_synthetic_type_expr_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "SyntheticUnarySpec": {
+  "def_table": "ada_synthetic_unary_spec_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_right_param",
+    "table": "ada_synthetic_unary_spec_right_param",
+    "nullable": false
+   },
+   {
+    "name": "f_return_type_expr",
+    "table": "ada_synthetic_unary_spec_return_type_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "TaggedAbsent": {
+  "def_table": "ada_tagged_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "TaggedPresent": {
+  "def_table": "ada_tagged_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "TargetName": {
+  "def_table": "ada_target_name_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "TaskBody": {
+  "def_table": "ada_task_body_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_task_body_name",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   },
+   {
+    "name": "f_decls",
+    "table": "ada_task_body_decls",
+    "nullable": false
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_task_body_stmts",
+    "nullable": false
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_task_body_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "TaskBodyStub": {
+  "def_table": "ada_task_body_stub_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_task_body_stub_name",
+    "nullable": false
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   }
+  ]
+ },
+ "TaskDef": {
+  "def_table": "ada_task_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_interfaces",
+    "table": "ada_task_def_interfaces",
+    "nullable": false
+   },
+   {
+    "name": "f_public_part",
+    "table": "ada_task_def_public_part",
+    "nullable": false
+   },
+   {
+    "name": "f_private_part",
+    "table": "ada_task_def_private_part",
+    "nullable": true
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_task_def_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "TaskTypeDecl": {
+  "def_table": "ada_task_type_decl_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_name",
+    "table": "ada_base_type_decl_name",
+    "nullable": true
+   },
+   {
+    "name": "f_discriminants",
+    "table": "ada_task_type_decl_discriminants",
+    "nullable": true
+   },
+   {
+    "name": "f_aspects",
+    "table": "ada_basic_decl_aspects",
+    "nullable": true
+   },
+   {
+    "name": "f_definition",
+    "table": "ada_task_type_decl_definition",
+    "nullable": true
+   }
+  ]
+ },
+ "TerminateAlternative": {
+  "def_table": "ada_terminate_alternative_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "ThenAbortPart": {
+  "def_table": "ada_then_abort_part_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_stmts",
+    "table": "ada_then_abort_part_stmts",
+    "nullable": false
+   }
+  ]
+ },
+ "TypeAccessDef": {
+  "def_table": "ada_type_access_def_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_not_null",
+    "table": "ada_access_def_has_not_null",
+    "nullable": true
+   },
+   {
+    "name": "f_has_all",
+    "table": "ada_type_access_def_has_all",
+    "nullable": false
+   },
+   {
+    "name": "f_has_constant",
+    "table": "ada_type_access_def_has_constant",
+    "nullable": false
+   },
+   {
+    "name": "f_subtype_indication",
+    "table": "ada_type_access_def_subtype_indication",
+    "nullable": false
+   }
+  ]
+ },
+ "TypeAttributesRepository": {
+  "def_table": "ada_type_attributes_repository_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "UnOp": {
+  "def_table": "ada_un_op_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_op",
+    "table": "ada_un_op_op",
+    "nullable": false
+   },
+   {
+    "name": "f_expr",
+    "table": "ada_un_op_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "UnconstrainedArrayIndex": {
+  "def_table": "ada_unconstrained_array_index_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_subtype_name",
+    "table": "ada_unconstrained_array_index_subtype_name",
+    "nullable": false
+   },
+   {
+    "name": "f_lower_bound",
+    "table": "ada_unconstrained_array_index_lower_bound",
+    "nullable": true
+   }
+  ]
+ },
+ "UnconstrainedArrayIndexList": {
+  "def_table": "ada_unconstrained_array_index_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "UnconstrainedArrayIndices": {
+  "def_table": "ada_unconstrained_array_indices_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_types",
+    "table": "ada_unconstrained_array_indices_types",
+    "nullable": false
+   }
+  ]
+ },
+ "UnknownDiscriminantPart": {
+  "def_table": "ada_unknown_discriminant_part_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "UntilAbsent": {
+  "def_table": "ada_until_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "UntilPresent": {
+  "def_table": "ada_until_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "UpdateAttributeRef": {
+  "def_table": "ada_update_attribute_ref_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_prefix",
+    "table": "ada_update_attribute_ref_prefix",
+    "nullable": false
+   },
+   {
+    "name": "f_attribute",
+    "table": "ada_update_attribute_ref_attribute",
+    "nullable": false
+   },
+   {
+    "name": "f_values",
+    "table": "ada_update_attribute_ref_values",
+    "nullable": false
+   }
+  ]
+ },
+ "UsePackageClause": {
+  "def_table": "ada_use_package_clause_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_packages",
+    "table": "ada_use_package_clause_packages",
+    "nullable": false
+   }
+  ]
+ },
+ "UseTypeClause": {
+  "def_table": "ada_use_type_clause_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_all",
+    "table": "ada_use_type_clause_has_all",
+    "nullable": false
+   },
+   {
+    "name": "f_types",
+    "table": "ada_use_type_clause_types",
+    "nullable": false
+   }
+  ]
+ },
+ "ValueSequence": {
+  "def_table": "ada_value_sequence_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_iter_assoc",
+    "table": "ada_value_sequence_iter_assoc",
+    "nullable": false
+   }
+  ]
+ },
+ "Variant": {
+  "def_table": "ada_variant_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_choices",
+    "table": "ada_variant_choices",
+    "nullable": false
+   },
+   {
+    "name": "f_components",
+    "table": "ada_variant_components",
+    "nullable": false
+   }
+  ]
+ },
+ "VariantList": {
+  "def_table": "ada_variant_list_def",
+  "is_token": false,
+  "is_list": true,
+  "fields": []
+ },
+ "VariantPart": {
+  "def_table": "ada_variant_part_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_discr_name",
+    "table": "ada_variant_part_discr_name",
+    "nullable": false
+   },
+   {
+    "name": "f_variant",
+    "table": "ada_variant_part_variant",
+    "nullable": false
+   }
+  ]
+ },
+ "WhileLoopSpec": {
+  "def_table": "ada_while_loop_spec_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_expr",
+    "table": "ada_while_loop_spec_expr",
+    "nullable": false
+   }
+  ]
+ },
+ "WhileLoopStmt": {
+  "def_table": "ada_while_loop_stmt_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_spec",
+    "table": "ada_base_loop_stmt_spec",
+    "nullable": true
+   },
+   {
+    "name": "f_stmts",
+    "table": "ada_base_loop_stmt_stmts",
+    "nullable": false
+   },
+   {
+    "name": "f_end_name",
+    "table": "ada_base_loop_stmt_end_name",
+    "nullable": true
+   }
+  ]
+ },
+ "WithClause": {
+  "def_table": "ada_with_clause_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": [
+   {
+    "name": "f_has_limited",
+    "table": "ada_with_clause_has_limited",
+    "nullable": false
+   },
+   {
+    "name": "f_has_private",
+    "table": "ada_with_clause_has_private",
+    "nullable": false
+   },
+   {
+    "name": "f_packages",
+    "table": "ada_with_clause_packages",
+    "nullable": false
+   }
+  ]
+ },
+ "WithPrivateAbsent": {
+  "def_table": "ada_with_private_absent_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ },
+ "WithPrivatePresent": {
+  "def_table": "ada_with_private_present_def",
+  "is_token": false,
+  "is_list": false,
+  "fields": []
+ }
+}

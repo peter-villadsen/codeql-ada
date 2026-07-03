@@ -1,5 +1,4 @@
 {
-  "libadalang_version": "undefined",
   "node_count": 405,
   "concrete_count": 333,
   "nodes": [
@@ -8,9 +7,9 @@
       "base": "AbortNode",
       "concrete": true,
       "kind_name": "AbortAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -18,9 +17,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -28,9 +27,9 @@
       "base": "AbortNode",
       "concrete": true,
       "kind_name": "AbortPresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -38,11 +37,17 @@
       "base": "SimpleStmt",
       "concrete": true,
       "kind_name": "AbortStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_names"
+      ],
+      "fields": [
+        {
+          "name": "f_names",
+          "type": "NameList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -50,9 +55,9 @@
       "base": "AbstractNode",
       "concrete": true,
       "kind_name": "AbstractAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -60,9 +65,14 @@
       "base": "FormalSubpDecl",
       "concrete": true,
       "kind_name": "AbstractFormalSubpDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_overriding",
+        "f_subp_spec",
+        "f_default_expr",
+        "f_aspects"
+      ],
       "fields": []
     },
     {
@@ -70,9 +80,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -80,9 +90,9 @@
       "base": "AbstractNode",
       "concrete": true,
       "kind_name": "AbstractPresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -90,11 +100,18 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "AbstractStateDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_aspects"
+      ],
       "fields": [
-        "f_name"
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        }
       ]
     },
     {
@@ -102,11 +119,17 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "AbstractStateDeclExpr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_state_decl"
+      ],
+      "fields": [
+        {
+          "name": "f_state_decl",
+          "type": "AdaNode",
+          "nullable": false
+        }
       ]
     },
     {
@@ -114,9 +137,9 @@
       "base": "AdaNodeList",
       "concrete": true,
       "kind_name": "AbstractStateDeclList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -124,9 +147,13 @@
       "base": "ClassicSubpDecl",
       "concrete": true,
       "kind_name": "AbstractSubpDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_overriding",
+        "f_subp_spec",
+        "f_aspects"
+      ],
       "fields": []
     },
     {
@@ -134,13 +161,29 @@
       "base": "CompositeStmt",
       "concrete": true,
       "kind_name": "AcceptStmt",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_body_decl",
         "f_entry_index_expr",
         "f_params"
+      ],
+      "fields": [
+        {
+          "name": "f_body_decl",
+          "type": "AcceptStmtBody",
+          "nullable": false
+        },
+        {
+          "name": "f_entry_index_expr",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_params",
+          "type": "EntryCompletionFormalParams",
+          "nullable": false
+        }
       ]
     },
     {
@@ -148,11 +191,17 @@
       "base": "BodyNode",
       "concrete": true,
       "kind_name": "AcceptStmtBody",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_name"
+      ],
+      "fields": [
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        }
       ]
     },
     {
@@ -160,12 +209,26 @@
       "base": "AcceptStmt",
       "concrete": true,
       "kind_name": "AcceptStmtWithStmts",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_body_decl",
+        "f_entry_index_expr",
+        "f_params",
+        "f_stmts",
+        "f_end_name"
+      ],
       "fields": [
-        "f_end_name",
-        "f_stmts"
+        {
+          "name": "f_end_name",
+          "type": "EndName",
+          "nullable": true
+        },
+        {
+          "name": "f_stmts",
+          "type": "HandledStmts",
+          "nullable": false
+        }
       ]
     },
     {
@@ -173,11 +236,17 @@
       "base": "TypeDef",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_has_not_null"
+      ],
+      "fields": [
+        {
+          "name": "f_has_not_null",
+          "type": "NotNull",
+          "nullable": true
+        }
       ]
     },
     {
@@ -185,12 +254,24 @@
       "base": "AccessDef",
       "concrete": true,
       "kind_name": "AccessToSubpDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_has_not_null",
         "f_has_protected",
         "f_subp_spec"
+      ],
+      "fields": [
+        {
+          "name": "f_has_protected",
+          "type": "ProtectedNode",
+          "nullable": false
+        },
+        {
+          "name": "f_subp_spec",
+          "type": "SubpSpec",
+          "nullable": false
+        }
       ]
     },
     {
@@ -198,9 +279,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -208,9 +289,9 @@
       "base": "object",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -218,9 +299,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "AdaNodeList",
-      "abstract_heuristic": true,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -228,9 +309,12 @@
       "base": "BaseAggregate",
       "concrete": true,
       "kind_name": "Aggregate",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_ancestor_expr",
+        "f_assocs"
+      ],
       "fields": []
     },
     {
@@ -238,12 +322,23 @@
       "base": "BasicAssoc",
       "concrete": true,
       "kind_name": "AggregateAssoc",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_designators",
         "f_r_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_designators",
+          "type": "AlternativesList",
+          "nullable": false
+        },
+        {
+          "name": "f_r_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -251,9 +346,9 @@
       "base": "AliasedNode",
       "concrete": true,
       "kind_name": "AliasedAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -261,9 +356,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -271,9 +366,9 @@
       "base": "AliasedNode",
       "concrete": true,
       "kind_name": "AliasedPresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -281,9 +376,9 @@
       "base": "AllNode",
       "concrete": true,
       "kind_name": "AllAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -291,9 +386,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -301,9 +396,9 @@
       "base": "AllNode",
       "concrete": true,
       "kind_name": "AllPresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -311,12 +406,23 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "Allocator",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_subpool",
         "f_type_or_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_subpool",
+          "type": "Name",
+          "nullable": true
+        },
+        {
+          "name": "f_type_or_expr",
+          "type": "AdaNode",
+          "nullable": false
+        }
       ]
     },
     {
@@ -324,9 +430,9 @@
       "base": "AdaNodeList",
       "concrete": true,
       "kind_name": "AlternativesList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -334,12 +440,23 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "AnonymousExprDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_expr"
+      ],
       "fields": [
-        "f_expr",
-        "f_name"
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_name",
+          "type": "SyntheticDefiningName",
+          "nullable": false
+        }
       ]
     },
     {
@@ -347,11 +464,17 @@
       "base": "TypeExpr",
       "concrete": true,
       "kind_name": "AnonymousType",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_type_decl"
+      ],
+      "fields": [
+        {
+          "name": "f_type_decl",
+          "type": "AnonymousTypeDecl",
+          "nullable": false
+        }
       ]
     },
     {
@@ -359,11 +482,18 @@
       "base": "BaseTypeAccessDef",
       "concrete": true,
       "kind_name": "AnonymousTypeAccessDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_has_not_null",
         "f_type_decl"
+      ],
+      "fields": [
+        {
+          "name": "f_type_decl",
+          "type": "BaseTypeDecl",
+          "nullable": false
+        }
       ]
     },
     {
@@ -371,9 +501,13 @@
       "base": "TypeDecl",
       "concrete": true,
       "kind_name": "AnonymousTypeDecl",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_discriminants",
+        "f_type_def"
+      ],
       "fields": []
     },
     {
@@ -381,9 +515,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -391,12 +525,23 @@
       "base": "Name",
       "concrete": true,
       "kind_name": "ArraySubcomponentChoiceName",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_name",
         "f_suffix"
+      ],
+      "fields": [
+        {
+          "name": "f_name",
+          "type": "Name",
+          "nullable": true
+        },
+        {
+          "name": "f_suffix",
+          "type": "AdaNode",
+          "nullable": false
+        }
       ]
     },
     {
@@ -404,12 +549,23 @@
       "base": "TypeDef",
       "concrete": true,
       "kind_name": "ArrayTypeDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_indices",
+        "f_component_type"
+      ],
       "fields": [
-        "f_component_type",
-        "f_indices"
+        {
+          "name": "f_component_type",
+          "type": "ComponentDef",
+          "nullable": false
+        },
+        {
+          "name": "f_indices",
+          "type": "ArrayIndices",
+          "nullable": false
+        }
       ]
     },
     {
@@ -417,12 +573,23 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "AspectAssoc",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_id",
+        "f_expr"
+      ],
       "fields": [
-        "f_expr",
-        "f_id"
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_id",
+          "type": "Name",
+          "nullable": false
+        }
       ]
     },
     {
@@ -430,9 +597,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "AspectAssocList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -440,9 +607,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -450,11 +617,17 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "AspectSpec",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_aspect_assocs"
+      ],
+      "fields": [
+        {
+          "name": "f_aspect_assocs",
+          "type": "AspectAssocList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -462,11 +635,17 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "AssertionLevelDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_name"
+      ],
+      "fields": [
+        {
+          "name": "f_name",
+          "type": "SyntheticDefiningName",
+          "nullable": false
+        }
       ]
     },
     {
@@ -474,12 +653,23 @@
       "base": "SimpleStmt",
       "concrete": true,
       "kind_name": "AssignStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_dest",
         "f_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_dest",
+          "type": "Name",
+          "nullable": false
+        },
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -487,9 +677,9 @@
       "base": "BasicAssocList",
       "concrete": true,
       "kind_name": "AssocList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -497,12 +687,23 @@
       "base": "AspectClause",
       "concrete": true,
       "kind_name": "AtClause",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_expr"
+      ],
       "fields": [
-        "f_expr",
-        "f_name"
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_name",
+          "type": "BaseId",
+          "nullable": false
+        }
       ]
     },
     {
@@ -510,12 +711,23 @@
       "base": "AspectClause",
       "concrete": true,
       "kind_name": "AttributeDefClause",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_attribute_expr",
         "f_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_attribute_expr",
+          "type": "Name",
+          "nullable": false
+        },
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -523,13 +735,29 @@
       "base": "Name",
       "concrete": true,
       "kind_name": "AttributeRef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_args",
+      "all_field_order": [
+        "f_prefix",
         "f_attribute",
-        "f_prefix"
+        "f_args"
+      ],
+      "fields": [
+        {
+          "name": "f_args",
+          "type": "AssocList",
+          "nullable": false
+        },
+        {
+          "name": "f_attribute",
+          "type": "Identifier",
+          "nullable": false
+        },
+        {
+          "name": "f_prefix",
+          "type": "Name",
+          "nullable": false
+        }
       ]
     },
     {
@@ -537,12 +765,23 @@
       "base": "Expr",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_ancestor_expr",
         "f_assocs"
+      ],
+      "fields": [
+        {
+          "name": "f_ancestor_expr",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_assocs",
+          "type": "AssocList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -550,9 +789,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -560,9 +799,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "BaseAssocList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -570,9 +809,9 @@
       "base": "BasicDecl",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -580,9 +819,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -590,9 +829,9 @@
       "base": "SingleTokNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -600,13 +839,29 @@
       "base": "CompositeStmt",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_end_name",
+      "all_field_order": [
         "f_spec",
-        "f_stmts"
+        "f_stmts",
+        "f_end_name"
+      ],
+      "fields": [
+        {
+          "name": "f_end_name",
+          "type": "EndName",
+          "nullable": true
+        },
+        {
+          "name": "f_spec",
+          "type": "LoopSpec",
+          "nullable": true
+        },
+        {
+          "name": "f_stmts",
+          "type": "StmtList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -614,14 +869,36 @@
       "base": "BasicDecl",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_end_name",
+      "all_field_order": [
         "f_package_name",
+        "f_aspects",
+        "f_public_part",
         "f_private_part",
-        "f_public_part"
+        "f_end_name"
+      ],
+      "fields": [
+        {
+          "name": "f_end_name",
+          "type": "EndName",
+          "nullable": true
+        },
+        {
+          "name": "f_package_name",
+          "type": "DefiningName",
+          "nullable": false
+        },
+        {
+          "name": "f_private_part",
+          "type": "PrivatePart",
+          "nullable": true
+        },
+        {
+          "name": "f_public_part",
+          "type": "PublicPart",
+          "nullable": false
+        }
       ]
     },
     {
@@ -629,11 +906,17 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_components"
+      ],
+      "fields": [
+        {
+          "name": "f_components",
+          "type": "ComponentList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -641,12 +924,23 @@
       "base": "BodyNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_overriding",
         "f_subp_spec"
+      ],
+      "fields": [
+        {
+          "name": "f_overriding",
+          "type": "OverridingNode",
+          "nullable": false
+        },
+        {
+          "name": "f_subp_spec",
+          "type": "SubpSpec",
+          "nullable": false
+        }
       ]
     },
     {
@@ -654,9 +948,9 @@
       "base": "BaseFormalParamHolder",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -664,9 +958,11 @@
       "base": "BaseTypeDecl",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name"
+      ],
       "fields": []
     },
     {
@@ -674,9 +970,11 @@
       "base": "AccessDef",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_has_not_null"
+      ],
       "fields": []
     },
     {
@@ -684,11 +982,17 @@
       "base": "BasicDecl",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_name"
+      ],
+      "fields": [
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": true
+        }
       ]
     },
     {
@@ -696,9 +1000,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -706,9 +1010,9 @@
       "base": "AdaList",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -716,11 +1020,15 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": [
-        "f_aspects"
+        {
+          "name": "f_aspects",
+          "type": "AspectSpec",
+          "nullable": true
+        }
       ]
     },
     {
@@ -728,9 +1036,9 @@
       "base": "BasicDecl",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -738,12 +1046,23 @@
       "base": "BlockStmt",
       "concrete": true,
       "kind_name": "BeginBlock",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_stmts",
+        "f_end_name"
+      ],
       "fields": [
-        "f_end_name",
-        "f_stmts"
+        {
+          "name": "f_end_name",
+          "type": "EndName",
+          "nullable": true
+        },
+        {
+          "name": "f_stmts",
+          "type": "HandledStmts",
+          "nullable": false
+        }
       ]
     },
     {
@@ -751,13 +1070,29 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "BinOp",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_left",
         "f_op",
         "f_right"
+      ],
+      "fields": [
+        {
+          "name": "f_left",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_op",
+          "type": "Op",
+          "nullable": false
+        },
+        {
+          "name": "f_right",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -765,9 +1100,9 @@
       "base": "CompositeStmt",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -775,9 +1110,9 @@
       "base": "BasicDecl",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -785,9 +1120,9 @@
       "base": "BodyNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -795,9 +1130,9 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "BoxExpr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -805,9 +1140,12 @@
       "base": "Aggregate",
       "concrete": true,
       "kind_name": "BracketAggregate",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_ancestor_expr",
+        "f_assocs"
+      ],
       "fields": []
     },
     {
@@ -815,9 +1153,12 @@
       "base": "DeltaAggregate",
       "concrete": true,
       "kind_name": "BracketDeltaAggregate",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_ancestor_expr",
+        "f_assocs"
+      ],
       "fields": []
     },
     {
@@ -825,12 +1166,23 @@
       "base": "Name",
       "concrete": true,
       "kind_name": "CallExpr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_name",
         "f_suffix"
+      ],
+      "fields": [
+        {
+          "name": "f_name",
+          "type": "Name",
+          "nullable": false
+        },
+        {
+          "name": "f_suffix",
+          "type": "AdaNode",
+          "nullable": false
+        }
       ]
     },
     {
@@ -838,11 +1190,17 @@
       "base": "SimpleStmt",
       "concrete": true,
       "kind_name": "CallStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_call"
+      ],
+      "fields": [
+        {
+          "name": "f_call",
+          "type": "Name",
+          "nullable": false
+        }
       ]
     },
     {
@@ -850,12 +1208,23 @@
       "base": "CondExpr",
       "concrete": true,
       "kind_name": "CaseExpr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_expr",
+        "f_cases"
+      ],
       "fields": [
-        "f_cases",
-        "f_expr"
+        {
+          "name": "f_cases",
+          "type": "CaseExprAlternativeList",
+          "nullable": false
+        },
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -863,12 +1232,23 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "CaseExprAlternative",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_choices",
         "f_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_choices",
+          "type": "AlternativesList",
+          "nullable": false
+        },
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -876,9 +1256,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "CaseExprAlternativeList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -886,13 +1266,29 @@
       "base": "CompositeStmt",
       "concrete": true,
       "kind_name": "CaseStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_alternatives",
+      "all_field_order": [
         "f_expr",
-        "f_pragmas"
+        "f_pragmas",
+        "f_alternatives"
+      ],
+      "fields": [
+        {
+          "name": "f_alternatives",
+          "type": "CaseStmtAlternativeList",
+          "nullable": false
+        },
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_pragmas",
+          "type": "PragmaNodeList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -900,12 +1296,23 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "CaseStmtAlternative",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_choices",
         "f_stmts"
+      ],
+      "fields": [
+        {
+          "name": "f_choices",
+          "type": "AlternativesList",
+          "nullable": false
+        },
+        {
+          "name": "f_stmts",
+          "type": "StmtList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -913,9 +1320,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "CaseStmtAlternativeList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -923,9 +1330,9 @@
       "base": "BaseId",
       "concrete": true,
       "kind_name": "CharLiteral",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -933,12 +1340,23 @@
       "base": "BasicSubpDecl",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_overriding",
         "f_subp_spec"
+      ],
+      "fields": [
+        {
+          "name": "f_overriding",
+          "type": "OverridingNode",
+          "nullable": false
+        },
+        {
+          "name": "f_subp_spec",
+          "type": "SubpSpec",
+          "nullable": false
+        }
       ]
     },
     {
@@ -946,9 +1364,11 @@
       "base": "BaseTypeDecl",
       "concrete": true,
       "kind_name": "ClasswideTypeDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name"
+      ],
       "fields": []
     },
     {
@@ -956,13 +1376,29 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "CompilationUnit",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_prelude",
         "f_body",
-        "f_pragmas",
-        "f_prelude"
+        "f_pragmas"
+      ],
+      "fields": [
+        {
+          "name": "f_body",
+          "type": "AdaNode",
+          "nullable": false
+        },
+        {
+          "name": "f_pragmas",
+          "type": "PragmaNodeList",
+          "nullable": false
+        },
+        {
+          "name": "f_prelude",
+          "type": "AdaNodeList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -970,9 +1406,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "CompilationUnitList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -980,13 +1416,29 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "ComponentClause",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_id",
         "f_position",
         "f_range"
+      ],
+      "fields": [
+        {
+          "name": "f_id",
+          "type": "Identifier",
+          "nullable": false
+        },
+        {
+          "name": "f_position",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_range",
+          "type": "RangeSpec",
+          "nullable": false
+        }
       ]
     },
     {
@@ -994,13 +1446,30 @@
       "base": "BaseFormalParamDecl",
       "concrete": true,
       "kind_name": "ComponentDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_ids",
         "f_component_def",
         "f_default_expr",
-        "f_ids"
+        "f_aspects"
+      ],
+      "fields": [
+        {
+          "name": "f_component_def",
+          "type": "ComponentDef",
+          "nullable": false
+        },
+        {
+          "name": "f_default_expr",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_ids",
+          "type": "DefiningNameList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1008,13 +1477,29 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "ComponentDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_has_aliased",
         "f_has_constant",
         "f_type_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_has_aliased",
+          "type": "AliasedNode",
+          "nullable": false
+        },
+        {
+          "name": "f_has_constant",
+          "type": "ConstantNode",
+          "nullable": false
+        },
+        {
+          "name": "f_type_expr",
+          "type": "TypeExpr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1022,12 +1507,23 @@
       "base": "BaseFormalParamHolder",
       "concrete": true,
       "kind_name": "ComponentList",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_components",
         "f_variant_part"
+      ],
+      "fields": [
+        {
+          "name": "f_components",
+          "type": "AdaNodeList",
+          "nullable": false
+        },
+        {
+          "name": "f_variant_part",
+          "type": "VariantPart",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1035,11 +1531,17 @@
       "base": "Constraint",
       "concrete": true,
       "kind_name": "CompositeConstraint",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_constraints"
+      ],
+      "fields": [
+        {
+          "name": "f_constraints",
+          "type": "AssocList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1047,12 +1549,23 @@
       "base": "BasicAssoc",
       "concrete": true,
       "kind_name": "CompositeConstraintAssoc",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_ids",
+        "f_constraint_expr"
+      ],
       "fields": [
-        "f_constraint_expr",
-        "f_ids"
+        {
+          "name": "f_constraint_expr",
+          "type": "AdaNode",
+          "nullable": false
+        },
+        {
+          "name": "f_ids",
+          "type": "DiscriminantChoiceList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1060,9 +1573,9 @@
       "base": "Stmt",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1070,12 +1583,23 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "ConcatOp",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_first_operand",
         "f_other_operands"
+      ],
+      "fields": [
+        {
+          "name": "f_first_operand",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_other_operands",
+          "type": "ConcatOperandList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1083,12 +1607,23 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "ConcatOperand",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_operator",
+        "f_operand"
+      ],
       "fields": [
-        "f_operand",
-        "f_operator"
+        {
+          "name": "f_operand",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_operator",
+          "type": "OpConcat",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1096,9 +1631,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "ConcatOperandList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1106,9 +1641,14 @@
       "base": "FormalSubpDecl",
       "concrete": true,
       "kind_name": "ConcreteFormalSubpDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_overriding",
+        "f_subp_spec",
+        "f_default_expr",
+        "f_aspects"
+      ],
       "fields": []
     },
     {
@@ -1116,9 +1656,14 @@
       "base": "TypeDecl",
       "concrete": true,
       "kind_name": "ConcreteTypeDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_discriminants",
+        "f_type_def",
+        "f_aspects"
+      ],
       "fields": []
     },
     {
@@ -1126,9 +1671,9 @@
       "base": "Expr",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1136,9 +1681,9 @@
       "base": "ConstantNode",
       "concrete": true,
       "kind_name": "ConstantAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1146,9 +1691,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1156,9 +1701,9 @@
       "base": "ConstantNode",
       "concrete": true,
       "kind_name": "ConstantPresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1166,11 +1711,17 @@
       "base": "ArrayIndices",
       "concrete": true,
       "kind_name": "ConstrainedArrayIndices",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_list"
+      ],
+      "fields": [
+        {
+          "name": "f_list",
+          "type": "ConstraintList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1178,9 +1729,13 @@
       "base": "SubtypeIndication",
       "concrete": true,
       "kind_name": "ConstrainedSubtypeIndication",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_has_not_null",
+        "f_name",
+        "f_constraint"
+      ],
       "fields": []
     },
     {
@@ -1188,9 +1743,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1198,9 +1753,9 @@
       "base": "AdaNodeList",
       "concrete": true,
       "kind_name": "ConstraintList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1208,13 +1763,29 @@
       "base": "RealTypeDef",
       "concrete": true,
       "kind_name": "DecimalFixedPointDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_delta",
         "f_digits",
         "f_range"
+      ],
+      "fields": [
+        {
+          "name": "f_delta",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_digits",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_range",
+          "type": "RangeSpec",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1222,13 +1793,29 @@
       "base": "BlockStmt",
       "concrete": true,
       "kind_name": "DeclBlock",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_decls",
-        "f_end_name",
-        "f_stmts"
+        "f_stmts",
+        "f_end_name"
+      ],
+      "fields": [
+        {
+          "name": "f_decls",
+          "type": "DeclarativePart",
+          "nullable": false
+        },
+        {
+          "name": "f_end_name",
+          "type": "EndName",
+          "nullable": true
+        },
+        {
+          "name": "f_stmts",
+          "type": "HandledStmts",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1236,12 +1823,23 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "DeclExpr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_decls",
         "f_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_decls",
+          "type": "AdaNodeList",
+          "nullable": false
+        },
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1249,9 +1847,9 @@
       "base": "AdaNodeList",
       "concrete": true,
       "kind_name": "DeclList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1259,11 +1857,17 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "DeclarativePart",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_decls"
+      ],
+      "fields": [
+        {
+          "name": "f_decls",
+          "type": "AdaNodeList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1271,11 +1875,17 @@
       "base": "Name",
       "concrete": true,
       "kind_name": "DefiningName",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_name"
+      ],
+      "fields": [
+        {
+          "name": "f_name",
+          "type": "Name",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1283,9 +1893,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "DefiningNameList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1293,12 +1903,23 @@
       "base": "SimpleStmt",
       "concrete": true,
       "kind_name": "DelayStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_has_until",
+        "f_expr"
+      ],
       "fields": [
-        "f_expr",
-        "f_has_until"
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_has_until",
+          "type": "UntilNode",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1306,9 +1927,12 @@
       "base": "BaseAggregate",
       "concrete": true,
       "kind_name": "DeltaAggregate",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_ancestor_expr",
+        "f_assocs"
+      ],
       "fields": []
     },
     {
@@ -1316,12 +1940,23 @@
       "base": "Constraint",
       "concrete": true,
       "kind_name": "DeltaConstraint",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_delta",
         "f_range"
+      ],
+      "fields": [
+        {
+          "name": "f_delta",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_range",
+          "type": "RangeSpec",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1329,17 +1964,53 @@
       "base": "TypeDef",
       "concrete": true,
       "kind_name": "DerivedTypeDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_has_abstract",
         "f_has_limited",
         "f_has_synchronized",
-        "f_has_with_private",
+        "f_subtype_indication",
         "f_interfaces",
         "f_record_extension",
-        "f_subtype_indication"
+        "f_has_with_private"
+      ],
+      "fields": [
+        {
+          "name": "f_has_abstract",
+          "type": "AbstractNode",
+          "nullable": false
+        },
+        {
+          "name": "f_has_limited",
+          "type": "LimitedNode",
+          "nullable": false
+        },
+        {
+          "name": "f_has_synchronized",
+          "type": "SynchronizedNode",
+          "nullable": false
+        },
+        {
+          "name": "f_has_with_private",
+          "type": "WithPrivate",
+          "nullable": false
+        },
+        {
+          "name": "f_interfaces",
+          "type": "ParentList",
+          "nullable": false
+        },
+        {
+          "name": "f_record_extension",
+          "type": "BaseRecordDef",
+          "nullable": true
+        },
+        {
+          "name": "f_subtype_indication",
+          "type": "SubtypeIndication",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1347,12 +2018,23 @@
       "base": "Constraint",
       "concrete": true,
       "kind_name": "DigitsConstraint",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_digits",
         "f_range"
+      ],
+      "fields": [
+        {
+          "name": "f_digits",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_range",
+          "type": "RangeSpec",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1360,9 +2042,11 @@
       "base": "BaseSubtypeDecl",
       "concrete": true,
       "kind_name": "DiscreteBaseSubtypeDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name"
+      ],
       "fields": []
     },
     {
@@ -1370,9 +2054,13 @@
       "base": "SubtypeIndication",
       "concrete": true,
       "kind_name": "DiscreteSubtypeIndication",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_has_not_null",
+        "f_name",
+        "f_constraint"
+      ],
       "fields": []
     },
     {
@@ -1380,11 +2068,17 @@
       "base": "Name",
       "concrete": true,
       "kind_name": "DiscreteSubtypeName",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_subtype"
+      ],
+      "fields": [
+        {
+          "name": "f_subtype",
+          "type": "DiscreteSubtypeIndication",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1392,9 +2086,9 @@
       "base": "IdentifierList",
       "concrete": true,
       "kind_name": "DiscriminantChoiceList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1402,9 +2096,9 @@
       "base": "BaseFormalParamHolder",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1412,13 +2106,30 @@
       "base": "BaseFormalParamDecl",
       "concrete": true,
       "kind_name": "DiscriminantSpec",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_default_expr",
+      "all_field_order": [
         "f_ids",
-        "f_type_expr"
+        "f_type_expr",
+        "f_default_expr",
+        "f_aspects"
+      ],
+      "fields": [
+        {
+          "name": "f_default_expr",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_ids",
+          "type": "DefiningNameList",
+          "nullable": false
+        },
+        {
+          "name": "f_type_expr",
+          "type": "TypeExpr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1426,9 +2137,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "DiscriminantSpecList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1436,12 +2147,23 @@
       "base": "Name",
       "concrete": true,
       "kind_name": "DottedName",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_prefix",
         "f_suffix"
+      ],
+      "fields": [
+        {
+          "name": "f_prefix",
+          "type": "Name",
+          "nullable": false
+        },
+        {
+          "name": "f_suffix",
+          "type": "BaseId",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1449,11 +2171,17 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "ElsePart",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_stmts"
+      ],
+      "fields": [
+        {
+          "name": "f_stmts",
+          "type": "StmtList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1461,12 +2189,23 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "ElsifExprPart",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_cond_expr",
         "f_then_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_cond_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_then_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1474,9 +2213,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "ElsifExprPartList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1484,12 +2223,23 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "ElsifStmtPart",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_cond_expr",
         "f_stmts"
+      ],
+      "fields": [
+        {
+          "name": "f_cond_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_stmts",
+          "type": "StmtList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1497,9 +2247,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "ElsifStmtPartList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1507,11 +2257,17 @@
       "base": "Name",
       "concrete": true,
       "kind_name": "EndName",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_name"
+      ],
+      "fields": [
+        {
+          "name": "f_name",
+          "type": "Name",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1519,17 +2275,54 @@
       "base": "BodyNode",
       "concrete": true,
       "kind_name": "EntryBody",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_barrier",
-        "f_decls",
-        "f_end_name",
+      "all_field_order": [
         "f_entry_name",
         "f_index_spec",
         "f_params",
-        "f_stmts"
+        "f_aspects",
+        "f_barrier",
+        "f_decls",
+        "f_stmts",
+        "f_end_name"
+      ],
+      "fields": [
+        {
+          "name": "f_barrier",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_decls",
+          "type": "DeclarativePart",
+          "nullable": false
+        },
+        {
+          "name": "f_end_name",
+          "type": "EndName",
+          "nullable": true
+        },
+        {
+          "name": "f_entry_name",
+          "type": "DefiningName",
+          "nullable": false
+        },
+        {
+          "name": "f_index_spec",
+          "type": "EntryIndexSpec",
+          "nullable": true
+        },
+        {
+          "name": "f_params",
+          "type": "EntryCompletionFormalParams",
+          "nullable": false
+        },
+        {
+          "name": "f_stmts",
+          "type": "HandledStmts",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1537,11 +2330,17 @@
       "base": "BaseFormalParamHolder",
       "concrete": true,
       "kind_name": "EntryCompletionFormalParams",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_params"
+      ],
+      "fields": [
+        {
+          "name": "f_params",
+          "type": "Params",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1549,12 +2348,24 @@
       "base": "BasicSubpDecl",
       "concrete": true,
       "kind_name": "EntryDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_overriding",
-        "f_spec"
+        "f_spec",
+        "f_aspects"
+      ],
+      "fields": [
+        {
+          "name": "f_overriding",
+          "type": "OverridingNode",
+          "nullable": false
+        },
+        {
+          "name": "f_spec",
+          "type": "EntrySpec",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1562,12 +2373,24 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "EntryIndexSpec",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_id",
-        "f_subtype"
+        "f_subtype",
+        "f_aspects"
+      ],
+      "fields": [
+        {
+          "name": "f_id",
+          "type": "DefiningName",
+          "nullable": false
+        },
+        {
+          "name": "f_subtype",
+          "type": "AdaNode",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1575,13 +2398,29 @@
       "base": "BaseSubpSpec",
       "concrete": true,
       "kind_name": "EntrySpec",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_entry_name",
-        "f_entry_params",
-        "f_family_type"
+        "f_family_type",
+        "f_entry_params"
+      ],
+      "fields": [
+        {
+          "name": "f_entry_name",
+          "type": "DefiningName",
+          "nullable": false
+        },
+        {
+          "name": "f_entry_params",
+          "type": "Params",
+          "nullable": true
+        },
+        {
+          "name": "f_family_type",
+          "type": "AdaNode",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1589,9 +2428,9 @@
       "base": "TypeExpr",
       "concrete": true,
       "kind_name": "EnumLitSynthTypeExpr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1599,11 +2438,17 @@
       "base": "BasicSubpDecl",
       "concrete": true,
       "kind_name": "EnumLiteralDecl",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_name"
+      ],
+      "fields": [
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1611,9 +2456,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "EnumLiteralDeclList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1621,12 +2466,23 @@
       "base": "AspectClause",
       "concrete": true,
       "kind_name": "EnumRepClause",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_type_name",
+        "f_aggregate"
+      ],
       "fields": [
-        "f_aggregate",
-        "f_type_name"
+        {
+          "name": "f_aggregate",
+          "type": "BaseAggregate",
+          "nullable": false
+        },
+        {
+          "name": "f_type_name",
+          "type": "Name",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1634,9 +2490,9 @@
       "base": "BaseSubpSpec",
       "concrete": true,
       "kind_name": "EnumSubpSpec",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1644,11 +2500,17 @@
       "base": "TypeDef",
       "concrete": true,
       "kind_name": "EnumTypeDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_enum_literals"
+      ],
+      "fields": [
+        {
+          "name": "f_enum_literals",
+          "type": "EnumLiteralDeclList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1656,9 +2518,9 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "ErrorDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1666,9 +2528,9 @@
       "base": "Stmt",
       "concrete": true,
       "kind_name": "ErrorStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1676,12 +2538,24 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "ExceptionDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_ids",
-        "f_renames"
+        "f_renames",
+        "f_aspects"
+      ],
+      "fields": [
+        {
+          "name": "f_ids",
+          "type": "DefiningNameList",
+          "nullable": false
+        },
+        {
+          "name": "f_renames",
+          "type": "RenamingClause",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1689,13 +2563,29 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "ExceptionHandler",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_exception_name",
         "f_handled_exceptions",
         "f_stmts"
+      ],
+      "fields": [
+        {
+          "name": "f_exception_name",
+          "type": "DefiningName",
+          "nullable": true
+        },
+        {
+          "name": "f_handled_exceptions",
+          "type": "AlternativesList",
+          "nullable": false
+        },
+        {
+          "name": "f_stmts",
+          "type": "StmtList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1703,12 +2593,23 @@
       "base": "SimpleStmt",
       "concrete": true,
       "kind_name": "ExitStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_loop_name",
+        "f_cond_expr"
+      ],
       "fields": [
-        "f_cond_expr",
-        "f_loop_name"
+        {
+          "name": "f_cond_expr",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_loop_name",
+          "type": "Name",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1716,11 +2617,17 @@
       "base": "Name",
       "concrete": true,
       "kind_name": "ExplicitDeref",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_prefix"
+      ],
+      "fields": [
+        {
+          "name": "f_prefix",
+          "type": "Name",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1728,9 +2635,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1738,9 +2645,9 @@
       "base": "ExprList",
       "concrete": true,
       "kind_name": "ExprAlternativesList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1748,11 +2655,20 @@
       "base": "BaseSubpBody",
       "concrete": true,
       "kind_name": "ExprFunction",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_overriding",
+        "f_subp_spec",
+        "f_expr",
+        "f_aspects"
+      ],
       "fields": [
-        "f_expr"
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1760,9 +2676,9 @@
       "base": "AdaList",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1770,12 +2686,23 @@
       "base": "CompositeStmt",
       "concrete": true,
       "kind_name": "ExtendedReturnStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_decl",
         "f_stmts"
+      ],
+      "fields": [
+        {
+          "name": "f_decl",
+          "type": "ExtendedReturnStmtObjectDecl",
+          "nullable": false
+        },
+        {
+          "name": "f_stmts",
+          "type": "HandledStmts",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1783,9 +2710,18 @@
       "base": "ObjectDecl",
       "concrete": true,
       "kind_name": "ExtendedReturnStmtObjectDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_ids",
+        "f_has_aliased",
+        "f_has_constant",
+        "f_mode",
+        "f_type_expr",
+        "f_default_expr",
+        "f_renaming_clause",
+        "f_aspects"
+      ],
       "fields": []
     },
     {
@@ -1793,11 +2729,17 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "FinallyPart",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_stmts"
+      ],
+      "fields": [
+        {
+          "name": "f_stmts",
+          "type": "StmtList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1805,12 +2747,23 @@
       "base": "RealTypeDef",
       "concrete": true,
       "kind_name": "FloatingPointDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_num_digits",
         "f_range"
+      ],
+      "fields": [
+        {
+          "name": "f_num_digits",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_range",
+          "type": "RangeSpec",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1818,11 +2771,17 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "ForLoopIterFilter",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1830,15 +2789,41 @@
       "base": "LoopSpec",
       "concrete": true,
       "kind_name": "ForLoopSpec",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_var_decl",
+        "f_loop_type",
         "f_has_reverse",
         "f_iter_expr",
-        "f_iter_filter",
-        "f_loop_type",
-        "f_var_decl"
+        "f_iter_filter"
+      ],
+      "fields": [
+        {
+          "name": "f_has_reverse",
+          "type": "ReverseNode",
+          "nullable": false
+        },
+        {
+          "name": "f_iter_expr",
+          "type": "AdaNode",
+          "nullable": false
+        },
+        {
+          "name": "f_iter_filter",
+          "type": "ForLoopIterFilter",
+          "nullable": true
+        },
+        {
+          "name": "f_loop_type",
+          "type": "IterType",
+          "nullable": false
+        },
+        {
+          "name": "f_var_decl",
+          "type": "ForLoopVarDecl",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1846,9 +2831,13 @@
       "base": "BaseLoopStmt",
       "concrete": true,
       "kind_name": "ForLoopStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_spec",
+        "f_stmts",
+        "f_end_name"
+      ],
       "fields": []
     },
     {
@@ -1856,12 +2845,23 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "ForLoopVarDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_id",
         "f_id_type"
+      ],
+      "fields": [
+        {
+          "name": "f_id",
+          "type": "DefiningName",
+          "nullable": false
+        },
+        {
+          "name": "f_id_type",
+          "type": "TypeExpr",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1869,9 +2869,9 @@
       "base": "TypeDef",
       "concrete": true,
       "kind_name": "FormalDiscreteTypeDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1879,11 +2879,20 @@
       "base": "ClassicSubpDecl",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_overriding",
+        "f_subp_spec",
+        "f_default_expr",
+        "f_aspects"
+      ],
       "fields": [
-        "f_default_expr"
+        {
+          "name": "f_default_expr",
+          "type": "Expr",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1891,11 +2900,21 @@
       "base": "TypeDecl",
       "concrete": true,
       "kind_name": "FormalTypeDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_discriminants",
+        "f_type_def",
+        "f_default_type",
+        "f_aspects"
+      ],
       "fields": [
-        "f_default_type"
+        {
+          "name": "f_default_type",
+          "type": "Name",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1903,12 +2922,23 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "FormatStringChunk",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_expr",
         "f_string_tok"
+      ],
+      "fields": [
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_string_tok",
+          "type": "FormatStringTokNode",
+          "nullable": false
+        }
       ]
     },
     {
@@ -1916,9 +2946,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "FormatStringChunkList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1926,13 +2956,29 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "FormatStringLiteral",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_mid_exprs",
+      "all_field_order": [
         "f_opening_chunk",
+        "f_mid_exprs",
         "f_trailing_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_mid_exprs",
+          "type": "FormatStringChunkList",
+          "nullable": false
+        },
+        {
+          "name": "f_opening_chunk",
+          "type": "FormatStringTokStart",
+          "nullable": false
+        },
+        {
+          "name": "f_trailing_expr",
+          "type": "FormatStringChunk",
+          "nullable": true
+        }
       ]
     },
     {
@@ -1940,9 +2986,9 @@
       "base": "FormatStringTokNode",
       "concrete": true,
       "kind_name": "FormatStringTokEnd",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1950,9 +2996,9 @@
       "base": "FormatStringTokNode",
       "concrete": true,
       "kind_name": "FormatStringTokMid",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1960,9 +3006,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1970,9 +3016,9 @@
       "base": "FormatStringTokNode",
       "concrete": true,
       "kind_name": "FormatStringTokStart",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1980,9 +3026,9 @@
       "base": "FormatStringTokStart",
       "concrete": true,
       "kind_name": "FormatStringTokString",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -1990,11 +3036,17 @@
       "base": "BasicDecl",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_formal_part"
+      ],
+      "fields": [
+        {
+          "name": "f_formal_part",
+          "type": "GenericFormalPart",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2002,11 +3054,17 @@
       "base": "BaseFormalParamDecl",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_decl"
+      ],
+      "fields": [
+        {
+          "name": "f_decl",
+          "type": "BasicDecl",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2014,9 +3072,11 @@
       "base": "GenericFormal",
       "concrete": true,
       "kind_name": "GenericFormalObjDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_decl"
+      ],
       "fields": []
     },
     {
@@ -2024,9 +3084,11 @@
       "base": "GenericFormal",
       "concrete": true,
       "kind_name": "GenericFormalPackage",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_decl"
+      ],
       "fields": []
     },
     {
@@ -2034,11 +3096,17 @@
       "base": "BaseFormalParamHolder",
       "concrete": true,
       "kind_name": "GenericFormalPart",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_decls"
+      ],
+      "fields": [
+        {
+          "name": "f_decls",
+          "type": "AdaNodeList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2046,9 +3114,11 @@
       "base": "GenericFormal",
       "concrete": true,
       "kind_name": "GenericFormalSubpDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_decl"
+      ],
       "fields": []
     },
     {
@@ -2056,9 +3126,11 @@
       "base": "GenericFormal",
       "concrete": true,
       "kind_name": "GenericFormalTypeDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_decl"
+      ],
       "fields": []
     },
     {
@@ -2066,9 +3138,9 @@
       "base": "BasicDecl",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2076,11 +3148,18 @@
       "base": "GenericDecl",
       "concrete": true,
       "kind_name": "GenericPackageDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_formal_part",
         "f_package_decl"
+      ],
+      "fields": [
+        {
+          "name": "f_package_decl",
+          "type": "GenericPackageInternal",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2088,13 +3167,30 @@
       "base": "GenericInstantiation",
       "concrete": true,
       "kind_name": "GenericPackageInstantiation",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_generic_pkg_name",
+      "all_field_order": [
         "f_name",
-        "f_params"
+        "f_generic_pkg_name",
+        "f_params",
+        "f_aspects"
+      ],
+      "fields": [
+        {
+          "name": "f_generic_pkg_name",
+          "type": "Name",
+          "nullable": false
+        },
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        },
+        {
+          "name": "f_params",
+          "type": "AssocList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2102,9 +3198,15 @@
       "base": "BasePackageDecl",
       "concrete": true,
       "kind_name": "GenericPackageInternal",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_package_name",
+        "f_aspects",
+        "f_public_part",
+        "f_private_part",
+        "f_end_name"
+      ],
       "fields": []
     },
     {
@@ -2112,12 +3214,24 @@
       "base": "GenericRenamingDecl",
       "concrete": true,
       "kind_name": "GenericPackageRenamingDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_name",
-        "f_renames"
+        "f_renames",
+        "f_aspects"
+      ],
+      "fields": [
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        },
+        {
+          "name": "f_renames",
+          "type": "RenamingClause",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2125,9 +3239,9 @@
       "base": "BasicDecl",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2135,11 +3249,18 @@
       "base": "GenericDecl",
       "concrete": true,
       "kind_name": "GenericSubpDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_formal_part",
         "f_subp_decl"
+      ],
+      "fields": [
+        {
+          "name": "f_subp_decl",
+          "type": "GenericSubpInternal",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2147,15 +3268,42 @@
       "base": "GenericInstantiation",
       "concrete": true,
       "kind_name": "GenericSubpInstantiation",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_generic_subp_name",
-        "f_kind",
+      "all_field_order": [
         "f_overriding",
+        "f_kind",
+        "f_subp_name",
+        "f_generic_subp_name",
         "f_params",
-        "f_subp_name"
+        "f_aspects"
+      ],
+      "fields": [
+        {
+          "name": "f_generic_subp_name",
+          "type": "Name",
+          "nullable": false
+        },
+        {
+          "name": "f_kind",
+          "type": "SubpKind",
+          "nullable": false
+        },
+        {
+          "name": "f_overriding",
+          "type": "OverridingNode",
+          "nullable": false
+        },
+        {
+          "name": "f_params",
+          "type": "AssocList",
+          "nullable": false
+        },
+        {
+          "name": "f_subp_name",
+          "type": "DefiningName",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2163,11 +3311,18 @@
       "base": "BasicSubpDecl",
       "concrete": true,
       "kind_name": "GenericSubpInternal",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_subp_spec",
+        "f_aspects"
+      ],
       "fields": [
-        "f_subp_spec"
+        {
+          "name": "f_subp_spec",
+          "type": "SubpSpec",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2175,13 +3330,30 @@
       "base": "GenericRenamingDecl",
       "concrete": true,
       "kind_name": "GenericSubpRenamingDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_kind",
         "f_name",
-        "f_renames"
+        "f_renames",
+        "f_aspects"
+      ],
+      "fields": [
+        {
+          "name": "f_kind",
+          "type": "SubpKind",
+          "nullable": false
+        },
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        },
+        {
+          "name": "f_renames",
+          "type": "RenamingClause",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2189,11 +3361,17 @@
       "base": "SimpleStmt",
       "concrete": true,
       "kind_name": "GotoStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_label_name"
+      ],
+      "fields": [
+        {
+          "name": "f_label_name",
+          "type": "Name",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2201,13 +3379,29 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "HandledStmts",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_stmts",
         "f_exceptions",
-        "f_finally_part",
-        "f_stmts"
+        "f_finally_part"
+      ],
+      "fields": [
+        {
+          "name": "f_exceptions",
+          "type": "AdaNodeList",
+          "nullable": false
+        },
+        {
+          "name": "f_finally_part",
+          "type": "FinallyPart",
+          "nullable": true
+        },
+        {
+          "name": "f_stmts",
+          "type": "StmtList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2215,9 +3409,9 @@
       "base": "BaseId",
       "concrete": true,
       "kind_name": "Identifier",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2225,9 +3419,9 @@
       "base": "AdaList",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2235,14 +3429,35 @@
       "base": "CondExpr",
       "concrete": true,
       "kind_name": "IfExpr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_alternatives",
+      "all_field_order": [
         "f_cond_expr",
-        "f_else_expr",
-        "f_then_expr"
+        "f_then_expr",
+        "f_alternatives",
+        "f_else_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_alternatives",
+          "type": "ElsifExprPartList",
+          "nullable": false
+        },
+        {
+          "name": "f_cond_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_else_expr",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_then_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2250,14 +3465,35 @@
       "base": "CompositeStmt",
       "concrete": true,
       "kind_name": "IfStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_alternatives",
+      "all_field_order": [
         "f_cond_expr",
-        "f_else_part",
-        "f_then_stmts"
+        "f_then_stmts",
+        "f_alternatives",
+        "f_else_part"
+      ],
+      "fields": [
+        {
+          "name": "f_alternatives",
+          "type": "ElsifStmtPartList",
+          "nullable": false
+        },
+        {
+          "name": "f_cond_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_else_part",
+          "type": "ElsePart",
+          "nullable": true
+        },
+        {
+          "name": "f_then_stmts",
+          "type": "StmtList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2265,12 +3501,25 @@
       "base": "IncompleteTypeDecl",
       "concrete": true,
       "kind_name": "IncompleteFormalTypeDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_discriminants",
+        "f_is_tagged",
+        "f_default_type"
+      ],
       "fields": [
-        "f_default_type",
-        "f_is_tagged"
+        {
+          "name": "f_default_type",
+          "type": "Name",
+          "nullable": true
+        },
+        {
+          "name": "f_is_tagged",
+          "type": "TaggedNode",
+          "nullable": true
+        }
       ]
     },
     {
@@ -2278,11 +3527,19 @@
       "base": "IncompleteTypeDecl",
       "concrete": true,
       "kind_name": "IncompleteTaggedTypeDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_name",
+        "f_discriminants",
         "f_has_abstract"
+      ],
+      "fields": [
+        {
+          "name": "f_has_abstract",
+          "type": "AbstractNode",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2290,11 +3547,18 @@
       "base": "BaseTypeDecl",
       "concrete": true,
       "kind_name": "IncompleteTypeDecl",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_name",
         "f_discriminants"
+      ],
+      "fields": [
+        {
+          "name": "f_discriminants",
+          "type": "DiscriminantPart",
+          "nullable": true
+        }
       ]
     },
     {
@@ -2302,9 +3566,9 @@
       "base": "NumLiteral",
       "concrete": true,
       "kind_name": "IntLiteral",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2312,9 +3576,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2322,9 +3586,9 @@
       "base": "InterfaceKind",
       "concrete": true,
       "kind_name": "InterfaceKindLimited",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2332,9 +3596,9 @@
       "base": "InterfaceKind",
       "concrete": true,
       "kind_name": "InterfaceKindProtected",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2342,9 +3606,9 @@
       "base": "InterfaceKind",
       "concrete": true,
       "kind_name": "InterfaceKindSynchronized",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2352,9 +3616,9 @@
       "base": "InterfaceKind",
       "concrete": true,
       "kind_name": "InterfaceKindTask",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2362,12 +3626,23 @@
       "base": "TypeDef",
       "concrete": true,
       "kind_name": "InterfaceTypeDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_interface_kind",
         "f_interfaces"
+      ],
+      "fields": [
+        {
+          "name": "f_interface_kind",
+          "type": "InterfaceKind",
+          "nullable": true
+        },
+        {
+          "name": "f_interfaces",
+          "type": "ParentList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2375,9 +3650,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2385,9 +3660,9 @@
       "base": "IterType",
       "concrete": true,
       "kind_name": "IterTypeIn",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2395,9 +3670,9 @@
       "base": "IterType",
       "concrete": true,
       "kind_name": "IterTypeOf",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2405,13 +3680,29 @@
       "base": "BasicAssoc",
       "concrete": true,
       "kind_name": "IteratedAssoc",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_spec",
         "f_key_expr",
-        "f_r_expr",
-        "f_spec"
+        "f_r_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_key_expr",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_r_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_spec",
+          "type": "ForLoopSpec",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2419,11 +3710,17 @@
       "base": "DiscriminantPart",
       "concrete": true,
       "kind_name": "KnownDiscriminantPart",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_discr_specs"
+      ],
+      "fields": [
+        {
+          "name": "f_discr_specs",
+          "type": "DiscriminantSpecList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2431,11 +3728,17 @@
       "base": "SimpleStmt",
       "concrete": true,
       "kind_name": "Label",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_decl"
+      ],
+      "fields": [
+        {
+          "name": "f_decl",
+          "type": "LabelDecl",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2443,11 +3746,17 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "LabelDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_name"
+      ],
+      "fields": [
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2455,12 +3764,23 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "LibraryItem",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_has_private",
         "f_item"
+      ],
+      "fields": [
+        {
+          "name": "f_has_private",
+          "type": "PrivateNode",
+          "nullable": false
+        },
+        {
+          "name": "f_item",
+          "type": "BasicDecl",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2468,9 +3788,9 @@
       "base": "LimitedNode",
       "concrete": true,
       "kind_name": "LimitedAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2478,9 +3798,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2488,9 +3808,9 @@
       "base": "LimitedNode",
       "concrete": true,
       "kind_name": "LimitedPresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2498,9 +3818,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2508,9 +3828,13 @@
       "base": "BaseLoopStmt",
       "concrete": true,
       "kind_name": "LoopStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_spec",
+        "f_stmts",
+        "f_end_name"
+      ],
       "fields": []
     },
     {
@@ -2518,13 +3842,29 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "MembershipExpr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_expr",
-        "f_membership_exprs",
-        "f_op"
+        "f_op",
+        "f_membership_exprs"
+      ],
+      "fields": [
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_membership_exprs",
+          "type": "ExprAlternativesList",
+          "nullable": false
+        },
+        {
+          "name": "f_op",
+          "type": "Op",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2532,11 +3872,17 @@
       "base": "TypeDef",
       "concrete": true,
       "kind_name": "ModIntTypeDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2544,9 +3890,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2554,9 +3900,9 @@
       "base": "Mode",
       "concrete": true,
       "kind_name": "ModeDefault",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2564,9 +3910,9 @@
       "base": "Mode",
       "concrete": true,
       "kind_name": "ModeIn",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2574,9 +3920,9 @@
       "base": "Mode",
       "concrete": true,
       "kind_name": "ModeInOut",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2584,9 +3930,9 @@
       "base": "Mode",
       "concrete": true,
       "kind_name": "ModeOut",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2594,11 +3940,17 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "MultiAbstractStateDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_decls"
+      ],
+      "fields": [
+        {
+          "name": "f_decls",
+          "type": "AbstractStateDeclList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2606,9 +3958,12 @@
       "base": "AggregateAssoc",
       "concrete": true,
       "kind_name": "MultiDimArrayAssoc",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_designators",
+        "f_r_expr"
+      ],
       "fields": []
     },
     {
@@ -2616,9 +3971,9 @@
       "base": "Expr",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2626,9 +3981,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "NameList",
-      "abstract_heuristic": true,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2636,12 +3991,23 @@
       "base": "CompositeStmt",
       "concrete": true,
       "kind_name": "NamedStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_decl",
         "f_stmt"
+      ],
+      "fields": [
+        {
+          "name": "f_decl",
+          "type": "NamedStmtDecl",
+          "nullable": false
+        },
+        {
+          "name": "f_stmt",
+          "type": "CompositeStmt",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2649,11 +4015,17 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "NamedStmtDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_name"
+      ],
+      "fields": [
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2661,9 +4033,18 @@
       "base": "ObjectDecl",
       "concrete": true,
       "kind_name": "NoTypeObjectRenamingDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_ids",
+        "f_has_aliased",
+        "f_has_constant",
+        "f_mode",
+        "f_type_expr",
+        "f_default_expr",
+        "f_renaming_clause",
+        "f_aspects"
+      ],
       "fields": []
     },
     {
@@ -2671,9 +4052,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2681,9 +4062,9 @@
       "base": "NotNull",
       "concrete": true,
       "kind_name": "NotNullAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2691,9 +4072,9 @@
       "base": "NotNull",
       "concrete": true,
       "kind_name": "NotNullPresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2701,9 +4082,9 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "NullComponentDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2711,9 +4092,9 @@
       "base": "SingleTokNode",
       "concrete": true,
       "kind_name": "NullLiteral",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2721,9 +4102,12 @@
       "base": "BaseAggregate",
       "concrete": true,
       "kind_name": "NullRecordAggregate",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_ancestor_expr",
+        "f_assocs"
+      ],
       "fields": []
     },
     {
@@ -2731,9 +4115,11 @@
       "base": "BaseRecordDef",
       "concrete": true,
       "kind_name": "NullRecordDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_components"
+      ],
       "fields": []
     },
     {
@@ -2741,9 +4127,9 @@
       "base": "SimpleStmt",
       "concrete": true,
       "kind_name": "NullStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2751,9 +4137,13 @@
       "base": "BaseSubpBody",
       "concrete": true,
       "kind_name": "NullSubpDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_overriding",
+        "f_subp_spec",
+        "f_aspects"
+      ],
       "fields": []
     },
     {
@@ -2761,9 +4151,9 @@
       "base": "SingleTokNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2771,12 +4161,23 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "NumberDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_ids",
+        "f_expr"
+      ],
       "fields": [
-        "f_expr",
-        "f_ids"
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_ids",
+          "type": "DefiningNameList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -2784,17 +4185,54 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "ObjectDecl",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_default_expr",
+      "all_field_order": [
+        "f_ids",
         "f_has_aliased",
         "f_has_constant",
-        "f_ids",
         "f_mode",
+        "f_type_expr",
+        "f_default_expr",
         "f_renaming_clause",
-        "f_type_expr"
+        "f_aspects"
+      ],
+      "fields": [
+        {
+          "name": "f_default_expr",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_has_aliased",
+          "type": "AliasedNode",
+          "nullable": false
+        },
+        {
+          "name": "f_has_constant",
+          "type": "ConstantNode",
+          "nullable": false
+        },
+        {
+          "name": "f_ids",
+          "type": "DefiningNameList",
+          "nullable": false
+        },
+        {
+          "name": "f_mode",
+          "type": "Mode",
+          "nullable": true
+        },
+        {
+          "name": "f_renaming_clause",
+          "type": "RenamingClause",
+          "nullable": true
+        },
+        {
+          "name": "f_type_expr",
+          "type": "TypeExpr",
+          "nullable": true
+        }
       ]
     },
     {
@@ -2802,9 +4240,9 @@
       "base": "BaseId",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2812,9 +4250,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpAbs",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2822,9 +4260,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpAnd",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2832,9 +4270,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpAndThen",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2842,9 +4280,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpConcat",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2852,9 +4290,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpDiv",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2862,9 +4300,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpDoubleDot",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2872,9 +4310,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpEq",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2882,9 +4320,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpGt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2892,9 +4330,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpGte",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2902,9 +4340,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpIn",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2912,9 +4350,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpLt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2922,9 +4360,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpLte",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2932,9 +4370,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpMinus",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2942,9 +4380,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpMod",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2952,9 +4390,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpMult",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2962,9 +4400,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpNeq",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2972,9 +4410,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpNot",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2982,9 +4420,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpNotIn",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -2992,9 +4430,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpOr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3002,9 +4440,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpOrElse",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3012,9 +4450,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpPlus",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3022,9 +4460,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpPow",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3032,9 +4470,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpRem",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3042,9 +4480,9 @@
       "base": "Op",
       "concrete": true,
       "kind_name": "OpXor",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3052,12 +4490,23 @@
       "base": "RealTypeDef",
       "concrete": true,
       "kind_name": "OrdinaryFixedPointDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_delta",
         "f_range"
+      ],
+      "fields": [
+        {
+          "name": "f_delta",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_range",
+          "type": "RangeSpec",
+          "nullable": true
+        }
       ]
     },
     {
@@ -3065,9 +4514,9 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "OthersDesignator",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3075,9 +4524,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3085,9 +4534,9 @@
       "base": "OverridingNode",
       "concrete": true,
       "kind_name": "OverridingNotOverriding",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3095,9 +4544,9 @@
       "base": "OverridingNode",
       "concrete": true,
       "kind_name": "OverridingOverriding",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3105,9 +4554,9 @@
       "base": "OverridingNode",
       "concrete": true,
       "kind_name": "OverridingUnspecified",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3115,14 +4564,36 @@
       "base": "BodyNode",
       "concrete": true,
       "kind_name": "PackageBody",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_decls",
-        "f_end_name",
+      "all_field_order": [
         "f_package_name",
-        "f_stmts"
+        "f_aspects",
+        "f_decls",
+        "f_stmts",
+        "f_end_name"
+      ],
+      "fields": [
+        {
+          "name": "f_decls",
+          "type": "DeclarativePart",
+          "nullable": false
+        },
+        {
+          "name": "f_end_name",
+          "type": "EndName",
+          "nullable": true
+        },
+        {
+          "name": "f_package_name",
+          "type": "DefiningName",
+          "nullable": false
+        },
+        {
+          "name": "f_stmts",
+          "type": "HandledStmts",
+          "nullable": true
+        }
       ]
     },
     {
@@ -3130,11 +4601,18 @@
       "base": "BodyStub",
       "concrete": true,
       "kind_name": "PackageBodyStub",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_aspects"
+      ],
       "fields": [
-        "f_name"
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3142,9 +4620,15 @@
       "base": "BasePackageDecl",
       "concrete": true,
       "kind_name": "PackageDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_package_name",
+        "f_aspects",
+        "f_public_part",
+        "f_private_part",
+        "f_end_name"
+      ],
       "fields": []
     },
     {
@@ -3152,12 +4636,24 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "PackageRenamingDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_name",
-        "f_renames"
+        "f_renames",
+        "f_aspects"
+      ],
+      "fields": [
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        },
+        {
+          "name": "f_renames",
+          "type": "RenamingClause",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3165,12 +4661,23 @@
       "base": "BasicAssoc",
       "concrete": true,
       "kind_name": "ParamAssoc",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_designator",
         "f_r_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_designator",
+          "type": "AdaNode",
+          "nullable": true
+        },
+        {
+          "name": "f_r_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3178,15 +4685,42 @@
       "base": "BaseFormalParamDecl",
       "concrete": true,
       "kind_name": "ParamSpec",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_default_expr",
-        "f_has_aliased",
+      "all_field_order": [
         "f_ids",
+        "f_has_aliased",
         "f_mode",
-        "f_type_expr"
+        "f_type_expr",
+        "f_default_expr",
+        "f_aspects"
+      ],
+      "fields": [
+        {
+          "name": "f_default_expr",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_has_aliased",
+          "type": "AliasedNode",
+          "nullable": false
+        },
+        {
+          "name": "f_ids",
+          "type": "DefiningNameList",
+          "nullable": false
+        },
+        {
+          "name": "f_mode",
+          "type": "Mode",
+          "nullable": true
+        },
+        {
+          "name": "f_type_expr",
+          "type": "TypeExpr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3194,9 +4728,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "ParamSpecList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3204,11 +4738,17 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "Params",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_params"
+      ],
+      "fields": [
+        {
+          "name": "f_params",
+          "type": "ParamSpecList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3216,11 +4756,17 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "ParenAbstractStateDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_decl"
+      ],
+      "fields": [
+        {
+          "name": "f_decl",
+          "type": "AdaNode",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3228,11 +4774,17 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "ParenExpr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3240,9 +4792,9 @@
       "base": "NameList",
       "concrete": true,
       "kind_name": "ParentList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3250,9 +4802,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3260,9 +4812,9 @@
       "base": "PpDirective",
       "concrete": true,
       "kind_name": "PpElseDirective",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3270,12 +4822,23 @@
       "base": "PpDirective",
       "concrete": true,
       "kind_name": "PpElsifDirective",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_expr",
         "f_then_kw"
+      ],
+      "fields": [
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_then_kw",
+          "type": "PpThenKw",
+          "nullable": true
+        }
       ]
     },
     {
@@ -3283,9 +4846,9 @@
       "base": "PpDirective",
       "concrete": true,
       "kind_name": "PpEndIfDirective",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3293,12 +4856,23 @@
       "base": "PpDirective",
       "concrete": true,
       "kind_name": "PpIfDirective",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_expr",
         "f_then_kw"
+      ],
+      "fields": [
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_then_kw",
+          "type": "PpThenKw",
+          "nullable": true
+        }
       ]
     },
     {
@@ -3306,9 +4880,9 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "PpThenKw",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3316,12 +4890,23 @@
       "base": "BaseAssoc",
       "concrete": true,
       "kind_name": "PragmaArgumentAssoc",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_expr"
+      ],
       "fields": [
-        "f_expr",
-        "f_name"
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_name",
+          "type": "Name",
+          "nullable": true
+        }
       ]
     },
     {
@@ -3329,12 +4914,23 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "PragmaNode",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_id",
+        "f_args"
+      ],
       "fields": [
-        "f_args",
-        "f_id"
+        {
+          "name": "f_args",
+          "type": "BaseAssocList",
+          "nullable": false
+        },
+        {
+          "name": "f_id",
+          "type": "Identifier",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3342,9 +4938,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "PragmaNodeList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3352,9 +4948,9 @@
       "base": "PrivateNode",
       "concrete": true,
       "kind_name": "PrivateAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3362,9 +4958,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3372,9 +4968,11 @@
       "base": "DeclarativePart",
       "concrete": true,
       "kind_name": "PrivatePart",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_decls"
+      ],
       "fields": []
     },
     {
@@ -3382,9 +4980,9 @@
       "base": "PrivateNode",
       "concrete": true,
       "kind_name": "PrivatePresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3392,13 +4990,29 @@
       "base": "TypeDef",
       "concrete": true,
       "kind_name": "PrivateTypeDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_has_abstract",
-        "f_has_limited",
-        "f_has_tagged"
+        "f_has_tagged",
+        "f_has_limited"
+      ],
+      "fields": [
+        {
+          "name": "f_has_abstract",
+          "type": "AbstractNode",
+          "nullable": false
+        },
+        {
+          "name": "f_has_limited",
+          "type": "LimitedNode",
+          "nullable": false
+        },
+        {
+          "name": "f_has_tagged",
+          "type": "TaggedNode",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3406,9 +5020,9 @@
       "base": "ProtectedNode",
       "concrete": true,
       "kind_name": "ProtectedAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3416,13 +5030,30 @@
       "base": "BodyNode",
       "concrete": true,
       "kind_name": "ProtectedBody",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_name",
+        "f_aspects",
         "f_decls",
-        "f_end_name",
-        "f_name"
+        "f_end_name"
+      ],
+      "fields": [
+        {
+          "name": "f_decls",
+          "type": "DeclarativePart",
+          "nullable": false
+        },
+        {
+          "name": "f_end_name",
+          "type": "EndName",
+          "nullable": true
+        },
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3430,11 +5061,18 @@
       "base": "BodyStub",
       "concrete": true,
       "kind_name": "ProtectedBodyStub",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_aspects"
+      ],
       "fields": [
-        "f_name"
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3442,13 +5080,29 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "ProtectedDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_end_name",
+      "all_field_order": [
+        "f_public_part",
         "f_private_part",
-        "f_public_part"
+        "f_end_name"
+      ],
+      "fields": [
+        {
+          "name": "f_end_name",
+          "type": "EndName",
+          "nullable": true
+        },
+        {
+          "name": "f_private_part",
+          "type": "PrivatePart",
+          "nullable": true
+        },
+        {
+          "name": "f_public_part",
+          "type": "PublicPart",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3456,9 +5110,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3466,9 +5120,9 @@
       "base": "ProtectedNode",
       "concrete": true,
       "kind_name": "ProtectedPresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3476,13 +5130,31 @@
       "base": "BaseTypeDecl",
       "concrete": true,
       "kind_name": "ProtectedTypeDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_definition",
+      "all_field_order": [
+        "f_name",
         "f_discriminants",
-        "f_interfaces"
+        "f_aspects",
+        "f_interfaces",
+        "f_definition"
+      ],
+      "fields": [
+        {
+          "name": "f_definition",
+          "type": "ProtectedDef",
+          "nullable": false
+        },
+        {
+          "name": "f_discriminants",
+          "type": "DiscriminantPart",
+          "nullable": true
+        },
+        {
+          "name": "f_interfaces",
+          "type": "ParentList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3490,9 +5162,11 @@
       "base": "DeclarativePart",
       "concrete": true,
       "kind_name": "PublicPart",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_decls"
+      ],
       "fields": []
     },
     {
@@ -3500,12 +5174,23 @@
       "base": "Name",
       "concrete": true,
       "kind_name": "QualExpr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_prefix",
         "f_suffix"
+      ],
+      "fields": [
+        {
+          "name": "f_prefix",
+          "type": "Name",
+          "nullable": false
+        },
+        {
+          "name": "f_suffix",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3513,13 +5198,29 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "QuantifiedExpr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_expr",
+      "all_field_order": [
+        "f_quantifier",
         "f_loop_spec",
-        "f_quantifier"
+        "f_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_loop_spec",
+          "type": "ForLoopSpec",
+          "nullable": false
+        },
+        {
+          "name": "f_quantifier",
+          "type": "Quantifier",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3527,9 +5228,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3537,9 +5238,9 @@
       "base": "Quantifier",
       "concrete": true,
       "kind_name": "QuantifierAll",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3547,9 +5248,9 @@
       "base": "Quantifier",
       "concrete": true,
       "kind_name": "QuantifierSome",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3557,12 +5258,23 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "RaiseExpr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_exception_name",
+        "f_error_message"
+      ],
       "fields": [
-        "f_error_message",
-        "f_exception_name"
+        {
+          "name": "f_error_message",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_exception_name",
+          "type": "Name",
+          "nullable": true
+        }
       ]
     },
     {
@@ -3570,12 +5282,23 @@
       "base": "SimpleStmt",
       "concrete": true,
       "kind_name": "RaiseStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_exception_name",
+        "f_error_message"
+      ],
       "fields": [
-        "f_error_message",
-        "f_exception_name"
+        {
+          "name": "f_error_message",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_exception_name",
+          "type": "Name",
+          "nullable": true
+        }
       ]
     },
     {
@@ -3583,11 +5306,17 @@
       "base": "Constraint",
       "concrete": true,
       "kind_name": "RangeConstraint",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_range"
+      ],
+      "fields": [
+        {
+          "name": "f_range",
+          "type": "RangeSpec",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3595,11 +5324,17 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "RangeSpec",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_range"
+      ],
+      "fields": [
+        {
+          "name": "f_range",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3607,9 +5342,9 @@
       "base": "NumLiteral",
       "concrete": true,
       "kind_name": "RealLiteral",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3617,9 +5352,9 @@
       "base": "TypeDef",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3627,9 +5362,11 @@
       "base": "BaseRecordDef",
       "concrete": true,
       "kind_name": "RecordDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_components"
+      ],
       "fields": []
     },
     {
@@ -3637,13 +5374,29 @@
       "base": "AspectClause",
       "concrete": true,
       "kind_name": "RecordRepClause",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_name",
         "f_at_expr",
-        "f_components",
-        "f_name"
+        "f_components"
+      ],
+      "fields": [
+        {
+          "name": "f_at_expr",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_components",
+          "type": "AdaNodeList",
+          "nullable": false
+        },
+        {
+          "name": "f_name",
+          "type": "Name",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3651,14 +5404,35 @@
       "base": "TypeDef",
       "concrete": true,
       "kind_name": "RecordTypeDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_has_abstract",
-        "f_has_limited",
         "f_has_tagged",
+        "f_has_limited",
         "f_record_def"
+      ],
+      "fields": [
+        {
+          "name": "f_has_abstract",
+          "type": "AbstractNode",
+          "nullable": false
+        },
+        {
+          "name": "f_has_limited",
+          "type": "LimitedNode",
+          "nullable": false
+        },
+        {
+          "name": "f_has_tagged",
+          "type": "TaggedNode",
+          "nullable": false
+        },
+        {
+          "name": "f_record_def",
+          "type": "BaseRecordDef",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3666,13 +5440,29 @@
       "base": "Name",
       "concrete": true,
       "kind_name": "ReduceAttributeRef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_args",
+      "all_field_order": [
+        "f_prefix",
         "f_attribute",
-        "f_prefix"
+        "f_args"
+      ],
+      "fields": [
+        {
+          "name": "f_args",
+          "type": "AssocList",
+          "nullable": false
+        },
+        {
+          "name": "f_attribute",
+          "type": "Identifier",
+          "nullable": false
+        },
+        {
+          "name": "f_prefix",
+          "type": "AdaNode",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3680,9 +5470,13 @@
       "base": "BinOp",
       "concrete": true,
       "kind_name": "RelationOp",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_left",
+        "f_op",
+        "f_right"
+      ],
       "fields": []
     },
     {
@@ -3690,11 +5484,17 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "RenamingClause",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_renamed_object"
+      ],
+      "fields": [
+        {
+          "name": "f_renamed_object",
+          "type": "Name",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3702,12 +5502,23 @@
       "base": "SimpleStmt",
       "concrete": true,
       "kind_name": "RequeueStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_call_name",
         "f_has_abort"
+      ],
+      "fields": [
+        {
+          "name": "f_call_name",
+          "type": "Name",
+          "nullable": false
+        },
+        {
+          "name": "f_has_abort",
+          "type": "AbortNode",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3715,11 +5526,17 @@
       "base": "SimpleStmt",
       "concrete": true,
       "kind_name": "ReturnStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_return_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_return_expr",
+          "type": "Expr",
+          "nullable": true
+        }
       ]
     },
     {
@@ -3727,9 +5544,9 @@
       "base": "ReverseNode",
       "concrete": true,
       "kind_name": "ReverseAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3737,9 +5554,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3747,9 +5564,9 @@
       "base": "ReverseNode",
       "concrete": true,
       "kind_name": "ReversePresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3757,13 +5574,29 @@
       "base": "CompositeStmt",
       "concrete": true,
       "kind_name": "SelectStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_else_part",
+      "all_field_order": [
         "f_guards",
+        "f_else_part",
         "f_then_abort_part"
+      ],
+      "fields": [
+        {
+          "name": "f_else_part",
+          "type": "ElsePart",
+          "nullable": true
+        },
+        {
+          "name": "f_guards",
+          "type": "SelectWhenPartList",
+          "nullable": false
+        },
+        {
+          "name": "f_then_abort_part",
+          "type": "ThenAbortPart",
+          "nullable": true
+        }
       ]
     },
     {
@@ -3771,12 +5604,23 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "SelectWhenPart",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_cond_expr",
         "f_stmts"
+      ],
+      "fields": [
+        {
+          "name": "f_cond_expr",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_stmts",
+          "type": "StmtList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3784,9 +5628,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "SelectWhenPartList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3794,11 +5638,17 @@
       "base": "TypeDef",
       "concrete": true,
       "kind_name": "SignedIntTypeDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_range"
+      ],
+      "fields": [
+        {
+          "name": "f_range",
+          "type": "RangeSpec",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3806,11 +5656,17 @@
       "base": "SimpleStmt",
       "concrete": true,
       "kind_name": "SimpleDeclStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_decl"
+      ],
+      "fields": [
+        {
+          "name": "f_decl",
+          "type": "ObjectDecl",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3818,9 +5674,9 @@
       "base": "Stmt",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3828,13 +5684,30 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "SingleProtectedDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_definition",
+      "all_field_order": [
+        "f_name",
+        "f_aspects",
         "f_interfaces",
-        "f_name"
+        "f_definition"
+      ],
+      "fields": [
+        {
+          "name": "f_definition",
+          "type": "ProtectedDef",
+          "nullable": false
+        },
+        {
+          "name": "f_interfaces",
+          "type": "ParentList",
+          "nullable": false
+        },
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3842,11 +5715,17 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "SingleTaskDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_task_type"
+      ],
+      "fields": [
+        {
+          "name": "f_task_type",
+          "type": "SingleTaskTypeDecl",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3854,9 +5733,14 @@
       "base": "TaskTypeDecl",
       "concrete": true,
       "kind_name": "SingleTaskTypeDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_discriminants",
+        "f_aspects",
+        "f_definition"
+      ],
       "fields": []
     },
     {
@@ -3864,9 +5748,9 @@
       "base": "Name",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3874,9 +5758,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3884,9 +5768,9 @@
       "base": "AdaNodeList",
       "concrete": true,
       "kind_name": "StmtList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3894,9 +5778,9 @@
       "base": "BaseId",
       "concrete": true,
       "kind_name": "StringLiteral",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3904,13 +5788,32 @@
       "base": "BaseSubpBody",
       "concrete": true,
       "kind_name": "SubpBody",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_overriding",
+        "f_subp_spec",
+        "f_aspects",
         "f_decls",
-        "f_end_name",
-        "f_stmts"
+        "f_stmts",
+        "f_end_name"
+      ],
+      "fields": [
+        {
+          "name": "f_decls",
+          "type": "DeclarativePart",
+          "nullable": false
+        },
+        {
+          "name": "f_end_name",
+          "type": "EndName",
+          "nullable": true
+        },
+        {
+          "name": "f_stmts",
+          "type": "HandledStmts",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3918,12 +5821,24 @@
       "base": "BodyStub",
       "concrete": true,
       "kind_name": "SubpBodyStub",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_overriding",
-        "f_subp_spec"
+        "f_subp_spec",
+        "f_aspects"
+      ],
+      "fields": [
+        {
+          "name": "f_overriding",
+          "type": "OverridingNode",
+          "nullable": false
+        },
+        {
+          "name": "f_subp_spec",
+          "type": "SubpSpec",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3931,9 +5846,13 @@
       "base": "ClassicSubpDecl",
       "concrete": true,
       "kind_name": "SubpDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_overriding",
+        "f_subp_spec",
+        "f_aspects"
+      ],
       "fields": []
     },
     {
@@ -3941,9 +5860,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3951,9 +5870,9 @@
       "base": "SubpKind",
       "concrete": true,
       "kind_name": "SubpKindFunction",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3961,9 +5880,9 @@
       "base": "SubpKind",
       "concrete": true,
       "kind_name": "SubpKindProcedure",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -3971,11 +5890,20 @@
       "base": "BaseSubpBody",
       "concrete": true,
       "kind_name": "SubpRenamingDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_overriding",
+        "f_subp_spec",
+        "f_renames",
+        "f_aspects"
+      ],
       "fields": [
-        "f_renames"
+        {
+          "name": "f_renames",
+          "type": "RenamingClause",
+          "nullable": false
+        }
       ]
     },
     {
@@ -3983,14 +5911,35 @@
       "base": "BaseSubpSpec",
       "concrete": true,
       "kind_name": "SubpSpec",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_subp_kind",
         "f_subp_name",
         "f_subp_params",
         "f_subp_returns"
+      ],
+      "fields": [
+        {
+          "name": "f_subp_kind",
+          "type": "SubpKind",
+          "nullable": false
+        },
+        {
+          "name": "f_subp_name",
+          "type": "DefiningName",
+          "nullable": true
+        },
+        {
+          "name": "f_subp_params",
+          "type": "Params",
+          "nullable": true
+        },
+        {
+          "name": "f_subp_returns",
+          "type": "TypeExpr",
+          "nullable": true
+        }
       ]
     },
     {
@@ -3998,11 +5947,19 @@
       "base": "BaseSubtypeDecl",
       "concrete": true,
       "kind_name": "SubtypeDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_subtype",
+        "f_aspects"
+      ],
       "fields": [
-        "f_subtype"
+        {
+          "name": "f_subtype",
+          "type": "SubtypeIndication",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4010,13 +5967,29 @@
       "base": "TypeExpr",
       "concrete": true,
       "kind_name": "SubtypeIndication",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_constraint",
+      "all_field_order": [
         "f_has_not_null",
-        "f_name"
+        "f_name",
+        "f_constraint"
+      ],
+      "fields": [
+        {
+          "name": "f_constraint",
+          "type": "Constraint",
+          "nullable": true
+        },
+        {
+          "name": "f_has_not_null",
+          "type": "NotNull",
+          "nullable": false
+        },
+        {
+          "name": "f_name",
+          "type": "Name",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4024,12 +5997,23 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "Subunit",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_body"
+      ],
       "fields": [
-        "f_body",
-        "f_name"
+        {
+          "name": "f_body",
+          "type": "BodyNode",
+          "nullable": false
+        },
+        {
+          "name": "f_name",
+          "type": "Name",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4037,9 +6021,9 @@
       "base": "SynchronizedNode",
       "concrete": true,
       "kind_name": "SynchronizedAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4047,9 +6031,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4057,9 +6041,9 @@
       "base": "SynchronizedNode",
       "concrete": true,
       "kind_name": "SynchronizedPresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4067,9 +6051,13 @@
       "base": "AnonymousTypeDecl",
       "concrete": true,
       "kind_name": "SynthAnonymousTypeDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_discriminants",
+        "f_type_def"
+      ],
       "fields": []
     },
     {
@@ -4077,13 +6065,29 @@
       "base": "BaseSubpSpec",
       "concrete": true,
       "kind_name": "SyntheticBinarySpec",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_left_param",
-        "f_return_type_expr",
-        "f_right_param"
+        "f_right_param",
+        "f_return_type_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_left_param",
+          "type": "SyntheticFormalParamDecl",
+          "nullable": false
+        },
+        {
+          "name": "f_return_type_expr",
+          "type": "TypeExpr",
+          "nullable": true
+        },
+        {
+          "name": "f_right_param",
+          "type": "SyntheticFormalParamDecl",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4091,9 +6095,11 @@
       "base": "EnumLiteralDecl",
       "concrete": true,
       "kind_name": "SyntheticCharEnumLit",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name"
+      ],
       "fields": []
     },
     {
@@ -4101,9 +6107,11 @@
       "base": "DefiningName",
       "concrete": true,
       "kind_name": "SyntheticDefiningName",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name"
+      ],
       "fields": []
     },
     {
@@ -4111,11 +6119,17 @@
       "base": "BaseFormalParamDecl",
       "concrete": true,
       "kind_name": "SyntheticFormalParamDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_param_type"
+      ],
+      "fields": [
+        {
+          "name": "f_param_type",
+          "type": "TypeExpr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4123,9 +6137,9 @@
       "base": "Name",
       "concrete": true,
       "kind_name": "SyntheticIdentifier",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4133,9 +6147,9 @@
       "base": "BasicDecl",
       "concrete": true,
       "kind_name": "SyntheticObjectDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4143,9 +6157,11 @@
       "base": "RenamingClause",
       "concrete": true,
       "kind_name": "SyntheticRenamingClause",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_renamed_object"
+      ],
       "fields": []
     },
     {
@@ -4153,11 +6169,17 @@
       "base": "BasicSubpDecl",
       "concrete": true,
       "kind_name": "SyntheticSubpDecl",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_spec"
+      ],
+      "fields": [
+        {
+          "name": "f_spec",
+          "type": "BaseSubpSpec",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4165,9 +6187,9 @@
       "base": "TypeExpr",
       "concrete": true,
       "kind_name": "SyntheticTypeExpr",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4175,12 +6197,23 @@
       "base": "BaseSubpSpec",
       "concrete": true,
       "kind_name": "SyntheticUnarySpec",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_right_param",
+        "f_return_type_expr"
+      ],
       "fields": [
-        "f_return_type_expr",
-        "f_right_param"
+        {
+          "name": "f_return_type_expr",
+          "type": "SyntheticTypeExpr",
+          "nullable": false
+        },
+        {
+          "name": "f_right_param",
+          "type": "SyntheticFormalParamDecl",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4188,9 +6221,9 @@
       "base": "TaggedNode",
       "concrete": true,
       "kind_name": "TaggedAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4198,9 +6231,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4208,9 +6241,9 @@
       "base": "TaggedNode",
       "concrete": true,
       "kind_name": "TaggedPresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4218,9 +6251,9 @@
       "base": "Name",
       "concrete": true,
       "kind_name": "TargetName",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4228,14 +6261,36 @@
       "base": "BodyNode",
       "concrete": true,
       "kind_name": "TaskBody",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_decls",
-        "f_end_name",
+      "all_field_order": [
         "f_name",
-        "f_stmts"
+        "f_aspects",
+        "f_decls",
+        "f_stmts",
+        "f_end_name"
+      ],
+      "fields": [
+        {
+          "name": "f_decls",
+          "type": "DeclarativePart",
+          "nullable": false
+        },
+        {
+          "name": "f_end_name",
+          "type": "EndName",
+          "nullable": true
+        },
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        },
+        {
+          "name": "f_stmts",
+          "type": "HandledStmts",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4243,11 +6298,18 @@
       "base": "BodyStub",
       "concrete": true,
       "kind_name": "TaskBodyStub",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_aspects"
+      ],
       "fields": [
-        "f_name"
+        {
+          "name": "f_name",
+          "type": "DefiningName",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4255,14 +6317,35 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "TaskDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_end_name",
+      "all_field_order": [
         "f_interfaces",
+        "f_public_part",
         "f_private_part",
-        "f_public_part"
+        "f_end_name"
+      ],
+      "fields": [
+        {
+          "name": "f_end_name",
+          "type": "EndName",
+          "nullable": true
+        },
+        {
+          "name": "f_interfaces",
+          "type": "ParentList",
+          "nullable": false
+        },
+        {
+          "name": "f_private_part",
+          "type": "PrivatePart",
+          "nullable": true
+        },
+        {
+          "name": "f_public_part",
+          "type": "PublicPart",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4270,12 +6353,25 @@
       "base": "BaseTypeDecl",
       "concrete": true,
       "kind_name": "TaskTypeDecl",
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_name",
+        "f_discriminants",
+        "f_aspects",
+        "f_definition"
+      ],
       "fields": [
-        "f_definition",
-        "f_discriminants"
+        {
+          "name": "f_definition",
+          "type": "TaskDef",
+          "nullable": true
+        },
+        {
+          "name": "f_discriminants",
+          "type": "DiscriminantPart",
+          "nullable": true
+        }
       ]
     },
     {
@@ -4283,9 +6379,9 @@
       "base": "SimpleStmt",
       "concrete": true,
       "kind_name": "TerminateAlternative",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4293,11 +6389,17 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "ThenAbortPart",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_stmts"
+      ],
+      "fields": [
+        {
+          "name": "f_stmts",
+          "type": "StmtList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4305,13 +6407,30 @@
       "base": "BaseTypeAccessDef",
       "concrete": true,
       "kind_name": "TypeAccessDef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_has_not_null",
         "f_has_all",
         "f_has_constant",
         "f_subtype_indication"
+      ],
+      "fields": [
+        {
+          "name": "f_has_all",
+          "type": "AllNode",
+          "nullable": false
+        },
+        {
+          "name": "f_has_constant",
+          "type": "ConstantNode",
+          "nullable": false
+        },
+        {
+          "name": "f_subtype_indication",
+          "type": "SubtypeIndication",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4319,9 +6438,9 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "TypeAttributesRepository",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4329,12 +6448,24 @@
       "base": "BaseTypeDecl",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
+        "f_name",
         "f_discriminants",
         "f_type_def"
+      ],
+      "fields": [
+        {
+          "name": "f_discriminants",
+          "type": "DiscriminantPart",
+          "nullable": true
+        },
+        {
+          "name": "f_type_def",
+          "type": "TypeDef",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4342,9 +6473,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4352,9 +6483,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4362,12 +6493,23 @@
       "base": "Expr",
       "concrete": true,
       "kind_name": "UnOp",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_op",
+        "f_expr"
+      ],
       "fields": [
-        "f_expr",
-        "f_op"
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        },
+        {
+          "name": "f_op",
+          "type": "Op",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4375,12 +6517,23 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "UnconstrainedArrayIndex",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_subtype_name",
+        "f_lower_bound"
+      ],
       "fields": [
-        "f_lower_bound",
-        "f_subtype_name"
+        {
+          "name": "f_lower_bound",
+          "type": "Expr",
+          "nullable": true
+        },
+        {
+          "name": "f_subtype_name",
+          "type": "Name",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4388,9 +6541,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "UnconstrainedArrayIndexList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4398,11 +6551,17 @@
       "base": "ArrayIndices",
       "concrete": true,
       "kind_name": "UnconstrainedArrayIndices",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_types"
+      ],
+      "fields": [
+        {
+          "name": "f_types",
+          "type": "UnconstrainedArrayIndexList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4410,9 +6569,9 @@
       "base": "DiscriminantPart",
       "concrete": true,
       "kind_name": "UnknownDiscriminantPart",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4420,9 +6579,9 @@
       "base": "UntilNode",
       "concrete": true,
       "kind_name": "UntilAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4430,9 +6589,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4440,9 +6599,9 @@
       "base": "UntilNode",
       "concrete": true,
       "kind_name": "UntilPresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4450,13 +6609,29 @@
       "base": "Name",
       "concrete": true,
       "kind_name": "UpdateAttributeRef",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
-        "f_attribute",
+      "all_field_order": [
         "f_prefix",
+        "f_attribute",
         "f_values"
+      ],
+      "fields": [
+        {
+          "name": "f_attribute",
+          "type": "Identifier",
+          "nullable": false
+        },
+        {
+          "name": "f_prefix",
+          "type": "Name",
+          "nullable": false
+        },
+        {
+          "name": "f_values",
+          "type": "BaseAggregate",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4464,9 +6639,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4474,11 +6649,17 @@
       "base": "UseClause",
       "concrete": true,
       "kind_name": "UsePackageClause",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_packages"
+      ],
+      "fields": [
+        {
+          "name": "f_packages",
+          "type": "NameList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4486,12 +6667,23 @@
       "base": "UseClause",
       "concrete": true,
       "kind_name": "UseTypeClause",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_has_all",
         "f_types"
+      ],
+      "fields": [
+        {
+          "name": "f_has_all",
+          "type": "AllNode",
+          "nullable": false
+        },
+        {
+          "name": "f_types",
+          "type": "NameList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4499,11 +6691,17 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "ValueSequence",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_iter_assoc"
+      ],
+      "fields": [
+        {
+          "name": "f_iter_assoc",
+          "type": "IteratedAssoc",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4511,12 +6709,23 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "Variant",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_choices",
         "f_components"
+      ],
+      "fields": [
+        {
+          "name": "f_choices",
+          "type": "AlternativesList",
+          "nullable": false
+        },
+        {
+          "name": "f_components",
+          "type": "ComponentList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4524,9 +6733,9 @@
       "base": "AdaList",
       "concrete": true,
       "kind_name": "VariantList",
-      "abstract_heuristic": false,
       "is_list_node": true,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4534,12 +6743,23 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "VariantPart",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_discr_name",
         "f_variant"
+      ],
+      "fields": [
+        {
+          "name": "f_discr_name",
+          "type": "Identifier",
+          "nullable": false
+        },
+        {
+          "name": "f_variant",
+          "type": "VariantList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4547,11 +6767,17 @@
       "base": "LoopSpec",
       "concrete": true,
       "kind_name": "WhileLoopSpec",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_expr"
+      ],
+      "fields": [
+        {
+          "name": "f_expr",
+          "type": "Expr",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4559,9 +6785,13 @@
       "base": "BaseLoopStmt",
       "concrete": true,
       "kind_name": "WhileLoopStmt",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [
+        "f_spec",
+        "f_stmts",
+        "f_end_name"
+      ],
       "fields": []
     },
     {
@@ -4569,13 +6799,29 @@
       "base": "AdaNode",
       "concrete": true,
       "kind_name": "WithClause",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
-      "fields": [
+      "all_field_order": [
         "f_has_limited",
         "f_has_private",
         "f_packages"
+      ],
+      "fields": [
+        {
+          "name": "f_has_limited",
+          "type": "LimitedNode",
+          "nullable": false
+        },
+        {
+          "name": "f_has_private",
+          "type": "PrivateNode",
+          "nullable": false
+        },
+        {
+          "name": "f_packages",
+          "type": "NameList",
+          "nullable": false
+        }
       ]
     },
     {
@@ -4583,9 +6829,9 @@
       "base": "AdaNode",
       "concrete": false,
       "kind_name": null,
-      "abstract_heuristic": true,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4593,9 +6839,9 @@
       "base": "WithPrivate",
       "concrete": true,
       "kind_name": "WithPrivateAbsent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     },
     {
@@ -4603,9 +6849,9 @@
       "base": "WithPrivate",
       "concrete": true,
       "kind_name": "WithPrivatePresent",
-      "abstract_heuristic": false,
       "is_list_node": false,
       "is_token_node": false,
+      "all_field_order": [],
       "fields": []
     }
   ]

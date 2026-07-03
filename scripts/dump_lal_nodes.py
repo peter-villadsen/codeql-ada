@@ -1,12 +1,13 @@
-"""Spike 1.3: dump Libadalang's node-kind hierarchy via Python introspection.
+"""Spike 1.3 / Phase 2 input: dump Libadalang's node hierarchy via introspection.
 
-Produces a JSON description of every AST node class (name, base class,
-abstractness, token-node-ness, and syntax fields) — the raw input for
-generating the dbscheme, TRAP emitter, and QL AST classes (decision D-004).
+Produces a JSON description of every AST node class — name, base, abstractness,
+list/token flags, and typed syntax fields (with nullability and declaration
+order) — the input for generating the dbscheme, TRAP emitter tables, and QL AST
+classes (decision D-004).
 
-Run inside the environment set up by build-libadalang.sh:
+Run inside the WSL build environment:
   source ~/lal-venv/bin/activate
-  eval "$(cd ~/src/libadalang && python -m langkit.scripts.lkm printenv)"
+  export PYTHONPATH=~/adacore/python LD_LIBRARY_PATH=~/adacore/lib
   python dump_lal_nodes.py > lal-nodes.json
 """
 
@@ -31,36 +32,53 @@ def node_classes():
     return seen
 
 
-def describe(cls) -> dict:
-    is_abstract = bool(cls.__subclasses__())  # heuristic; refined below
-    kind_name = getattr(cls, "_kind_name", None)
-    # Concrete Langkit-generated classes carry a _kind_name; abstract ones don't.
-    concrete = kind_name is not None
+def field_type_name(cls, fname: str) -> str:
+    """Return type of a field property, from the generated annotations."""
+    prop = getattr(cls, fname)
+    fget = prop.fget
+    ann = getattr(fget, "__annotations__", {}).get("return")
+    if ann is None:
+        return "AdaNode"
+    if isinstance(ann, str):
+        return ann.strip("'\"")
+    return getattr(ann, "__name__", str(ann))
 
+
+def describe(cls) -> dict:
+    kind_name = getattr(cls, "_kind_name", None)
+    # A field is "own" if the property object lives in this class's __dict__
+    # (abstract classes declare fields their _field_names doesn't list).
+    own_field_names = sorted(
+        f for f, v in cls.__dict__.items()
+        if f.startswith("f_") and isinstance(v, property)
+    )
     fields = []
-    for name in dir(cls):
-        if not name.startswith("f_"):
-            continue
-        # Only count fields introduced by this class, not inherited ones.
-        if not any(name in base.__dict__ for base in cls.__mro__[1:]):
-            fields.append(name)
+    for f in own_field_names:
+        doc = (getattr(cls, f).fget.__doc__ or "")
+        fields.append({
+            "name": f,
+            "type": field_type_name(cls, f),
+            "nullable": "field is never null" not in doc,
+        })
 
     return {
         "name": cls.__name__,
         "base": cls.__mro__[1].__name__,
-        "concrete": concrete,
+        "concrete": kind_name is not None,
         "kind_name": kind_name,
-        "abstract_heuristic": is_abstract,
         "is_list_node": issubclass(cls, lal.AdaList) and cls is not lal.AdaList,
         "is_token_node": bool(getattr(cls, "_token_node", False)),
-        "fields": sorted(fields),
+        # Full field order (inherited + own) as the parser emits children.
+        "all_field_order": [
+            f for f in getattr(cls, "_field_names", ()) if f.startswith("f_")
+        ],
+        "fields": fields,
     }
 
 
 def main() -> int:
     classes = node_classes()
     out = {
-        "libadalang_version": getattr(lal, "version", "unknown"),
         "node_count": len(classes),
         "concrete_count": sum(
             1 for c in classes.values() if getattr(c, "_kind_name", None)
