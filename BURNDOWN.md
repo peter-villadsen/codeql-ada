@@ -269,14 +269,31 @@ Status of the field (verified 2026-07-02):
 > **[docs/phase6-plan.md](docs/phase6-plan.md)** — execution order 6.0 → 6.4 → 6.1 → 6.2,
 > with 6.3 anytime after 6.0.
 
-- [ ] **6.0 Scope rename** `codeql-ada/` → `peter-villadsen/` in the three qlpack.yml files.
-- [ ] 6.1 Release tarball: `scripts/create-extractor-pack.sh` bundling the LAL runtime
+- [x] **6.0 Scope rename** `codeql-ada/` → `peter-villadsen/` in the three qlpack.yml files.
+  *Done 2026-07-03* — 5 occurrences updated; full WSL test suite green (10/10).
+- [x] 6.1 Release tarball: `scripts/create-extractor-pack.sh` bundling the LAL runtime
   (shared-lib closure incl. GNAT runtime + ctypes Python bindings + third-party notices);
   verified in a clean environment with no dev-machine LAL install.
+  *Done 2026-07-03* — isolation test (`env -i`, no access to the dev machine's
+  `$HOME/adacore`) creates a database and runs a real query cleanly; found and fixed a
+  dangling-symlink bug in the closure copy (`cp -a` vs `cp -L` on system deps like
+  `libgmp.so.10`); THIRD_PARTY_NOTICES.md written from each dependency's actual LICENSE
+  file, not assumed — GNATcoll/libgpr/XML-Ada/GNAT-runtime turned out to be GPLv3 +
+  GCC Runtime Library Exception, not Apache-2.0 like Libadalang/Langkit/VSS/prettier-ada/
+  AdaSAT/gpr2.
 - [ ] 6.2 Release workflow on tag `v*`: version-consistency gate → tests → tarball →
   GitHub Release → `codeql pack publish` of `ada-all` + `ada-queries` to GHCR.
+  Written and committed 2026-07-03 (`.github/workflows/release.yml`); version-gate script
+  and `codeql pack publish --dry-run` verified locally. Still open: push and confirm a
+  green `workflow_dispatch` dry run on GitHub Actions (blocked on 6.4's CI run finishing
+  so the LAL cache is warm).
 - [ ] 6.3 Docs: README rewrite, user guide, query-writing guide, CONTRIBUTING (dev env,
   regeneration pipeline, release checklist, pin-bump procedure).
+  **Audience/quality bar (set 2026-07-03, applies to all four files): textbook quality,
+  not reference-manual quality.** Assume the reader is a skilled Ada programmer who has
+  never used CodeQL — explain CodeQL concepts (extractor, database, QL, pack, query
+  suite) in prose the first time each appears, don't assume familiarity with the
+  `github/codeql` ecosystem or its jargon. Do not assume Ada knowledge needs explaining.
 - [ ] 6.4 Pin LAL/Langkit (and other tip-of-master deps) to exact commits in
   `build-libadalang.sh`; support policy = CodeQL CLI 2.25.6 tested.
 

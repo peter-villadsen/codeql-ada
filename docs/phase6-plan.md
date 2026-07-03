@@ -202,6 +202,15 @@ running its shell snippet with a wrong tag value, no need to push a bad tag).
 Four files. Source material: BURNDOWN.md phase entries, DECISIONS.md, and the scripts
 themselves — everything documented must be verified against the actual code, not guessed.
 
+**Audience and quality bar (added 2026-07-03):** write textbook quality prose, not
+reference-manual entries. Assume the reader is a skilled Ada programmer who has never
+used CodeQL before — introduce CodeQL-ecosystem concepts and vocabulary (extractor,
+database, QL, pack, `codeql-extractor.yml`, query suite, `.qlref`/`.expected` test
+format, etc.) in plain prose the first time each one appears; don't assume familiarity
+with `github/codeql` or its jargon just because that's the world this project lives in.
+Conversely, don't over-explain Ada — GPR files, generics, SPARK, `pragma`, exception
+handlers etc. need no introduction. This applies to all four files below.
+
 1. **`README.md` rewrite**: drop the "pre-alpha / nothing usable" status; new status =
    "working extractor + 8 queries, tested on a 5-project corpus, releases pending". Quickstart
    (download tarball → extract → `codeql database create --language=ada --build-mode=none
