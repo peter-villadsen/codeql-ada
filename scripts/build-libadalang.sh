@@ -32,9 +32,12 @@ mkdir -p "$SRC" "$PREFIX"
 
 if run_stage clone; then
   cd "$SRC"
-  for repo in gnatcoll-core gnatcoll-bindings adasat VSS prettier-ada langkit libadalang; do
+  for repo in gnatcoll-core gnatcoll-bindings adasat VSS langkit libadalang; do
     [ -d "$repo" ] || git clone --depth 1 -b "$BRANCH" "https://github.com/AdaCore/$repo.git"
   done
+  # prettier-ada defaults to `main`, not `master` like the rest of this group;
+  # it isn't pinned in lockstep with LAL_BRANCH, so just take its own default.
+  [ -d prettier-ada ] || git clone --depth 1 https://github.com/AdaCore/prettier-ada.git
 fi
 
 if [ ! -d "$VENV" ]; then
