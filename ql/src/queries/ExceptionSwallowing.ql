@@ -3,7 +3,8 @@
  * @description A `when others => null;` handler silently discards every
  *              exception, hiding failures from callers and operators.
  * @id ada/exception-swallowing
- * @kind table
+ * @kind problem
+ * @problem.severity warning
  * @tags reliability correctness
  */
 

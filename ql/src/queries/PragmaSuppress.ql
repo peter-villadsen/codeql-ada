@@ -4,7 +4,8 @@
  *              index, ...) that make Ada erroneous-execution-safe; suppressed
  *              checks turn latent bugs into undefined behavior.
  * @id ada/pragma-suppress
- * @kind table
+ * @kind problem
+ * @problem.severity warning
  * @tags reliability security
  */
 

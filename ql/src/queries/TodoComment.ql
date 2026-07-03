@@ -4,7 +4,8 @@
  *              or known-wrong code; tracking them surfaces technical debt that
  *              might otherwise be forgotten.
  * @id ada/todo-comment
- * @kind table
+ * @kind problem
+ * @problem.severity recommendation
  * @tags maintainability
  */
 

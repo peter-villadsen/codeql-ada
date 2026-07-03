@@ -5,7 +5,8 @@
  *              embedding the credential directly in source where it can leak via
  *              version control, decompilation, or logs.
  * @id ada/hardcoded-credential
- * @kind table
+ * @kind problem
+ * @problem.severity error
  * @tags security
  */
 

@@ -3,7 +3,8 @@
  * @description Instantiations of Ada.Unchecked_Conversion reinterpret raw bits
  *              between types, bypassing type safety; each use deserves review.
  * @id ada/unchecked-conversion
- * @kind table
+ * @kind problem
+ * @problem.severity warning
  * @tags security correctness
  */
 

@@ -5,7 +5,8 @@
  *              runtime errors or contract violations that SPARK would otherwise
  *              prove, so each use deserves review.
  * @id ada/spark-mode-off
- * @kind table
+ * @kind problem
+ * @problem.severity warning
  * @tags reliability security
  */
 

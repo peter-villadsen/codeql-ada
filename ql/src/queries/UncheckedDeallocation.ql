@@ -4,7 +4,8 @@
  *              compiler-checked lifetime tracking, risking dangling pointers and
  *              double-free if a freed access value is used or deallocated again.
  * @id ada/unchecked-deallocation
- * @kind table
+ * @kind problem
+ * @problem.severity warning
  * @tags security correctness
  */
 

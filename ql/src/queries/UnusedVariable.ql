@@ -4,7 +4,8 @@
  *              to is dead code. (Multi-name declarations count as used if any
  *              of their names is used.)
  * @id ada/unused-local
- * @kind table
+ * @kind problem
+ * @problem.severity recommendation
  * @tags maintainability
  */
 
