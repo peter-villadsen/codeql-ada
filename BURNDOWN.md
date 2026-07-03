@@ -148,15 +148,25 @@ Status of the field (verified 2026-07-02):
 
 ## Phase 3 — Extractor
 
-- [ ] 3.1 CLI contract: implement the extractor entry points CodeQL invokes
-  (`codeql-extractor.yml`: `file_types`, `build_modes: [none]`, autobuild script, env vars
-  `CODEQL_EXTRACTOR_ADA_*`).
-- [ ] 3.2 Project discovery: locate `.gpr` files, handle multiple projects, scenario
-  variables, source dirs; fallback auto-provider mode.
-- [ ] 3.3 TRAP emission: AST walk → tuples; stable IDs; TRAP compression; per-file caching.
-- [ ] 3.4 Error tolerance: partial parses, nameres failures, mixed-language repos —
-  extractor must never hard-fail the whole database for one bad file.
-- [ ] 3.5 Parallelism across compilation units.
+> **Status 2026-07-02: core extractor working at scale.**
+> `extractors/ada/tools/extractor.py` (LAL AST → TRAP, driven by generated
+> `ada_tables.json`). Runs in WSL with the Linux CodeQL CLI (`/root/tools/codeql`).
+> Scale test on gpr2 (345 files): **775k nodes, 185k xrefs, 90k expr types,
+> 0 parse errors, 0 nameres errors** in 228 s (~0.66 s/file, single-threaded).
+> First real query (`queries/ExceptionSwallowing.ql`) found a genuine
+> `when others => null` in AdaCore's own gpr2 sources.
+
+- [x] 3.1 CLI contract: autobuild.sh + `CODEQL_EXTRACTOR_ADA_*` env vars; LAL located
+  via `ADA_LAL_PREFIX` (defaults to `~/adacore`) until packaging bundles it.
+- [x] 3.2 Project discovery: `CODEQL_EXTRACTOR_ADA_GPR` env var → single `.gpr` under
+  root → auto unit provider. Open: scenario variables, multi-GPR repos.
+- [x] 3.3 TRAP emission: per-file TRAP; node identity = (file, kind, span) — stable and
+  cross-unit computable; known limitation: pathological same-kind-same-span nodes merge.
+  Open: TRAP compression, incremental caching.
+- [x] 3.4 Error tolerance: parse errors become `diagnostics` rows (severity error) without
+  failing the file; nameres wrapped per-node. Open: corpus with intentionally broken code.
+- [ ] 3.5 Parallelism across compilation units (multi-process; LAL contexts are not
+  thread-safe). At ~0.66 s/file single-threaded this is the main lever for big codebases.
 
 ## Phase 4 — QL library pack (`ada-all`)
 
