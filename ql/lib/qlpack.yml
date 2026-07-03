@@ -1,4 +1,4 @@
-name: codeql-ada/ada-all
+name: peter-villadsen/ada-all
 version: 0.0.1
 library: true
 warnOnImplicitThis: true

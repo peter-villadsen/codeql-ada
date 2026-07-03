@@ -1,5 +1,5 @@
-name: codeql-ada/ada-tests
+name: peter-villadsen/ada-tests
 version: 0.0.1
 extractor: ada
 dependencies:
-  codeql-ada/ada-queries: "*"
+  peter-villadsen/ada-queries: "*"
