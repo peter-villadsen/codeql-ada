@@ -1,0 +1,2 @@
+| test.adb:4:12:4:17 | RelationOp | This comparison always yields the same result, since both sides are X. |
+| test.adb:5:12:5:18 | RelationOp | This comparison always yields the same result, since both sides are X. |

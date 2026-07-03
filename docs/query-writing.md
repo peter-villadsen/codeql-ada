@@ -12,7 +12,7 @@ language's package registry entry, just for QL:
 
 - **`ql/lib`, published as `peter-villadsen/ada-all`** — the library. No
   queries live here, only reusable QL classes that queries import.
-- **`ql/src`, published as `peter-villadsen/ada-queries`** — the 8 shipped
+- **`ql/src`, published as `peter-villadsen/ada-queries`** — the 11 shipped
   queries, each a standalone `.ql` file under `ql/src/queries/`. This pack
   depends on `ada-all`.
 
@@ -79,7 +79,7 @@ alerts with a location and a message, which is how every downstream
 consumer (GitHub code scanning, editor integrations, `sarif-latest` output)
 expects results to look. `@problem.severity` is `error`, `warning`, or
 `recommendation` — roughly: certainly-a-bug, worth-a-look, and
-style/maintainability respectively; see the 8 shipped queries for examples
+style/maintainability respectively; see the 11 shipped queries for examples
 of each. `@kind table` (arbitrary tuples, no location/message shape) exists
 for exploratory or diagnostic queries, but such a query can't be interpreted
 by `database analyze` — only run directly (`codeql query run`) or by
@@ -87,11 +87,15 @@ by `database analyze` — only run directly (`codeql query run`) or by
 
 ## Adding a query
 
-1. Write `ql/src/queries/YourQuery.ql`. The 8 existing queries in that
+1. Write `ql/src/queries/YourQuery.ql`. The 11 existing queries in that
    directory are templates — `UnusedVariable.ql` and `TodoComment.ql` are
    good starting points if your query is a single `from`/`where`/`select`
    over one node type; `HardcodedCredential.ql` shows a multi-variable
-   `from` with a name-pattern heuristic.
+   `from` with a name-pattern heuristic; `SelfComparison.ql` and
+   `UnusedWithClause.ql` show comparing/joining on a resolved declaration
+   (`getReferencedDecl()`) rather than matching on node kind alone;
+   `UnreachableStatement.ql` shows sibling-position reasoning within a
+   statement list (`getChild(i)`/`getChild(i + 1)`) without needing a CFG.
 2. Add a test: create `ql/test/queries/YourQuery/` containing
    `YourQuery.qlref` (one line: `queries/YourQuery.ql`) and one or more Ada
    source snippets exercising both a case that should be flagged and one
@@ -120,7 +124,7 @@ by `database analyze` — only run directly (`codeql query run`) or by
 ### Testing a query
 
 The pattern above — `.qlref` pointing at the real query, plus fixtures, plus
-`.expected` — is how all 8 shipped queries are tested, and is what the
+`.expected` — is how all 11 shipped queries are tested, and is what the
 `ql/test` pack (`ada-tests`, depending on `ada-queries`, see
 [The two packs](#the-two-packs)) exists for. `ql/test/extractor/` holds a
 different kind of test: test-local `.ql` files with no `.qlref`,

@@ -6,7 +6,7 @@ libraries, and a query suite — enabling `codeql database create --language=ada
 and, from there, the same static-analysis workflow CodeQL already offers for
 C++, Java, Python, and a dozen other languages.
 
-> **Status:** working extractor, 8 security/reliability queries, tested on a
+> **Status:** working extractor, 11 security/reliability queries, tested on a
 > 5-project real-world corpus (see [BURNDOWN.md](BURNDOWN.md) Phase 5).
 > Releases are pending — see [Installing](#installing) for how to build one
 > yourself in the meantime.
@@ -38,7 +38,7 @@ Three pieces make this work for a new language:
 - **QL packs** — versioned bundles of QL code, the same way a language has
   package registries for libraries. This project ships two: `ada-all` (the
   library — reusable classes like `Name` and `Expr` that queries build on)
-  and `ada-queries` (8 ready-to-run queries built on that library).
+  and `ada-queries` (11 ready-to-run queries built on that library).
 - **The CodeQL CLI** — GitHub's command-line tool that drives extraction and
   query evaluation. It's free to run against open-source queries but is
   proprietary software with its own license (see [License](#license)) and
@@ -98,7 +98,7 @@ codeql database analyze mydb peter-villadsen/ada-queries \
 resolves Ada semantics from your `.gpr` file (or, absent one, by parsing
 every `.ads`/`.adb` it finds) without invoking GNAT at all.
 
-For everything past this point — the 8 queries, environment variables that
+For everything past this point — the 11 queries, environment variables that
 control project discovery and parallelism, how to write your own queries,
 and known limitations — see [docs/user-guide.md](docs/user-guide.md) and
 [docs/query-writing.md](docs/query-writing.md).

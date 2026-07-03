@@ -257,6 +257,20 @@ Status of the field (verified 2026-07-02):
     flakes). Confirmed both caches populate on the first green run.
   Windows/macOS packaging (the rest of 5.4's original scope) is still open —
   revisit at Phase 6.
+- [x] 5.5 *Done 2026-07-03 (post-Phase-6) — 3 more queries, 11 total:*
+  UnusedWithClause (a `with` clause no other resolved name in the file refers
+  back to; deliberately conservative — only fires when the with'd unit's own
+  declaration is in the analyzed sources, so it silently no-ops on
+  standard-library units rather than risk a false positive when the GNAT
+  runtime isn't part of the source set), SelfComparison (`X = X`/`X <= X`/...,
+  matched by comparing `getReferencedDecl()` on both sides of a `RelationOp`,
+  not by text), UnreachableStatement (the statement immediately after an
+  unconditional `raise`/`return` in the same `StmtList`, skipping a
+  following `Label` since a `goto` this project doesn't analyze could still
+  target it). All three reuse existing `ada.qll`/`Raw::` surface with no
+  extractor or dbscheme changes. 13/13 QL tests green;
+  `codeql database analyze` clean (11 rules, no errors) against the full
+  suite.
 
 ## Phase 6 — Packaging & release
 
