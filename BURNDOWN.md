@@ -260,14 +260,14 @@ Status of the field (verified 2026-07-02):
 
 ## Phase 6 — Packaging & release
 
-> **Status 2026-07-03: all Phase 6 decisions made** (D-009…D-012): pack scope
-> `peter-villadsen/`; Linux-x86_64-only tarball with bundled Libadalang; tag-driven
-> release workflow; pinned LAL commits; pre-1.0 = rebuild databases, no upgrade scripts
-> (closes 2.4). Reference layout studied: `codeql-extractor-iac` ships one
-> `extractor-<lang>.tar.gz` release asset + publishes QL packs to GHCR under the repo-owner
-> scope via `GITHUB_TOKEN`. Detailed per-task instructions with acceptance criteria:
-> **[docs/phase6-plan.md](docs/phase6-plan.md)** — execution order 6.0 → 6.4 → 6.1 → 6.2,
-> with 6.3 anytime after 6.0.
+> **Status 2026-07-03: all Phase 6 tasks complete** (6.0, 6.4, 6.1, 6.2, 6.3, executed in
+> that order per [docs/phase6-plan.md](docs/phase6-plan.md)). Pack scope renamed; LAL
+> commits pinned and verified via a from-scratch build and a green CI rebuild; release
+> tarball script isolation-tested; release workflow's `workflow_dispatch` dry run green on
+> GitHub Actions with the tarball as an inspectable artifact; docs rewritten with every
+> command verified. No release has been tagged yet — that's a deliberate, separate step
+> the user pulls the trigger on (see CONTRIBUTING.md's release checklist), not something
+> left undone here.
 
 - [x] **6.0 Scope rename** `codeql-ada/` → `peter-villadsen/` in the three qlpack.yml files.
   *Done 2026-07-03* — 5 occurrences updated; full WSL test suite green (10/10).
@@ -293,13 +293,29 @@ Status of the field (verified 2026-07-02):
   workflow that only exists off the default branch, so `release.yml` never showed up in
   the workflow list until `master` was made the default branch.** Also added an
   `actions/upload-artifact` step that the first dry run was missing.
-- [ ] 6.3 Docs: README rewrite, user guide, query-writing guide, CONTRIBUTING (dev env,
+- [x] 6.3 Docs: README rewrite, user guide, query-writing guide, CONTRIBUTING (dev env,
   regeneration pipeline, release checklist, pin-bump procedure).
   **Audience/quality bar (set 2026-07-03, applies to all four files): textbook quality,
   not reference-manual quality.** Assume the reader is a skilled Ada programmer who has
   never used CodeQL — explain CodeQL concepts (extractor, database, QL, pack, query
   suite) in prose the first time each appears, don't assume familiarity with the
   `github/codeql` ecosystem or its jargon. Do not assume Ada knowledge needs explaining.
+  *Done 2026-07-03.* Every documented command was actually executed at least once
+  (copy-paste fidelity) before being included — this caught three unrelated pre-existing
+  bugs, fixed in separate commits along the way: (1) all 8 queries were `@kind table`,
+  which `codeql database analyze` cannot interpret at all (needs `problem`/`path-problem`)
+  — fixed by adding `@kind problem` + `@problem.severity` to each (no `.expected` files
+  needed regenerating, since `codeql test run` ignores `@kind`); also dropped a stray
+  spike-era `ql/src/spike/ListFiles.ql` that would otherwise ship in the published
+  `ada-queries` pack. (2) The repo's default branch was a stale, empty `main` created at
+  `gh repo create` time, while all real work has always been on `master` — GitHub silently
+  refuses to register `workflow_dispatch` for a workflow that only exists off the default
+  branch, which is why 6.2's dry run didn't show up until `master` was made the default.
+  (3) The four generator-produced files (`ada.dbscheme` ×2, `Raw.qll`, `ada_tables.json`)
+  were committed with CRLF while `.gitattributes` normalizes everything else to LF —
+  regenerating from WSL/Linux Python produced a spurious 100%-of-lines diff (content
+  identical, confirmed via `git diff -b -w`); fixed by normalizing to LF and extending
+  `.gitattributes`.
 - [x] 6.4 Pin LAL/Langkit (and other tip-of-master deps) to exact commits in
   `build-libadalang.sh`; support policy = CodeQL CLI 2.25.6 tested.
   *Done 2026-07-03* — 8 repos pinned (gnatcoll-core, gnatcoll-bindings, adasat, VSS,
