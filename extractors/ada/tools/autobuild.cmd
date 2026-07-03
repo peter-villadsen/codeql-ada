@@ -1,3 +1,4 @@
 @echo off
-python "%CODEQL_EXTRACTOR_ADA_ROOT%\tools\spike_extractor.py"
-exit /b %ERRORLEVEL%
+echo Native Windows is not supported for the Ada extractor (D-010).
+echo Run codeql database create under WSL instead - see README.md.
+exit /b 1

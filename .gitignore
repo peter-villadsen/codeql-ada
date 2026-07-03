@@ -5,6 +5,10 @@ test-db/
 .cache/
 corpus-report.json
 
+# Release packaging output (scripts/create-extractor-pack.sh)
+/extractor-pack/
+/codeql-extractor-ada-linux64.tar.gz
+
 # Python
 __pycache__/
 *.py[cod]
