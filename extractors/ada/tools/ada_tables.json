@@ -723,7 +723,7 @@
  },
  "CharLiteral": {
   "def_table": "ada_char_literal_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
@@ -2286,7 +2286,7 @@
  },
  "Identifier": {
   "def_table": "ada_identifier_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
@@ -2412,7 +2412,7 @@
  },
  "IntLiteral": {
   "def_table": "ada_int_literal_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
@@ -2767,7 +2767,7 @@
  },
  "NullLiteral": {
   "def_table": "ada_null_literal_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
@@ -2894,145 +2894,145 @@
  },
  "OpAbs": {
   "def_table": "ada_op_abs_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpAnd": {
   "def_table": "ada_op_and_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpAndThen": {
   "def_table": "ada_op_and_then_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpConcat": {
   "def_table": "ada_op_concat_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpDiv": {
   "def_table": "ada_op_div_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpDoubleDot": {
   "def_table": "ada_op_double_dot_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpEq": {
   "def_table": "ada_op_eq_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpGt": {
   "def_table": "ada_op_gt_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpGte": {
   "def_table": "ada_op_gte_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpIn": {
   "def_table": "ada_op_in_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpLt": {
   "def_table": "ada_op_lt_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpLte": {
   "def_table": "ada_op_lte_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpMinus": {
   "def_table": "ada_op_minus_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpMod": {
   "def_table": "ada_op_mod_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpMult": {
   "def_table": "ada_op_mult_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpNeq": {
   "def_table": "ada_op_neq_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpNot": {
   "def_table": "ada_op_not_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpNotIn": {
   "def_table": "ada_op_not_in_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpOr": {
   "def_table": "ada_op_or_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpOrElse": {
   "def_table": "ada_op_or_else_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpPlus": {
   "def_table": "ada_op_plus_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpPow": {
   "def_table": "ada_op_pow_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpRem": {
   "def_table": "ada_op_rem_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
  "OpXor": {
   "def_table": "ada_op_xor_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
@@ -3653,7 +3653,7 @@
  },
  "RealLiteral": {
   "def_table": "ada_real_literal_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },
@@ -3958,7 +3958,7 @@
  },
  "StringLiteral": {
   "def_table": "ada_string_literal_def",
-  "is_token": false,
+  "is_token": true,
   "is_list": false,
   "fields": []
  },

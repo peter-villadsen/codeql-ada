@@ -1,0 +1,1 @@
+| test.adb:7:4:8:12 | ExceptionHandler | Exception handler swallows all exceptions. |

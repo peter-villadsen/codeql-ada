@@ -1288,126 +1288,186 @@ module Raw {
 
   class CharLiteral extends BaseId, @ada_char_literal {
     override string getAPrimaryQlClass() { result = "CharLiteral" }
+
+    string getValue() { ada_char_literal_def(this, result) }
   }
 
   class Identifier extends BaseId, @ada_identifier {
     override string getAPrimaryQlClass() { result = "Identifier" }
+
+    string getValue() { ada_identifier_def(this, result) }
   }
 
   class Op extends BaseId, @ada_op { }
 
   class OpAbs extends Op, @ada_op_abs {
     override string getAPrimaryQlClass() { result = "OpAbs" }
+
+    string getValue() { ada_op_abs_def(this, result) }
   }
 
   class OpAnd extends Op, @ada_op_and {
     override string getAPrimaryQlClass() { result = "OpAnd" }
+
+    string getValue() { ada_op_and_def(this, result) }
   }
 
   class OpAndThen extends Op, @ada_op_and_then {
     override string getAPrimaryQlClass() { result = "OpAndThen" }
+
+    string getValue() { ada_op_and_then_def(this, result) }
   }
 
   class OpConcat extends Op, @ada_op_concat {
     override string getAPrimaryQlClass() { result = "OpConcat" }
+
+    string getValue() { ada_op_concat_def(this, result) }
   }
 
   class OpDiv extends Op, @ada_op_div {
     override string getAPrimaryQlClass() { result = "OpDiv" }
+
+    string getValue() { ada_op_div_def(this, result) }
   }
 
   class OpDoubleDot extends Op, @ada_op_double_dot {
     override string getAPrimaryQlClass() { result = "OpDoubleDot" }
+
+    string getValue() { ada_op_double_dot_def(this, result) }
   }
 
   class OpEq extends Op, @ada_op_eq {
     override string getAPrimaryQlClass() { result = "OpEq" }
+
+    string getValue() { ada_op_eq_def(this, result) }
   }
 
   class OpGt extends Op, @ada_op_gt {
     override string getAPrimaryQlClass() { result = "OpGt" }
+
+    string getValue() { ada_op_gt_def(this, result) }
   }
 
   class OpGte extends Op, @ada_op_gte {
     override string getAPrimaryQlClass() { result = "OpGte" }
+
+    string getValue() { ada_op_gte_def(this, result) }
   }
 
   class OpIn extends Op, @ada_op_in {
     override string getAPrimaryQlClass() { result = "OpIn" }
+
+    string getValue() { ada_op_in_def(this, result) }
   }
 
   class OpLt extends Op, @ada_op_lt {
     override string getAPrimaryQlClass() { result = "OpLt" }
+
+    string getValue() { ada_op_lt_def(this, result) }
   }
 
   class OpLte extends Op, @ada_op_lte {
     override string getAPrimaryQlClass() { result = "OpLte" }
+
+    string getValue() { ada_op_lte_def(this, result) }
   }
 
   class OpMinus extends Op, @ada_op_minus {
     override string getAPrimaryQlClass() { result = "OpMinus" }
+
+    string getValue() { ada_op_minus_def(this, result) }
   }
 
   class OpMod extends Op, @ada_op_mod {
     override string getAPrimaryQlClass() { result = "OpMod" }
+
+    string getValue() { ada_op_mod_def(this, result) }
   }
 
   class OpMult extends Op, @ada_op_mult {
     override string getAPrimaryQlClass() { result = "OpMult" }
+
+    string getValue() { ada_op_mult_def(this, result) }
   }
 
   class OpNeq extends Op, @ada_op_neq {
     override string getAPrimaryQlClass() { result = "OpNeq" }
+
+    string getValue() { ada_op_neq_def(this, result) }
   }
 
   class OpNot extends Op, @ada_op_not {
     override string getAPrimaryQlClass() { result = "OpNot" }
+
+    string getValue() { ada_op_not_def(this, result) }
   }
 
   class OpNotIn extends Op, @ada_op_not_in {
     override string getAPrimaryQlClass() { result = "OpNotIn" }
+
+    string getValue() { ada_op_not_in_def(this, result) }
   }
 
   class OpOr extends Op, @ada_op_or {
     override string getAPrimaryQlClass() { result = "OpOr" }
+
+    string getValue() { ada_op_or_def(this, result) }
   }
 
   class OpOrElse extends Op, @ada_op_or_else {
     override string getAPrimaryQlClass() { result = "OpOrElse" }
+
+    string getValue() { ada_op_or_else_def(this, result) }
   }
 
   class OpPlus extends Op, @ada_op_plus {
     override string getAPrimaryQlClass() { result = "OpPlus" }
+
+    string getValue() { ada_op_plus_def(this, result) }
   }
 
   class OpPow extends Op, @ada_op_pow {
     override string getAPrimaryQlClass() { result = "OpPow" }
+
+    string getValue() { ada_op_pow_def(this, result) }
   }
 
   class OpRem extends Op, @ada_op_rem {
     override string getAPrimaryQlClass() { result = "OpRem" }
+
+    string getValue() { ada_op_rem_def(this, result) }
   }
 
   class OpXor extends Op, @ada_op_xor {
     override string getAPrimaryQlClass() { result = "OpXor" }
+
+    string getValue() { ada_op_xor_def(this, result) }
   }
 
   class StringLiteral extends BaseId, @ada_string_literal {
     override string getAPrimaryQlClass() { result = "StringLiteral" }
+
+    string getValue() { ada_string_literal_def(this, result) }
   }
 
   class NullLiteral extends SingleTokNode, @ada_null_literal {
     override string getAPrimaryQlClass() { result = "NullLiteral" }
+
+    string getValue() { ada_null_literal_def(this, result) }
   }
 
   class NumLiteral extends SingleTokNode, @ada_num_literal { }
 
   class IntLiteral extends NumLiteral, @ada_int_literal {
     override string getAPrimaryQlClass() { result = "IntLiteral" }
+
+    string getValue() { ada_int_literal_def(this, result) }
   }
 
   class RealLiteral extends NumLiteral, @ada_real_literal {
     override string getAPrimaryQlClass() { result = "RealLiteral" }
+
+    string getValue() { ada_real_literal_def(this, result) }
   }
 
   class SyntheticIdentifier extends Name, @ada_synthetic_identifier {

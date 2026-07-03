@@ -202,28 +202,52 @@ class Extractor:
             self.stats["nameres_errors"] += 1
 
 
-def discover_project(src_root: pathlib.Path):
-    """Returns (context, source files)."""
+def find_gpr(src_root: pathlib.Path):
     gpr = os.environ.get("CODEQL_EXTRACTOR_ADA_GPR")
     if not gpr:
         gprs = sorted(src_root.rglob("*.gpr"))
         if len(gprs) == 1:
             gpr = str(gprs[0])
-    ada_files = sorted(
+    return gpr
+
+
+def project_files(src_root: pathlib.Path, gpr):
+    if gpr:
+        return [f for f in lal.GPRProject(gpr).source_files()
+                if pathlib.Path(f).suffix.lower() in EXTENSIONS]
+    return sorted(
         str(p) for p in src_root.rglob("*")
         if p.suffix.lower() in EXTENSIONS and p.is_file()
     )
+
+
+def build_context(gpr, ada_files) -> lal.AnalysisContext:
     if gpr:
-        print(f"[ada-extractor] project: {gpr}")
-        project = lal.GPRProject(gpr)
-        ctx = project.create_context()
-        files = [f for f in project.source_files()
-                 if pathlib.Path(f).suffix.lower() in EXTENSIONS]
-        return ctx, files
-    print(f"[ada-extractor] no project file; auto provider over "
-          f"{len(ada_files)} Ada files")
+        return lal.GPRProject(gpr).create_context()
     provider = lal.UnitProvider.auto(input_files=ada_files)
-    return lal.AnalysisContext(unit_provider=provider), ada_files
+    return lal.AnalysisContext(unit_provider=provider)
+
+
+# Per-worker state (LAL contexts are neither picklable nor thread-safe, so
+# parallelism is one context per forked process).
+_state = None
+
+
+def _init_worker(gpr, files, trap_dir, archive_dir):
+    global _state
+    _state = (build_context(gpr, files), Extractor(files), trap_dir, archive_dir)
+
+
+def _extract_one(f):
+    ctx, ex, trap_dir, archive_dir = _state
+    ex.stats = dict.fromkeys(ex.stats, 0)
+    path = norm(f)
+    unit = ctx.get_from_file(f)
+    ex.extract_unit(unit, trap_dir)
+    dest = archive_dir / path.replace(":", "_").lstrip("/")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(f, dest)
+    return path, ex.stats
 
 
 def main() -> int:
@@ -234,24 +258,39 @@ def main() -> int:
     trap_dir.mkdir(parents=True, exist_ok=True)
     archive_dir.mkdir(parents=True, exist_ok=True)
 
-    ctx, files = discover_project(src_root)
-    ex = Extractor(files)
+    gpr = find_gpr(src_root)
+    print(f"[ada-extractor] project: {gpr or 'none (auto unit provider)'}")
+    files = project_files(src_root, gpr)
 
     (trap_dir / "metadata.trap").write_text(
         f"sourceLocationPrefix({q(norm(src_root))})\n", encoding="utf-8"
     )
 
-    for f in files:
-        path = norm(f)
-        unit = ctx.get_from_file(f)
-        ex.extract_unit(unit, trap_dir)
-        dest = archive_dir / path.replace(":", "_").lstrip("/")
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(f, dest)
+    jobs = int(os.environ.get("CODEQL_EXTRACTOR_ADA_JOBS",
+                              str(os.cpu_count() or 1)))
+    jobs = max(1, min(jobs, len(files) or 1))
+    totals = dict.fromkeys(
+        ("nodes", "xref", "types", "diags", "nameres_errors"), 0)
+
+    if jobs == 1 or not hasattr(os, "fork"):
+        _init_worker(gpr, files, trap_dir, archive_dir)
+        results = map(_extract_one, files)
+        self_stats = [r for r in results]
+    else:
+        import multiprocessing
+        with multiprocessing.Pool(
+            jobs, _init_worker, (gpr, files, trap_dir, archive_dir)
+        ) as pool:
+            self_stats = pool.map(_extract_one, files, chunksize=4)
+
+    for path, st in self_stats:
         print(f"[ada-extractor] {path}")
+        for k, v in st.items():
+            totals[k] += v
 
     dt = time.monotonic() - t0
-    print(f"[ada-extractor] {len(files)} files in {dt:.1f}s: {ex.stats}")
+    print(f"[ada-extractor] {len(files)} files in {dt:.1f}s "
+          f"({jobs} jobs): {totals}")
     return 0
 
 

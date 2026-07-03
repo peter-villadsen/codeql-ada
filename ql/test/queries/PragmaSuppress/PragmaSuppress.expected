@@ -1,0 +1,2 @@
+| test.adb:2:4:2:34 | PragmaNode | pragma Suppress disables runtime checks. |
+| test.adb:3:4:3:33 | PragmaNode | pragma Suppress disables runtime checks. |

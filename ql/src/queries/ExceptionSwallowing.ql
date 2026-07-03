@@ -13,4 +13,4 @@ from Raw::ExceptionHandler h
 where
   h.getHandledExceptions().getChild(_) instanceof Raw::OthersDesignator and
   forex(Raw::AdaNode s | s = h.getStmts().getChild(_) | s instanceof Raw::NullStmt)
-select h.getLocation().toString(), "Exception handler swallows all exceptions."
+select h, "Exception handler swallows all exceptions."

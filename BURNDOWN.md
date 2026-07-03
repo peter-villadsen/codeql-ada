@@ -165,25 +165,33 @@ Status of the field (verified 2026-07-02):
   Open: TRAP compression, incremental caching.
 - [x] 3.4 Error tolerance: parse errors become `diagnostics` rows (severity error) without
   failing the file; nameres wrapped per-node. Open: corpus with intentionally broken code.
-- [ ] 3.5 Parallelism across compilation units (multi-process; LAL contexts are not
-  thread-safe). At ~0.66 s/file single-threaded this is the main lever for big codebases.
+- [x] 3.5 *Done 2026-07-03.* Multi-process pool (one LAL context per fork;
+  `CODEQL_EXTRACTOR_ADA_JOBS`, default nproc). gpr2: 228 s → **76.6 s** with 12 jobs,
+  identical stats (deterministic). Sublinear because each worker re-parses dependency
+  closures for nameres; good enough until proven otherwise.
 
 ## Phase 4 — QL library pack (`ada-all`)
 
-- [ ] 4.1 Generated AST classes mirroring the dbscheme, plus hand-written convenience layer
-  (`getEnclosingSubprogram()`, `getType()`, pretty `toString()`s).
-- [ ] 4.2 `File`/`Location` classes conforming to CodeQL conventions (required for SARIF).
-- [ ] 4.3 CFG library in QL (per decision 0.5, likely post-v1).
+- [x] 4.1 *Done 2026-07-02.* Generated `Raw.qll` (Phase 2) + hand-written layer in
+  `ada.qll`: `Name.getText()` (recursive over token values/dotted names),
+  `Name.getReferencedDecl()`, `Expr.getType()`, `BasicDecl.getADefiningName()/getAName()/
+  isReferenced()`, `AdaNode.getEnclosingSubprogram()/getEnclosingUnit()`.
+  Fix along the way: token-node detection (SingleTokNode hierarchy) — token kinds now
+  store their source text in the `_def` tables' `value` column.
+- [x] 4.2 `File`/`Location` with `hasLocationInfo` — test framework renders locations
+  correctly (relativized paths in `.expected` files prove the contract works).
+- [ ] 4.3 CFG library in QL (per decision 0.5, post-v1).
 - [ ] 4.4 Dataflow: instantiate the shared `codeql/dataflow` framework (post-v1).
 
 ## Phase 5 — Queries, tests, CI
 
-- [ ] 5.1 Seed query suite (syntax/xref-level is enough to be useful): unused
-  declarations, exception-swallowing handlers (`when others => null`), suspicious
-  `Unchecked_Conversion` / `Unchecked_Deallocation`, `pragma Suppress` of checks,
-  hardcoded credentials in strings, TODO/FIXME. SPARK-adjacent checks later.
-- [ ] 5.2 Test infrastructure: `codeql test run` harness with small Ada snippets per
-  query; golden-output extractor tests (source → expected TRAP/AST dump).
+- [x] 5.1 *Started 2026-07-02 — 4 queries shipped:* ExceptionSwallowing, PragmaSuppress,
+  UncheckedConversion, UnusedVariable (xref-based). Still open: Unchecked_Deallocation,
+  hardcoded credentials, TODO/FIXME, SPARK-adjacent checks.
+- [x] 5.2 *Done 2026-07-02.* `codeql test run` harness live: `ql/test/queries/<Q>/` with
+  `.qlref` + Ada snippets + `.expected`; extractor's qltest entry point is
+  `tools/index.sh` (legacy_qltest_extraction). All 4 tests green. Still open:
+  golden-output extractor tests (TRAP/AST dumps).
 - [ ] 5.3 Corpus regression: extract 3–5 real projects (e.g. libadalang-tools, Alire itself,
   an avionics-style open project) in CI; track extraction success rate and timing.
 - [ ] 5.4 CI matrix: Linux first (primary), then Windows/macOS packaging.

@@ -4164,8 +4164,110 @@
                     <k>id</k>
                     <v>1503</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>87</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>1503</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>5</v>
+                                </b>
+                                <b>
+                                    <a>2</a>
+                                    <b>3</b>
+                                    <v>7</v>
+                                </b>
+                                <b>
+                                    <a>3</a>
+                                    <b>4</b>
+                                    <v>8</v>
+                                </b>
+                                <b>
+                                    <a>4</a>
+                                    <b>5</b>
+                                    <v>7</v>
+                                </b>
+                                <b>
+                                    <a>5</a>
+                                    <b>6</b>
+                                    <v>5</v>
+                                </b>
+                                <b>
+                                    <a>6</a>
+                                    <b>8</b>
+                                    <v>8</v>
+                                </b>
+                                <b>
+                                    <a>8</a>
+                                    <b>9</b>
+                                    <v>5</v>
+                                </b>
+                                <b>
+                                    <a>9</a>
+                                    <b>10</b>
+                                    <v>6</v>
+                                </b>
+                                <b>
+                                    <a>10</a>
+                                    <b>13</b>
+                                    <v>8</v>
+                                </b>
+                                <b>
+                                    <a>13</a>
+                                    <b>16</b>
+                                    <v>6</v>
+                                </b>
+                                <b>
+                                    <a>16</a>
+                                    <b>19</b>
+                                    <v>7</v>
+                                </b>
+                                <b>
+                                    <a>19</a>
+                                    <b>50</b>
+                                    <v>7</v>
+                                </b>
+                                <b>
+                                    <a>90</a>
+                                    <b>106</b>
+                                    <v>7</v>
+                                </b>
+                                <b>
+                                    <a>106</a>
+                                    <b>107</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_classwide_type_decl_def</name>
@@ -5220,8 +5322,90 @@
                     <k>id</k>
                     <v>213518</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>9131</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>213518</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>239</v>
+                                </b>
+                                <b>
+                                    <a>2</a>
+                                    <b>3</b>
+                                    <v>1746</v>
+                                </b>
+                                <b>
+                                    <a>3</a>
+                                    <b>4</b>
+                                    <v>1291</v>
+                                </b>
+                                <b>
+                                    <a>4</a>
+                                    <b>5</b>
+                                    <v>1332</v>
+                                </b>
+                                <b>
+                                    <a>5</a>
+                                    <b>6</b>
+                                    <v>750</v>
+                                </b>
+                                <b>
+                                    <a>6</a>
+                                    <b>8</b>
+                                    <v>839</v>
+                                </b>
+                                <b>
+                                    <a>8</a>
+                                    <b>11</b>
+                                    <v>809</v>
+                                </b>
+                                <b>
+                                    <a>11</a>
+                                    <b>18</b>
+                                    <v>797</v>
+                                </b>
+                                <b>
+                                    <a>18</a>
+                                    <b>40</b>
+                                    <v>685</v>
+                                </b>
+                                <b>
+                                    <a>40</a>
+                                    <b>9270</b>
+                                    <v>643</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_if_expr_def</name>
@@ -5286,8 +5470,95 @@
                     <k>id</k>
                     <v>4403</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>94</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>4403</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>17</v>
+                                </b>
+                                <b>
+                                    <a>2</a>
+                                    <b>3</b>
+                                    <v>11</v>
+                                </b>
+                                <b>
+                                    <a>3</a>
+                                    <b>4</b>
+                                    <v>3</v>
+                                </b>
+                                <b>
+                                    <a>4</a>
+                                    <b>5</b>
+                                    <v>11</v>
+                                </b>
+                                <b>
+                                    <a>5</a>
+                                    <b>6</b>
+                                    <v>5</v>
+                                </b>
+                                <b>
+                                    <a>6</a>
+                                    <b>7</b>
+                                    <v>8</v>
+                                </b>
+                                <b>
+                                    <a>8</a>
+                                    <b>9</b>
+                                    <v>8</v>
+                                </b>
+                                <b>
+                                    <a>9</a>
+                                    <b>12</b>
+                                    <v>8</v>
+                                </b>
+                                <b>
+                                    <a>12</a>
+                                    <b>15</b>
+                                    <v>7</v>
+                                </b>
+                                <b>
+                                    <a>15</a>
+                                    <b>34</b>
+                                    <v>8</v>
+                                </b>
+                                <b>
+                                    <a>37</a>
+                                    <b>1942</b>
+                                    <v>8</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_interface_kind_limited_def</name>
@@ -5627,8 +5898,45 @@
                     <k>id</k>
                     <v>1003</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>1003</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1003</a>
+                                    <b>1004</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_null_record_aggregate_def</name>
@@ -5704,8 +6012,45 @@
                     <k>id</k>
                     <v>3</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>3</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>3</a>
+                                    <b>4</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_and_def</name>
@@ -5715,8 +6060,45 @@
                     <k>id</k>
                     <v>5</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>5</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>5</a>
+                                    <b>6</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_and_then_def</name>
@@ -5726,8 +6108,45 @@
                     <k>id</k>
                     <v>1175</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>1175</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1175</a>
+                                    <b>1176</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_concat_def</name>
@@ -5737,8 +6156,45 @@
                     <k>id</k>
                     <v>20424</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>20424</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>20424</a>
+                                    <b>20425</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_div_def</name>
@@ -5748,8 +6204,45 @@
                     <k>id</k>
                     <v>24</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>24</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>24</a>
+                                    <b>25</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_double_dot_def</name>
@@ -5759,8 +6252,45 @@
                     <k>id</k>
                     <v>1230</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>1230</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1230</a>
+                                    <b>1231</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_eq_def</name>
@@ -5770,8 +6300,45 @@
                     <k>id</k>
                     <v>2208</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>2208</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>2208</a>
+                                    <b>2209</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_gt_def</name>
@@ -5781,8 +6348,45 @@
                     <k>id</k>
                     <v>360</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>360</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>360</a>
+                                    <b>361</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_gte_def</name>
@@ -5792,8 +6396,45 @@
                     <k>id</k>
                     <v>75</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>75</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>75</a>
+                                    <b>76</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_in_def</name>
@@ -5803,8 +6444,45 @@
                     <k>id</k>
                     <v>351</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>351</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>351</a>
+                                    <b>352</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_lt_def</name>
@@ -5814,8 +6492,45 @@
                     <k>id</k>
                     <v>132</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>132</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>132</a>
+                                    <b>133</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_lte_def</name>
@@ -5825,8 +6540,45 @@
                     <k>id</k>
                     <v>138</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>138</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>138</a>
+                                    <b>139</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_minus_def</name>
@@ -5836,8 +6588,45 @@
                     <k>id</k>
                     <v>590</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>590</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>590</a>
+                                    <b>591</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_mod_def</name>
@@ -5847,8 +6636,45 @@
                     <k>id</k>
                     <v>9</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>9</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>9</a>
+                                    <b>10</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_mult_def</name>
@@ -5858,8 +6684,45 @@
                     <k>id</k>
                     <v>32</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>32</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>32</a>
+                                    <b>33</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_neq_def</name>
@@ -5869,8 +6732,45 @@
                     <k>id</k>
                     <v>1233</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>1233</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1233</a>
+                                    <b>1234</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_not_def</name>
@@ -5880,8 +6780,45 @@
                     <k>id</k>
                     <v>1063</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>1063</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1063</a>
+                                    <b>1064</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_not_in_def</name>
@@ -5891,8 +6828,45 @@
                     <k>id</k>
                     <v>51</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>51</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>51</a>
+                                    <b>52</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_or_def</name>
@@ -5902,8 +6876,45 @@
                     <k>id</k>
                     <v>4</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>4</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>4</a>
+                                    <b>5</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_or_else_def</name>
@@ -5913,8 +6924,45 @@
                     <k>id</k>
                     <v>463</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>463</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>463</a>
+                                    <b>464</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_plus_def</name>
@@ -5924,8 +6972,45 @@
                     <k>id</k>
                     <v>1044</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>1044</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1044</a>
+                                    <b>1045</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_pow_def</name>
@@ -5935,8 +7020,45 @@
                     <k>id</k>
                     <v>7</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>7</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>7</a>
+                                    <b>8</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_rem_def</name>
@@ -5946,8 +7068,39 @@
                     <k>id</k>
                     <v>0</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>0</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs/>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_op_xor_def</name>
@@ -5957,8 +7110,45 @@
                     <k>id</k>
                     <v>3</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>3</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>3</a>
+                                    <b>4</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_ordinary_fixed_point_def_def</name>
@@ -6441,8 +7631,45 @@
                     <k>id</k>
                     <v>1</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>1</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>1</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_record_def_def</name>
@@ -6661,8 +7888,60 @@
                     <k>id</k>
                     <v>14583</v>
                 </e>
+                <e>
+                    <k>value</k>
+                    <v>5741</v>
+                </e>
             </columnsizes>
-            <dependencies/>
+            <dependencies>
+                <dep>
+                    <src>id</src>
+                    <trg>value</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>14583</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>value</src>
+                    <trg>id</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>4417</v>
+                                </b>
+                                <b>
+                                    <a>2</a>
+                                    <b>3</b>
+                                    <v>687</v>
+                                </b>
+                                <b>
+                                    <a>3</a>
+                                    <b>7</b>
+                                    <v>453</v>
+                                </b>
+                                <b>
+                                    <a>7</a>
+                                    <b>1529</b>
+                                    <v>184</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
         </relation>
         <relation>
             <name>ada_subp_body_def</name>

@@ -1331,7 +1331,7 @@
       "concrete": true,
       "kind_name": "CharLiteral",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -3410,7 +3410,7 @@
       "concrete": true,
       "kind_name": "Identifier",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -3567,7 +3567,7 @@
       "concrete": true,
       "kind_name": "IntLiteral",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4093,7 +4093,7 @@
       "concrete": true,
       "kind_name": "NullLiteral",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4251,7 +4251,7 @@
       "concrete": true,
       "kind_name": "OpAbs",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4261,7 +4261,7 @@
       "concrete": true,
       "kind_name": "OpAnd",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4271,7 +4271,7 @@
       "concrete": true,
       "kind_name": "OpAndThen",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4281,7 +4281,7 @@
       "concrete": true,
       "kind_name": "OpConcat",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4291,7 +4291,7 @@
       "concrete": true,
       "kind_name": "OpDiv",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4301,7 +4301,7 @@
       "concrete": true,
       "kind_name": "OpDoubleDot",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4311,7 +4311,7 @@
       "concrete": true,
       "kind_name": "OpEq",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4321,7 +4321,7 @@
       "concrete": true,
       "kind_name": "OpGt",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4331,7 +4331,7 @@
       "concrete": true,
       "kind_name": "OpGte",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4341,7 +4341,7 @@
       "concrete": true,
       "kind_name": "OpIn",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4351,7 +4351,7 @@
       "concrete": true,
       "kind_name": "OpLt",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4361,7 +4361,7 @@
       "concrete": true,
       "kind_name": "OpLte",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4371,7 +4371,7 @@
       "concrete": true,
       "kind_name": "OpMinus",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4381,7 +4381,7 @@
       "concrete": true,
       "kind_name": "OpMod",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4391,7 +4391,7 @@
       "concrete": true,
       "kind_name": "OpMult",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4401,7 +4401,7 @@
       "concrete": true,
       "kind_name": "OpNeq",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4411,7 +4411,7 @@
       "concrete": true,
       "kind_name": "OpNot",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4421,7 +4421,7 @@
       "concrete": true,
       "kind_name": "OpNotIn",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4431,7 +4431,7 @@
       "concrete": true,
       "kind_name": "OpOr",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4441,7 +4441,7 @@
       "concrete": true,
       "kind_name": "OpOrElse",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4451,7 +4451,7 @@
       "concrete": true,
       "kind_name": "OpPlus",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4461,7 +4461,7 @@
       "concrete": true,
       "kind_name": "OpPow",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4471,7 +4471,7 @@
       "concrete": true,
       "kind_name": "OpRem",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -4481,7 +4481,7 @@
       "concrete": true,
       "kind_name": "OpXor",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -5343,7 +5343,7 @@
       "concrete": true,
       "kind_name": "RealLiteral",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },
@@ -5779,7 +5779,7 @@
       "concrete": true,
       "kind_name": "StringLiteral",
       "is_list_node": false,
-      "is_token_node": false,
+      "is_token_node": true,
       "all_field_order": [],
       "fields": []
     },

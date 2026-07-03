@@ -67,7 +67,9 @@ def describe(cls) -> dict:
         "concrete": kind_name is not None,
         "kind_name": kind_name,
         "is_list_node": issubclass(cls, lal.AdaList) and cls is not lal.AdaList,
-        "is_token_node": bool(getattr(cls, "_token_node", False)),
+        # Token nodes: SingleTokNode hierarchy (`implements TokenNode` in nodes.lkt).
+        "is_token_node": issubclass(cls, lal.SingleTokNode)
+        and kind_name is not None,
         # Full field order (inherited + own) as the parser emits children.
         "all_field_order": [
             f for f in getattr(cls, "_field_names", ()) if f.startswith("f_")

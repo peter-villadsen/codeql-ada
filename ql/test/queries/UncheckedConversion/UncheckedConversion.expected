@@ -1,0 +1,1 @@
+| test.adb:6:4:7:42 | GenericSubpInstantiation | Instantiation of Unchecked_Conversion bypasses type safety. |

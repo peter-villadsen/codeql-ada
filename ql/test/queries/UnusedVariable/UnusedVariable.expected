@@ -1,0 +1,1 @@
+| test.adb:5:4:5:26 | ObjectDecl | Local object Unused is never referenced. |

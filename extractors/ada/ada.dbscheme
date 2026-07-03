@@ -1141,7 +1141,8 @@ ada_case_stmt_alternative_list_def(
 );
 
 ada_char_literal_def(
-  unique int id: @ada_char_literal
+  unique int id: @ada_char_literal,
+  string value: string ref
 );
 
 ada_classwide_type_decl_def(
@@ -1525,7 +1526,8 @@ ada_handled_stmts_def(
 );
 
 ada_identifier_def(
-  unique int id: @ada_identifier
+  unique int id: @ada_identifier,
+  string value: string ref
 );
 
 ada_if_expr_def(
@@ -1549,7 +1551,8 @@ ada_incomplete_type_decl_def(
 );
 
 ada_int_literal_def(
-  unique int id: @ada_int_literal
+  unique int id: @ada_int_literal,
+  string value: string ref
 );
 
 ada_interface_kind_limited_def(
@@ -1673,7 +1676,8 @@ ada_null_component_decl_def(
 );
 
 ada_null_literal_def(
-  unique int id: @ada_null_literal
+  unique int id: @ada_null_literal,
+  string value: string ref
 );
 
 ada_null_record_aggregate_def(
@@ -1701,99 +1705,123 @@ ada_object_decl_def(
 );
 
 ada_op_abs_def(
-  unique int id: @ada_op_abs
+  unique int id: @ada_op_abs,
+  string value: string ref
 );
 
 ada_op_and_def(
-  unique int id: @ada_op_and
+  unique int id: @ada_op_and,
+  string value: string ref
 );
 
 ada_op_and_then_def(
-  unique int id: @ada_op_and_then
+  unique int id: @ada_op_and_then,
+  string value: string ref
 );
 
 ada_op_concat_def(
-  unique int id: @ada_op_concat
+  unique int id: @ada_op_concat,
+  string value: string ref
 );
 
 ada_op_div_def(
-  unique int id: @ada_op_div
+  unique int id: @ada_op_div,
+  string value: string ref
 );
 
 ada_op_double_dot_def(
-  unique int id: @ada_op_double_dot
+  unique int id: @ada_op_double_dot,
+  string value: string ref
 );
 
 ada_op_eq_def(
-  unique int id: @ada_op_eq
+  unique int id: @ada_op_eq,
+  string value: string ref
 );
 
 ada_op_gt_def(
-  unique int id: @ada_op_gt
+  unique int id: @ada_op_gt,
+  string value: string ref
 );
 
 ada_op_gte_def(
-  unique int id: @ada_op_gte
+  unique int id: @ada_op_gte,
+  string value: string ref
 );
 
 ada_op_in_def(
-  unique int id: @ada_op_in
+  unique int id: @ada_op_in,
+  string value: string ref
 );
 
 ada_op_lt_def(
-  unique int id: @ada_op_lt
+  unique int id: @ada_op_lt,
+  string value: string ref
 );
 
 ada_op_lte_def(
-  unique int id: @ada_op_lte
+  unique int id: @ada_op_lte,
+  string value: string ref
 );
 
 ada_op_minus_def(
-  unique int id: @ada_op_minus
+  unique int id: @ada_op_minus,
+  string value: string ref
 );
 
 ada_op_mod_def(
-  unique int id: @ada_op_mod
+  unique int id: @ada_op_mod,
+  string value: string ref
 );
 
 ada_op_mult_def(
-  unique int id: @ada_op_mult
+  unique int id: @ada_op_mult,
+  string value: string ref
 );
 
 ada_op_neq_def(
-  unique int id: @ada_op_neq
+  unique int id: @ada_op_neq,
+  string value: string ref
 );
 
 ada_op_not_def(
-  unique int id: @ada_op_not
+  unique int id: @ada_op_not,
+  string value: string ref
 );
 
 ada_op_not_in_def(
-  unique int id: @ada_op_not_in
+  unique int id: @ada_op_not_in,
+  string value: string ref
 );
 
 ada_op_or_def(
-  unique int id: @ada_op_or
+  unique int id: @ada_op_or,
+  string value: string ref
 );
 
 ada_op_or_else_def(
-  unique int id: @ada_op_or_else
+  unique int id: @ada_op_or_else,
+  string value: string ref
 );
 
 ada_op_plus_def(
-  unique int id: @ada_op_plus
+  unique int id: @ada_op_plus,
+  string value: string ref
 );
 
 ada_op_pow_def(
-  unique int id: @ada_op_pow
+  unique int id: @ada_op_pow,
+  string value: string ref
 );
 
 ada_op_rem_def(
-  unique int id: @ada_op_rem
+  unique int id: @ada_op_rem,
+  string value: string ref
 );
 
 ada_op_xor_def(
-  unique int id: @ada_op_xor
+  unique int id: @ada_op_xor,
+  string value: string ref
 );
 
 ada_ordinary_fixed_point_def_def(
@@ -1969,7 +1997,8 @@ ada_range_spec_def(
 );
 
 ada_real_literal_def(
-  unique int id: @ada_real_literal
+  unique int id: @ada_real_literal,
+  string value: string ref
 );
 
 ada_record_def_def(
@@ -2049,7 +2078,8 @@ ada_stmt_list_def(
 );
 
 ada_string_literal_def(
-  unique int id: @ada_string_literal
+  unique int id: @ada_string_literal,
+  string value: string ref
 );
 
 ada_subp_body_def(
