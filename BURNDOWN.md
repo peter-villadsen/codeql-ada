@@ -106,12 +106,21 @@ Status of the field (verified 2026-07-02):
   produced `schema/lal-nodes.json`: **405 node classes, 333 concrete**, with base-class
   links, list/token-node flags, and per-class syntax fields — sufficient input for the
   dbscheme/TRAP/QL generator (D-004).
-- [ ] **1.4 Study reference extractors.** Read `github/codeql` Ruby + QL extractors
-  (Rust, generated dbscheme, build-less) and `advanced-security/codeql-extractor-iac`
-  (packaging/distribution of a third-party extractor, incl. the release-tarball layout that
-  `codeql-extractor-action` consumes).
-- [ ] **1.5 Xref/perf spike.** Run LAL name resolution across a large GPR project; measure
-  time and failure rate (nameres can fail on individual nodes — need an error policy).
+- [x] **1.4 Study reference extractors.** *Done 2026-07-02.* Ruby's generated dbscheme
+  conventions extracted and mapped onto Libadalang's node model in
+  [docs/dbscheme-conventions.md](docs/dbscheme-conventions.md) — includes the standard
+  prelude tables, `_def`/optional-field/child-table patterns, union types from the LAL
+  class hierarchy, our added semantic layer (xref/types), and the Phase 2 generator plan.
+  Still open: study `codeql-extractor-iac`'s release-tarball layout before Phase 6.
+- [x] **1.5 Xref/perf spike.** *Done 2026-07-02* via `scripts/spike_nameres.py`:
+  - gpr2 (345 files): parse 749 files/s; nameres 280,898 names at **3,758 names/s**,
+    80.2% resolved, **0 errors** (no PropertyError crashes at all).
+  - AdaSAT (16 files): 4,703 names/s, 0 errors.
+  - Extrapolation: ~0.25 s/file single-threaded nameres → a 10k-file codebase ≈ 40 min
+    on one core; extraction parallelizes per compilation unit (multi-process — LAL
+    contexts are not thread-safe). No error policy needed beyond logging: failures are
+    "resolves to null", not exceptions. The ~20% unresolved is mostly defining
+    occurrences/pragma names the spike didn't filter; refine in the real extractor.
 
 ## Phase 2 — Database schema (design doc before code)
 
