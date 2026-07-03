@@ -80,9 +80,17 @@ Status of the field (verified 2026-07-02):
 
 ## Phase 1 — Spikes (throwaway code allowed; time-boxed)
 
-- [ ] **1.1 Toolchain spike.** *Half done 2026-07-02:* CodeQL CLI v2.25.6 installed
-  (`C:\Users\peter\tools\codeql`). Remaining: Libadalang — no PyPI wheels exist (verified),
-  so install via Alire or AdaCore GNAT FSF inside WSL Ubuntu (per D-008).
+- [x] **1.1 Toolchain spike.** *Done 2026-07-02.* CodeQL CLI v2.25.6 on Windows
+  (`C:\Users\peter\tools\codeql`). Libadalang: no prebuilt packages exist anywhere
+  (PyPI/Debian/Fedora all verified empty) — built from source in WSL **Debian 13**
+  (not Ubuntu) via `scripts/build-libadalang.sh`. ~10 failure/fix cycles, all encoded
+  in the script; key traps: undocumented deps (VSS, prettier-ada, liblktlang-from-
+  langkit-bootstrap, libgpr, gnatcoll_projects, gpr2, gprconfig_kb), version pinning
+  (langkit/LAL master + gprbuild v25.0.0 + gpr2 v26.0.0 — masters need GNAT ≥25,
+  Debian has FSF GNAT 14.2), and gpr2's incomplete source install. Result verified:
+  `import libadalang` parses `tests/hello/hello.adb` cleanly.
+  Env inside WSL: `source /root/lal-venv/bin/activate; export PYTHONPATH=/root/adacore/python
+  LD_LIBRARY_PATH=/root/adacore/lib`.
 - [x] **1.2 "Hello TRAP" spike.** *Done 2026-07-02.* Full pipeline proven on Windows:
   `extractors/ada` pack (stub Python extractor) → `codeql database create --language=ada
   --build-mode=none` → `ql/lib` + `ql/src` packs → `codeql query run` returns the extracted
@@ -94,9 +102,10 @@ Status of the field (verified 2026-07-02):
     global identity. (4) The QL library pack needs `ada.dbscheme.stats` next to its dbscheme
     (`codeql dataset measure` generates it) or query compilation fails. (5) Local pack
     resolution works with `--additional-packs=ql`.
-- [ ] **1.3 LAL introspection spike.** Dump the full node-kind hierarchy, fields, and token
-  types from LAL's Python introspection; confirm it contains everything needed for generation
-  (decision 0.4).
+- [x] **1.3 LAL introspection spike.** *Done 2026-07-02.* `scripts/dump_lal_nodes.py`
+  produced `schema/lal-nodes.json`: **405 node classes, 333 concrete**, with base-class
+  links, list/token-node flags, and per-class syntax fields — sufficient input for the
+  dbscheme/TRAP/QL generator (D-004).
 - [ ] **1.4 Study reference extractors.** Read `github/codeql` Ruby + QL extractors
   (Rust, generated dbscheme, build-less) and `advanced-security/codeql-extractor-iac`
   (packaging/distribution of a third-party extractor, incl. the release-tarball layout that

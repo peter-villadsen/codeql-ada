@@ -1,0 +1,4612 @@
+{
+  "libadalang_version": "undefined",
+  "node_count": 405,
+  "concrete_count": 333,
+  "nodes": [
+    {
+      "name": "AbortAbsent",
+      "base": "AbortNode",
+      "concrete": true,
+      "kind_name": "AbortAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AbortNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AbortPresent",
+      "base": "AbortNode",
+      "concrete": true,
+      "kind_name": "AbortPresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AbortStmt",
+      "base": "SimpleStmt",
+      "concrete": true,
+      "kind_name": "AbortStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_names"
+      ]
+    },
+    {
+      "name": "AbstractAbsent",
+      "base": "AbstractNode",
+      "concrete": true,
+      "kind_name": "AbstractAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AbstractFormalSubpDecl",
+      "base": "FormalSubpDecl",
+      "concrete": true,
+      "kind_name": "AbstractFormalSubpDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AbstractNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AbstractPresent",
+      "base": "AbstractNode",
+      "concrete": true,
+      "kind_name": "AbstractPresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AbstractStateDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "AbstractStateDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name"
+      ]
+    },
+    {
+      "name": "AbstractStateDeclExpr",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "AbstractStateDeclExpr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_state_decl"
+      ]
+    },
+    {
+      "name": "AbstractStateDeclList",
+      "base": "AdaNodeList",
+      "concrete": true,
+      "kind_name": "AbstractStateDeclList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AbstractSubpDecl",
+      "base": "ClassicSubpDecl",
+      "concrete": true,
+      "kind_name": "AbstractSubpDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AcceptStmt",
+      "base": "CompositeStmt",
+      "concrete": true,
+      "kind_name": "AcceptStmt",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_body_decl",
+        "f_entry_index_expr",
+        "f_params"
+      ]
+    },
+    {
+      "name": "AcceptStmtBody",
+      "base": "BodyNode",
+      "concrete": true,
+      "kind_name": "AcceptStmtBody",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name"
+      ]
+    },
+    {
+      "name": "AcceptStmtWithStmts",
+      "base": "AcceptStmt",
+      "concrete": true,
+      "kind_name": "AcceptStmtWithStmts",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_end_name",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "AccessDef",
+      "base": "TypeDef",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_has_not_null"
+      ]
+    },
+    {
+      "name": "AccessToSubpDef",
+      "base": "AccessDef",
+      "concrete": true,
+      "kind_name": "AccessToSubpDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_has_protected",
+        "f_subp_spec"
+      ]
+    },
+    {
+      "name": "AdaList",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AdaNode",
+      "base": "object",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AdaNodeList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "AdaNodeList",
+      "abstract_heuristic": true,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "Aggregate",
+      "base": "BaseAggregate",
+      "concrete": true,
+      "kind_name": "Aggregate",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AggregateAssoc",
+      "base": "BasicAssoc",
+      "concrete": true,
+      "kind_name": "AggregateAssoc",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_designators",
+        "f_r_expr"
+      ]
+    },
+    {
+      "name": "AliasedAbsent",
+      "base": "AliasedNode",
+      "concrete": true,
+      "kind_name": "AliasedAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AliasedNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AliasedPresent",
+      "base": "AliasedNode",
+      "concrete": true,
+      "kind_name": "AliasedPresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AllAbsent",
+      "base": "AllNode",
+      "concrete": true,
+      "kind_name": "AllAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AllNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AllPresent",
+      "base": "AllNode",
+      "concrete": true,
+      "kind_name": "AllPresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "Allocator",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "Allocator",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_subpool",
+        "f_type_or_expr"
+      ]
+    },
+    {
+      "name": "AlternativesList",
+      "base": "AdaNodeList",
+      "concrete": true,
+      "kind_name": "AlternativesList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AnonymousExprDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "AnonymousExprDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr",
+        "f_name"
+      ]
+    },
+    {
+      "name": "AnonymousType",
+      "base": "TypeExpr",
+      "concrete": true,
+      "kind_name": "AnonymousType",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_type_decl"
+      ]
+    },
+    {
+      "name": "AnonymousTypeAccessDef",
+      "base": "BaseTypeAccessDef",
+      "concrete": true,
+      "kind_name": "AnonymousTypeAccessDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_type_decl"
+      ]
+    },
+    {
+      "name": "AnonymousTypeDecl",
+      "base": "TypeDecl",
+      "concrete": true,
+      "kind_name": "AnonymousTypeDecl",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ArrayIndices",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ArraySubcomponentChoiceName",
+      "base": "Name",
+      "concrete": true,
+      "kind_name": "ArraySubcomponentChoiceName",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name",
+        "f_suffix"
+      ]
+    },
+    {
+      "name": "ArrayTypeDef",
+      "base": "TypeDef",
+      "concrete": true,
+      "kind_name": "ArrayTypeDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_component_type",
+        "f_indices"
+      ]
+    },
+    {
+      "name": "AspectAssoc",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "AspectAssoc",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr",
+        "f_id"
+      ]
+    },
+    {
+      "name": "AspectAssocList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "AspectAssocList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AspectClause",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AspectSpec",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "AspectSpec",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_aspect_assocs"
+      ]
+    },
+    {
+      "name": "AssertionLevelDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "AssertionLevelDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name"
+      ]
+    },
+    {
+      "name": "AssignStmt",
+      "base": "SimpleStmt",
+      "concrete": true,
+      "kind_name": "AssignStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_dest",
+        "f_expr"
+      ]
+    },
+    {
+      "name": "AssocList",
+      "base": "BasicAssocList",
+      "concrete": true,
+      "kind_name": "AssocList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "AtClause",
+      "base": "AspectClause",
+      "concrete": true,
+      "kind_name": "AtClause",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr",
+        "f_name"
+      ]
+    },
+    {
+      "name": "AttributeDefClause",
+      "base": "AspectClause",
+      "concrete": true,
+      "kind_name": "AttributeDefClause",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_attribute_expr",
+        "f_expr"
+      ]
+    },
+    {
+      "name": "AttributeRef",
+      "base": "Name",
+      "concrete": true,
+      "kind_name": "AttributeRef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_args",
+        "f_attribute",
+        "f_prefix"
+      ]
+    },
+    {
+      "name": "BaseAggregate",
+      "base": "Expr",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_ancestor_expr",
+        "f_assocs"
+      ]
+    },
+    {
+      "name": "BaseAssoc",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BaseAssocList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "BaseAssocList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BaseFormalParamDecl",
+      "base": "BasicDecl",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BaseFormalParamHolder",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BaseId",
+      "base": "SingleTokNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BaseLoopStmt",
+      "base": "CompositeStmt",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_end_name",
+        "f_spec",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "BasePackageDecl",
+      "base": "BasicDecl",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_end_name",
+        "f_package_name",
+        "f_private_part",
+        "f_public_part"
+      ]
+    },
+    {
+      "name": "BaseRecordDef",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_components"
+      ]
+    },
+    {
+      "name": "BaseSubpBody",
+      "base": "BodyNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_overriding",
+        "f_subp_spec"
+      ]
+    },
+    {
+      "name": "BaseSubpSpec",
+      "base": "BaseFormalParamHolder",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BaseSubtypeDecl",
+      "base": "BaseTypeDecl",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BaseTypeAccessDef",
+      "base": "AccessDef",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BaseTypeDecl",
+      "base": "BasicDecl",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name"
+      ]
+    },
+    {
+      "name": "BasicAssoc",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BasicAssocList",
+      "base": "AdaList",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BasicDecl",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_aspects"
+      ]
+    },
+    {
+      "name": "BasicSubpDecl",
+      "base": "BasicDecl",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BeginBlock",
+      "base": "BlockStmt",
+      "concrete": true,
+      "kind_name": "BeginBlock",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_end_name",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "BinOp",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "BinOp",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_left",
+        "f_op",
+        "f_right"
+      ]
+    },
+    {
+      "name": "BlockStmt",
+      "base": "CompositeStmt",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BodyNode",
+      "base": "BasicDecl",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BodyStub",
+      "base": "BodyNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BoxExpr",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "BoxExpr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BracketAggregate",
+      "base": "Aggregate",
+      "concrete": true,
+      "kind_name": "BracketAggregate",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "BracketDeltaAggregate",
+      "base": "DeltaAggregate",
+      "concrete": true,
+      "kind_name": "BracketDeltaAggregate",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "CallExpr",
+      "base": "Name",
+      "concrete": true,
+      "kind_name": "CallExpr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name",
+        "f_suffix"
+      ]
+    },
+    {
+      "name": "CallStmt",
+      "base": "SimpleStmt",
+      "concrete": true,
+      "kind_name": "CallStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_call"
+      ]
+    },
+    {
+      "name": "CaseExpr",
+      "base": "CondExpr",
+      "concrete": true,
+      "kind_name": "CaseExpr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_cases",
+        "f_expr"
+      ]
+    },
+    {
+      "name": "CaseExprAlternative",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "CaseExprAlternative",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_choices",
+        "f_expr"
+      ]
+    },
+    {
+      "name": "CaseExprAlternativeList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "CaseExprAlternativeList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "CaseStmt",
+      "base": "CompositeStmt",
+      "concrete": true,
+      "kind_name": "CaseStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_alternatives",
+        "f_expr",
+        "f_pragmas"
+      ]
+    },
+    {
+      "name": "CaseStmtAlternative",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "CaseStmtAlternative",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_choices",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "CaseStmtAlternativeList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "CaseStmtAlternativeList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "CharLiteral",
+      "base": "BaseId",
+      "concrete": true,
+      "kind_name": "CharLiteral",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ClassicSubpDecl",
+      "base": "BasicSubpDecl",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_overriding",
+        "f_subp_spec"
+      ]
+    },
+    {
+      "name": "ClasswideTypeDecl",
+      "base": "BaseTypeDecl",
+      "concrete": true,
+      "kind_name": "ClasswideTypeDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "CompilationUnit",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "CompilationUnit",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_body",
+        "f_pragmas",
+        "f_prelude"
+      ]
+    },
+    {
+      "name": "CompilationUnitList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "CompilationUnitList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ComponentClause",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "ComponentClause",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_id",
+        "f_position",
+        "f_range"
+      ]
+    },
+    {
+      "name": "ComponentDecl",
+      "base": "BaseFormalParamDecl",
+      "concrete": true,
+      "kind_name": "ComponentDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_component_def",
+        "f_default_expr",
+        "f_ids"
+      ]
+    },
+    {
+      "name": "ComponentDef",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "ComponentDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_has_aliased",
+        "f_has_constant",
+        "f_type_expr"
+      ]
+    },
+    {
+      "name": "ComponentList",
+      "base": "BaseFormalParamHolder",
+      "concrete": true,
+      "kind_name": "ComponentList",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_components",
+        "f_variant_part"
+      ]
+    },
+    {
+      "name": "CompositeConstraint",
+      "base": "Constraint",
+      "concrete": true,
+      "kind_name": "CompositeConstraint",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_constraints"
+      ]
+    },
+    {
+      "name": "CompositeConstraintAssoc",
+      "base": "BasicAssoc",
+      "concrete": true,
+      "kind_name": "CompositeConstraintAssoc",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_constraint_expr",
+        "f_ids"
+      ]
+    },
+    {
+      "name": "CompositeStmt",
+      "base": "Stmt",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ConcatOp",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "ConcatOp",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_first_operand",
+        "f_other_operands"
+      ]
+    },
+    {
+      "name": "ConcatOperand",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "ConcatOperand",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_operand",
+        "f_operator"
+      ]
+    },
+    {
+      "name": "ConcatOperandList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "ConcatOperandList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ConcreteFormalSubpDecl",
+      "base": "FormalSubpDecl",
+      "concrete": true,
+      "kind_name": "ConcreteFormalSubpDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ConcreteTypeDecl",
+      "base": "TypeDecl",
+      "concrete": true,
+      "kind_name": "ConcreteTypeDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "CondExpr",
+      "base": "Expr",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ConstantAbsent",
+      "base": "ConstantNode",
+      "concrete": true,
+      "kind_name": "ConstantAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ConstantNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ConstantPresent",
+      "base": "ConstantNode",
+      "concrete": true,
+      "kind_name": "ConstantPresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ConstrainedArrayIndices",
+      "base": "ArrayIndices",
+      "concrete": true,
+      "kind_name": "ConstrainedArrayIndices",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_list"
+      ]
+    },
+    {
+      "name": "ConstrainedSubtypeIndication",
+      "base": "SubtypeIndication",
+      "concrete": true,
+      "kind_name": "ConstrainedSubtypeIndication",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "Constraint",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ConstraintList",
+      "base": "AdaNodeList",
+      "concrete": true,
+      "kind_name": "ConstraintList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "DecimalFixedPointDef",
+      "base": "RealTypeDef",
+      "concrete": true,
+      "kind_name": "DecimalFixedPointDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_delta",
+        "f_digits",
+        "f_range"
+      ]
+    },
+    {
+      "name": "DeclBlock",
+      "base": "BlockStmt",
+      "concrete": true,
+      "kind_name": "DeclBlock",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decls",
+        "f_end_name",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "DeclExpr",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "DeclExpr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decls",
+        "f_expr"
+      ]
+    },
+    {
+      "name": "DeclList",
+      "base": "AdaNodeList",
+      "concrete": true,
+      "kind_name": "DeclList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "DeclarativePart",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "DeclarativePart",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decls"
+      ]
+    },
+    {
+      "name": "DefiningName",
+      "base": "Name",
+      "concrete": true,
+      "kind_name": "DefiningName",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name"
+      ]
+    },
+    {
+      "name": "DefiningNameList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "DefiningNameList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "DelayStmt",
+      "base": "SimpleStmt",
+      "concrete": true,
+      "kind_name": "DelayStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr",
+        "f_has_until"
+      ]
+    },
+    {
+      "name": "DeltaAggregate",
+      "base": "BaseAggregate",
+      "concrete": true,
+      "kind_name": "DeltaAggregate",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "DeltaConstraint",
+      "base": "Constraint",
+      "concrete": true,
+      "kind_name": "DeltaConstraint",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_delta",
+        "f_range"
+      ]
+    },
+    {
+      "name": "DerivedTypeDef",
+      "base": "TypeDef",
+      "concrete": true,
+      "kind_name": "DerivedTypeDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_has_abstract",
+        "f_has_limited",
+        "f_has_synchronized",
+        "f_has_with_private",
+        "f_interfaces",
+        "f_record_extension",
+        "f_subtype_indication"
+      ]
+    },
+    {
+      "name": "DigitsConstraint",
+      "base": "Constraint",
+      "concrete": true,
+      "kind_name": "DigitsConstraint",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_digits",
+        "f_range"
+      ]
+    },
+    {
+      "name": "DiscreteBaseSubtypeDecl",
+      "base": "BaseSubtypeDecl",
+      "concrete": true,
+      "kind_name": "DiscreteBaseSubtypeDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "DiscreteSubtypeIndication",
+      "base": "SubtypeIndication",
+      "concrete": true,
+      "kind_name": "DiscreteSubtypeIndication",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "DiscreteSubtypeName",
+      "base": "Name",
+      "concrete": true,
+      "kind_name": "DiscreteSubtypeName",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_subtype"
+      ]
+    },
+    {
+      "name": "DiscriminantChoiceList",
+      "base": "IdentifierList",
+      "concrete": true,
+      "kind_name": "DiscriminantChoiceList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "DiscriminantPart",
+      "base": "BaseFormalParamHolder",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "DiscriminantSpec",
+      "base": "BaseFormalParamDecl",
+      "concrete": true,
+      "kind_name": "DiscriminantSpec",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_default_expr",
+        "f_ids",
+        "f_type_expr"
+      ]
+    },
+    {
+      "name": "DiscriminantSpecList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "DiscriminantSpecList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "DottedName",
+      "base": "Name",
+      "concrete": true,
+      "kind_name": "DottedName",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_prefix",
+        "f_suffix"
+      ]
+    },
+    {
+      "name": "ElsePart",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "ElsePart",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "ElsifExprPart",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "ElsifExprPart",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_cond_expr",
+        "f_then_expr"
+      ]
+    },
+    {
+      "name": "ElsifExprPartList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "ElsifExprPartList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ElsifStmtPart",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "ElsifStmtPart",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_cond_expr",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "ElsifStmtPartList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "ElsifStmtPartList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "EndName",
+      "base": "Name",
+      "concrete": true,
+      "kind_name": "EndName",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name"
+      ]
+    },
+    {
+      "name": "EntryBody",
+      "base": "BodyNode",
+      "concrete": true,
+      "kind_name": "EntryBody",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_barrier",
+        "f_decls",
+        "f_end_name",
+        "f_entry_name",
+        "f_index_spec",
+        "f_params",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "EntryCompletionFormalParams",
+      "base": "BaseFormalParamHolder",
+      "concrete": true,
+      "kind_name": "EntryCompletionFormalParams",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_params"
+      ]
+    },
+    {
+      "name": "EntryDecl",
+      "base": "BasicSubpDecl",
+      "concrete": true,
+      "kind_name": "EntryDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_overriding",
+        "f_spec"
+      ]
+    },
+    {
+      "name": "EntryIndexSpec",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "EntryIndexSpec",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_id",
+        "f_subtype"
+      ]
+    },
+    {
+      "name": "EntrySpec",
+      "base": "BaseSubpSpec",
+      "concrete": true,
+      "kind_name": "EntrySpec",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_entry_name",
+        "f_entry_params",
+        "f_family_type"
+      ]
+    },
+    {
+      "name": "EnumLitSynthTypeExpr",
+      "base": "TypeExpr",
+      "concrete": true,
+      "kind_name": "EnumLitSynthTypeExpr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "EnumLiteralDecl",
+      "base": "BasicSubpDecl",
+      "concrete": true,
+      "kind_name": "EnumLiteralDecl",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name"
+      ]
+    },
+    {
+      "name": "EnumLiteralDeclList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "EnumLiteralDeclList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "EnumRepClause",
+      "base": "AspectClause",
+      "concrete": true,
+      "kind_name": "EnumRepClause",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_aggregate",
+        "f_type_name"
+      ]
+    },
+    {
+      "name": "EnumSubpSpec",
+      "base": "BaseSubpSpec",
+      "concrete": true,
+      "kind_name": "EnumSubpSpec",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "EnumTypeDef",
+      "base": "TypeDef",
+      "concrete": true,
+      "kind_name": "EnumTypeDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_enum_literals"
+      ]
+    },
+    {
+      "name": "ErrorDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "ErrorDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ErrorStmt",
+      "base": "Stmt",
+      "concrete": true,
+      "kind_name": "ErrorStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ExceptionDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "ExceptionDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_ids",
+        "f_renames"
+      ]
+    },
+    {
+      "name": "ExceptionHandler",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "ExceptionHandler",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_exception_name",
+        "f_handled_exceptions",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "ExitStmt",
+      "base": "SimpleStmt",
+      "concrete": true,
+      "kind_name": "ExitStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_cond_expr",
+        "f_loop_name"
+      ]
+    },
+    {
+      "name": "ExplicitDeref",
+      "base": "Name",
+      "concrete": true,
+      "kind_name": "ExplicitDeref",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_prefix"
+      ]
+    },
+    {
+      "name": "Expr",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ExprAlternativesList",
+      "base": "ExprList",
+      "concrete": true,
+      "kind_name": "ExprAlternativesList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ExprFunction",
+      "base": "BaseSubpBody",
+      "concrete": true,
+      "kind_name": "ExprFunction",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr"
+      ]
+    },
+    {
+      "name": "ExprList",
+      "base": "AdaList",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ExtendedReturnStmt",
+      "base": "CompositeStmt",
+      "concrete": true,
+      "kind_name": "ExtendedReturnStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decl",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "ExtendedReturnStmtObjectDecl",
+      "base": "ObjectDecl",
+      "concrete": true,
+      "kind_name": "ExtendedReturnStmtObjectDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "FinallyPart",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "FinallyPart",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "FloatingPointDef",
+      "base": "RealTypeDef",
+      "concrete": true,
+      "kind_name": "FloatingPointDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_num_digits",
+        "f_range"
+      ]
+    },
+    {
+      "name": "ForLoopIterFilter",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "ForLoopIterFilter",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr"
+      ]
+    },
+    {
+      "name": "ForLoopSpec",
+      "base": "LoopSpec",
+      "concrete": true,
+      "kind_name": "ForLoopSpec",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_has_reverse",
+        "f_iter_expr",
+        "f_iter_filter",
+        "f_loop_type",
+        "f_var_decl"
+      ]
+    },
+    {
+      "name": "ForLoopStmt",
+      "base": "BaseLoopStmt",
+      "concrete": true,
+      "kind_name": "ForLoopStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ForLoopVarDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "ForLoopVarDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_id",
+        "f_id_type"
+      ]
+    },
+    {
+      "name": "FormalDiscreteTypeDef",
+      "base": "TypeDef",
+      "concrete": true,
+      "kind_name": "FormalDiscreteTypeDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "FormalSubpDecl",
+      "base": "ClassicSubpDecl",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_default_expr"
+      ]
+    },
+    {
+      "name": "FormalTypeDecl",
+      "base": "TypeDecl",
+      "concrete": true,
+      "kind_name": "FormalTypeDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_default_type"
+      ]
+    },
+    {
+      "name": "FormatStringChunk",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "FormatStringChunk",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr",
+        "f_string_tok"
+      ]
+    },
+    {
+      "name": "FormatStringChunkList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "FormatStringChunkList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "FormatStringLiteral",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "FormatStringLiteral",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_mid_exprs",
+        "f_opening_chunk",
+        "f_trailing_expr"
+      ]
+    },
+    {
+      "name": "FormatStringTokEnd",
+      "base": "FormatStringTokNode",
+      "concrete": true,
+      "kind_name": "FormatStringTokEnd",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "FormatStringTokMid",
+      "base": "FormatStringTokNode",
+      "concrete": true,
+      "kind_name": "FormatStringTokMid",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "FormatStringTokNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "FormatStringTokStart",
+      "base": "FormatStringTokNode",
+      "concrete": true,
+      "kind_name": "FormatStringTokStart",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "FormatStringTokString",
+      "base": "FormatStringTokStart",
+      "concrete": true,
+      "kind_name": "FormatStringTokString",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "GenericDecl",
+      "base": "BasicDecl",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_formal_part"
+      ]
+    },
+    {
+      "name": "GenericFormal",
+      "base": "BaseFormalParamDecl",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decl"
+      ]
+    },
+    {
+      "name": "GenericFormalObjDecl",
+      "base": "GenericFormal",
+      "concrete": true,
+      "kind_name": "GenericFormalObjDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "GenericFormalPackage",
+      "base": "GenericFormal",
+      "concrete": true,
+      "kind_name": "GenericFormalPackage",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "GenericFormalPart",
+      "base": "BaseFormalParamHolder",
+      "concrete": true,
+      "kind_name": "GenericFormalPart",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decls"
+      ]
+    },
+    {
+      "name": "GenericFormalSubpDecl",
+      "base": "GenericFormal",
+      "concrete": true,
+      "kind_name": "GenericFormalSubpDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "GenericFormalTypeDecl",
+      "base": "GenericFormal",
+      "concrete": true,
+      "kind_name": "GenericFormalTypeDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "GenericInstantiation",
+      "base": "BasicDecl",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "GenericPackageDecl",
+      "base": "GenericDecl",
+      "concrete": true,
+      "kind_name": "GenericPackageDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_package_decl"
+      ]
+    },
+    {
+      "name": "GenericPackageInstantiation",
+      "base": "GenericInstantiation",
+      "concrete": true,
+      "kind_name": "GenericPackageInstantiation",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_generic_pkg_name",
+        "f_name",
+        "f_params"
+      ]
+    },
+    {
+      "name": "GenericPackageInternal",
+      "base": "BasePackageDecl",
+      "concrete": true,
+      "kind_name": "GenericPackageInternal",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "GenericPackageRenamingDecl",
+      "base": "GenericRenamingDecl",
+      "concrete": true,
+      "kind_name": "GenericPackageRenamingDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name",
+        "f_renames"
+      ]
+    },
+    {
+      "name": "GenericRenamingDecl",
+      "base": "BasicDecl",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "GenericSubpDecl",
+      "base": "GenericDecl",
+      "concrete": true,
+      "kind_name": "GenericSubpDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_subp_decl"
+      ]
+    },
+    {
+      "name": "GenericSubpInstantiation",
+      "base": "GenericInstantiation",
+      "concrete": true,
+      "kind_name": "GenericSubpInstantiation",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_generic_subp_name",
+        "f_kind",
+        "f_overriding",
+        "f_params",
+        "f_subp_name"
+      ]
+    },
+    {
+      "name": "GenericSubpInternal",
+      "base": "BasicSubpDecl",
+      "concrete": true,
+      "kind_name": "GenericSubpInternal",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_subp_spec"
+      ]
+    },
+    {
+      "name": "GenericSubpRenamingDecl",
+      "base": "GenericRenamingDecl",
+      "concrete": true,
+      "kind_name": "GenericSubpRenamingDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_kind",
+        "f_name",
+        "f_renames"
+      ]
+    },
+    {
+      "name": "GotoStmt",
+      "base": "SimpleStmt",
+      "concrete": true,
+      "kind_name": "GotoStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_label_name"
+      ]
+    },
+    {
+      "name": "HandledStmts",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "HandledStmts",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_exceptions",
+        "f_finally_part",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "Identifier",
+      "base": "BaseId",
+      "concrete": true,
+      "kind_name": "Identifier",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "IdentifierList",
+      "base": "AdaList",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "IfExpr",
+      "base": "CondExpr",
+      "concrete": true,
+      "kind_name": "IfExpr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_alternatives",
+        "f_cond_expr",
+        "f_else_expr",
+        "f_then_expr"
+      ]
+    },
+    {
+      "name": "IfStmt",
+      "base": "CompositeStmt",
+      "concrete": true,
+      "kind_name": "IfStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_alternatives",
+        "f_cond_expr",
+        "f_else_part",
+        "f_then_stmts"
+      ]
+    },
+    {
+      "name": "IncompleteFormalTypeDecl",
+      "base": "IncompleteTypeDecl",
+      "concrete": true,
+      "kind_name": "IncompleteFormalTypeDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_default_type",
+        "f_is_tagged"
+      ]
+    },
+    {
+      "name": "IncompleteTaggedTypeDecl",
+      "base": "IncompleteTypeDecl",
+      "concrete": true,
+      "kind_name": "IncompleteTaggedTypeDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_has_abstract"
+      ]
+    },
+    {
+      "name": "IncompleteTypeDecl",
+      "base": "BaseTypeDecl",
+      "concrete": true,
+      "kind_name": "IncompleteTypeDecl",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_discriminants"
+      ]
+    },
+    {
+      "name": "IntLiteral",
+      "base": "NumLiteral",
+      "concrete": true,
+      "kind_name": "IntLiteral",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "InterfaceKind",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "InterfaceKindLimited",
+      "base": "InterfaceKind",
+      "concrete": true,
+      "kind_name": "InterfaceKindLimited",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "InterfaceKindProtected",
+      "base": "InterfaceKind",
+      "concrete": true,
+      "kind_name": "InterfaceKindProtected",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "InterfaceKindSynchronized",
+      "base": "InterfaceKind",
+      "concrete": true,
+      "kind_name": "InterfaceKindSynchronized",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "InterfaceKindTask",
+      "base": "InterfaceKind",
+      "concrete": true,
+      "kind_name": "InterfaceKindTask",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "InterfaceTypeDef",
+      "base": "TypeDef",
+      "concrete": true,
+      "kind_name": "InterfaceTypeDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_interface_kind",
+        "f_interfaces"
+      ]
+    },
+    {
+      "name": "IterType",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "IterTypeIn",
+      "base": "IterType",
+      "concrete": true,
+      "kind_name": "IterTypeIn",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "IterTypeOf",
+      "base": "IterType",
+      "concrete": true,
+      "kind_name": "IterTypeOf",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "IteratedAssoc",
+      "base": "BasicAssoc",
+      "concrete": true,
+      "kind_name": "IteratedAssoc",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_key_expr",
+        "f_r_expr",
+        "f_spec"
+      ]
+    },
+    {
+      "name": "KnownDiscriminantPart",
+      "base": "DiscriminantPart",
+      "concrete": true,
+      "kind_name": "KnownDiscriminantPart",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_discr_specs"
+      ]
+    },
+    {
+      "name": "Label",
+      "base": "SimpleStmt",
+      "concrete": true,
+      "kind_name": "Label",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decl"
+      ]
+    },
+    {
+      "name": "LabelDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "LabelDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name"
+      ]
+    },
+    {
+      "name": "LibraryItem",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "LibraryItem",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_has_private",
+        "f_item"
+      ]
+    },
+    {
+      "name": "LimitedAbsent",
+      "base": "LimitedNode",
+      "concrete": true,
+      "kind_name": "LimitedAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "LimitedNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "LimitedPresent",
+      "base": "LimitedNode",
+      "concrete": true,
+      "kind_name": "LimitedPresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "LoopSpec",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "LoopStmt",
+      "base": "BaseLoopStmt",
+      "concrete": true,
+      "kind_name": "LoopStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "MembershipExpr",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "MembershipExpr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr",
+        "f_membership_exprs",
+        "f_op"
+      ]
+    },
+    {
+      "name": "ModIntTypeDef",
+      "base": "TypeDef",
+      "concrete": true,
+      "kind_name": "ModIntTypeDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr"
+      ]
+    },
+    {
+      "name": "Mode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ModeDefault",
+      "base": "Mode",
+      "concrete": true,
+      "kind_name": "ModeDefault",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ModeIn",
+      "base": "Mode",
+      "concrete": true,
+      "kind_name": "ModeIn",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ModeInOut",
+      "base": "Mode",
+      "concrete": true,
+      "kind_name": "ModeInOut",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ModeOut",
+      "base": "Mode",
+      "concrete": true,
+      "kind_name": "ModeOut",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "MultiAbstractStateDecl",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "MultiAbstractStateDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decls"
+      ]
+    },
+    {
+      "name": "MultiDimArrayAssoc",
+      "base": "AggregateAssoc",
+      "concrete": true,
+      "kind_name": "MultiDimArrayAssoc",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "Name",
+      "base": "Expr",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "NameList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "NameList",
+      "abstract_heuristic": true,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "NamedStmt",
+      "base": "CompositeStmt",
+      "concrete": true,
+      "kind_name": "NamedStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decl",
+        "f_stmt"
+      ]
+    },
+    {
+      "name": "NamedStmtDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "NamedStmtDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name"
+      ]
+    },
+    {
+      "name": "NoTypeObjectRenamingDecl",
+      "base": "ObjectDecl",
+      "concrete": true,
+      "kind_name": "NoTypeObjectRenamingDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "NotNull",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "NotNullAbsent",
+      "base": "NotNull",
+      "concrete": true,
+      "kind_name": "NotNullAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "NotNullPresent",
+      "base": "NotNull",
+      "concrete": true,
+      "kind_name": "NotNullPresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "NullComponentDecl",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "NullComponentDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "NullLiteral",
+      "base": "SingleTokNode",
+      "concrete": true,
+      "kind_name": "NullLiteral",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "NullRecordAggregate",
+      "base": "BaseAggregate",
+      "concrete": true,
+      "kind_name": "NullRecordAggregate",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "NullRecordDef",
+      "base": "BaseRecordDef",
+      "concrete": true,
+      "kind_name": "NullRecordDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "NullStmt",
+      "base": "SimpleStmt",
+      "concrete": true,
+      "kind_name": "NullStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "NullSubpDecl",
+      "base": "BaseSubpBody",
+      "concrete": true,
+      "kind_name": "NullSubpDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "NumLiteral",
+      "base": "SingleTokNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "NumberDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "NumberDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr",
+        "f_ids"
+      ]
+    },
+    {
+      "name": "ObjectDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "ObjectDecl",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_default_expr",
+        "f_has_aliased",
+        "f_has_constant",
+        "f_ids",
+        "f_mode",
+        "f_renaming_clause",
+        "f_type_expr"
+      ]
+    },
+    {
+      "name": "Op",
+      "base": "BaseId",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpAbs",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpAbs",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpAnd",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpAnd",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpAndThen",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpAndThen",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpConcat",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpConcat",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpDiv",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpDiv",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpDoubleDot",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpDoubleDot",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpEq",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpEq",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpGt",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpGt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpGte",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpGte",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpIn",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpIn",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpLt",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpLt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpLte",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpLte",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpMinus",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpMinus",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpMod",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpMod",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpMult",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpMult",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpNeq",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpNeq",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpNot",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpNot",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpNotIn",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpNotIn",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpOr",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpOr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpOrElse",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpOrElse",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpPlus",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpPlus",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpPow",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpPow",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpRem",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpRem",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OpXor",
+      "base": "Op",
+      "concrete": true,
+      "kind_name": "OpXor",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OrdinaryFixedPointDef",
+      "base": "RealTypeDef",
+      "concrete": true,
+      "kind_name": "OrdinaryFixedPointDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_delta",
+        "f_range"
+      ]
+    },
+    {
+      "name": "OthersDesignator",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "OthersDesignator",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OverridingNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OverridingNotOverriding",
+      "base": "OverridingNode",
+      "concrete": true,
+      "kind_name": "OverridingNotOverriding",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OverridingOverriding",
+      "base": "OverridingNode",
+      "concrete": true,
+      "kind_name": "OverridingOverriding",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "OverridingUnspecified",
+      "base": "OverridingNode",
+      "concrete": true,
+      "kind_name": "OverridingUnspecified",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "PackageBody",
+      "base": "BodyNode",
+      "concrete": true,
+      "kind_name": "PackageBody",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decls",
+        "f_end_name",
+        "f_package_name",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "PackageBodyStub",
+      "base": "BodyStub",
+      "concrete": true,
+      "kind_name": "PackageBodyStub",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name"
+      ]
+    },
+    {
+      "name": "PackageDecl",
+      "base": "BasePackageDecl",
+      "concrete": true,
+      "kind_name": "PackageDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "PackageRenamingDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "PackageRenamingDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name",
+        "f_renames"
+      ]
+    },
+    {
+      "name": "ParamAssoc",
+      "base": "BasicAssoc",
+      "concrete": true,
+      "kind_name": "ParamAssoc",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_designator",
+        "f_r_expr"
+      ]
+    },
+    {
+      "name": "ParamSpec",
+      "base": "BaseFormalParamDecl",
+      "concrete": true,
+      "kind_name": "ParamSpec",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_default_expr",
+        "f_has_aliased",
+        "f_ids",
+        "f_mode",
+        "f_type_expr"
+      ]
+    },
+    {
+      "name": "ParamSpecList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "ParamSpecList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "Params",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "Params",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_params"
+      ]
+    },
+    {
+      "name": "ParenAbstractStateDecl",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "ParenAbstractStateDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decl"
+      ]
+    },
+    {
+      "name": "ParenExpr",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "ParenExpr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr"
+      ]
+    },
+    {
+      "name": "ParentList",
+      "base": "NameList",
+      "concrete": true,
+      "kind_name": "ParentList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "PpDirective",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "PpElseDirective",
+      "base": "PpDirective",
+      "concrete": true,
+      "kind_name": "PpElseDirective",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "PpElsifDirective",
+      "base": "PpDirective",
+      "concrete": true,
+      "kind_name": "PpElsifDirective",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr",
+        "f_then_kw"
+      ]
+    },
+    {
+      "name": "PpEndIfDirective",
+      "base": "PpDirective",
+      "concrete": true,
+      "kind_name": "PpEndIfDirective",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "PpIfDirective",
+      "base": "PpDirective",
+      "concrete": true,
+      "kind_name": "PpIfDirective",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr",
+        "f_then_kw"
+      ]
+    },
+    {
+      "name": "PpThenKw",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "PpThenKw",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "PragmaArgumentAssoc",
+      "base": "BaseAssoc",
+      "concrete": true,
+      "kind_name": "PragmaArgumentAssoc",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr",
+        "f_name"
+      ]
+    },
+    {
+      "name": "PragmaNode",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "PragmaNode",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_args",
+        "f_id"
+      ]
+    },
+    {
+      "name": "PragmaNodeList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "PragmaNodeList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "PrivateAbsent",
+      "base": "PrivateNode",
+      "concrete": true,
+      "kind_name": "PrivateAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "PrivateNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "PrivatePart",
+      "base": "DeclarativePart",
+      "concrete": true,
+      "kind_name": "PrivatePart",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "PrivatePresent",
+      "base": "PrivateNode",
+      "concrete": true,
+      "kind_name": "PrivatePresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "PrivateTypeDef",
+      "base": "TypeDef",
+      "concrete": true,
+      "kind_name": "PrivateTypeDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_has_abstract",
+        "f_has_limited",
+        "f_has_tagged"
+      ]
+    },
+    {
+      "name": "ProtectedAbsent",
+      "base": "ProtectedNode",
+      "concrete": true,
+      "kind_name": "ProtectedAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ProtectedBody",
+      "base": "BodyNode",
+      "concrete": true,
+      "kind_name": "ProtectedBody",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decls",
+        "f_end_name",
+        "f_name"
+      ]
+    },
+    {
+      "name": "ProtectedBodyStub",
+      "base": "BodyStub",
+      "concrete": true,
+      "kind_name": "ProtectedBodyStub",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name"
+      ]
+    },
+    {
+      "name": "ProtectedDef",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "ProtectedDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_end_name",
+        "f_private_part",
+        "f_public_part"
+      ]
+    },
+    {
+      "name": "ProtectedNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ProtectedPresent",
+      "base": "ProtectedNode",
+      "concrete": true,
+      "kind_name": "ProtectedPresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ProtectedTypeDecl",
+      "base": "BaseTypeDecl",
+      "concrete": true,
+      "kind_name": "ProtectedTypeDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_definition",
+        "f_discriminants",
+        "f_interfaces"
+      ]
+    },
+    {
+      "name": "PublicPart",
+      "base": "DeclarativePart",
+      "concrete": true,
+      "kind_name": "PublicPart",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "QualExpr",
+      "base": "Name",
+      "concrete": true,
+      "kind_name": "QualExpr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_prefix",
+        "f_suffix"
+      ]
+    },
+    {
+      "name": "QuantifiedExpr",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "QuantifiedExpr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr",
+        "f_loop_spec",
+        "f_quantifier"
+      ]
+    },
+    {
+      "name": "Quantifier",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "QuantifierAll",
+      "base": "Quantifier",
+      "concrete": true,
+      "kind_name": "QuantifierAll",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "QuantifierSome",
+      "base": "Quantifier",
+      "concrete": true,
+      "kind_name": "QuantifierSome",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "RaiseExpr",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "RaiseExpr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_error_message",
+        "f_exception_name"
+      ]
+    },
+    {
+      "name": "RaiseStmt",
+      "base": "SimpleStmt",
+      "concrete": true,
+      "kind_name": "RaiseStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_error_message",
+        "f_exception_name"
+      ]
+    },
+    {
+      "name": "RangeConstraint",
+      "base": "Constraint",
+      "concrete": true,
+      "kind_name": "RangeConstraint",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_range"
+      ]
+    },
+    {
+      "name": "RangeSpec",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "RangeSpec",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_range"
+      ]
+    },
+    {
+      "name": "RealLiteral",
+      "base": "NumLiteral",
+      "concrete": true,
+      "kind_name": "RealLiteral",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "RealTypeDef",
+      "base": "TypeDef",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "RecordDef",
+      "base": "BaseRecordDef",
+      "concrete": true,
+      "kind_name": "RecordDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "RecordRepClause",
+      "base": "AspectClause",
+      "concrete": true,
+      "kind_name": "RecordRepClause",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_at_expr",
+        "f_components",
+        "f_name"
+      ]
+    },
+    {
+      "name": "RecordTypeDef",
+      "base": "TypeDef",
+      "concrete": true,
+      "kind_name": "RecordTypeDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_has_abstract",
+        "f_has_limited",
+        "f_has_tagged",
+        "f_record_def"
+      ]
+    },
+    {
+      "name": "ReduceAttributeRef",
+      "base": "Name",
+      "concrete": true,
+      "kind_name": "ReduceAttributeRef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_args",
+        "f_attribute",
+        "f_prefix"
+      ]
+    },
+    {
+      "name": "RelationOp",
+      "base": "BinOp",
+      "concrete": true,
+      "kind_name": "RelationOp",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "RenamingClause",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "RenamingClause",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_renamed_object"
+      ]
+    },
+    {
+      "name": "RequeueStmt",
+      "base": "SimpleStmt",
+      "concrete": true,
+      "kind_name": "RequeueStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_call_name",
+        "f_has_abort"
+      ]
+    },
+    {
+      "name": "ReturnStmt",
+      "base": "SimpleStmt",
+      "concrete": true,
+      "kind_name": "ReturnStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_return_expr"
+      ]
+    },
+    {
+      "name": "ReverseAbsent",
+      "base": "ReverseNode",
+      "concrete": true,
+      "kind_name": "ReverseAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ReverseNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ReversePresent",
+      "base": "ReverseNode",
+      "concrete": true,
+      "kind_name": "ReversePresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SelectStmt",
+      "base": "CompositeStmt",
+      "concrete": true,
+      "kind_name": "SelectStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_else_part",
+        "f_guards",
+        "f_then_abort_part"
+      ]
+    },
+    {
+      "name": "SelectWhenPart",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "SelectWhenPart",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_cond_expr",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "SelectWhenPartList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "SelectWhenPartList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SignedIntTypeDef",
+      "base": "TypeDef",
+      "concrete": true,
+      "kind_name": "SignedIntTypeDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_range"
+      ]
+    },
+    {
+      "name": "SimpleDeclStmt",
+      "base": "SimpleStmt",
+      "concrete": true,
+      "kind_name": "SimpleDeclStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decl"
+      ]
+    },
+    {
+      "name": "SimpleStmt",
+      "base": "Stmt",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SingleProtectedDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "SingleProtectedDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_definition",
+        "f_interfaces",
+        "f_name"
+      ]
+    },
+    {
+      "name": "SingleTaskDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "SingleTaskDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_task_type"
+      ]
+    },
+    {
+      "name": "SingleTaskTypeDecl",
+      "base": "TaskTypeDecl",
+      "concrete": true,
+      "kind_name": "SingleTaskTypeDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SingleTokNode",
+      "base": "Name",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "Stmt",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "StmtList",
+      "base": "AdaNodeList",
+      "concrete": true,
+      "kind_name": "StmtList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "StringLiteral",
+      "base": "BaseId",
+      "concrete": true,
+      "kind_name": "StringLiteral",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SubpBody",
+      "base": "BaseSubpBody",
+      "concrete": true,
+      "kind_name": "SubpBody",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decls",
+        "f_end_name",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "SubpBodyStub",
+      "base": "BodyStub",
+      "concrete": true,
+      "kind_name": "SubpBodyStub",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_overriding",
+        "f_subp_spec"
+      ]
+    },
+    {
+      "name": "SubpDecl",
+      "base": "ClassicSubpDecl",
+      "concrete": true,
+      "kind_name": "SubpDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SubpKind",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SubpKindFunction",
+      "base": "SubpKind",
+      "concrete": true,
+      "kind_name": "SubpKindFunction",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SubpKindProcedure",
+      "base": "SubpKind",
+      "concrete": true,
+      "kind_name": "SubpKindProcedure",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SubpRenamingDecl",
+      "base": "BaseSubpBody",
+      "concrete": true,
+      "kind_name": "SubpRenamingDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_renames"
+      ]
+    },
+    {
+      "name": "SubpSpec",
+      "base": "BaseSubpSpec",
+      "concrete": true,
+      "kind_name": "SubpSpec",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_subp_kind",
+        "f_subp_name",
+        "f_subp_params",
+        "f_subp_returns"
+      ]
+    },
+    {
+      "name": "SubtypeDecl",
+      "base": "BaseSubtypeDecl",
+      "concrete": true,
+      "kind_name": "SubtypeDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_subtype"
+      ]
+    },
+    {
+      "name": "SubtypeIndication",
+      "base": "TypeExpr",
+      "concrete": true,
+      "kind_name": "SubtypeIndication",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_constraint",
+        "f_has_not_null",
+        "f_name"
+      ]
+    },
+    {
+      "name": "Subunit",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "Subunit",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_body",
+        "f_name"
+      ]
+    },
+    {
+      "name": "SynchronizedAbsent",
+      "base": "SynchronizedNode",
+      "concrete": true,
+      "kind_name": "SynchronizedAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SynchronizedNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SynchronizedPresent",
+      "base": "SynchronizedNode",
+      "concrete": true,
+      "kind_name": "SynchronizedPresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SynthAnonymousTypeDecl",
+      "base": "AnonymousTypeDecl",
+      "concrete": true,
+      "kind_name": "SynthAnonymousTypeDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SyntheticBinarySpec",
+      "base": "BaseSubpSpec",
+      "concrete": true,
+      "kind_name": "SyntheticBinarySpec",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_left_param",
+        "f_return_type_expr",
+        "f_right_param"
+      ]
+    },
+    {
+      "name": "SyntheticCharEnumLit",
+      "base": "EnumLiteralDecl",
+      "concrete": true,
+      "kind_name": "SyntheticCharEnumLit",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SyntheticDefiningName",
+      "base": "DefiningName",
+      "concrete": true,
+      "kind_name": "SyntheticDefiningName",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SyntheticFormalParamDecl",
+      "base": "BaseFormalParamDecl",
+      "concrete": true,
+      "kind_name": "SyntheticFormalParamDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_param_type"
+      ]
+    },
+    {
+      "name": "SyntheticIdentifier",
+      "base": "Name",
+      "concrete": true,
+      "kind_name": "SyntheticIdentifier",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SyntheticObjectDecl",
+      "base": "BasicDecl",
+      "concrete": true,
+      "kind_name": "SyntheticObjectDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SyntheticRenamingClause",
+      "base": "RenamingClause",
+      "concrete": true,
+      "kind_name": "SyntheticRenamingClause",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SyntheticSubpDecl",
+      "base": "BasicSubpDecl",
+      "concrete": true,
+      "kind_name": "SyntheticSubpDecl",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_spec"
+      ]
+    },
+    {
+      "name": "SyntheticTypeExpr",
+      "base": "TypeExpr",
+      "concrete": true,
+      "kind_name": "SyntheticTypeExpr",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "SyntheticUnarySpec",
+      "base": "BaseSubpSpec",
+      "concrete": true,
+      "kind_name": "SyntheticUnarySpec",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_return_type_expr",
+        "f_right_param"
+      ]
+    },
+    {
+      "name": "TaggedAbsent",
+      "base": "TaggedNode",
+      "concrete": true,
+      "kind_name": "TaggedAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "TaggedNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "TaggedPresent",
+      "base": "TaggedNode",
+      "concrete": true,
+      "kind_name": "TaggedPresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "TargetName",
+      "base": "Name",
+      "concrete": true,
+      "kind_name": "TargetName",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "TaskBody",
+      "base": "BodyNode",
+      "concrete": true,
+      "kind_name": "TaskBody",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_decls",
+        "f_end_name",
+        "f_name",
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "TaskBodyStub",
+      "base": "BodyStub",
+      "concrete": true,
+      "kind_name": "TaskBodyStub",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_name"
+      ]
+    },
+    {
+      "name": "TaskDef",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "TaskDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_end_name",
+        "f_interfaces",
+        "f_private_part",
+        "f_public_part"
+      ]
+    },
+    {
+      "name": "TaskTypeDecl",
+      "base": "BaseTypeDecl",
+      "concrete": true,
+      "kind_name": "TaskTypeDecl",
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_definition",
+        "f_discriminants"
+      ]
+    },
+    {
+      "name": "TerminateAlternative",
+      "base": "SimpleStmt",
+      "concrete": true,
+      "kind_name": "TerminateAlternative",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "ThenAbortPart",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "ThenAbortPart",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_stmts"
+      ]
+    },
+    {
+      "name": "TypeAccessDef",
+      "base": "BaseTypeAccessDef",
+      "concrete": true,
+      "kind_name": "TypeAccessDef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_has_all",
+        "f_has_constant",
+        "f_subtype_indication"
+      ]
+    },
+    {
+      "name": "TypeAttributesRepository",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "TypeAttributesRepository",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "TypeDecl",
+      "base": "BaseTypeDecl",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_discriminants",
+        "f_type_def"
+      ]
+    },
+    {
+      "name": "TypeDef",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "TypeExpr",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "UnOp",
+      "base": "Expr",
+      "concrete": true,
+      "kind_name": "UnOp",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr",
+        "f_op"
+      ]
+    },
+    {
+      "name": "UnconstrainedArrayIndex",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "UnconstrainedArrayIndex",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_lower_bound",
+        "f_subtype_name"
+      ]
+    },
+    {
+      "name": "UnconstrainedArrayIndexList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "UnconstrainedArrayIndexList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "UnconstrainedArrayIndices",
+      "base": "ArrayIndices",
+      "concrete": true,
+      "kind_name": "UnconstrainedArrayIndices",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_types"
+      ]
+    },
+    {
+      "name": "UnknownDiscriminantPart",
+      "base": "DiscriminantPart",
+      "concrete": true,
+      "kind_name": "UnknownDiscriminantPart",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "UntilAbsent",
+      "base": "UntilNode",
+      "concrete": true,
+      "kind_name": "UntilAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "UntilNode",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "UntilPresent",
+      "base": "UntilNode",
+      "concrete": true,
+      "kind_name": "UntilPresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "UpdateAttributeRef",
+      "base": "Name",
+      "concrete": true,
+      "kind_name": "UpdateAttributeRef",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_attribute",
+        "f_prefix",
+        "f_values"
+      ]
+    },
+    {
+      "name": "UseClause",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "UsePackageClause",
+      "base": "UseClause",
+      "concrete": true,
+      "kind_name": "UsePackageClause",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_packages"
+      ]
+    },
+    {
+      "name": "UseTypeClause",
+      "base": "UseClause",
+      "concrete": true,
+      "kind_name": "UseTypeClause",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_has_all",
+        "f_types"
+      ]
+    },
+    {
+      "name": "ValueSequence",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "ValueSequence",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_iter_assoc"
+      ]
+    },
+    {
+      "name": "Variant",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "Variant",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_choices",
+        "f_components"
+      ]
+    },
+    {
+      "name": "VariantList",
+      "base": "AdaList",
+      "concrete": true,
+      "kind_name": "VariantList",
+      "abstract_heuristic": false,
+      "is_list_node": true,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "VariantPart",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "VariantPart",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_discr_name",
+        "f_variant"
+      ]
+    },
+    {
+      "name": "WhileLoopSpec",
+      "base": "LoopSpec",
+      "concrete": true,
+      "kind_name": "WhileLoopSpec",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_expr"
+      ]
+    },
+    {
+      "name": "WhileLoopStmt",
+      "base": "BaseLoopStmt",
+      "concrete": true,
+      "kind_name": "WhileLoopStmt",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "WithClause",
+      "base": "AdaNode",
+      "concrete": true,
+      "kind_name": "WithClause",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": [
+        "f_has_limited",
+        "f_has_private",
+        "f_packages"
+      ]
+    },
+    {
+      "name": "WithPrivate",
+      "base": "AdaNode",
+      "concrete": false,
+      "kind_name": null,
+      "abstract_heuristic": true,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "WithPrivateAbsent",
+      "base": "WithPrivate",
+      "concrete": true,
+      "kind_name": "WithPrivateAbsent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    },
+    {
+      "name": "WithPrivatePresent",
+      "base": "WithPrivate",
+      "concrete": true,
+      "kind_name": "WithPrivatePresent",
+      "abstract_heuristic": false,
+      "is_list_node": false,
+      "is_token_node": false,
+      "fields": []
+    }
+  ]
+}
