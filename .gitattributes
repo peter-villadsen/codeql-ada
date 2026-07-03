@@ -1,3 +1,10 @@
 * -text
 *.sh text eol=lf
 *.py text eol=lf
+
+# generator/gen.py's outputs (see CONTRIBUTING.md's regeneration pipeline) --
+# without this, regenerating on a Linux/WSL Python produces an all-lines-changed
+# diff against files previously committed with CRLF.
+*.dbscheme text eol=lf
+*.qll text eol=lf
+extractors/ada/tools/ada_tables.json text eol=lf
