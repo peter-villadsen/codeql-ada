@@ -110,6 +110,15 @@ jobs:
       - name: Build extractor tarball (burndown 6.1)
         run: bash scripts/create-extractor-pack.sh
 
+      # Always uploaded (not just on workflow_dispatch): gives every run, including a
+      # real tag release, a downloadable copy for inspection independent of the GitHub
+      # Release attachment.
+      - name: Upload extractor tarball artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: codeql-extractor-ada-linux64
+          path: codeql-extractor-ada-linux64.tar.gz
+
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
