@@ -294,8 +294,14 @@ Status of the field (verified 2026-07-02):
   never used CodeQL — explain CodeQL concepts (extractor, database, QL, pack, query
   suite) in prose the first time each appears, don't assume familiarity with the
   `github/codeql` ecosystem or its jargon. Do not assume Ada knowledge needs explaining.
-- [ ] 6.4 Pin LAL/Langkit (and other tip-of-master deps) to exact commits in
+- [x] 6.4 Pin LAL/Langkit (and other tip-of-master deps) to exact commits in
   `build-libadalang.sh`; support policy = CodeQL CLI 2.25.6 tested.
+  *Done 2026-07-03* — 8 repos pinned (gnatcoll-core, gnatcoll-bindings, adasat, VSS,
+  langkit, libadalang, prettier-ada, gprconfig_kb), fetched shallow at the exact commit
+  rather than at branch tip. Verified with a full from-scratch WSL build to a throwaway
+  `$HOME` (moves prefix/src/venv together) — clean import and parse, 0 diagnostics — and
+  with a real CI run that rebuilt LAL from the pinned commits and went green end to end
+  (QL test suite + corpus regression), confirming the cache repopulates correctly.
 
 ---
 
