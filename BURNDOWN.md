@@ -111,7 +111,8 @@ Status of the field (verified 2026-07-02):
   [docs/dbscheme-conventions.md](docs/dbscheme-conventions.md) — includes the standard
   prelude tables, `_def`/optional-field/child-table patterns, union types from the LAL
   class hierarchy, our added semantic layer (xref/types), and the Phase 2 generator plan.
-  Still open: study `codeql-extractor-iac`'s release-tarball layout before Phase 6.
+  The remaining item (study `codeql-extractor-iac`'s release-tarball layout) was done
+  2026-07-03; findings folded into [docs/phase6-plan.md](docs/phase6-plan.md).
 - [x] **1.5 Xref/perf spike.** *Done 2026-07-02* via `scripts/spike_nameres.py`:
   - gpr2 (345 files): parse 749 files/s; nameres 280,898 names at **3,758 names/s**,
     80.2% resolved, **0 errors** (no PropertyError crashes at all).
@@ -145,8 +146,8 @@ Status of the field (verified 2026-07-02):
   of the AST tree/generated tables.
 - [x] 2.3 Semantic relations: `ada_xref`, `ada_expr_type`, `ada_generic_instantiation`
   defined in the dbscheme (population is Phase 3; generic instance-body model still open).
-- [ ] 2.4 Upgrade/downgrade story: policy = regenerate + hand-write upgrade scripts once
-  there are external users; pre-1.0 databases are rebuilt, not upgraded. Revisit at Phase 6.
+- [x] 2.4 Upgrade/downgrade story: *resolved 2026-07-03 (D-011)* — pre-1.0 databases are
+  rebuilt, not upgraded; no upgrade scripts until there are external users on a 1.0 dbscheme.
 
 ## Phase 3 — Extractor
 
@@ -259,12 +260,25 @@ Status of the field (verified 2026-07-02):
 
 ## Phase 6 — Packaging & release
 
-- [ ] 6.1 Extractor pack tarball layout + GitHub Releases, compatible with
-  `advanced-security/codeql-extractor-action`.
-- [ ] 6.2 Publish QL packs to the GitHub container registry (`codeql pack publish`).
-- [ ] 6.3 Docs: user guide (database creation against a GPR project), query writing guide,
-  dbscheme/versioning policy, contribution guide.
-- [ ] 6.4 Pin support policy: which CodeQL CLI versions and LAL versions are tested.
+> **Status 2026-07-03: all Phase 6 decisions made** (D-009…D-012): pack scope
+> `peter-villadsen/`; Linux-x86_64-only tarball with bundled Libadalang; tag-driven
+> release workflow; pinned LAL commits; pre-1.0 = rebuild databases, no upgrade scripts
+> (closes 2.4). Reference layout studied: `codeql-extractor-iac` ships one
+> `extractor-<lang>.tar.gz` release asset + publishes QL packs to GHCR under the repo-owner
+> scope via `GITHUB_TOKEN`. Detailed per-task instructions with acceptance criteria:
+> **[docs/phase6-plan.md](docs/phase6-plan.md)** — execution order 6.0 → 6.4 → 6.1 → 6.2,
+> with 6.3 anytime after 6.0.
+
+- [ ] **6.0 Scope rename** `codeql-ada/` → `peter-villadsen/` in the three qlpack.yml files.
+- [ ] 6.1 Release tarball: `scripts/create-extractor-pack.sh` bundling the LAL runtime
+  (shared-lib closure incl. GNAT runtime + ctypes Python bindings + third-party notices);
+  verified in a clean environment with no dev-machine LAL install.
+- [ ] 6.2 Release workflow on tag `v*`: version-consistency gate → tests → tarball →
+  GitHub Release → `codeql pack publish` of `ada-all` + `ada-queries` to GHCR.
+- [ ] 6.3 Docs: README rewrite, user guide, query-writing guide, CONTRIBUTING (dev env,
+  regeneration pipeline, release checklist, pin-bump procedure).
+- [ ] 6.4 Pin LAL/Langkit (and other tip-of-master deps) to exact commits in
+  `build-libadalang.sh`; support policy = CodeQL CLI 2.25.6 tested.
 
 ---
 
