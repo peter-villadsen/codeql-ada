@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CODEQL_CLI_VERSION: "2.25.6"
+  # Bump this when you want to force a fresh Libadalang build (e.g. after
+  # intentionally moving the pins in scripts/build-libadalang.sh, or if
+  # upstream `master` drifted and the cache is now stale for a reason the
+  # script's own text doesn't capture — see BURNDOWN.md top risk #1).
+  LAL_CACHE_VERSION: "v1"
+
+jobs:
+  ada:
+    # Matches the only environment this extractor has been verified on
+    # (burndown 1.1/D-008): Debian 13, apt-provided GNAT/gprbuild. Ubuntu's
+    # package set/GNAT version is untested and may hit the same GNAT-version
+    # traps build-libadalang.sh works around for Debian.
+    runs-on: ubuntu-latest
+    container: debian:13
+    timeout-minutes: 60
+    steps:
+      - name: Install OS packages
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            git ca-certificates curl unzip \
+            build-essential gnat gprbuild python3 python3-venv python3-dev \
+            libgmp-dev pkg-config libxmlada-dom-dev libxmlada-input-dev \
+            libxmlada-sax-dev libxmlada-schema-dev libxmlada-unicode-dev
+
+      - uses: actions/checkout@v4
+
+      - name: Cache Libadalang build
+        id: lal-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/adacore
+            ~/src
+          key: lal-${{ env.LAL_CACHE_VERSION }}-${{ hashFiles('scripts/build-libadalang.sh') }}
+
+      - name: Build Libadalang
+        if: steps.lal-cache.outputs.cache-hit != 'true'
+        run: bash scripts/build-libadalang.sh
+
+      - name: Cache CodeQL CLI
+        id: codeql-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/codeql-cli
+          key: codeql-cli-${{ env.CODEQL_CLI_VERSION }}
+
+      - name: Download CodeQL CLI
+        if: steps.codeql-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -sSL -o /tmp/codeql.zip \
+            "https://github.com/github/codeql-cli-binaries/releases/download/v${CODEQL_CLI_VERSION}/codeql-linux64.zip"
+          mkdir -p ~/codeql-cli
+          unzip -q /tmp/codeql.zip -d ~/codeql-cli
+
+      - name: Add CodeQL to PATH
+        run: echo "$HOME/codeql-cli/codeql" >> "$GITHUB_PATH"
+
+      - name: Run QL test suite (Phase 5.2)
+        run: codeql test run ql/test --search-path=extractors --additional-packs=ql
+
+      - name: Run corpus regression (Phase 5.3)
+        run: python3 scripts/corpus_regression.py --out corpus-report.json
+
+      - name: Upload corpus report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: corpus-report
+          path: corpus-report.json

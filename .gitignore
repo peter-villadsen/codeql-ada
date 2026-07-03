@@ -3,6 +3,7 @@
 test-db/
 *-db/
 .cache/
+corpus-report.json
 
 # Python
 __pycache__/

@@ -1,0 +1,40 @@
+{
+  "description": "Pinned real-world Ada/GPR projects used for extraction regression testing (burndown 5.3). Refs are commit SHAs, not branches, so results are reproducible across CI runs. Bump refs deliberately and refresh scripts/corpus_baseline.json in the same commit.",
+  "projects": [
+    {
+      "name": "gpr2",
+      "repo": "https://github.com/AdaCore/gpr.git",
+      "ref": "b0225564392bf32df832aa3600d87e76000a1102",
+      "gpr": null,
+      "notes": "Large real GPR/project-model codebase. Its .gpr needs a generated .build/kb directory (from gprconfig_kb, produced by a build step we don't run here), so this falls back to the auto unit provider over all sources rather than a specific .gpr. Already used in spike 1.5 (with a real build present, that run resolved a 345-file subset via the project graph directly)."
+    },
+    {
+      "name": "adasat",
+      "repo": "https://github.com/AdaCore/adasat.git",
+      "ref": "01e9a19b61ba785878862b8bce5ae8145018ef01",
+      "gpr": "adasat.gpr",
+      "notes": "Small SAT solver; repo has multiple .gpr files (testsuite included), so the main project is pinned explicitly. Already used in spike 1.5."
+    },
+    {
+      "name": "libadalang-tools",
+      "repo": "https://github.com/AdaCore/libadalang-tools.git",
+      "ref": "c46b4b5ff8c1660d48ce725e28b8a0c6c969ae65",
+      "gpr": null,
+      "notes": "Medium-size, dogfoods Libadalang itself. Its .gpr files `with` unvendored deps (e.g. templates_parser) that aren't resolvable without Alire, so this falls back to the auto unit provider over all sources rather than a specific .gpr."
+    },
+    {
+      "name": "alire",
+      "repo": "https://github.com/alire-project/alire.git",
+      "ref": "c6b843e95ccca075db97be5f3e1fd9395ab2edeb",
+      "gpr": null,
+      "notes": "Larger real-world application (the Alire package manager CLI). Its .gpr files `with` unvendored Alire-managed dependency crates, so this falls back to the auto unit provider over all sources rather than a specific .gpr."
+    },
+    {
+      "name": "libkeccak",
+      "repo": "https://github.com/damaki/libkeccak.git",
+      "ref": "4b7174fccbf5461998b18395aaeecc68bb25798d",
+      "gpr": null,
+      "notes": "Small SPARK-flavored crypto library; exercises SPARK aspects (D-006 scope). Its top-level .gpr `with`s a generated config/libkeccak_config.gpr, so this falls back to the auto unit provider over all sources rather than a specific .gpr."
+    }
+  ]
+}

@@ -192,9 +192,39 @@ Status of the field (verified 2026-07-02):
   `.qlref` + Ada snippets + `.expected`; extractor's qltest entry point is
   `tools/index.sh` (legacy_qltest_extraction). All 4 tests green. Still open:
   golden-output extractor tests (TRAP/AST dumps).
-- [ ] 5.3 Corpus regression: extract 3–5 real projects (e.g. libadalang-tools, Alire itself,
-  an avionics-style open project) in CI; track extraction success rate and timing.
-- [ ] 5.4 CI matrix: Linux first (primary), then Windows/macOS packaging.
+- [x] 5.3 *Done 2026-07-03.* `scripts/corpus_regression.py` drives the real
+  `codeql database create` pipeline (not a Libadalang-only spike) over 5 pinned
+  real projects in `scripts/corpus.json`: gpr2, AdaSAT (both already known from
+  spike 1.5), libadalang-tools, Alire, and libkeccak (a SPARK-flavored crypto
+  lib, for D-006 coverage). Projects are fetched by exact commit SHA (`git
+  fetch origin <sha>`), not branch tips, so runs are reproducible. Extracts,
+  parses the extractor's summary stats line, and compares against
+  `scripts/corpus_baseline.json`: file-count drift or new parse errors are
+  hard failures (exit 1); nameres/timing drift are warnings only, since LAL
+  itself is built from a moving `master` branch (D-002/D-008) and can
+  legitimately shift those numbers between builds.
+  - Learning: naively pinning each project's "main" `.gpr` broke 3 of the 5
+    projects (`alire`, `libadalang-tools`, `libkeccak`) — their project graphs
+    `with` dependency crates that Alire fetches at build time and that aren't
+    vendored in a plain git clone. Left `"gpr": null` for those (and for gpr2,
+    whose `.gpr` needs a generated `gprconfig_kb` dir); the extractor's own
+    auto-unit-provider fallback handles all of them without crashing, at the
+    cost of weaker name resolution than a fully-configured build would give.
+- [x] 5.4 *Done 2026-07-03.* `.github/workflows/ci.yml`: single job on
+  `container: debian:13` (matching burndown 1.1/D-008 — this is the only
+  environment the extractor has been verified on; plain `ubuntu-latest` was
+  not attempted and may hit the same GNAT-version traps `build-libadalang.sh`
+  works around). Steps: apt prereqs → checkout → cache-or-build Libadalang
+  (`actions/cache` keyed on the build script's hash plus a manually-bumped
+  `LAL_CACHE_VERSION`, since upstream `master` can drift without the script
+  text changing) → cache-or-download the pinned CodeQL CLI release → `codeql
+  test run ql/test` (Phase 5.2 harness) → `corpus_regression.py` → upload the
+  JSON report as an artifact. **Not yet verified on actual GitHub Actions** —
+  this repo has no GitHub remote configured yet, so the workflow has only been
+  validated by (a) running every step's command manually in the WSL Debian 13
+  env this session and confirming it works, and (b) YAML-parsing the file.
+  Windows/macOS packaging (the rest of 5.4's original scope) is still open —
+  revisit at Phase 6.
 
 ## Phase 6 — Packaging & release
 
