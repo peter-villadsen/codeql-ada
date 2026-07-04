@@ -41,7 +41,8 @@ Status of the field (verified 2026-07-02):
   - Recommended: MIT the extractor + packs; monetize support/custom queries/services.
     Contact GitHub partner/BD team early. Get formal legal review of current terms.
 
-- [ ] **0.2 Pick the extractor implementation language.** Options, in rough order of fit:
+- [x] **0.2 Pick the extractor implementation language.** *Decided — see D-002 (Python
+  prototype).* Options, in rough order of fit:
 
   | Option | Pros | Cons |
   |---|---|---|
@@ -52,31 +53,38 @@ Status of the field (verified 2026-07-02):
   Recommendation: **Python for the prototype**, decide Ada vs. keep-Python for production
   after measuring extraction speed on a large real project (e.g. GNAT sources themselves).
 
-- [ ] **0.3 Decide extraction model: build-less (recommended) vs. build-traced.**
+- [x] **0.3 Decide extraction model: build-less (recommended) vs. build-traced.**
+  *Decided — see D-003 (build-less).*
   Ada has no preprocessor games like C; LAL resolves semantics from a GPR project file
   without running the compiler. Plan: build-less extractor that (a) uses a GPR file when
   present, (b) falls back to LAL's auto unit provider over all `.ads/.adb` files.
   This avoids CodeQL's compiler-tracing machinery entirely — a large complexity saving.
 
-- [ ] **0.4 Decide dbscheme generation strategy.**
+- [x] **0.4 Decide dbscheme generation strategy.** *Decided — see D-004 (generated from
+  Libadalang/Langkit introspection).*
   Langkit (LAL's generator) exposes the full node-kind hierarchy via introspection.
   Decide: hand-write the dbscheme, or **generate dbscheme + TRAP emitter + QL AST classes
   from LAL introspection** (the Ruby/QL extractors do exactly this from tree-sitter grammars —
   their Rust generator is the model). Recommendation: generate. Keeps ~400 node kinds in sync
   automatically and follows LAL upgrades.
 
-- [ ] **0.5 Scope the v1 semantic depth.** Syntax-only gets you linting; security queries need:
+- [x] **0.5 Scope the v1 semantic depth.** *Decided — see D-005 (AST + xref + types in
+  v1; CFG/dataflow later in QL, now Phases 7/9).* Syntax-only gets you linting; security
+  queries need:
   - name resolution (definition/use links) — LAL provides via `p_referenced_decl` etc.
   - type of each expression — LAL provides
   - control flow graph — **not** provided by LAL; must be built (extractor-side or QL-side)
   - data flow — built in QL on top of CFG using CodeQL's shared dataflow library
   Decide the v1 cut line (suggested: AST + xref + types in the DB; CFG/DFG in QL later).
 
-- [ ] **0.6 Define target Ada dialect & ecosystem scope.** Ada 2012/2022, SPARK subset?
+- [x] **0.6 Define target Ada dialect & ecosystem scope.** *Decided — see D-006 (Ada
+  2012/2022, GPR-first, SPARK is just Ada, Alire test corpus).* Ada 2012/2022, SPARK subset?
   GPR-based projects only, or bare source trees too? Alire crates as test corpus?
 
-- [ ] **0.7 Name and pack identifiers.** e.g. language id `ada`, packs
-  `<org>/ada-all` (library), `<org>/ada-queries`. Check no collisions on the pack registry.
+- [x] **0.7 Name and pack identifiers.** *Decided — see D-007 (language id `ada`) and D-009
+  (final pack scope `peter-villadsen/`, superseding D-007's placeholder).* e.g. language id
+  `ada`, packs `<org>/ada-all` (library), `<org>/ada-queries`. Check no collisions on the
+  pack registry.
 
 ## Phase 1 — Spikes (throwaway code allowed; time-boxed)
 
