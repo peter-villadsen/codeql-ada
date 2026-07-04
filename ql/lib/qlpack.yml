@@ -4,3 +4,8 @@ library: true
 warnOnImplicitThis: true
 dbscheme: ada.dbscheme
 extractor: ada
+dependencies:
+  # Shared CFG framework (D-013). Version pinned to the codeql-cli/v2.25.6 tag
+  # of github/codeql (shared/controlflow/qlpack.yml). Transitively pulls
+  # codeql/util 2.0.38. Do not bump without re-verifying against CLI 2.25.6.
+  codeql/controlflow: 2.0.35
