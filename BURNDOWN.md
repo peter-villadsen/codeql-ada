@@ -396,6 +396,12 @@ Status of the field (verified 2026-07-02):
 
 ## Phase 9 — SSA + dataflow (outline only)
 
+- [ ] 8.12 Extract package `Standard` (and possibly the runtime spec closure) as
+      pseudo-sources so semantic relations resolve predefined entities (`Float`,
+      `Boolean`, `Constraint_Error`, ...). Removes the source-set blindness recorded
+      in D-015: `float-equality` starts catching plain `Standard.Float` comparisons,
+      and the textual matchers listed in D-015 become candidates for semantic
+      rewrites. Extractor-side work; re-audit those queries when this lands.
 - [ ] 9.0 Write the Phase 9 plan doc (blocked on Phase 7 shipping and soaking on corpus).
 - [ ] SSA (`codeql/ssa`) over the CFG → dataflow (`codeql/dataflow`) → first taint
       queries with Ada sources/sinks (`Ada.Command_Line` → `GNAT.OS_Lib.Spawn`,

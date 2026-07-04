@@ -11,7 +11,8 @@
 
 import ada
 
-// Limitation: only catches user-declared floating-point types. `ada_expr_type` is only
+// Limitation (see DECISIONS.md D-015): only catches user-declared floating-point types.
+// `ada_expr_type` is only
 // emitted when the resolved type declaration is itself in the analyzed source set, so
 // predefined types (`Float`, `Long_Float`, ...), which live in package `Standard`, never
 // resolve here. Derived-type chains to a user-declared float base are also not followed

@@ -11,6 +11,9 @@
 
 import ada
 
+// Limitation (see DECISIONS.md D-015): `ada_xref` is only emitted when the referenced
+// declaration is in the analyzed source set, so a self-comparison of a name declared in
+// an unanalyzed library unit (e.g. `Lib.X = Lib.X`) is not detected.
 from Raw::RelationOp cmp, Name left, Name right
 where
   left = cmp.getLeft() and

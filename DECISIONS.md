@@ -99,3 +99,24 @@ queries plus .NET framework models — those become portable only after Phase 9 
 not before, and the framework-specific ones (ASP.NET, LINQ, async) never apply.
 Growth is organized in waves keyed to infrastructure: Wave A needs only AST+xref+types
 (available today), Wave B needs the CFG (Phase 7), Wave C needs dataflow (Phase 9).
+
+## D-015 (2026-07-03) — Semantic relations are source-set-relative; query authors must not rely on resolving out-of-source entities
+All three semantic relations (`ada_xref`, `ada_expr_type`, `ada_generic_instantiation`) are
+emitted only when the resolved declaration is itself in the analyzed source set
+(`extractor.py`, `in_sources` guard). Anything declared in package `Standard` (`Float`,
+`Boolean`, `Constraint_Error`, ...) or in library units outside the source set (the GNAT
+runtime, external Alire crates) therefore never appears on the right-hand side of these
+relations. Consequences, audited across all 22 queries on 2026-07-03:
+- Type-based queries only see *user-declared* types — `float-equality` misses plain
+  `Standard.Float` comparisons (documented in the query; found experimentally in Phase 8).
+- Queries targeting language- or runtime-defined entities must match **textually**, never
+  semantically — `unchecked-conversion`, `unchecked-deallocation`,
+  `raise-predefined-exception`, and `boolean-literal-comparison` already do this and are
+  unaffected; a semantic rewrite of any of them would silently go blind.
+- Reference-identity queries (`self-comparison`, `identical-operands`) miss the edge where
+  the compared name is declared out-of-source (documented in the queries).
+- `unused-with-clause` deliberately only reports units whose declaration is in-source.
+The durable fix is to extract `Standard` (and possibly the runtime spec closure) as
+pseudo-sources so semantic rows exist for predefined entities; that is an extractor/dbscheme
+workload, deferred — tracked as burndown item 8.12; re-audit the textual matchers above
+for conversion once it lands.
