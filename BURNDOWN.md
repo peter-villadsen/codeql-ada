@@ -183,8 +183,10 @@ Status of the field (verified 2026-07-02):
   store their source text in the `_def` tables' `value` column.
 - [x] 4.2 `File`/`Location` with `hasLocationInfo` — test framework renders locations
   correctly (relativized paths in `.expected` files prove the contract works).
-- [ ] 4.3 CFG library in QL (per decision 0.5, post-v1).
+- [ ] 4.3 CFG library in QL (per decision 0.5, post-v1). → **Now planned as Phase 7**
+  (D-013, [docs/phase7-plan.md](docs/phase7-plan.md)).
 - [ ] 4.4 Dataflow: instantiate the shared `codeql/dataflow` framework (post-v1).
+  → **Now outlined as Phase 9** (needs its own plan doc after Phase 7 ships).
 
 ## Phase 5 — Queries, tests, CI
 
@@ -338,6 +340,41 @@ Status of the field (verified 2026-07-02):
   `$HOME` (moves prefix/src/venv together) — clean import and parse, 0 diagnostics — and
   with a real CI run that rebuilt LAL from the pinned commits and went green end to end
   (QL test suite + corpus regression), confirming the cache repopulates correctly.
+
+## Phase 7 — Control flow graph (planned 2026-07-03)
+
+> Decisions D-013/D-014; execution plan in [docs/phase7-plan.md](docs/phase7-plan.md).
+> Goal: a CFG good enough for the paired-call query ("a call to Foo not invariably
+> followed by a call to Bar"). Pure QL — no dbscheme or extractor changes.
+
+- [ ] 7.0 Wire up shared `codeql/controlflow` pack (version matched to CLI 2.25.6).
+- [ ] 7.1 CFG design doc `docs/cfg-design.md` (construct→successor mapping table).
+- [ ] 7.2 Skeleton: scopes + straight-line code.
+- [ ] 7.3 Branching, loops, exit, goto.
+- [ ] 7.4 Exceptions (conservative raise model), short-circuit, conditional exprs.
+- [ ] 7.5 PrintCfg golden-test harness (one .adb per construct family).
+- [ ] 7.6 Consumer layer: basic blocks/dominance re-export, `MissingPairedCall`
+      parameterized module, UnreachableStatement rewritten on the CFG,
+      `ada/function-missing-return`, `ada/open-without-close`.
+
+## Phase 8 — Wave A queries (planned 2026-07-03; independent of Phase 7)
+
+> Eleven AST+xref+types-only queries, specs in [docs/phase7-plan.md](docs/phase7-plan.md)
+> §Phase 8 — any order, one at a time. Rule ideas ported per D-014 (GNATcheck / C-C++ /
+> C# quality suites — ideas, not code). Takes the pack 11 → 22 rules.
+
+- [ ] 8.1 boolean-literal-comparison · 8.2 identical-operands · 8.3 useless-if
+      · 8.4 empty-loop-body · 8.5 float-equality · 8.6 goto-statement
+      · 8.7 raise-predefined-exception · 8.8 unused-parameter
+      · 8.9 dead-local-subprogram · 8.10 direct-recursion · 8.11 warnings-off
+
+## Phase 9 — SSA + dataflow (outline only)
+
+- [ ] 9.0 Write the Phase 9 plan doc (blocked on Phase 7 shipping and soaking on corpus).
+- [ ] SSA (`codeql/ssa`) over the CFG → dataflow (`codeql/dataflow`) → first taint
+      queries with Ada sources/sinks (`Ada.Command_Line` → `GNAT.OS_Lib.Spawn`,
+      `GNATCOLL.SQL`, file-path sinks). This is where the C# security suite's ideas
+      become portable (D-014 Wave C).
 
 ---
 

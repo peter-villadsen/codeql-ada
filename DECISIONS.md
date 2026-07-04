@@ -73,3 +73,29 @@ unversioned dependency it clones, so release builds are reproducible and corpus-
 nameres numbers stop drifting. Supported CodeQL CLI = the pinned, tested version (currently
 2.25.6). Bumping either pin is a deliberate change: update the pin, let CI rebuild (the cache
 key hashes the build script), re-baseline the corpus if needed, and note it in the changelog.
+
+## D-013 (2026-07-03) — CFG built in QL via the shared `codeql/controlflow` pack
+The control flow graph is computed in QL (no dbscheme or extractor changes), by instantiating
+the shared `codeql/controlflow` pack from `github/codeql` — the same framework Ruby, Swift,
+C# and Rust use. The CFG is expression-level (every evaluated AST node is a CFG node, in
+evaluation order), because (a) that is the shared framework's natural model, and (b) queries
+of the form "a call to X is not always followed by a call to Y" need *call* nodes, not just
+statement nodes. Exception edges use a conservative model: any call and any explicit raise
+may transfer control to an applicable handler or out of the scope. Tasking constructs
+(`select`, `accept`, `delay`, `abort`) are sequenced opaquely — no inter-task edges.
+Fallback (only if the shared pack proves incompatible with CLI 2.25.6 or our Raw layer):
+hand-roll a minimal CFG library exposing the same surface (entry/exit/successor/basic blocks);
+record that as an amendment here before doing it.
+
+## D-014 (2026-07-03) — Query growth: port rule *ideas*, not query code
+QL query code is not portable across languages — every query is written against
+language-specific AST classes and a language-specific dbscheme, so "porting the C# queries"
+means re-implementing each rule's idea against the Ada library. Priority of source material:
+(1) GNATcheck's rule catalog and the AdaCore Quality & Style guide — these speak the Ada
+audience's language and map 1:1 onto Ada constructs; (2) CodeQL's C/C++ quality suite
+(closest domain: systems code, manual memory, no GC); (3) C#'s *quality* queries where
+language-agnostic. C#'s big query count comes overwhelmingly from taint-tracking security
+queries plus .NET framework models — those become portable only after Phase 9 (dataflow),
+not before, and the framework-specific ones (ASP.NET, LINQ, async) never apply.
+Growth is organized in waves keyed to infrastructure: Wave A needs only AST+xref+types
+(available today), Wave B needs the CFG (Phase 7), Wave C needs dataflow (Phase 9).
