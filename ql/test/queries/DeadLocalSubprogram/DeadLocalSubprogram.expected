@@ -1,0 +1,2 @@
+| test.adb:7:4:10:13 | SubpBody | This nested subprogram is never called. |
+| test.adb:13:4:16:23 | SubpBody | This nested subprogram is never called. |

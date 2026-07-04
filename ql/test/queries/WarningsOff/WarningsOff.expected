@@ -1,0 +1,1 @@
+| test.adb:3:4:3:26 | PragmaNode | pragma Warnings (Off) disables all warnings without restriction. |

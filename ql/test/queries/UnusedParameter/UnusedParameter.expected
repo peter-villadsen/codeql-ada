@@ -1,0 +1,4 @@
+| test.adb:1:15:1:26 | ParamSpec | This parameter is never used in this body. |
+| test.adb:7:15:7:26 | ParamSpec | This parameter is never used in this body. |
+| test.adb:42:19:42:30 | ParamSpec | This parameter is never used in this body. |
+| test.adb:42:32:42:43 | ParamSpec | This parameter is never used in this body. |

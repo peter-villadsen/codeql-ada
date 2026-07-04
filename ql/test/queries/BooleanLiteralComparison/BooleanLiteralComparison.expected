@@ -1,0 +1,2 @@
+| test.adb:5:7:5:18 | RelationOp | Comparison with boolean literal True is redundant. |
+| test.adb:8:7:8:20 | RelationOp | Comparison with boolean literal False is redundant. |

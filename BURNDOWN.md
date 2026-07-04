@@ -363,10 +363,36 @@ Status of the field (verified 2026-07-02):
 > §Phase 8 — any order, one at a time. Rule ideas ported per D-014 (GNATcheck / C-C++ /
 > C# quality suites — ideas, not code). Takes the pack 11 → 22 rules.
 
-- [ ] 8.1 boolean-literal-comparison · 8.2 identical-operands · 8.3 useless-if
+- [x] 8.1 boolean-literal-comparison · 8.2 identical-operands · 8.3 useless-if
       · 8.4 empty-loop-body · 8.5 float-equality · 8.6 goto-statement
       · 8.7 raise-predefined-exception · 8.8 unused-parameter
       · 8.9 dead-local-subprogram · 8.10 direct-recursion · 8.11 warnings-off
+      *Done 2026-07-03 — all 11 shipped, 24/24 QL tests green, full pack
+      compiles and evaluates cleanly against a real database (`hello-db`).*
+      Two notable findings from test-first xref checks (Global trap 7), both
+      documented as comments in the affected query files:
+      - **8.5 float-equality**: `ada_expr_type` is only emitted when the
+        resolved type declaration is itself in the analyzed source set.
+        `Standard.Float`/`Long_Float` never qualify (they live in the
+        unanalyzed `Standard` package), so v1 only catches comparisons on
+        *user-declared* floating-point types — confirmed by testing with
+        plain `Float` (zero matches) vs. a custom `digits 6` type (matches).
+      - **8.8 unused-parameter / 8.9 dead-local-subprogram / 8.10
+        direct-recursion**: a reference to a *parameter* inside a body
+        always resolves to that body's own `ParamSpec`, never to a separate
+        forward declaration's copy — so 8.8 needs no decl/body pairing at
+        all. A *call*, by contrast, does resolve to the separate forward
+        declaration's `SubpDecl` when one exists, so 8.9/8.10 do need the
+        pairing. That pairing broke for library-level (top-level) subprograms
+        because each is wrapped in its own private `LibraryItem`/
+        `CompilationUnit` node — two top-level siblings only share a parent
+        three levels up, at the file's `CompilationUnitList` (worked around
+        in `DirectRecursion.ql`; `DeadLocalSubprogram.ql` never hits this
+        since it only pairs *nested* siblings, which share an immediate
+        parent). Also found: a body's closing `end Name;` is extracted as
+        two self-referencing `ada_xref` rows (the `EndName` node and its
+        inner `Identifier` child), so a naive `isReferenced()` on a
+        `SubpBody` is always true and must exclude both.
 
 ## Phase 9 — SSA + dataflow (outline only)
 

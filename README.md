@@ -98,7 +98,7 @@ codeql database analyze mydb peter-villadsen/ada-queries \
 resolves Ada semantics from your `.gpr` file (or, absent one, by parsing
 every `.ads`/`.adb` it finds) without invoking GNAT at all.
 
-For everything past this point — the 11 queries, environment variables that
+For everything past this point — the 22 queries, environment variables that
 control project discovery and parallelism, how to write your own queries,
 and known limitations — see [docs/user-guide.md](docs/user-guide.md) and
 [docs/query-writing.md](docs/query-writing.md).

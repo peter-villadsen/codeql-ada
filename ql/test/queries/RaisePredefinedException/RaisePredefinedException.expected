@@ -1,0 +1,2 @@
+| test.adb:4:4:4:27 | RaiseStmt | Explicit raise of predefined exception Constraint_Error. |
+| test.adb:5:4:5:33 | RaiseStmt | Explicit raise of predefined exception Standard.Program_Error. |

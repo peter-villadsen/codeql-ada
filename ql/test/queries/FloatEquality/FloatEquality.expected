@@ -1,0 +1,2 @@
+| test.adb:6:7:6:14 | RelationOp | This comparison uses floating-point equality. |
+| test.adb:9:7:9:15 | RelationOp | This comparison uses floating-point equality. |
