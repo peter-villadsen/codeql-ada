@@ -361,7 +361,7 @@ Status of the field (verified 2026-07-02):
 - [x] 7.3 Branching, loops, exit, goto.
 - [x] 7.4 Exceptions (conservative raise model), short-circuit, conditional exprs.
 - [x] 7.5 PrintCfg golden-test harness (one .adb per construct family).
-- [ ] 7.6 Consumer layer: basic blocks/dominance re-export, `MissingPairedCall`
+- [x] 7.6 Consumer layer: basic blocks/dominance re-export, `MissingPairedCall`
       parameterized module, UnreachableStatement rewritten on the CFG,
       `ada/function-missing-return`, `ada/open-without-close`.
 

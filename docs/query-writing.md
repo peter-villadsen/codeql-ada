@@ -112,14 +112,73 @@ by `database analyze` — only run directly (`codeql query run`) or by
    ```
    This renames the `.actual` file `codeql test run` left behind to
    `.expected`. Re-run the same `codeql test run` command to confirm it now
-   passes — that's your regression test from now on. (If you see a
-   reference to `codeql test run --learn` elsewhere: that flag doesn't exist
-   on the CodeQL CLI version this project targets; `codeql test accept` is
-   the actual mechanism, verified above.)
+   passes — that's your regression test from now on. `codeql test run
+   --learn` is an equivalent shortcut for the same bootstrap-then-review
+   workflow (it writes `.expected` directly instead of leaving a `.actual`
+   file for `codeql test accept` to rename); either works on the CLI version
+   this project targets. Either way, **review the diff before trusting it**
+   — both mechanisms record whatever the query actually does, bugs
+   included.
 4. Run the full suite before committing:
    ```sh
    codeql test run ql/test --additional-packs=ql --search-path=extractors
    ```
+
+## Finding a call not invariably followed by another (`MissingPairedCall`)
+
+If your rule idea is shaped like "a call to `Foo` should always be followed
+by a call to `Bar` before control leaves the enclosing subprogram" (resource
+acquire/release pairs: open/close, seize/release, lock/unlock, ...), you
+don't need to hand-write a control-flow search — instantiate
+`MissingPairedCall` from `codeql/ada/controlflow/PairedCalls.qll`, built on
+the Ada CFG (see [cfg-design.md](cfg-design.md) for how the CFG itself is
+constructed). `OpenWithoutClose.ql` is the worked example this module was
+built for; read it alongside this section.
+
+```ql
+import ada
+import codeql.ada.controlflow.Cfg
+import codeql.ada.controlflow.PairedCalls
+
+private predicate isFoo(Raw::AdaNode call) { /* your match on `Foo` calls */ }
+
+private predicate isBar(Raw::AdaNode call) { /* your match on `Bar` calls */ }
+
+module FooBar = MissingPairedCall<isFoo/1, isBar/1>;
+
+from Raw::AdaNode call
+where FooBar::missingPairedCallNormalPathsOnly(call)
+select call, "This Foo is not invariably followed by a Bar."
+```
+
+A few things worth knowing before you instantiate it:
+
+- **`isFoo`/`isBar` match call *sites*, by call kind, not specific objects.**
+  If your program can open two different files and only close one, this
+  module won't tell you *which* file leaked — it pairs by "a call matching
+  `isBar` occurred somewhere reachable", not "the same object's close was
+  called". Document this limitation in your query the way
+  `OpenWithoutClose.ql` does, rather than trying to fix it here — proper
+  per-object pairing needs dataflow (Phase 9), not just a CFG.
+- **Two variants, different signal-to-noise.** Use
+  `missingPairedCallNormalPathsOnly` (ignores exceptional/raise edges) as
+  your default — a path that only reaches the scope exit by first raising an
+  exception is usually not what you mean by "leaked". Use
+  `missingPairedCallStrict` if you want every path considered, including
+  ones that only escape via an unhandled exception.
+- **Resolving what a call "is" is the hard part, not the CFG part.** Per
+  [Global trap 7](phase7-plan.md) in the Phase 7 plan: before assuming
+  `getReferencedDecl()` will tell you a call resolves to a specific
+  standard-library subprogram, check empirically — the GNAT runtime is
+  normally *not* part of the analyzed source set (see the note on
+  `UnusedWithClause.ql` above), so xref resolution silently fails for calls
+  into it and you fall back to matching the dotted callee name as text (see
+  `isTextIoOp` in `OpenWithoutClose.ql` for the pattern: try xref first, in
+  case a project has bundled the runtime sources, then fall back to a
+  textual dotted-name match). This also means a call shortened by a `use`
+  clause (bare `Open(...)` instead of `Ada.Text_IO.Open(...)`) generally
+  can't be told apart from an unrelated same-named subprogram without xref —
+  document that as a limitation rather than guessing.
 
 ### Testing a query
 
