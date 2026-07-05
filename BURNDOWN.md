@@ -355,11 +355,11 @@ Status of the field (verified 2026-07-02):
 > Goal: a CFG good enough for the paired-call query ("a call to Foo not invariably
 > followed by a call to Bar"). Pure QL — no dbscheme or extractor changes.
 
-- [ ] 7.0 Wire up shared `codeql/controlflow` pack (version matched to CLI 2.25.6).
-- [ ] 7.1 CFG design doc `docs/cfg-design.md` (construct→successor mapping table).
-- [ ] 7.2 Skeleton: scopes + straight-line code.
-- [ ] 7.3 Branching, loops, exit, goto.
-- [ ] 7.4 Exceptions (conservative raise model), short-circuit, conditional exprs.
+- [x] 7.0 Wire up shared `codeql/controlflow` pack (version matched to CLI 2.25.6).
+- [x] 7.1 CFG design doc `docs/cfg-design.md` (construct→successor mapping table).
+- [x] 7.2 Skeleton: scopes + straight-line code.
+- [x] 7.3 Branching, loops, exit, goto.
+- [x] 7.4 Exceptions (conservative raise model), short-circuit, conditional exprs.
 - [ ] 7.5 PrintCfg golden-test harness (one .adb per construct family).
 - [ ] 7.6 Consumer layer: basic blocks/dominance re-export, `MissingPairedCall`
       parameterized module, UnreachableStatement rewritten on the CFG,

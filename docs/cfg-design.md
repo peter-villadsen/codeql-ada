@@ -18,7 +18,25 @@ future precision upgrade, tracked for post-Phase-9.
 `Cfg::InputSig` requires: `AstNode`, `Completion`, `CfgScope`, the three completion
 predicates (`completionIsNormal`, `completionIsSimple`, `completionIsValidFor`),
 `getCfgScope`, `scopeFirst`, `scopeLast`, `getAMatchingSuccessorType`, and the two
-`idOf*` predicates. We set `AstNode = Raw::AdaNode` and `Location = Raw::Location`.
+`idOf*` predicates. We set `AstNode = Raw::AdaNode` and `Location = Raw::Location`, both
+as **plain aliases** (no wrapper classes).
+
+Two structural facts that follow from the alias choice (learned while implementing 7.2):
+
+- **`Raw::Location` must satisfy `LocationSig`.** The shared framework's `LocationSig`
+  requires `getStartLine`/`getStartColumn`/`getEndLine`/`getEndColumn` on the location
+  type. The generator (`generator/gen.py`) now emits these four accessors on
+  `Raw::Location` (pure QL over the existing `locations_default` relation — **no dbscheme
+  change**). A wrapper `AstNode` with a covariant `getLocation()` override is *not* viable:
+  it makes every tree class (which multiply-inherits a `Raw::` node class) fail with
+  "`StandardPostOrderTree` is incompatible with `Raw::…`".
+- **Tree classes use `extends <Helper> instanceof Raw::X`, not `extends <Helper>, Raw::X`.**
+  Because `AstNode = Raw::AdaNode` is an alias, the framework's `ControlFlowTree` already
+  reaches `Raw::AdaNode` via a `final` alias; a second `extends Raw::X` path is rejected as
+  "extends the type … but also extends a final alias of it". So subclasses constrain with
+  `instanceof` and reach node accessors through `super.` (e.g. `super.getStmts()`), and
+  every override that returns/takes an AST node is typed `Raw::AdaNode` (the alias target),
+  since `AstNode` itself is private inside `Make`.
 
 The CFG itself is built by extending the framework's `ControlFlowTree` class (and its
 helpers `PreOrderTree`, `PostOrderTree`, `StandardPreOrderTree`, `StandardPostOrderTree`,
@@ -26,6 +44,40 @@ helpers `PreOrderTree`, `PostOrderTree`, `StandardPreOrderTree`, `StandardPostOr
 `propagatesAbnormal`. The framework then yields `Node`, `getASuccessor`, the
 `BasicBlocks` submodule (dominance/post-dominance — reused verbatim in Task 7.6), and a
 `PrintGraph` interface (used by the Task 7.5 PrintCfg harness).
+
+Three realized patterns (from implementing 7.2/7.3), important when extending in 7.4:
+
+- **`GenericPostOrderTree` covers only *expression-like* nodes** — `Raw::Expr`,
+  `Raw::AssocList`, `Raw::BasicAssoc` — and never `Raw::Op` (operators are not "executed")
+  nor `Raw::CallExpr` (handled specially). It must **not** be a catch-all over `AdaNode`:
+  a generic post-order tree wires its *reached* children back to itself, so if it covered
+  structural statement/declaration parts (`ElsifStmtPart`, `CaseStmtAlternative`,
+  `WhileLoopSpec`, `ForLoopSpec`, `ObjectDecl`, …) those would leak into the graph as
+  spurious reachable nodes. Structural parts are consumed **directly** by their owning
+  construct's tree (e.g. `CaseStmtTree` reads each alternative's `getStmts()`, never the
+  `CaseStmtAlternative` node), which keeps them out of the graph.
+- **`if`/`case`/loops are `PostOrderTree`s whose self-node is the join/exit.** A condition
+  emits `BooleanCompletion(true/false)`; branch/loop bodies converge on the construct node,
+  which then completes normally to the next statement. A plain `loop`'s node is reachable
+  only via an `exit`, so an exit-less loop is correctly infinite.
+- **Exception routing lives in `HandledStmtsTree`, keyed off the region's `last`.** A
+  raise from anywhere in the protected statements bubbles to `last(getStmts(), p,
+  RaiseCompletion)` (statement lists propagate abnormal completions), and the handled
+  sequence adds a `succ` edge from each such `p` to the first node of *every* handler (v1
+  matches no exception identities). Crucially `propagatesAbnormal` covers **only the
+  handler bodies, not the protected region** — otherwise caught raises would leak past the
+  block; the protected region's escaping completions (`return`/`exit`/`goto` always, and a
+  raise only when there is no `when others`) are added explicitly in `last`. Short-circuit
+  operators, `if`/`case` expressions and `ExtendedReturnStmt` follow the same
+  `PostOrderTree`/`BooleanCompletion` shapes as their statement forms.
+- **`exit` and `goto` are direct jump edges, not propagated completions.** `ExitStmtTree`
+  adds a `succ` edge from the exit node straight to the **target loop node** (resolved by
+  `exitTargetLoop`: named → matching enclosing `NamedStmt` loop, nameless → innermost),
+  labelled `ExitCompletion`→`BreakSuccessor`; `GotoStmtTree` edges straight to the target
+  `Label` node (`gotoTargetLabel`: same `CfgScope`, matching name text). No jump completion
+  bubbles up through `propagatesAbnormal`, so there is no catch-and-relabel machinery.
+  `declare` block object-declaration initializers are evaluated inline by `DeclBlockTree`
+  (only `ObjectDecl.getDefaultExpr()`, in declaration order, then the statements).
 
 ## Scopes
 

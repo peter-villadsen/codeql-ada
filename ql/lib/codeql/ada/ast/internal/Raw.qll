@@ -15,6 +15,18 @@ module Raw {
       )
     }
 
+    /** Gets the 1-based line number (inclusive) where this location starts. */
+    int getStartLine() { this.hasLocationInfo(_, result, _, _, _) }
+
+    /** Gets the 1-based column number (inclusive) where this location starts. */
+    int getStartColumn() { this.hasLocationInfo(_, _, result, _, _) }
+
+    /** Gets the 1-based line number (inclusive) where this location ends. */
+    int getEndLine() { this.hasLocationInfo(_, _, _, result, _) }
+
+    /** Gets the 1-based column number (inclusive) where this location ends. */
+    int getEndColumn() { this.hasLocationInfo(_, _, _, _, result) }
+
     string toString() {
       exists(string path, int line |
         this.hasLocationInfo(path, line, _, _, _) and
