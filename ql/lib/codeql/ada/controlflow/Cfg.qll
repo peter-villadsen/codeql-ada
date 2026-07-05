@@ -31,6 +31,7 @@
 import codeql.controlflow.Cfg
 import codeql.controlflow.SuccessorType
 private import internal.ControlFlowGraphImpl
+private import codeql.ada.ast.internal.Raw
 
 /** A control flow graph scope: an Ada body with its own graph. */
 final class CfgScope = Scopes::CfgScope;
@@ -44,5 +45,27 @@ final class EntryNode = CfgImpl::EntryNode;
 /** An exit node of a CFG scope. */
 final class ExitNode = CfgImpl::ExitNode;
 
+/**
+ * An exit node of a CFG scope, annotated with whether it was reached via a
+ * normal (`getAMatchingSuccessorType()` not an `ExceptionSuccessor`/
+ * `ExitSuccessor`) or abnormal completion. Note that both fall-through
+ * (`DirectSuccessor`) and explicit `return` (`ReturnSuccessor`) count as
+ * normal here; distinguish them, if needed, by the type of the edge reaching
+ * this node (see `FunctionMissingReturn.ql` for a worked example).
+ */
+final class AnnotatedExitNode = CfgImpl::AnnotatedExitNode;
+
 /** A node corresponding to an AST element. */
 final class AstCfgNode = CfgImpl::AstCfgNode;
+
+/**
+ * Gets the AST node first executed when `n` is entered (e.g. the guard of an
+ * `if`, or `n` itself for a straight-line statement). This is a *structural*
+ * predicate: it always has a result for any node with executable content,
+ * regardless of whether `n` itself is reachable. Combine with `AstCfgNode` to
+ * test reachability of a compound statement whose own node in the CFG
+ * represents only its normal-completion join point (e.g. an `if` all of
+ * whose branches return has no `AstCfgNode` for the `IfStmt` itself, even
+ * though it plainly executes) -- see `UnreachableStatement.ql`.
+ */
+Raw::AdaNode getAControlFlowEntryNode(Raw::AdaNode n) { result = CfgImpl::getAControlFlowEntryNode(n) }

@@ -1,11 +1,8 @@
 /**
  * @name Unreachable statement
- * @description A statement immediately following an unconditional `raise` or `return`
- *              in the same statement sequence can never execute -- control has already
- *              left the sequence by the time it would be reached. (Only the immediate
- *              next statement is flagged, and a following label is never flagged, since
- *              a `goto` elsewhere in the unit could still jump to code after it -- this
- *              query does not analyze `goto` targets.)
+ * @description A statement that no control-flow path from the start of its enclosing
+ *              subprogram, task, entry, or package body can ever reach (only the first
+ *              unreachable statement in a run is flagged).
  * @id ada/unreachable-statement
  * @kind problem
  * @problem.severity warning
@@ -13,15 +10,24 @@
  */
 
 import ada
+import codeql.ada.controlflow.Cfg
 
-from Raw::StmtList list, Raw::AdaNode terminator, int i, Raw::AdaNode nextStmt, string how
+/** Holds if `n` is part of the analyzed control flow, i.e. has a CFG node. */
+private predicate hasCfgNode(Raw::AdaNode n) { exists(AstCfgNode cfn | cfn.getAstNode() = n) }
+
+/**
+ * Holds if `stmt` is ever executed: its control-flow entry point (which, for
+ * a compound statement, may differ from `stmt` itself -- e.g. an `if`'s
+ * guard) has a CFG node. This is deliberately not "`stmt` has a CFG node"
+ * directly: a compound statement all of whose branches complete abruptly
+ * (e.g. an `if`/`else` that both `return`) never reaches its own
+ * normal-completion join node, even though it plainly executes.
+ */
+private predicate isReachable(Raw::AdaNode stmt) { hasCfgNode(getAControlFlowEntryNode(stmt)) }
+
+from Raw::StmtList list, int i, Raw::AdaNode stmt
 where
-  terminator = list.getChild(i) and
-  nextStmt = list.getChild(i + 1) and
-  not nextStmt instanceof Raw::Label and
-  (
-    terminator instanceof Raw::RaiseStmt and how = "raises an exception"
-    or
-    terminator instanceof Raw::ReturnStmt and how = "returns"
-  )
-select nextStmt, "This statement is unreachable: the previous statement always " + how + "."
+  stmt = list.getChild(i) and
+  not isReachable(stmt) and
+  (i = 0 or isReachable(list.getChild(i - 1)))
+select stmt, "This statement is unreachable."
