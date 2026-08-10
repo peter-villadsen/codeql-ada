@@ -131,8 +131,10 @@ by a call to `Bar` before control leaves the enclosing subprogram" (resource
 acquire/release pairs: open/close, seize/release, lock/unlock, ...), you
 don't need to hand-write a control-flow search — instantiate
 `MissingPairedCall` from `codeql/ada/controlflow/PairedCalls.qll`, built on
-the Ada CFG (see [cfg-design.md](cfg-design.md) for how the CFG itself is
-constructed). `OpenWithoutClose.ql` is the worked example this module was
+the Ada CFG. [cfg-design.md](cfg-design.md) specifies the CFG construct by
+construct — each section gives an Ada snippet, the exact edges it produces and
+a link to the conformance test that enforces them, so you can predict what
+your query will see before running it. `OpenWithoutClose.ql` is the worked example this module was
 built for; read it alongside this section.
 
 ```ql

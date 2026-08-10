@@ -86,6 +86,9 @@ jobs:
       - name: Add CodeQL to PATH
         run: echo "$HOME/codeql-cli/codeql" >> "$GITHUB_PATH"
 
+      - name: Check CFG coverage appendix (Phase 7.7)
+        run: python3 scripts/check_cfg_coverage.py
+
       - name: Run QL test suite (Phase 5.2)
         run: codeql test run ql/test --search-path=extractors --additional-packs=ql
 

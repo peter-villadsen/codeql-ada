@@ -361,9 +361,42 @@ Status of the field (verified 2026-07-02):
 - [x] 7.3 Branching, loops, exit, goto.
 - [x] 7.4 Exceptions (conservative raise model), short-circuit, conditional exprs.
 - [x] 7.5 PrintCfg golden-test harness (one .adb per construct family).
+      → superseded by 7.7; the learned `.expected` is gone and `PrintCfg.ql` now
+      lives in `ql/debug/`.
 - [x] 7.6 Consumer layer: basic blocks/dominance re-export, `MissingPairedCall`
       parameterized module, UnreachableStatement rewritten on the CFG,
       `ada/function-missing-return`, `ada/open-without-close`.
+
+## Phase 7.7 — CFG specification & conformance tests (planned 2026-08-10)
+
+> Decisions D-016..D-019; execution plan in [docs/phase7.7-plan.md](docs/phase7.7-plan.md).
+> Turns `docs/cfg-design.md` from prose into a checkable specification and replaces the
+> single learned edge dump with per-construct inline-expectation tests. No CFG features.
+
+- [x] 7.7.0 Inline-expectation harness (`codeql/ada/test/InlineExpectationsTest.qll`,
+      `CfgConformance.qll`, `ql/debug/` PrintCfg + CfgAnnotations), golden harness retired.
+- [x] 7.7.1 `docs/cfg-design.md` rewritten as a snippet→edges specification.
+- [x] 7.7.2–7.7.15 Fourteen construct families, each with a spec section and a
+      conformance test whose `.adb` carries exhaustive machine-checked edge annotations:
+      linear, scopes, if-stmt, case-stmt, loops-basic, loops-for, exit, goto, blocks,
+      exceptions, return, short-circuit, cond-expr, tasking.
+- [x] 7.7.16 Coverage appendix: all 405 node kinds carry a verdict, enforced in CI by
+      `scripts/check_cfg_coverage.py`.
+- [x] 7.7.17 Close-out: bundled `test_*.adb` retired after construct-by-construct check.
+
+Defects the conformance tests surfaced (three fixed, one deferred):
+
+- [x] C-2 `CaseStmtTree`/`CaseExprTree` dropped the selector's abnormal completions.
+- [x] C-3 A plain `accept E;` was matched by no control-flow tree and vanished.
+- [x] C-4 `select … then abort`'s abortable part was in no branch and unreachable.
+- [ ] **C-1 Declarative parts are not elaborated.** A subprogram's, package's or task's
+      local object initialisers produce no CFG nodes at all — only `declare` blocks
+      elaborate. A call in a declaration is invisible to `MissingPairedCall`, so
+      `ada/open-without-close` misses `F : File_Type := Open (…)`. Recorded as
+      MISSING/SPURIOUS expectations in the `scopes` family, which will report
+      "Fixed missing result" when it is implemented. Needs its own decision: it changes
+      graph shape for every body with an initialised local.
+- [x] C-5 resolved as *not* a defect: a `NumberDecl`'s value is static.
 
 ## Phase 8 — Wave A queries (planned 2026-07-03; independent of Phase 7)
 
