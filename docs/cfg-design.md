@@ -181,22 +181,6 @@ Deliberate imprecisions are written as `$ MISSING: edge=…` rather than describ
 
 ## Part 3 — Construct specifications
 
-> **Interim index (Phase 7.7 in progress).** The table below is the prose mapping this
-> document carried before the per-construct sections existed. A row is authoritative only
-> until the corresponding section below is written; **delete the row when its section
-> lands**, and the table with the last one. It is kept so that an interrupted phase never
-> leaves a construct undocumented.
->
-> | Construct | Raw class(es) | Structure |
-> |---|---|---|
-> | Handled sequence | `HandledStmts`, `ExceptionHandler` | every raise-completing node in the protected region has an edge to *each* handler; if no `when others`, also a raise edge out of the scope; handler bodies continue normally after the sequence |
-> | Return | `ReturnStmt` | (value expr →) `return` to scope exit |
-> | Extended return | `ExtendedReturnStmt` | elaborate object decl → run optional `HandledStmts` → `return` |
-> | Short-circuit | `BinOp` with `OpAndThen`/`OpOrElse` | and-then: LHS(false)→skip RHS; or-else: LHS(true)→skip RHS. Plain `OpAnd`/`OpOr` evaluate both sides |
-> | Conditional expr | `IfExpr`, `ElsifExprPart`, `CaseExpr`, `CaseExprAlternative` | same branch shape as their statement forms, but produce a value |
-> | Raise | `RaiseStmt`, `RaiseExpr` | `exception` |
-> | Tasking | `SelectStmt`, `AcceptStmtWithStmts`, `DelayStmt`, … | opaque sequencing per D-013; `select` branches like a case over its `SelectWhenPart`s |
-> | Elaboration | `DeclBlock.getDecls()`, package-body decls | object-declaration initialisers are in the graph, because they can call functions and raise |
 
 ### Linear code
 
@@ -378,9 +362,8 @@ expressions) are structural — consumed by `CaseStmtTree` and never in the grap
 earlier draft of this document claimed a `MatchingSuccessor` per choice; that was never
 implemented.)
 
-**Limitation — the selector's abnormal completions are dropped (candidate defect C-2).**
-`CaseStmtTree.propagatesAbnormal` covers only the alternative bodies, omitting the
-selector, so a selector that can raise produces no `exception` edge:
+A selector that can raise propagates that completion, exactly as an `if`'s guard condition
+does:
 
 ```
 l1: case Id (N) is
@@ -388,12 +371,15 @@ l2:    when others =>
 l3:       R := 20;
 l4: end case;
 
-l1 CallExpr -> l3 (20)   ; successor
-                         ; MISSING: l1 CallExpr -> exit (abnormal) ; exception
+l1 CallExpr -> l3 (20)          ; successor
+l1 CallExpr -> exit (abnormal)  ; exception
 ```
 
-The identical call in an `if` condition *does* get the edge — see above. `CaseExprTree`
-has the same shape and the same gap. Recorded as a `MISSING:` expectation in the test.
+This was **wrong** until this phase: `CaseStmtTree.propagatesAbnormal` covered only the
+alternative bodies, omitting the selector, so the `exception` edge was silently absent
+while the identical call in an `if` condition produced it. The conformance tests carry
+both, so the asymmetry cannot come back unnoticed. `CaseExprTree` had — and has had fixed —
+the same gap.
 
 ### Plain and while loops
 
@@ -583,23 +569,241 @@ unmodelled — a genuine but exotic gap.
 
 ### Exceptions
 
-TODO — task 7.7.11.
+Test: [`ql/test/library/Cfg/exceptions/`](../ql/test/library/Cfg/exceptions/)
+
+**Rule.** Every node in the protected region that can complete with a raise has an
+`exception` edge to the **first node of every handler** — v1 does not match exception
+identities, so a handler naming `Constraint_Error` is reached from a raise of anything. A
+handler body completing normally continues at the statement *after* the handled sequence.
+Whether a raise also **escapes** the sequence depends on `when others`: with an `others`
+handler nothing escapes; without one, the raise additionally has an edge out of the region
+(here, to the scope's abnormal exit).
+
+```
+l1: begin
+l2:    P;
+l3:    raise Constraint_Error;
+l4: exception
+l5:    when Constraint_Error =>
+l6:       N := 1;
+l7:    when others =>
+l8:       N := 2;
+l9: end;
+l10: <next statement>
+
+l2 CallStmt  -> l3 Constraint_Error ; successor -- the normal path
+l2 CallStmt  -> l6 (1)              ; exception -- to *every* handler …
+l2 CallStmt  -> l8 (2)              ; exception -- … including the one it does not name
+l3 RaiseStmt -> l6 (1)              ; exception
+l3 RaiseStmt -> l8 (2)              ; exception
+l6 AssignStmt -> l10                ; a handler body continues after the sequence
+l8 AssignStmt -> l10
+```
+
+Note the absence of any edge to the scope's abnormal exit: the `when others` handler
+catches everything. Remove it and the raise escapes as well as entering the handler:
+
+```
+l1: begin
+l2:    P;
+l3: exception
+l4:    when Constraint_Error =>
+l5:       N := 3;
+l6: end;
+l7: <next statement>
+
+l2 CallStmt -> l7                   ; successor
+l2 CallStmt -> l5 (3)               ; exception -- into the handler …
+l2 CallStmt -> exit (abnormal)      ; exception -- … and out of the scope, no others handler
+```
+
+The exception *name* of a `raise` is evaluated first (post-order), so `raise
+Constraint_Error;` is `Constraint_Error` → `RaiseStmt`.
 
 ### Return
 
-TODO — task 7.7.12.
+Test: [`ql/test/library/Cfg/return/`](../ql/test/library/Cfg/return/)
+
+**Rule.** A `return` evaluates its optional value, then the statement node, which completes
+with `return` to the scope's **normal** annotated exit — an explicit return and falling off
+the end both count as normal, and are told apart by the edge label. An extended return
+elaborates its object declaration, runs its optional `do … end return` statements, and then
+completes with `return`.
+
+```
+l1: if A then
+l2:    return 1;
+l3: end if;
+l4: return N;
+
+l2 (1)         -> l2 ReturnStmt        ; the value is evaluated first
+l2 ReturnStmt  -> exit (normal)        ; return
+l4 N           -> l4 ReturnStmt
+l4 ReturnStmt  -> exit (normal)        ; return
+```
+
+A bare `return;` from a procedure has no value to evaluate, so the statement node is itself
+the first node of the statement:
+
+```
+l1: if A then
+l2:    return;
+
+l1 A          -> l2 ReturnStmt ; true -- straight to the return node
+l2 ReturnStmt -> exit (normal) ; return
+```
+
+Extended return:
+
+```
+l1: return R : Integer := N do
+l2:    R := R + 1;
+l3: end return;
+
+l1 N                    -> l2 R                   ; elaborate the declaration first
+l2 AssignStmt           -> l1 ExtendedReturnStmt  ; then the do-block statements
+l1 ExtendedReturnStmt   -> exit (normal)          ; return
+```
 
 ### Short-circuit operators
 
-TODO — task 7.7.13.
+Test: [`ql/test/library/Cfg/short-circuit/`](../ql/test/library/Cfg/short-circuit/)
+
+**Rule.** The **left** operand of `and then` / `or else` is in a Boolean context and
+completes `true`/`false`; one of those two values skips the right operand and goes straight
+to the operator node. The right operand is *not* in a Boolean context — it completes
+`successor` into the operator node. The operator node then completes according to its own
+context (here, `true`/`false` because it is an `if` condition). Plain `and` / `or` evaluate
+both operands unconditionally.
+
+```
+l1: if A and then B then
+l2:    N := 1;
+l3: end if;
+
+l1 A     -> l1 B         ; true  -- the value is not yet decided, evaluate the right operand
+l1 A     -> l1 BinOp     ; false -- short-circuit
+l1 B     -> l1 BinOp     ; successor
+l1 BinOp -> l2 (1)       ; true
+l1 BinOp -> l3 IfStmt    ; false
+```
+
+`or else` is the mirror image — `true` short-circuits and `false` evaluates the right
+operand. Plain `and` has no Boolean edges out of its left operand at all:
+
+```
+l1: if A and B then
+
+l1 A -> l1 B  ; successor -- both operands are always evaluated
+```
+
+Nesting works as expected; a parenthesised inner short-circuit completes `successor` into
+its `ParenExpr` because a right operand is not a Boolean context:
+
+```
+l1: if A and then (B or else C) then
+
+l1 A         -> l1 B             ; true
+l1 A         -> l1 BinOp(outer)  ; false
+l1 B         -> l1 BinOp(inner)  ; true  -- short-circuit the or else
+l1 B         -> l1 C             ; false
+l1 C         -> l1 BinOp(inner)  ; successor
+l1 BinOp(inner) -> l1 ParenExpr  ; successor
+l1 ParenExpr -> l1 BinOp(outer)  ; successor
+```
+
+Because the framework is instantiated **without splitting**, the operator node emits both
+`true` and `false` regardless of which path reached it. This is sound but imprecise: the
+graph admits `A` false followed by the `true` branch. See the note on `Make` in Part 1.
 
 ### Conditional expressions
 
-TODO — task 7.7.14.
+Test: [`ql/test/library/Cfg/cond-expr/`](../ql/test/library/Cfg/cond-expr/)
+
+**Rule.** `IfExpr` and `CaseExpr` have exactly the branch shape of their statement forms —
+guard conditions completing `true`/`false`, alternatives reached by plain `successor` —
+except that each arm produces a value converging on the expression node, which then
+continues as an ordinary sub-expression.
+
+```
+l1: N := (if A then 1 elsif B then 2 else 3);
+
+l1 A         -> l1 (1)        ; true
+l1 A         -> l1 B          ; false
+l1 B         -> l1 (2)        ; true
+l1 B         -> l1 (3)        ; false
+l1 (1)       -> l1 IfExpr     ; every arm converges on the expression node
+l1 (2)       -> l1 IfExpr
+l1 (3)       -> l1 IfExpr
+l1 IfExpr    -> l1 ParenExpr  ; and then evaluation continues normally
+l1 ParenExpr -> l1 N          ; the assignment's LHS, RHS having been evaluated
+l1 N         -> l1 AssignStmt
+```
+
+```
+l1: N := (case N is when 0 => 10, when others => 20);
+
+l1 N       -> l1 (10)      ; successor -- to every arm, as in a case statement
+l1 N       -> l1 (20)      ; successor
+l1 (10)    -> l1 CaseExpr
+l1 (20)    -> l1 CaseExpr
+```
 
 ### Tasking
 
-TODO — task 7.7.15.
+Test: [`ql/test/library/Cfg/tasking/`](../ql/test/library/Cfg/tasking/)
+
+**Rule.** Tasking constructs are **opaque** (D-013): there are no inter-task edges and no
+rendezvous modelling, but every statement must still appear in the graph. A `select` is a
+`PostOrderTree` shaped like a `case`: control may enter *any* branch — each guarded
+alternative's statements, the `else` part, and the abortable part of `select … then
+abort` — and every branch converges on the select node. `accept … do … end` is transparent
+to its statements; a plain `accept E;`, a `delay`, an `abort` and a `requeue` are opaque
+leaves that complete normally.
+
+```
+l1: select
+l2:    accept E do
+l3:       null;
+l4:    end E;
+l5: or
+l6:    accept F;
+l7: else
+l8:    null;
+l9: end select;
+l10: <next statement>
+
+enter          -> l3 NullStmt   ; any branch may be entered …
+enter          -> l6 AcceptStmt
+enter          -> l8 NullStmt
+l3 NullStmt    -> l1 SelectStmt ; … and all converge on the select node
+l6 AcceptStmt  -> l1 SelectStmt
+l8 NullStmt    -> l1 SelectStmt
+l1 SelectStmt  -> l10
+```
+
+`accept E do … end` contributes no node of its own — only its inner statements — whereas
+the plain `accept F;` is itself a leaf node.
+
+```
+l1: select
+l2:    delay 1.0;
+l3: then abort
+l4:    null;
+l5: end select;
+
+<before> -> l2 DelayStmt  ; the triggering alternative …
+<before> -> l4 NullStmt   ; … and the abortable part are both reachable
+l2 DelayStmt -> l1 SelectStmt
+l4 NullStmt  -> l1 SelectStmt
+```
+
+Both branch shapes above were **wrong** until this phase. A plain `accept E;` was matched
+by no control-flow tree at all (`OpaqueStmtTree` excluded all of `Raw::AcceptStmt` while
+`AcceptStmtTree` covered only `AcceptStmtWithStmts`), and `SelectStmtTree` never read
+`getThenAbortPart()`. Both constructs therefore had no CFG nodes, and
+`ada/unreachable-statement` reported them as unreachable — two confirmed false positives,
+now fixed and pinned by this test.
 
 ---
 

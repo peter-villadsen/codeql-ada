@@ -279,7 +279,11 @@ class OpaqueStmtTree extends LeafTree instanceof Raw::Stmt {
     not this instanceof Raw::BlockStmt and
     not this instanceof Raw::ExtendedReturnStmt and
     not this instanceof Raw::SelectStmt and
-    not this instanceof Raw::AcceptStmt
+    // only `accept … do … end` has its own tree; a plain `accept E;` has no
+    // statements to wire and stays an opaque leaf here. Excluding all of
+    // `AcceptStmt` would leave it covered by no tree at all, so it would vanish
+    // from the graph and be reported as unreachable.
+    not this instanceof Raw::AcceptStmtWithStmts
   }
 }
 
@@ -355,7 +359,11 @@ class CaseStmtTree extends PostOrderTree instanceof Raw::CaseStmt {
 
   override predicate first(Raw::AdaNode node) { first(super.getExpr(), node) }
 
-  override predicate propagatesAbnormal(Raw::AdaNode child) { child = this.altBody() }
+  override predicate propagatesAbnormal(Raw::AdaNode child) {
+    // the selector as well as the bodies: a selector that can raise must
+    // propagate that completion, as an `if`'s guard condition does
+    child = super.getExpr() or child = this.altBody()
+  }
 
   override predicate succ(Raw::AdaNode pred, Raw::AdaNode succ, Completion c) {
     // selector → each alternative's statements
@@ -611,7 +619,10 @@ class CaseExprTree extends PostOrderTree instanceof Raw::CaseExpr {
 
   override predicate first(Raw::AdaNode node) { first(super.getExpr(), node) }
 
-  override predicate propagatesAbnormal(Raw::AdaNode child) { child = this.altExpr() }
+  override predicate propagatesAbnormal(Raw::AdaNode child) {
+    // the selector as well as the arms -- see `CaseStmtTree`
+    child = super.getExpr() or child = this.altExpr()
+  }
 
   override predicate succ(Raw::AdaNode pred, Raw::AdaNode succ, Completion c) {
     last(super.getExpr(), pred, c) and completionIsNormal(c) and first(this.altExpr(), succ)
@@ -677,6 +688,10 @@ class SelectStmtTree extends PostOrderTree instanceof Raw::SelectStmt {
     result = super.getGuards().getChild(_).(Raw::SelectWhenPart).getStmts()
     or
     result = super.getElsePart().getStmts()
+    or
+    // the abortable part of `select … then abort …`; without this its
+    // statements are in no branch and so appear unreachable
+    result = super.getThenAbortPart().getStmts()
   }
 
   override predicate first(Raw::AdaNode node) { first(this.branch(), node) or this.enterNode(node) }
