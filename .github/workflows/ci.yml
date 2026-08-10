@@ -86,6 +86,20 @@ jobs:
       - name: Add CodeQL to PATH
         run: echo "$HOME/codeql-cli/codeql" >> "$GITHUB_PATH"
 
+      # Committing codeql-pack.lock.yml is not enough: the lock file pins the
+      # version, but the pack still has to be downloaded into the local cache
+      # before anything can compile against it. A developer machine usually has
+      # it already, so this only ever fails on a clean checkout -- which is why
+      # it went unnoticed from Phase 7.0 (when codeql/controlflow was added) to
+      # the first push that carried it.
+      # Lib before src before test, matching the dependency order.
+      - name: Install QL pack dependencies
+        run: |
+          set -euo pipefail
+          for pack in ql/lib ql/src ql/test; do
+            codeql pack install "$pack" --additional-packs=ql
+          done
+
       - name: Check CFG coverage appendix (Phase 7.7)
         run: python3 scripts/check_cfg_coverage.py
 
