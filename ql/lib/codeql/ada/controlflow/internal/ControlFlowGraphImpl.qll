@@ -42,18 +42,18 @@ module Scopes {
     }
 
     /**
-     * Gets the body content executed for this scope: the handled statement
-     * sequence, or (for an expression function) the return expression.
+     * Gets the body content executed for this scope.
      *
-     * Phase 7.2 enters the statements directly; declarative-part elaboration
-     * (object-declaration initializers) is wired in task 7.4.
+     * For an expression function that is the return expression. For every other
+     * scope it is the body node itself, which `BodyTree` sequences as
+     * "elaborate the declarative part, then run the statements" — so a local
+     * object's initializer is part of the graph, exactly as in a `declare`
+     * block.
      */
     private Raw::AdaNode getBody() {
-      result = this.(Raw::SubpBody).getStmts() or
-      result = this.(Raw::ExprFunction).getExpr() or
-      result = this.(Raw::TaskBody).getStmts() or
-      result = this.(Raw::EntryBody).getStmts() or
-      result = this.(Raw::PackageBody).getStmts()
+      result = this.(Raw::ExprFunction).getExpr()
+      or
+      not this instanceof Raw::ExprFunction and result = this
     }
 
     /** Holds if `first` is executed first when entering this scope. */
@@ -503,20 +503,95 @@ class BeginBlockTree extends StandardTree instanceof Raw::BeginBlock {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Elaboration of declarative parts, shared by `declare` blocks and bodies.
+// ---------------------------------------------------------------------------
+
+/** Gets the `i`th declaration of `part`. */
+private Raw::AdaNode declAt(Raw::DeclarativePart part, int i) {
+  result = part.getDecls().getChild(i)
+}
+
+/**
+ * Gets the initializer evaluated when elaborating the `i`th declaration of
+ * `part`, if any.
+ *
+ * Only object declarations are elaborated: a named number (`K : constant := 3`)
+ * is a `NumberDecl` whose value is static, and the declarative parts of nested
+ * packages are a documented gap (see `docs/cfg-design.md`).
+ */
+private Raw::Expr elaboratedInitializer(Raw::DeclarativePart part, int i) {
+  result = declAt(part, i).(Raw::ObjectDecl).getDefaultExpr()
+}
+
+/** Gets the number of declarations in `part`, or 0 if there is no such part. */
+bindingset[part]
+private int declCount(Raw::DeclarativePart part) { result = count(declAt(part, _)) }
+
 /**
  * A `declare … begin … end` block: elaborate the declarative part (object
- * declaration initializers are evaluated, via generic post-order over the
- * declarations) then run the handled statements.
+ * declaration initializers are evaluated, in declaration order) then run the
+ * handled statements. Transparent — the block itself is never a node.
  */
 class DeclBlockTree extends StandardTree instanceof Raw::DeclBlock {
-  private Raw::AdaNode aDecl(int i) { result = super.getDecls().getDecls().getChild(i) }
-
   override Raw::AdaNode getChildNode(int i) {
     // object-declaration initializers, in declaration order …
-    result = this.aDecl(i).(Raw::ObjectDecl).getDefaultExpr()
+    result = elaboratedInitializer(super.getDecls(), i)
     or
     // … then the handled statements
-    i = count(this.aDecl(_)) and result = super.getStmts()
+    i = declCount(super.getDecls()) and result = super.getStmts()
+  }
+
+  override predicate first(Raw::AdaNode f) { first(this.getFirstChildTree(), f) }
+
+  override predicate last(Raw::AdaNode l, Completion c) {
+    last(this.getLastChildTree(), l, c) and completionIsNormal(c)
+  }
+}
+
+/** Gets the declarative part of body `b`. */
+private Raw::DeclarativePart bodyDecls(Raw::AdaNode b) {
+  result = b.(Raw::SubpBody).getDecls() or
+  result = b.(Raw::PackageBody).getDecls() or
+  result = b.(Raw::TaskBody).getDecls() or
+  result = b.(Raw::EntryBody).getDecls()
+}
+
+/** Gets the handled statement sequence of body `b`. */
+private Raw::HandledStmts bodyStmts(Raw::AdaNode b) {
+  result = b.(Raw::SubpBody).getStmts() or
+  result = b.(Raw::PackageBody).getStmts() or
+  result = b.(Raw::TaskBody).getStmts() or
+  result = b.(Raw::EntryBody).getStmts()
+}
+
+/**
+ * A body with a declarative part — a subprogram, package, task or entry body.
+ * Elaborates the object-declaration initializers in declaration order, then
+ * runs the statements, exactly as a `declare` block does. An entry body's
+ * barrier is evaluated first of all, since it is evaluated before the body is
+ * entered.
+ *
+ * Transparent: the body node itself is never in the graph. It is the scope's
+ * `getBody()`, so `scopeFirst` enters the first elaborated initializer (or the
+ * first statement when there is nothing to elaborate) and `scopeLast` picks up
+ * both the statements' normal completion and, through `propagatesAbnormal`,
+ * every `return`/`raise` escaping either part.
+ */
+class BodyTree extends StandardTree instanceof Raw::AdaNode {
+  BodyTree() {
+    this instanceof Raw::SubpBody or
+    this instanceof Raw::PackageBody or
+    this instanceof Raw::TaskBody or
+    this instanceof Raw::EntryBody
+  }
+
+  override Raw::AdaNode getChildNode(int i) {
+    i = -1 and result = this.(Raw::EntryBody).getBarrier()
+    or
+    result = elaboratedInitializer(bodyDecls(this), i)
+    or
+    i = declCount(bodyDecls(this)) and result = bodyStmts(this)
   }
 
   override predicate first(Raw::AdaNode f) { first(this.getFirstChildTree(), f) }

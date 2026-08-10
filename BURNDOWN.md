@@ -384,19 +384,28 @@ Status of the field (verified 2026-07-02):
       `scripts/check_cfg_coverage.py`.
 - [x] 7.7.17 Close-out: bundled `test_*.adb` retired after construct-by-construct check.
 
-Defects the conformance tests surfaced (three fixed, one deferred):
+Defects the conformance tests surfaced (all four fixed):
 
+- [x] C-1 **Declarative parts were not elaborated.** A subprogram's, package's, task's or
+      entry body's local object initialisers produced no CFG nodes at all — only `declare`
+      blocks elaborated — so every expression evaluated during elaboration, including
+      calls that can raise, was missing from the graph. `BodyTree` now sequences
+      "elaborate the declarative part, then run the statements" for all four body kinds,
+      sharing its elaboration rule with `DeclBlockTree`; an entry barrier is evaluated
+      first of all. The `scopes` family's MISSING/SPURIOUS tripwires reported all nine
+      predicted edges on the fix.
 - [x] C-2 `CaseStmtTree`/`CaseExprTree` dropped the selector's abnormal completions.
 - [x] C-3 A plain `accept E;` was matched by no control-flow tree and vanished.
 - [x] C-4 `select … then abort`'s abortable part was in no branch and unreachable.
-- [ ] **C-1 Declarative parts are not elaborated.** A subprogram's, package's or task's
-      local object initialisers produce no CFG nodes at all — only `declare` blocks
-      elaborate. A call in a declaration is invisible to `MissingPairedCall`, so
-      `ada/open-without-close` misses `F : File_Type := Open (…)`. Recorded as
-      MISSING/SPURIOUS expectations in the `scopes` family, which will report
-      "Fixed missing result" when it is implemented. Needs its own decision: it changes
-      graph shape for every body with an initialised local.
 - [x] C-5 resolved as *not* a defect: a `NumberDecl`'s value is static.
+
+C-1 changes no current query result: `ada/open-without-close` matches `CallStmt` only, and
+`Ada.Text_IO.Open`/`Create` are procedures, so they cannot appear as an initialiser. (An
+earlier note here claimed otherwise — it was wrong.) What the fix buys is a graph that no
+longer omits elaboration: a user instantiating `MissingPairedCall` with a *function*-shaped
+acquire (`H : Handle := Acquire (…)`) now sees it, exception edges out of initialisers
+exist, and — the substantive one — the SSA layer planned for Phase 9 will see the defining
+assignment of every initialised local, which it could not have before.
 
 ## Phase 8 — Wave A queries (planned 2026-07-03; independent of Phase 7)
 

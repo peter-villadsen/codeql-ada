@@ -85,14 +85,14 @@ NA_GROUPS = [
     ("type definitions and constraints",
      "The static type system: type definitions, subtype indications, constraints, "
      "ranges used as type bounds. Elaborating a type declaration can in principle run "
-     "code, which the CFG does not model (a documented limitation, and a superset of "
-     "C-1).",
+     "code (a dynamic bound, say), which the CFG does not model -- a documented "
+     "limitation.",
      lambda n, a: ("TypeDef" in a or "BaseTypeDecl" in a or "Constraint" in a
                    or n.endswith("Constraint") or n.endswith("Def"))),
     ("declarations",
-     "Declarations other than the object declarations elaborated inside a `declare` "
-     "block. See C-1 in Part 5: declarative parts of subprograms, packages and tasks "
-     "are not elaborated at all.",
+     "Declarations other than the object declarations whose initialisers are elaborated "
+     "in a `declare` block or a body. The declarative part of a nested *package* is "
+     "still not elaborated -- see Blocks.",
      lambda n, a: "BasicDecl" in a),
     ("lists",
      "List wrappers whose elements the owning construct reads directly. `StmtList` and "

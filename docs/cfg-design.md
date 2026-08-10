@@ -87,13 +87,16 @@ Each `CfgScope` gets its own disconnected graph with one entry and one exit. Nes
 bodies are their **own** scopes — a nested `SubpBody`'s statements are NOT part of the
 enclosing body's CFG.
 
-| Scope | Raw class | Body accessor |
+| Scope | Raw class | Body content, in order |
 |---|---|---|
-| Subprogram | `Raw::SubpBody` | `getStmts()` → `HandledStmts` |
-| Expression function | `Raw::ExprFunction` | `getExpr()` → `Expr` |
-| Task body | `Raw::TaskBody` | `getStmts()` → `HandledStmts` |
-| Entry body | `Raw::EntryBody` | `getStmts()` → `HandledStmts` (barrier `getBarrier()` is elaborated before entry) |
-| Package body | `Raw::PackageBody` | `getStmts()` → `HandledStmts` (elaboration statements, if any) |
+| Subprogram | `Raw::SubpBody` | `getDecls()` elaborated, then `getStmts()` |
+| Expression function | `Raw::ExprFunction` | `getExpr()` — no declarative part, no statements |
+| Task body | `Raw::TaskBody` | `getDecls()` elaborated, then `getStmts()` |
+| Entry body | `Raw::EntryBody` | `getBarrier()`, then `getDecls()` elaborated, then `getStmts()` |
+| Package body | `Raw::PackageBody` | `getDecls()` elaborated, then `getStmts()` (its elaboration statements, if any) |
+
+Everything except an expression function is sequenced by `BodyTree`, which shares its
+elaboration rule with `DeclBlockTree` — see [Scopes](#scopes-1) and [Blocks](#blocks).
 
 ### Completions
 
@@ -230,11 +233,14 @@ declaration *does* have an initialiser.
 
 Test: [`ql/test/library/Cfg/scopes/`](../ql/test/library/Cfg/scopes/)
 
-**Rule.** Each of the five scope kinds gets its own disconnected graph. Entry flows to the
-first node of the scope's body; the last node flows to an `AnnotatedExitNode`
-(`(normal)` or `(abnormal)`), and both annotated exits flow to the single exit node.
-Nested bodies are separate graphs: the package body below contains four other scopes and
-shares no edge with any of them.
+**Rule.** Each of the five scope kinds gets its own disconnected graph. A body with a
+declarative part **elaborates it first** — each object declaration's initialiser is
+evaluated, in declaration order — and then runs its statements, exactly as a `declare`
+block does. Entry flows to the first node of that sequence; the last node flows to an
+`AnnotatedExitNode` (`(normal)` or `(abnormal)`), and both annotated exits flow to the
+single exit node. An entry body's barrier is evaluated before anything else, since it is
+evaluated before the body is entered. Nested bodies are separate graphs: the package body
+below contains four other scopes and shares no edge with any of them.
 
 ```
 l1: package body Scopes is
@@ -254,26 +260,29 @@ enter PackageBody   -> l24 NullStmt        ; the package's elaboration statement
 l24 NullStmt        -> exit PackageBody (normal)
 enter ExprFunction  -> l3 X                ; an expression function's body is its expression
 l3 (X * 2)          -> exit ExprFunction (normal)
-enter SubpBody      -> l8 NullStmt         ; NOTE: l6 is skipped entirely -- see below
+enter SubpBody      -> l6 Double           ; the declarative part is elaborated first
+l6 Double(1)        -> l8 NullStmt         ; then the statements
+l6 Double(1)        -> exit SubpBody (abnormal) ; exception -- an initialiser can raise
 enter TaskBody      -> l13 NullStmt
-enter EntryBody     -> l19 NullStmt        ; the barrier on l17 is not in the graph
+enter EntryBody     -> l17 True            ; the barrier, evaluated before the body
+l17 True            -> l19 NullStmt
 ```
 
 An expression function's "body" is `getExpr()`, so `is (X * 2)` yields the `ParenExpr`
 chain and no statement nodes at all.
 
-**Limitation — declarative parts are not elaborated (candidate defect C-1).** The
-initialiser on l6 calls `Double`, which can raise, yet it produces **no CFG node**: entry
-goes straight to l8. `Scopes::CfgScope.getBody()` returns only `getStmts()`, so a
-subprogram's, package's or task's declarative part is invisible to the CFG — only
-`declare` blocks elaborate their declarations (see [Blocks](#blocks)). This contradicts
-the elaboration row of the interim index above and matters to the paired-call query: an
-`Open` called in a declaration is not seen. The correct edges are recorded as `MISSING:`
-expectations in the test, and the edge that would become wrong as `SPURIOUS:`, so the day
-elaboration is implemented the test says so.
+Elaboration follows the same rule as a [`declare` block](#blocks) and shares its
+implementation: only `ObjectDecl` initialisers are evaluated, so a named number is
+correctly skipped, and the declarative part of a *nested package* remains unmodelled.
 
-The entry barrier of an `EntryBody` (`when True` on l17) is unmodelled for the same
-reason.
+This was **wrong** until this phase (defect C-1): `Scopes::CfgScope.getBody()` returned
+only `getStmts()`, so the initialiser on l6 — a call that can raise — produced no CFG node
+at all and entry went straight to l8. Only `declare` blocks elaborated. The consequence
+was a graph that silently omitted every expression evaluated during elaboration; in
+particular an SSA layer built on it (Phase 9) would have missed the defining assignment of
+every initialised local. The conformance test had recorded the correct edges as `MISSING:`
+expectations and the edge that had to disappear as `SPURIOUS:`, and implementing
+elaboration reported all nine.
 
 ### If statement
 
@@ -561,13 +570,14 @@ l8 AssignStmt  -> <after the block>
 
 A named block behaves identically; `Named : declare …` adds no node.
 
-Two things this pins down. First, the contrast with [Scopes](#scopes-1): a `declare`
-block elaborates its declarations, but a *subprogram's* declarative part does not (C-1) —
-the same declaration is in the graph here and absent there. Second, a **named number**
-(`K : constant := 3;`) is correctly skipped: it is a `NumberDecl`, not an `ObjectDecl`,
-and its value is static, so there is nothing to evaluate. Only `ObjectDecl` initialisers
-are elaborated, which leaves the declarative part of a *nested package* inside a block
-unmodelled — a genuine but exotic gap.
+A **named number** (`K : constant := 3;`) is correctly skipped: it is a `NumberDecl`, not
+an `ObjectDecl`, and its value is static, so there is nothing to evaluate. Only
+`ObjectDecl` initialisers are elaborated, which leaves the declarative part of a *nested
+package* inside a block unmodelled — a genuine but exotic gap.
+
+A block and a body now elaborate by the same rule, sharing one implementation
+(`elaboratedInitializer`), so the two cannot drift apart. They did drift once: until this
+phase only blocks elaborated, which is defect C-1 in [Scopes](#scopes-1).
 
 ### Exceptions
 
@@ -870,13 +880,13 @@ A statement with no dedicated tree, so `OpaqueStmtTree` makes it a leaf that com
 
 `AbortStmt`, `AcceptStmt`, `DelayStmt`, `ErrorStmt`, `RequeueStmt`, `SimpleDeclStmt`, `TerminateAlternative`
 
-### structural (15)
+### structural (16)
 
 Read by the CFG but never becoming a node: its owning construct's tree consumes it directly. Making these nodes would leak spurious reachable elements into the graph -- see Part 1.
 
-`CaseExprAlternative`, `CaseStmtAlternative`, `ElsePart`, `ElsifExprPart`, `ElsifStmtPart`, `ExceptionHandler`, `ExtendedReturnStmtObjectDecl`, `ForLoopSpec`, `LabelDecl`, `NamedStmtDecl`, `ObjectDecl`, `OthersDesignator`, `SelectWhenPart`, `ThenAbortPart`, `WhileLoopSpec`
+`CaseExprAlternative`, `CaseStmtAlternative`, `DeclarativePart`, `ElsePart`, `ElsifExprPart`, `ElsifStmtPart`, `ExceptionHandler`, `ExtendedReturnStmtObjectDecl`, `ForLoopSpec`, `LabelDecl`, `NamedStmtDecl`, `ObjectDecl`, `OthersDesignator`, `SelectWhenPart`, `ThenAbortPart`, `WhileLoopSpec`
 
-### n/a (310)
+### n/a (309)
 
 Not control-relevant: nothing here is executed, so nothing is in the graph.
 
@@ -888,11 +898,11 @@ Not control-relevant: nothing here is executed, so nothing is in the graph.
 
 `AbortAbsent`, `AbortPresent`, `AbstractAbsent`, `AbstractPresent`, `AliasedAbsent`, `AliasedPresent`, `AllAbsent`, `AllPresent`, `ConstantAbsent`, `ConstantPresent`, `LimitedAbsent`, `LimitedPresent`, `NotNullAbsent`, `NotNullPresent`, `PrivateAbsent`, `PrivatePresent`, `ProtectedAbsent`, `ProtectedPresent`, `ReverseAbsent`, `ReversePresent`, `SynchronizedAbsent`, `SynchronizedPresent`, `TaggedAbsent`, `TaggedPresent`, `UntilAbsent`, `UntilPresent`, `WithPrivateAbsent`, `WithPrivatePresent`
 
-**type definitions and constraints** (37) — The static type system: type definitions, subtype indications, constraints, ranges used as type bounds. Elaborating a type declaration can in principle run code, which the CFG does not model (a documented limitation, and a superset of C-1).
+**type definitions and constraints** (37) — The static type system: type definitions, subtype indications, constraints, ranges used as type bounds. Elaborating a type declaration can in principle run code (a dynamic bound, say), which the CFG does not model -- a documented limitation.
 
 `AccessToSubpDef`, `AnonymousTypeAccessDef`, `AnonymousTypeDecl`, `ArrayTypeDef`, `ClasswideTypeDecl`, `ComponentDef`, `CompositeConstraint`, `ConcreteTypeDecl`, `DecimalFixedPointDef`, `DeltaConstraint`, `DerivedTypeDef`, `DigitsConstraint`, `DiscreteBaseSubtypeDecl`, `EnumTypeDef`, `FloatingPointDef`, `FormalDiscreteTypeDef`, `FormalTypeDecl`, `IncompleteFormalTypeDecl`, `IncompleteTaggedTypeDecl`, `IncompleteTypeDecl`, `InterfaceTypeDef`, `ModIntTypeDef`, `NullRecordDef`, `OrdinaryFixedPointDef`, `PrivateTypeDef`, `ProtectedDef`, `ProtectedTypeDecl`, `RangeConstraint`, `RecordDef`, `RecordTypeDef`, `SignedIntTypeDef`, `SingleTaskTypeDecl`, `SubtypeDecl`, `SynthAnonymousTypeDecl`, `TaskDef`, `TaskTypeDecl`, `TypeAccessDef`
 
-**declarations** (46) — Declarations other than the object declarations elaborated inside a `declare` block. See C-1 in Part 5: declarative parts of subprograms, packages and tasks are not elaborated at all.
+**declarations** (46) — Declarations other than the object declarations whose initialisers are elaborated in a `declare` block or a body. The declarative part of a nested *package* is still not elaborated -- see Blocks.
 
 `AbstractFormalSubpDecl`, `AbstractStateDecl`, `AbstractSubpDecl`, `AcceptStmtBody`, `AnonymousExprDecl`, `AssertionLevelDecl`, `ComponentDecl`, `ConcreteFormalSubpDecl`, `DiscriminantSpec`, `EntryDecl`, `EntryIndexSpec`, `EnumLiteralDecl`, `ErrorDecl`, `ExceptionDecl`, `ForLoopVarDecl`, `GenericFormalObjDecl`, `GenericFormalPackage`, `GenericFormalSubpDecl`, `GenericFormalTypeDecl`, `GenericPackageDecl`, `GenericPackageInstantiation`, `GenericPackageInternal`, `GenericPackageRenamingDecl`, `GenericSubpDecl`, `GenericSubpInstantiation`, `GenericSubpInternal`, `GenericSubpRenamingDecl`, `NoTypeObjectRenamingDecl`, `NullSubpDecl`, `NumberDecl`, `PackageBodyStub`, `PackageDecl`, `PackageRenamingDecl`, `ParamSpec`, `ProtectedBody`, `ProtectedBodyStub`, `SingleProtectedDecl`, `SingleTaskDecl`, `SubpBodyStub`, `SubpDecl`, `SubpRenamingDecl`, `SyntheticCharEnumLit`, `SyntheticFormalParamDecl`, `SyntheticObjectDecl`, `SyntheticSubpDecl`, `TaskBodyStub`
 
@@ -904,9 +914,9 @@ Not control-relevant: nothing here is executed, so nothing is in the graph.
 
 `AbortNode`, `AbstractNode`, `AccessDef`, `AdaList`, `AdaNode`, `AliasedNode`, `AllNode`, `ArrayIndices`, `AspectClause`, `BaseAggregate`, `BaseAssoc`, `BaseFormalParamDecl`, `BaseFormalParamHolder`, `BaseId`, `BaseLoopStmt`, `BasePackageDecl`, `BaseRecordDef`, `BaseSubpBody`, `BaseSubpSpec`, `BaseSubtypeDecl`, `BaseTypeAccessDef`, `BaseTypeDecl`, `BasicAssoc`, `BasicAssocList`, `BasicDecl`, `BasicSubpDecl`, `BlockStmt`, `BodyNode`, `BodyStub`, `ClassicSubpDecl`, `CompositeStmt`, `CondExpr`, `ConstantNode`, `Constraint`, `DiscriminantPart`, `Expr`, `ExprList`, `FormalSubpDecl`, `FormatStringTokNode`, `GenericDecl`, `GenericFormal`, `GenericInstantiation`, `GenericRenamingDecl`, `IdentifierList`, `InterfaceKind`, `IterType`, `LimitedNode`, `LoopSpec`, `Mode`, `Name`, `NotNull`, `NumLiteral`, `Op`, `OverridingNode`, `PpDirective`, `PrivateNode`, `ProtectedNode`, `Quantifier`, `RealTypeDef`, `ReverseNode`, `SimpleStmt`, `SingleTokNode`, `Stmt`, `SubpKind`, `SynchronizedNode`, `TaggedNode`, `TypeDecl`, `TypeDef`, `TypeExpr`, `UntilNode`, `UseClause`, `WithPrivate`
 
-**other syntax** (77) — Compilation units, with/use clauses, aspects, pragmas, defining names, designators and similar structure that carries no control flow.
+**other syntax** (76) — Compilation units, with/use clauses, aspects, pragmas, defining names, designators and similar structure that carries no control flow.
 
-`AnonymousType`, `AspectAssoc`, `AspectSpec`, `AtClause`, `AttributeDefClause`, `CompilationUnit`, `ComponentClause`, `ComponentList`, `ConstrainedArrayIndices`, `ConstrainedSubtypeIndication`, `DeclarativePart`, `DiscreteSubtypeIndication`, `EntryCompletionFormalParams`, `EntrySpec`, `EnumLitSynthTypeExpr`, `EnumRepClause`, `EnumSubpSpec`, `FinallyPart`, `ForLoopIterFilter`, `FormatStringChunk`, `FormatStringTokEnd`, `FormatStringTokMid`, `FormatStringTokStart`, `FormatStringTokString`, `GenericFormalPart`, `InterfaceKindLimited`, `InterfaceKindProtected`, `InterfaceKindSynchronized`, `InterfaceKindTask`, `IterTypeIn`, `IterTypeOf`, `KnownDiscriminantPart`, `LibraryItem`, `ModeDefault`, `ModeIn`, `ModeInOut`, `ModeOut`, `MultiAbstractStateDecl`, `NullComponentDecl`, `OverridingNotOverriding`, `OverridingOverriding`, `OverridingUnspecified`, `Params`, `ParenAbstractStateDecl`, `PpElseDirective`, `PpElsifDirective`, `PpEndIfDirective`, `PpIfDirective`, `PpThenKw`, `PragmaArgumentAssoc`, `PragmaNode`, `PrivatePart`, `PublicPart`, `QuantifierAll`, `QuantifierSome`, `RangeSpec`, `RecordRepClause`, `RenamingClause`, `SubpKindFunction`, `SubpKindProcedure`, `SubpSpec`, `SubtypeIndication`, `Subunit`, `SyntheticBinarySpec`, `SyntheticRenamingClause`, `SyntheticTypeExpr`, `SyntheticUnarySpec`, `TypeAttributesRepository`, `UnconstrainedArrayIndex`, `UnconstrainedArrayIndices`, `UnknownDiscriminantPart`, `UsePackageClause`, `UseTypeClause`, `ValueSequence`, `Variant`, `VariantPart`, `WithClause`
+`AnonymousType`, `AspectAssoc`, `AspectSpec`, `AtClause`, `AttributeDefClause`, `CompilationUnit`, `ComponentClause`, `ComponentList`, `ConstrainedArrayIndices`, `ConstrainedSubtypeIndication`, `DiscreteSubtypeIndication`, `EntryCompletionFormalParams`, `EntrySpec`, `EnumLitSynthTypeExpr`, `EnumRepClause`, `EnumSubpSpec`, `FinallyPart`, `ForLoopIterFilter`, `FormatStringChunk`, `FormatStringTokEnd`, `FormatStringTokMid`, `FormatStringTokStart`, `FormatStringTokString`, `GenericFormalPart`, `InterfaceKindLimited`, `InterfaceKindProtected`, `InterfaceKindSynchronized`, `InterfaceKindTask`, `IterTypeIn`, `IterTypeOf`, `KnownDiscriminantPart`, `LibraryItem`, `ModeDefault`, `ModeIn`, `ModeInOut`, `ModeOut`, `MultiAbstractStateDecl`, `NullComponentDecl`, `OverridingNotOverriding`, `OverridingOverriding`, `OverridingUnspecified`, `Params`, `ParenAbstractStateDecl`, `PpElseDirective`, `PpElsifDirective`, `PpEndIfDirective`, `PpIfDirective`, `PpThenKw`, `PragmaArgumentAssoc`, `PragmaNode`, `PrivatePart`, `PublicPart`, `QuantifierAll`, `QuantifierSome`, `RangeSpec`, `RecordRepClause`, `RenamingClause`, `SubpKindFunction`, `SubpKindProcedure`, `SubpSpec`, `SubtypeIndication`, `Subunit`, `SyntheticBinarySpec`, `SyntheticRenamingClause`, `SyntheticTypeExpr`, `SyntheticUnarySpec`, `TypeAttributesRepository`, `UnconstrainedArrayIndex`, `UnconstrainedArrayIndices`, `UnknownDiscriminantPart`, `UsePackageClause`, `UseTypeClause`, `ValueSequence`, `Variant`, `VariantPart`, `WithClause`
 
 <!-- END GENERATED COVERAGE -->
 

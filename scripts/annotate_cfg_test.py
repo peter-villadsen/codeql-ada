@@ -59,6 +59,32 @@ def run_test(repo: str, test_dir: str) -> str:
     return proc.stdout + proc.stderr
 
 
+def strip(test_dir: str) -> int:
+    """Removes existing expectation comments so the run reports every edge.
+
+    Without this, re-annotating a file keeps only the edges the run called
+    "Unexpected" -- the ones that already matched are not reported, so they
+    would be silently dropped. Lines carrying a hand-written `MISSING:` or
+    `SPURIOUS:` expectation are left alone, matching `annotate`.
+    """
+    stripped = 0
+    for name in sorted(os.listdir(test_dir)):
+        if not name.endswith((".adb", ".ads")):
+            continue
+        path = os.path.join(test_dir, name)
+        with io.open(path, encoding="utf-8") as f:
+            lines = f.read().splitlines()
+        out = [
+            l if ("MISSING:" in l or "SPURIOUS:" in l) else re.sub(r"\s*--\s*\$ .*$", "", l)
+            for l in lines
+        ]
+        if out != lines:
+            stripped += 1
+            with io.open(path, "w", encoding="utf-8", newline="\n") as f:
+                f.write("\n".join(out) + "\n")
+    return stripped
+
+
 def collect(output: str) -> dict[tuple[str, int], list[str]]:
     """Maps (file, annotation line) to the expectation values to write there.
 
@@ -103,6 +129,7 @@ def main() -> int:
     ap.add_argument("--repo", default=".", help="repository root (default: cwd)")
     args = ap.parse_args()
 
+    strip(args.test_dir)
     output = run_test(args.repo, args.test_dir)
     if "Unexpected result" not in output:
         print("No unannotated edges. Either the test already passes, or it failed "
