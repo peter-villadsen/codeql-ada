@@ -189,15 +189,9 @@ Deliberate imprecisions are written as `$ MISSING: edge=…` rather than describ
 >
 > | Construct | Raw class(es) | Structure |
 > |---|---|---|
-> | Plain loop | `LoopStmt` | body → back-edge to body start; only `ExitStmt`/return/goto/raise leaves |
-> | While loop | `WhileLoopStmt`, `WhileLoopSpec` | cond(true)→body→cond; cond(false)→past-loop |
-> | For loop | `ForLoopStmt`, `ForLoopSpec` | spec modelled as one opaque continue/exit node → [body → spec]* → past-loop |
-> | Exit | `ExitStmt` | with condition: cond(true)→`break` to named/innermost loop, cond(false)→normal; else unconditional `break` |
-> | Block | `BlockStmt` → `DeclBlock` / `BeginBlock` | declarative part elaborates in order (object-decl initialisers are evaluated) → `getStmts()` |
 > | Handled sequence | `HandledStmts`, `ExceptionHandler` | every raise-completing node in the protected region has an edge to *each* handler; if no `when others`, also a raise edge out of the scope; handler bodies continue normally after the sequence |
 > | Return | `ReturnStmt` | (value expr →) `return` to scope exit |
 > | Extended return | `ExtendedReturnStmt` | elaborate object decl → run optional `HandledStmts` → `return` |
-> | Goto / label | `GotoStmt`, `Label`, `LabelDecl` | `goto` edge to the `Label` with matching name in the same body |
 > | Short-circuit | `BinOp` with `OpAndThen`/`OpOrElse` | and-then: LHS(false)→skip RHS; or-else: LHS(true)→skip RHS. Plain `OpAnd`/`OpOr` evaluate both sides |
 > | Conditional expr | `IfExpr`, `ElsifExprPart`, `CaseExpr`, `CaseExprAlternative` | same branch shape as their statement forms, but produce a value |
 > | Raise | `RaiseStmt`, `RaiseExpr` | `exception` |
@@ -403,23 +397,189 @@ has the same shape and the same gap. Recorded as a `MISSING:` expectation in the
 
 ### Plain and while loops
 
-TODO — task 7.7.6.
+Test: [`ql/test/library/Cfg/loops-basic/`](../ql/test/library/Cfg/loops-basic/)
+
+**Rule.** Both are `PostOrderTree`s whose own node is the point *after* the loop. A
+`while` loop enters at its condition: `true` goes to the body, `false` to the loop node,
+and the body's normal completion goes back to the condition. A plain `loop` enters at its
+body and the body loops back to itself; its node is reachable **only** through an `exit`
+(or the enclosing construct), so an exit-less loop is genuinely infinite.
+
+```
+l1: while A loop
+l2:    N := N + 1;
+l3: end loop;
+l4: <next statement>
+
+l1 A          -> l2 N              ; true  -- into the body
+l1 A          -> l3 WhileLoopStmt  ; false -- to the loop node, i.e. past the loop
+l2 AssignStmt -> l1 A              ; back edge, to the condition
+l3 WhileLoopStmt -> l4
+```
+
+```
+l1: loop
+l2:    N := N + 1;
+l3: end loop;
+
+enter         -> l2 N              ; a plain loop is entered at its body
+l2 AssignStmt -> l2 N              ; back edge, to the body's first node
+```
+
+Note what is **absent** from the second listing: there is no `LoopStmt` node, because
+nothing reaches it, and consequently no `exit SubpBody (normal)` node either — a
+subprogram ending in an exit-less loop never completes normally. This is the property the
+`FunctionMissingReturn` query relies on, and the conformance test pins it by having no
+annotation to write.
 
 ### For loops
 
-TODO — task 7.7.7.
+Test: [`ql/test/library/Cfg/loops-for/`](../ql/test/library/Cfg/loops-for/)
+
+**Rule.** The iteration mechanism is **opaque** (D-013): only the iterable expression is
+in the graph. It is evaluated once, and then control may either enter the body or skip the
+loop entirely (zero iterations); after each iteration control may either iterate again or
+leave. Both the range form and the `of` iterator form have this shape; the loop variable
+declaration (`ForLoopSpec.getVarDecl()`) is structural and never a node.
+
+```
+l1: for I in 1 .. 3 loop
+l2:    N := N + I;
+l3: end loop;
+l4: <next statement>
+
+l1 1           -> l1 3            ; the iterable is an ordinary expression: 1 .. 3 is a BinOp
+l1 3           -> l1 (1 .. 3)
+l1 (1 .. 3)    -> l2 N            ; enter the body …
+l1 (1 .. 3)    -> l3 ForLoopStmt  ; … or skip the loop entirely (empty range)
+l2 AssignStmt  -> l2 N            ; iterate again …
+l2 AssignStmt  -> l3 ForLoopStmt  ; … or leave
+l3 ForLoopStmt -> l4
+```
+
+`for E of V` is identical with `V` as the iterable:
+
+```
+l1: for E of V loop
+
+l1 V -> l2 N            ; enter the body
+l1 V -> l3 ForLoopStmt  ; or skip
+```
+
+Because the loop node is reachable from the iterable directly, a `for` loop — unlike a
+plain `loop` — always has a path around it.
 
 ### Exit
 
-TODO — task 7.7.8.
+Test: [`ql/test/library/Cfg/exit/`](../ql/test/library/Cfg/exit/)
+
+**Rule.** An `exit` is a **direct jump edge** labelled `break` from the exit node to the
+target loop's own node (the node a `PostOrderTree` loop uses as its join), not a completion
+that propagates outward. A bare `exit` targets the innermost enclosing loop; `exit Name`
+targets the enclosing loop whose `NamedStmt` declares that name. With a condition, `true`
+reaches the exit node and `false` falls through to the next statement. A `NamedStmt`
+wrapper is transparent — the loop node is the `LoopStmt` inside it.
+
+```
+l1: loop
+l2:    exit when A;
+l3:    N := N + 1;
+l4: end loop;
+
+l2 A        -> l2 ExitStmt  ; true  -- take the exit
+l2 A        -> l3 N         ; false -- fall through to the next statement
+l2 ExitStmt -> l4 LoopStmt  ; break -- jump to the loop node
+l3 AssignStmt -> l2 A       ; back edge
+```
+
+Named and nameless exits from nested loops:
+
+```
+l1: Outer : loop
+l2:    Inner : loop
+l3:       exit Outer when B;
+l4:       exit Inner;
+l5:    end loop Inner;
+l6: end loop Outer;
+
+l3 B          -> l3 ExitStmt      ; true
+l3 B          -> l4 ExitStmt      ; false -- on to the next statement
+l3 ExitStmt   -> l1 LoopStmt      ; break -- the *outer* loop, matched by name
+l4 ExitStmt   -> l2 LoopStmt      ; break -- the innermost loop
+l5 LoopStmt   -> l3 B             ; leaving Inner continues Outer's body
+```
 
 ### Goto and labels
 
-TODO — task 7.7.9.
+Test: [`ql/test/library/Cfg/goto/`](../ql/test/library/Cfg/goto/)
+
+**Rule.** A `goto` is a direct jump edge labelled `goto` from the goto node to its target
+`Label`, resolved by name text within the same CFG scope. A `goto` has **no** normal
+successor, so statements after an unconditional one are unreachable and appear in no edge
+at all. A `Label` is a leaf: control passes through it to the next statement.
+
+```
+l1: <<Again>>
+l2: N := N + 1;
+l3: if A then
+l4:    goto Again;
+l5: end if;
+l6: goto Done;
+l7: N := 999;
+l8: <<Done>>
+l9: null;
+
+enter          -> l1 Label
+l1 Label       -> l2 N            ; a label is passed through
+l3 A           -> l4 GotoStmt     ; true
+l3 A           -> l5 IfStmt       ; false
+l4 GotoStmt    -> l1 Label        ; goto -- backward
+l5 IfStmt      -> l6 GotoStmt
+l6 GotoStmt    -> l8 Label        ; goto -- forward; note there is no successor edge
+l8 Label       -> l9 NullStmt
+```
+
+`N := 999;` on l7 produces **no nodes whatsoever** — it is unreachable, which is exactly
+what `UnreachableStatement` reports. Because the CFG resolves `goto` properly, that query
+needs none of the label-based heuristics its pre-CFG version had.
 
 ### Blocks
 
-TODO — task 7.7.10.
+Test: [`ql/test/library/Cfg/blocks/`](../ql/test/library/Cfg/blocks/)
+
+**Rule.** All three block forms are **transparent**: `BeginBlock`, `DeclBlock` and the
+`NamedStmt` wrapper have no node of their own, so control flows from the statement before
+the block straight into the block's first node, and out of its last node to the statement
+after. A `declare` block **elaborates its declarative part first**: each `ObjectDecl`'s
+initialiser is evaluated, in declaration order, before the block's statements.
+
+```
+l1: begin
+l2:    N := 1;
+l3: end;
+l4:
+l5: declare
+l6:    Local : Integer := Id (N);
+l7: begin
+l8:    N := Local;
+l9: end;
+
+enter          -> l2 (1)          ; straight into the block, no node for "begin"
+l2 AssignStmt  -> l6 Id           ; on to the declare block's *initialiser*
+l6 CallExpr    -> l8 Local        ; elaboration done, now the statements
+l6 CallExpr    -> exit (abnormal) ; exception -- the initialiser can raise
+l8 AssignStmt  -> <after the block>
+```
+
+A named block behaves identically; `Named : declare …` adds no node.
+
+Two things this pins down. First, the contrast with [Scopes](#scopes-1): a `declare`
+block elaborates its declarations, but a *subprogram's* declarative part does not (C-1) —
+the same declaration is in the graph here and absent there. Second, a **named number**
+(`K : constant := 3;`) is correctly skipped: it is a `NumberDecl`, not an `ObjectDecl`,
+and its value is static, so there is nothing to evaluate. Only `ObjectDecl` initialisers
+are elaborated, which leaves the declarative part of a *nested package* inside a block
+unmodelled — a genuine but exotic gap.
 
 ### Exceptions
 
