@@ -189,9 +189,6 @@ Deliberate imprecisions are written as `$ MISSING: edge=…` rather than describ
 >
 > | Construct | Raw class(es) | Structure |
 > |---|---|---|
-> | Statement sequence | `StmtList` | children in evaluation order; a non-normal completion of child *i* skips *i+1…* |
-> | If statement | `IfStmt`, `ElsifStmtPart`, `ElsePart` | cond(true)→then-stmts; cond(false)→next elsif cond / else-stmts / past-if |
-> | Case statement | `CaseStmt`, `CaseStmtAlternative` | selector expr → exactly one alternative's stmts; alternatives converge on the join |
 > | Plain loop | `LoopStmt` | body → back-edge to body start; only `ExitStmt`/return/goto/raise leaves |
 > | While loop | `WhileLoopStmt`, `WhileLoopSpec` | cond(true)→body→cond; cond(false)→past-loop |
 > | For loop | `ForLoopStmt`, `ForLoopSpec` | spec modelled as one opaque continue/exit node → [body → spec]* → past-loop |
@@ -251,15 +248,158 @@ declaration *does* have an initialiser.
 
 ### Scopes
 
-TODO — task 7.7.3.
+Test: [`ql/test/library/Cfg/scopes/`](../ql/test/library/Cfg/scopes/)
+
+**Rule.** Each of the five scope kinds gets its own disconnected graph. Entry flows to the
+first node of the scope's body; the last node flows to an `AnnotatedExitNode`
+(`(normal)` or `(abnormal)`), and both annotated exits flow to the single exit node.
+Nested bodies are separate graphs: the package body below contains four other scopes and
+shares no edge with any of them.
+
+```
+l1: package body Scopes is
+l3:    function Double (X : Integer) return Integer is (X * 2);
+l5:    procedure With_Decl is
+l6:       Local : Integer := Double (1);
+l7:    begin
+l8:       null;
+l9:    end With_Decl;
+l11:   task body Worker is  … l13: null;  l14: end Worker;
+l17:      entry Wait when True is  … l19: null;  l20: end Wait;
+l23: begin
+l24:    null;
+l25: end Scopes;
+
+enter PackageBody   -> l24 NullStmt        ; the package's elaboration statements
+l24 NullStmt        -> exit PackageBody (normal)
+enter ExprFunction  -> l3 X                ; an expression function's body is its expression
+l3 (X * 2)          -> exit ExprFunction (normal)
+enter SubpBody      -> l8 NullStmt         ; NOTE: l6 is skipped entirely -- see below
+enter TaskBody      -> l13 NullStmt
+enter EntryBody     -> l19 NullStmt        ; the barrier on l17 is not in the graph
+```
+
+An expression function's "body" is `getExpr()`, so `is (X * 2)` yields the `ParenExpr`
+chain and no statement nodes at all.
+
+**Limitation — declarative parts are not elaborated (candidate defect C-1).** The
+initialiser on l6 calls `Double`, which can raise, yet it produces **no CFG node**: entry
+goes straight to l8. `Scopes::CfgScope.getBody()` returns only `getStmts()`, so a
+subprogram's, package's or task's declarative part is invisible to the CFG — only
+`declare` blocks elaborate their declarations (see [Blocks](#blocks)). This contradicts
+the elaboration row of the interim index above and matters to the paired-call query: an
+`Open` called in a declaration is not seen. The correct edges are recorded as `MISSING:`
+expectations in the test, and the edge that would become wrong as `SPURIOUS:`, so the day
+elaboration is implemented the test says so.
+
+The entry barrier of an `EntryBody` (`when True` on l17) is unmodelled for the same
+reason.
 
 ### If statement
 
-TODO — task 7.7.4.
+Test: [`ql/test/library/Cfg/if-stmt/`](../ql/test/library/Cfg/if-stmt/)
+
+**Rule.** `IfStmt` is a `PostOrderTree` whose own node is the **join** reached after any
+branch. Guard *i*'s condition completes `true` to the first node of guard *i*'s statements
+and `false` to the next guard's condition; the last guard's `false` goes to the `else`
+statements, or, if there is no `else`, directly to the join. Every branch body completing
+normally goes to the join, and the join completes normally to the next statement.
+
+```
+l1: if A then
+l2:    N := 1;
+l3: elsif B then
+l4:    N := 2;
+l5: else
+l6:    N := 3;
+l7: end if;
+l8: <next statement>
+
+l1 A          -> l2 (1)          ; true  -- first node of the then-statements
+l1 A          -> l3 B            ; false -- the next guard's condition
+l3 B          -> l4 (2)          ; true
+l3 B          -> l6 (3)          ; false -- no further guard, so the else statements
+l2 AssignStmt -> l7 IfStmt       ; every branch converges on the join
+l4 AssignStmt -> l7 IfStmt
+l6 AssignStmt -> l7 IfStmt
+l7 IfStmt     -> l8              ; the join completes normally
+```
+
+With no `else`, the last `false` edge goes straight to the join:
+
+```
+l1: if A then
+l2:    N := 4;
+l3: end if;
+
+l1 A -> l2 (4)     ; true
+l1 A -> l3 IfStmt  ; false -- straight to the join
+```
+
+`IfStmtTree.propagatesAbnormal` lists the guard conditions as well as the bodies, so a
+condition that can raise gets an `exception` edge:
+
+```
+l1: if Check (N) then …
+
+l1 CallExpr -> l2 (5)                  ; true
+l1 CallExpr -> l3 IfStmt               ; false
+l1 CallExpr -> exit SubpBody (abnormal); exception -- every call may raise (D-013)
+```
+
+Contrast this with the case statement below, whose selector does *not* get that edge.
 
 ### Case statement
 
-TODO — task 7.7.5.
+Test: [`ql/test/library/Cfg/case-stmt/`](../ql/test/library/Cfg/case-stmt/)
+
+**Rule.** `CaseStmt` is a `PostOrderTree` whose own node is the join. The selector
+expression flows to the first node of **every** alternative's statements, and every
+alternative converges on the join.
+
+```
+l1: case N is
+l2:    when 0 =>
+l3:       R := 10;
+l4:    when 1 =>
+l5:       R := 11;
+l6:    when others =>
+l7:       R := 12;
+l8: end case;
+l9: <next statement>
+
+l1 N           -> l3 (10)     ; successor -- to every alternative, not one
+l1 N           -> l5 (11)     ; successor
+l1 N           -> l7 (12)     ; successor
+l3 AssignStmt  -> l8 CaseStmt
+l5 AssignStmt  -> l8 CaseStmt
+l7 AssignStmt  -> l8 CaseStmt
+l8 CaseStmt    -> l9
+```
+
+Two things to note. The branch edges are labelled plain `successor`, **not** a
+matching-successor per choice: v1 over-approximates by assuming any alternative may be
+taken, and the `when` choices themselves (`CaseStmtAlternative`, and the choice
+expressions) are structural — consumed by `CaseStmtTree` and never in the graph. (An
+earlier draft of this document claimed a `MatchingSuccessor` per choice; that was never
+implemented.)
+
+**Limitation — the selector's abnormal completions are dropped (candidate defect C-2).**
+`CaseStmtTree.propagatesAbnormal` covers only the alternative bodies, omitting the
+selector, so a selector that can raise produces no `exception` edge:
+
+```
+l1: case Id (N) is
+l2:    when others =>
+l3:       R := 20;
+l4: end case;
+
+l1 CallExpr -> l3 (20)   ; successor
+                         ; MISSING: l1 CallExpr -> exit (abnormal) ; exception
+```
+
+The identical call in an `if` condition *does* get the edge — see above. `CaseExprTree`
+has the same shape and the same gap. Recorded as a `MISSING:` expectation in the test.
 
 ### Plain and while loops
 
