@@ -539,7 +539,15 @@ assignment of every initialised local, which it could not have before.
       overlapping rules, cost is adjudicating each divergence); (b) write Ada test cases
       from GNATcheck's *documented* rule semantics without running the tool — cheap, no
       toolchain, weaker evidence.
-- [ ] 9.0 Write the Phase 9 plan doc (blocked on Phase 7 shipping and soaking on corpus).
+- [x] 9.0 Phase 9 plan doc → [docs/phase9-plan.md](docs/phase9-plan.md). The soak gate is
+      satisfied: the CFG has been run over the full corpus and four defects were found and
+      fixed. **Key finding: the call graph does not exist yet.** There is no
+      declaration↔body relation, so a call in a spec/body-split package resolves only to
+      the spec's `SubpDecl` — and name-text pairing cannot substitute, because Ada
+      overloads. Verified 2026-08-11 that Libadalang's `p_body_part` resolves it across
+      compilation units, so the fix is extraction, not analysis. That makes Phase 9 the
+      first phase since Phase 3 to change the dbscheme, with the database-format
+      consequences in D-011.
 - [ ] SSA (`codeql/ssa`) over the CFG → dataflow (`codeql/dataflow`) → first taint
       queries with Ada sources/sinks (`Ada.Command_Line` → `GNAT.OS_Lib.Spawn`,
       `GNATCOLL.SQL`, file-path sinks). This is where the C# security suite's ideas
