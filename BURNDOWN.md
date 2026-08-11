@@ -407,6 +407,26 @@ acquire (`H : Handle := Acquire (…)`) now sees it, exception edges out of init
 exist, and — the substantive one — the SSA layer planned for Phase 9 will see the defining
 assignment of every initialised local, which it could not have before.
 
+## Phase 10 — Adoption (planned 2026-08-10)
+
+> Making the analyzer usable by someone who did not build it. Everything here is
+> documentation and packaging; no analysis behaviour changes.
+
+- [x] 10.1 `docs/ci-integration.md` — GitHub Actions + code scanning, Azure DevOps
+      (hosted and air-gapped). Leads with the constraint that `github/codeql-action`
+      cannot accept `languages: ada`, so third-party extractors install the CLI
+      themselves and use the action only for `upload-sarif`.
+- [x] 10.2 `docs/releasing.md` + release prep: `release.yml`'s missing `codeql pack
+      install` fixed (it would have failed any tag), manifests bumped 0.0.1 → 0.1.0,
+      release checklist with a verified isolation test.
+- [ ] **10.3 Cut v0.1.0.** Nothing else in Phase 10 is usable until this exists: the
+      guide's download URLs 404 and `codeql pack download` has nothing to serve.
+      Blocked only on the decision to publish — the checklist has been run locally and
+      passes. Outward-facing and irreversible (GHCR will not let a version be
+      republished), so it needs an explicit go-ahead.
+- [ ] 10.4 Cross-implementation validation — **blocked on tool acquisition**, see the
+      note under Phase 9 below.
+
 ## Phase 8 — Wave A queries (planned 2026-07-03; independent of Phase 7)
 
 > Eleven AST+xref+types-only queries, specs in [docs/phase7-plan.md](docs/phase7-plan.md)
@@ -452,6 +472,23 @@ assignment of every initialised local, which it could not have before.
       in D-015: `float-equality` starts catching plain `Standard.Float` comparisons,
       and the textual matchers listed in D-015 become candidates for semantic
       rewrites. Extractor-side work; re-audit those queries when this lands.
+- [ ] **10.4 Cross-implementation validation — GNATcheck differential is blocked.**
+      The intent was to run GNATcheck over the 5-project corpus and diff its findings
+      against ours rule by rule: no files copied (so no licensing question), ~1,700 real
+      files rather than toy cases, and it answers the question this audience actually
+      asks — "does this agree with the tool I already trust?".
+      GNATcheck turns out not to be obtainable cheaply. Checked and ruled out on
+      2026-08-10: not in Debian (the ASIS-based `asis-programs` is gone from modern
+      GNAT); not in `libadalang-tools`, whose public testsuite has only laltools,
+      metric, pp and stub; and no crate in the Alire index. What remains is building
+      AdaCore/gnatcheck from source, which pins its own Libadalang/Langkit versions —
+      and ours are pinned by D-012 for extractor stability and must not move to suit it,
+      so this likely means a *second* Libadalang build.
+      Alternatives, if the differential is not worth that: (a) port the imperative-core
+      C# tests as Ada tests with hand-derived expectations (MIT, no toolchain, ~6–9
+      overlapping rules, cost is adjudicating each divergence); (b) write Ada test cases
+      from GNATcheck's *documented* rule semantics without running the tool — cheap, no
+      toolchain, weaker evidence.
 - [ ] 9.0 Write the Phase 9 plan doc (blocked on Phase 7 shipping and soaking on corpus).
 - [ ] SSA (`codeql/ssa`) over the CFG → dataflow (`codeql/dataflow`) → first taint
       queries with Ada sources/sinks (`Ada.Command_Line` → `GNAT.OS_Lib.Spawn`,
