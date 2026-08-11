@@ -104,6 +104,18 @@ jobs:
             fi
           fi
 
+      # Same reason as in ci.yml: a committed lock file pins the version but does
+      # not put the pack in the local download cache, and a release runner is
+      # always a clean checkout. This has to come before the test suite -- the
+      # `codeql pack install` further down, in "Publish QL packs", runs far too
+      # late to help it.
+      - name: Install QL pack dependencies
+        run: |
+          set -euo pipefail
+          for pack in ql/lib ql/src ql/test; do
+            codeql pack install "$pack" --additional-packs=ql
+          done
+
       - name: Run QL test suite (Phase 5.2)
         run: codeql test run ql/test --search-path=extractors --additional-packs=ql
 

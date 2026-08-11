@@ -1,5 +1,5 @@
 name: peter-villadsen/ada-tests
-version: 0.0.1
+version: 0.1.0
 extractor: ada
 dependencies:
   peter-villadsen/ada-queries: "*"

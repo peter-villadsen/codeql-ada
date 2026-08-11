@@ -1,8 +1,26 @@
 name: CI
 
+# A full run rebuilds nothing on a warm cache but still extracts five corpus
+# projects, so it costs ~12 minutes of Actions time. Documentation-only pushes
+# skip it. The list is explicit rather than `**.md` on purpose:
+# docs/cfg-design.md is *verified* by the "Check CFG coverage appendix" step
+# below, so a change to it must still run CI. Do not collapse this to a glob.
 on:
   push:
+    paths-ignore: &docs-only
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'BURNDOWN.md'
+      - 'DECISIONS.md'
+      - 'LICENSE'
+      - 'docs/user-guide.md'
+      - 'docs/query-writing.md'
+      - 'docs/ci-integration.md'
+      - 'docs/releasing.md'
+      - 'docs/dbscheme-conventions.md'
+      - 'docs/phase*.md'
   pull_request:
+    paths-ignore: *docs-only
   workflow_dispatch:
 
 env:

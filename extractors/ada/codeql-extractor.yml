@@ -1,6 +1,6 @@
 name: "ada"
 display_name: "Ada"
-version: 0.0.1
+version: 0.1.0
 column_kind: "utf8"
 legacy_qltest_extraction: true
 build_modes:
