@@ -120,3 +120,69 @@ The durable fix is to extract `Standard` (and possibly the runtime spec closure)
 pseudo-sources so semantic rows exist for predefined entities; that is an extractor/dbscheme
 workload, deferred — tracked as burndown item 8.12; re-audit the textual matchers above
 for conversion once it lands.
+
+## D-016 (2026-08-10) — CFG coverage is exhaustive over the grammar and enforced
+Every one of the 405 node kinds in `schema/lal-nodes.json` carries an explicit verdict for
+how the CFG treats it (`scope`, `shaped`, `expression`, `opaque`, `structural`, `n/a`),
+published as the coverage appendix of `docs/cfg-design.md`. The verdicts are *derived from*
+`ControlFlowGraphImpl.qll` by `scripts/check_cfg_coverage.py` rather than maintained by
+hand, so the document cannot drift from the code; CI fails if a node kind is unaccounted
+for or the appendix is stale. The point is that a future grammar addition cannot silently
+slip past the CFG.
+
+## D-017 (2026-08-10) — CFG conformance tests use inline expectations, not learned output
+Expected CFG edges are written as `-- $ edge=...` comments in the `.adb` under test and
+checked by `codeql.util.test.InlineExpectationsTest`; those tests' `.expected` files are
+empty. `codeql test run --learn` records whatever the implementation does, including its
+bugs, so a golden file cannot detect a wrong edge — an inline expectation has to be written
+down by a human first. The check is exhaustive both ways: an unannotated edge fails, and an
+annotation with no edge fails. `codeql/util` arrives transitively via `codeql/controlflow`,
+so this added no dependency.
+
+## D-018 (2026-08-10) — `docs/cfg-design.md` is the CFG specification
+The document was rewritten from a prose mapping table into a per-construct specification:
+each construct gets an Ada snippet, the exact edges it produces, and a link to the
+conformance test enforcing them. It keeps its filename so existing references stay valid.
+It is the rule; the tests are the enforcement. Change the spec first, then the test.
+
+## D-019 (2026-08-10) — Known imprecisions are expectations, not prose
+A deliberate or accepted CFG imprecision is recorded as a `$ MISSING:` expectation (and, if
+an edge must disappear, `$ SPURIOUS:`) in the relevant conformance test, not as a sentence
+in a document. The framework then reports "Fixed missing result" on the day someone fixes
+it. This is not theoretical: all four defects found in Phase 7.7 were pinned this way
+first, and each fix reported exactly the predicted edges at the predicted positions.
+
+## D-020 (2026-08-10) — Positioning: complement CodeQL estates, do not displace GNATcheck
+An assessment, recorded because it should govern what gets built next.
+
+**The finding.** AdaCore's GNATcheck is a mature, vendor-backed Ada rule checker with
+**211 predefined rules** (plus 120 GNATkp known-problem rules), implemented in LKQL over
+**the same Libadalang frontend this project uses**. We ship 24 rules. Consequences:
+
+- **No fidelity advantage is available.** Same parser, same name resolution. We are in fact
+  behind, because extraction loses information that GNATcheck queries directly — see D-015
+  and burndown 8.12.
+- **No certification story.** AdaCore sells qualification material for the DO-178C /
+  EN 50128 regimes this audience works under. A community extractor has none.
+- **Rule-count parity is unreachable** and would produce a worse GNATcheck.
+
+**What GNATcheck does not do.** Checked against all 211 rule names on 2026-08-10: zero
+matches for taint, inject, sql, command, sanitize, source or sink. It is a coding-standards
+checker, not a security dataflow engine. Note this does *not* mean AdaCore lacks deep
+analysis — GNAT SAS/CodePeer (abstract interpretation) and SPARK (proof) occupy that space,
+and are the real comparators for anything beyond syntax.
+
+**Decision.** Do not position or grow this project as a GNATcheck replacement. The only
+defensible audience is an organisation **already running CodeQL across other languages**
+that wants its Ada to stop being a hole in the same security posture, triage workflow and
+compliance reporting — plus interprocedural taint analysis, which Ada tooling does not
+offer. Note honestly that this audience is small.
+
+**Consequences.**
+- Revises the emphasis of D-014: GNATcheck's catalog is a **cross-check** for the rules we
+  already have, not a backlog to work through. Adding syntactic rules competes where we are
+  weakest.
+- The differentiated value is Phase 9 (SSA → dataflow → taint) plus platform integration
+  (Phase 10). Everything else is table stakes.
+- **Open and undecided:** whether that audience justifies Phase 9's cost. This decision
+  does not settle it, and the project is at a natural stopping point either way.

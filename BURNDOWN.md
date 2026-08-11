@@ -3,6 +3,56 @@
 Goal: a CodeQL language pack for Ada — extractor (built on Libadalang), database schema,
 QL standard library, and an initial query suite — usable via `codeql database create --language=ada`.
 
+---
+
+## Where things stand (2026-08-10) — read this first if resuming
+
+**The analyzer works and is finished as a v1.** Extractor, dbscheme, QL library, 24 rules,
+a control-flow graph that is specified construct-by-construct and enforced by conformance
+tests, packaging, release automation, and CI. 40 tests green; the full pack analyzes the
+1,718-file gpr2 corpus cleanly. Nothing is half-built.
+
+**It is not published.** No tag has been cut, so `docs/ci-integration.md` cannot be
+followed: its download URLs 404 and `codeql pack download` has nothing to serve. Everything
+needed to cut `v0.1.0` is done and verified locally — see [docs/releasing.md](docs/releasing.md).
+Note that on a **private** repository the Release asset and the GHCR packages are private
+too, so a tag makes the artifacts usable by their owner but does not make the project
+adoptable by anyone else; that needs the repo or at least the packages made public.
+
+**The strategic question is answered and it constrains what is worth building** — see
+[D-020](DECISIONS.md). Briefly: AdaCore's GNATcheck has 211 rules on the same Libadalang
+frontend, with certification material we cannot match, so competing on Ada coding rules is
+not viable. GNATcheck has *no* taint analysis, so the differentiated value is Phase 9
+(dataflow) plus platform integration — for an audience that is real but small. **Whether
+that audience justifies Phase 9's cost is deliberately left undecided.**
+
+### If you are picking this up again, the live options are
+
+| Option | Cost | Value |
+|---|---|---|
+| Cut `v0.1.0` | one Actions run | Makes the artifacts real. Prerequisite for anything else, including your own use. Checklist already passes locally. |
+| 8.12 — extract `Standard` as pseudo-sources | self-contained extractor work | Removes the D-015 blindness; `float-equality` starts catching plain `Float`, several textual matchers become semantic. Best value-per-effort of the technical items. |
+| Cross-check the 7–9 rules overlapping GNATcheck | small | Read AdaCore's LKQL rule sources (GPLv3 — read, never copy) and confirm our scope matches theirs. Catches subtly-wrong edge cases. |
+| Phase 9 — SSA → dataflow → taint | large, needs its own plan (9.0) | The only genuinely differentiated capability. Gated on the undecided question in D-020. |
+
+### Working notes for whoever resumes
+
+- **Environment recipe** (WSL invocation, test commands, traps): see the "Global traps"
+  section of [docs/phase7.7-plan.md](docs/phase7.7-plan.md). Windows-side PowerShell must
+  invoke WSL directly — the Git-Bash tool rewrites `/bin/...` paths and breaks it. Note
+  `/tmp` inside WSL does not survive between invocations; use a path under `/root`.
+- **Never bump the CodeQL CLI or Libadalang pins casually** (D-012). Version skew presents
+  as "the CodeQL database is not compatible with a QL library", which reads like a query
+  bug and is not one.
+- **CI skips documentation-only pushes.** The ignore list in `ci.yml` is explicit rather
+  than a glob, because `docs/cfg-design.md` is verified by the coverage check and must
+  still trigger a run. Do not collapse it.
+- **Both workflows now install QL packs before compiling anything.** A committed lock file
+  pins a version but does not put the pack on disk; only a clean checkout notices. This bit
+  us twice — `ci.yml` after Phase 7.0, and latently in `release.yml`.
+
+---
+
 Status of the field (verified 2026-07-02):
 
 - **No existing Ada CodeQL extractor** exists publicly. This is greenfield.
