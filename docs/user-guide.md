@@ -1,5 +1,9 @@
 # User guide
 
+Running this in CI rather than on your own machine? See
+[ci-integration.md](ci-integration.md) — this guide covers the analysis itself,
+that one covers wiring it into GitHub Actions and code scanning.
+
 This expands on the [README](../README.md) quickstart: how the extractor
 picks a project, how to control it, what ends up in the database when your
 code doesn't parse cleanly, and what to expect from the pre-1.0 database
