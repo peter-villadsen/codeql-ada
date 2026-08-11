@@ -1,9 +1,10 @@
 # Running the Ada pack in CI
 
 How to analyze an Ada codebase on every push and get the findings in front of
-developers. This guide covers **GitHub Actions with code scanning**. Azure DevOps gets a
-sibling section in this document once it is written — the setup steps up to "produce
-`results.sarif`" are identical, only the publishing differs.
+developers. This guide covers **[GitHub Actions with code scanning](#the-workflow)** and
+**[Azure DevOps](#azure-devops)**, including [air-gapped agents](#air-gapped-agents). The
+setup is identical on both up to the point where `results.sarif` exists; only publishing
+differs.
 
 If you have never run this locally, do that first: the [README](../README.md#quickstart)
 quickstart is the same three commands this workflow automates, and debugging them on your
@@ -310,8 +311,168 @@ things on day one.
 
 ## Azure DevOps
 
-*To be written.* Everything up to and including `codeql database analyze ... --format=sarif-latest`
-is identical — the extractor and CLI install steps translate directly to pipeline `script:`
-tasks. What differs is publishing: ADO has no native code-scanning surface, so results go
-to the SARIF SAST Scans Tab extension or an artifact, and self-hosted agents in regulated
-environments need the [vendored](#vendoring-the-extractor) path rather than downloads.
+Everything up to producing `results.sarif` is identical — same CLI, same extractor, same
+two commands. Two things differ.
+
+**There is no native code-scanning surface.** ADO has no equivalent of GitHub's Security
+tab. The usual way to see SARIF in the UI is the **SARIF SAST Scans Tab** extension, which
+renders any SARIF it finds in a build artifact named — exactly — `CodeAnalysisLogs`. That
+artifact name is not a convention you can choose; the extension looks for that string. If
+your organisation will not install marketplace extensions, publish the SARIF as an ordinary
+artifact and gate the build instead (below).
+
+**Agents are often self-hosted and frequently offline.** That is the normal case in the
+regulated environments where Ada lives, and it changes the setup more than the pipeline
+syntax does — see [Air-gapped agents](#air-gapped-agents).
+
+### Microsoft-hosted agents
+
+`azure-pipelines.yml`:
+
+```yaml
+trigger:
+  branches:
+    include: [main]
+
+pool:
+  # Linux x86-64 only -- the extractor ships no other build.
+  vmImage: ubuntu-24.04
+
+variables:
+  CODEQL_CLI_VERSION: 2.25.6
+  ADA_EXTRACTOR_VERSION: v0.1.0
+  ADA_QUERY_PACK: peter-villadsen/ada-queries
+  TOOLS_DIR: $(Pipeline.Workspace)/ada-tools
+
+steps:
+  - checkout: self
+
+  - task: Cache@2
+    displayName: Cache CodeQL CLI and Ada extractor
+    inputs:
+      key: 'ada-tools | "$(CODEQL_CLI_VERSION)" | "$(ADA_EXTRACTOR_VERSION)"'
+      path: $(TOOLS_DIR)
+      cacheHitVar: TOOLS_CACHED
+
+  - script: |
+      set -euo pipefail
+      mkdir -p "$(TOOLS_DIR)/cli" "$(TOOLS_DIR)/extractor"
+      curl -sSL -o /tmp/codeql.zip \
+        "https://github.com/github/codeql-cli-binaries/releases/download/v$(CODEQL_CLI_VERSION)/codeql-linux64.zip"
+      unzip -q /tmp/codeql.zip -d "$(TOOLS_DIR)/cli"
+      curl -sSL -o /tmp/ada-extractor.tar.gz \
+        "https://github.com/peter-villadsen/codeql-ada/releases/download/$(ADA_EXTRACTOR_VERSION)/codeql-extractor-ada-linux64.tar.gz"
+      tar -xzf /tmp/ada-extractor.tar.gz -C "$(TOOLS_DIR)/extractor"
+    displayName: Install CodeQL CLI and Ada extractor
+    condition: ne(variables.TOOLS_CACHED, 'true')
+
+  - script: echo "##vso[task.prependpath]$(TOOLS_DIR)/cli/codeql"
+    displayName: Add CodeQL to PATH
+
+  - script: codeql pack download "$(ADA_QUERY_PACK)"
+    displayName: Download the Ada query pack
+
+  - script: |
+      set -euo pipefail
+      codeql database create "$(Agent.TempDirectory)/ada-db" \
+        --language=ada --build-mode=none \
+        --search-path="$(TOOLS_DIR)/extractor" \
+        --source-root="$(Build.SourcesDirectory)"
+    displayName: Create the database
+
+  - script: |
+      set -euo pipefail
+      mkdir -p "$(Build.ArtifactStagingDirectory)/CodeAnalysisLogs"
+      codeql database analyze "$(Agent.TempDirectory)/ada-db" "$(ADA_QUERY_PACK)" \
+        --format=sarif-latest \
+        --output="$(Build.ArtifactStagingDirectory)/CodeAnalysisLogs/ada.sarif"
+    displayName: Analyze
+
+  # The SARIF SAST Scans Tab extension reads from an artifact with this exact name.
+  - task: PublishBuildArtifacts@1
+    displayName: Publish SARIF
+    condition: always()
+    inputs:
+      PathtoPublish: $(Build.ArtifactStagingDirectory)/CodeAnalysisLogs
+      ArtifactName: CodeAnalysisLogs
+```
+
+### Failing the build on findings
+
+Without a Security tab, a finding that nobody looks at may as well not exist. Gate the
+build:
+
+```yaml
+  - script: |
+      set -euo pipefail
+      sarif="$(Build.ArtifactStagingDirectory)/CodeAnalysisLogs/ada.sarif"
+      count=$(jq '[.runs[].results[]] | length' "$sarif")
+      echo "Ada findings: $count"
+      if [ "$count" -gt 0 ]; then
+        echo "##vso[task.logissue type=warning]Ada analysis reported $count finding(s)"
+        echo "##vso[task.complete result=SucceededWithIssues;]"
+      fi
+    displayName: Report findings
+```
+
+Start with `SucceededWithIssues`, not a hard failure. Twenty-four quality rules over an
+existing Ada codebase will find things on day one, and a pipeline that goes red
+immediately gets disabled rather than fixed. Tighten to `result=Failed`, or to a specific
+rule id or severity, once the baseline is clean.
+
+### Air-gapped agents
+
+On a disconnected agent nothing can be downloaded: not the CLI, not the extractor, and
+not the query pack. Everything has to be staged in advance. Three pieces, in increasing
+order of surprise:
+
+1. **The CodeQL CLI** — mirror `codeql-linux64.zip` for the pinned version to your
+   internal artifact feed.
+2. **The extractor tarball** — likewise, per
+   [Vendoring the extractor](#vendoring-the-extractor).
+3. **The QL packs, *including the shared CodeQL packs*.** This is the one people miss.
+   `codeql pack download` needs GHCR, so instead you vendor the query pack **as source**
+   — the `ql/` directory of this repository is small and pure text — and analyze it by
+   path. But `ql/src` depends on `ql/lib`, which depends on `codeql/controlflow` and
+   `codeql/util`, and *those* still have to come from somewhere. Copy them from a
+   connected machine:
+
+   ```sh
+   # on a machine that has run `codeql pack install`
+   cp -a ~/.codeql/packages/codeql /your/vendor/dir/
+   ```
+
+   Then point `--additional-packs` at both the vendor directory and the repository's
+   `ql/` directory, colon-separated:
+
+   ```sh
+   codeql database analyze ada-db /path/to/ql/src \
+     --format=sarif-latest --output=ada.sarif \
+     --additional-packs=/your/vendor/dir:/path/to/ql \
+     --search-path=/path/to/extractor
+   ```
+
+   Note that the query pack is named by **path** (`/path/to/ql/src`) rather than by pack
+   name — naming it `peter-villadsen/ada-queries` would send the CLI looking for a
+   registry.
+
+   This path is verified: with `~/.codeql/packages` removed entirely, the command above
+   resolves every dependency and produces SARIF listing all 24 rules.
+
+If your agents can reach an internal proxy but not GHCR, the alternative is a private
+CodeQL package registry, which the CLI supports through `--registries-auth-stdin` and a
+`qlconfig.yml`. That is a heavier setup and out of scope here, but it exists, and it is
+worth asking your platform team about before committing to vendoring.
+
+### Notes on ADO specifics
+
+- **Shell syntax.** `$(VAR)` is ADO macro substitution, resolved *before* the script runs;
+  `$VAR` is ordinary shell. The examples deliberately use `$(...)` for pipeline variables
+  and `$...` for nothing else, so there is no ambiguity.
+- **`condition: always()`** on the publish step — otherwise a failed analysis leaves you
+  with no SARIF to inspect, which is exactly when you want it.
+- **Workspace paths.** `$(Agent.TempDirectory)` for the database, not the sources
+  directory. A database written under `$(Build.SourcesDirectory)` gets picked up by the
+  next extraction run as if it were source.
+- **Timeouts.** ADO's default job timeout on hosted agents is 60 minutes. Extraction
+  dominates; see [Performance](#performance).
