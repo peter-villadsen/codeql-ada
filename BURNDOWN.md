@@ -548,6 +548,36 @@ assignment of every initialised local, which it could not have before.
       compilation units, so the fix is extraction, not analysis. That makes Phase 9 the
       first phase since Phase 3 to change the dbscheme, with the database-format
       consequences in D-011.
+- [x] **9.1 Extract the call graph.** *Done 2026-08-11 — see [D-021](DECISIONS.md).* New
+      relation `ada_body_part(decl, body)` in the dbscheme, emitted in
+      `extractors/ada/tools/extractor.py` from Libadalang's `p_body_part`. Exposed as
+      `BasicDecl.getBody()` / `BaseSubpBody.getDeclaration()` in `ql/lib/ada.qll`.
+      `ql/lib/ada.dbscheme.stats` regenerated (`codeql dataset measure`), per the plan's
+      trap 1. Full suite green (41/41); corpus regression green on all 5 pinned projects
+      (gpr2 1,718 files included).
+      - **`p_body_part` is inconsistent across Libadalang node kinds**: a `@property` on
+        `BasePackageDecl`/`GenericPackageDecl` (returns the value directly), a callable
+        method with an `imprecise_fallback` parameter on `ClassicSubpDecl`/`EntryDecl`/
+        `GenericSubpDecl`. The extractor normalizes both shapes with `callable(bp)` rather
+        than special-casing node kinds — found by reading the generated Python bindings
+        before writing the extraction code, not by trial and error.
+      - **Test-first, per Global trap 7**: a new golden-output regression test,
+        `ql/test/extractor/PrintBodyPart/`, dumps every `ada_body_part` row over a fixture
+        covering all six cases the task asked for (spec+body in separate units,
+        expression-function completion, a body with no separate spec, two overloads with
+        different profiles, a nested subprogram, a library-level subprogram). The learned
+        output confirms the overload case resolves each declaration to its own body (`Foo
+        (X : Integer)` → its body at pkg.adb:2, `Foo (X : Float)` → its body at
+        pkg.adb:7, never crossed) and that the no-separate-spec body produces no row —
+        exactly what name-text pairing cannot guarantee (D-021's acceptance criterion).
+      - **`DeadLocalSubprogram.ql` / `DirectRecursion.ql` reviewed as asked:** both
+        `getMatchingDecl` helpers (name-text-plus-region approximations, one of them with
+        a documented library-level special case) could now be replaced by
+        `BaseSubpBody.getDeclaration()`, exactly and without the library-level
+        special-casing. Not changed here — 9.1 was scoped to extraction, and the two
+        queries' current approximations are tested and correct for the cases they cover;
+        swapping them is a small, low-risk follow-up whenever someone next touches either
+        file, not urgent enough to justify unbudgeted scope now.
 - [ ] SSA (`codeql/ssa`) over the CFG → dataflow (`codeql/dataflow`) → first taint
       queries with Ada sources/sinks (`Ada.Command_Line` → `GNAT.OS_Lib.Spawn`,
       `GNATCOLL.SQL`, file-path sinks). This is where the C# security suite's ideas

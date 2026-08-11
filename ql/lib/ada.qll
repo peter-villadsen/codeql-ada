@@ -58,10 +58,23 @@ class BasicDecl extends Raw::BasicDecl {
 
   /** Holds if some extracted name resolves to this declaration. */
   predicate isReferenced() { ada_xref(_, this) }
+
+  /**
+   * Gets the completion (body) of this declaration, if extracted. Extracted
+   * from Libadalang's `p_body_part`, never inferred from name text, since
+   * overloading makes textual pairing unsound (D-021).
+   */
+  Raw::BasicDecl getBody() { ada_body_part(this, result) }
 }
 
 /** A subprogram body, with its declared name. */
 class SubprogramBody extends Raw::SubpBody {
   /** Gets the name of this subprogram. */
   string getName() { result = this.(BasicDecl).getAName() }
+}
+
+/** A subprogram body or expression-function completion. */
+class BaseSubpBody extends Raw::BaseSubpBody {
+  /** Gets the declaration this body completes, if extracted (D-021). */
+  Raw::BasicDecl getDeclaration() { ada_body_part(result, this) }
 }

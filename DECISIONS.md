@@ -229,3 +229,20 @@ smaller set with no code-scanning-style compliance surface.
 **Status: an option, not a plan.** Recorded so that a future decision to continue can weigh
 "finish Phase 9 in CodeQL" against "port the frontend to Joern and inherit its dataflow",
 rather than rediscovering the trade-off.
+
+## D-021 (2026-08-11) — The call graph is extracted, never inferred
+A new relation, `ada_body_part(decl, body)`, maps a `BasicDecl` to its completion (a
+`SubpBody`, `ExprFunction`, or `PackageBody`), emitted straight from Libadalang's
+`p_body_part` in the extractor. QL must never fall back to name-text pairing to resolve a
+call to a body: Ada overloads, so two subprograms can share a name and differ only in
+profile, and a call graph built on text would silently mix them with no visible symptom.
+Phase 8's `DirectRecursion`/`DeadLocalSubprogram` already hit a narrower version of this
+(their documented textual-pairing workaround breaks on library-level subprograms, each in
+its own `CompilationUnit`) — this relation is the real fix, not a wider workaround. If a
+declaration has no row, its call sites are unresolved and dataflow must stop there,
+visibly, rather than guess.
+
+`p_body_part` is exposed inconsistently across Libadalang node kinds — a `@property` on
+`BasePackageDecl`/`GenericPackageDecl`, a callable method (with an `imprecise_fallback`
+parameter, left at its default) on `ClassicSubpDecl`/`EntryDecl`/`GenericSubpDecl` — so the
+extractor normalizes both shapes with `callable(bp)` rather than special-casing node kinds.

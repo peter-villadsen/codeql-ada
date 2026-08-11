@@ -233,6 +233,11 @@ def gen_dbscheme(m: Model) -> str:
         f"  unique int inst: {m.ref('GenericInstantiation')} ref,\n"
         f"  int generic_decl: {m.ref('BasicDecl')} ref\n);\n"
     )
+    out.append(
+        "ada_body_part(\n"
+        f"  unique int decl: {m.ref('BasicDecl')} ref,\n"
+        f"  int body: {m.ref('BasicDecl')} ref\n);\n"
+    )
     out.append("/*- Ada trivia: comments (not part of the AST tree) -*/\n")
     out.append(
         "ada_comments(\n"

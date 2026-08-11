@@ -54,6 +54,10 @@ Tree-sitter languages have no compiler semantics; we do. Add:
 - `ada_expr_type(unique int expr: @ada_expr ref, int type_decl: @ada_base_type_decl ref)` —
   from `p_expression_type`.
 - `ada_generic_instantiation(int inst ref, int generic_decl ref)`.
+- `ada_body_part(unique int decl: @ada_basic_decl ref, int body: @ada_basic_decl ref)` —
+  from `p_body_part`; the declaration-to-completion (call graph) edge, extracted rather
+  than inferred from name text because Ada overloading makes textual pairing unsound
+  (D-021, Phase 9).
 - nameres failures logged into `diagnostics` with a dedicated `error_tag`.
 
 ## QL side

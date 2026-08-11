@@ -4192,6 +4192,11 @@ ada_generic_instantiation(
   int generic_decl: @ada_basic_decl ref
 );
 
+ada_body_part(
+  unique int decl: @ada_basic_decl ref,
+  int body: @ada_basic_decl ref
+);
+
 /*- Ada trivia: comments (not part of the AST tree) -*/
 
 ada_comments(

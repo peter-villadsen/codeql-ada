@@ -1,0 +1,7 @@
+| lib_proc.ads:1:1:1:34 | SubpDecl | SubpDecl | Lib_Proc | lib_proc.adb:1:1:4:14 | SubpBody | SubpBody |
+| pkg.adb:15:7:15:23 | SubpDecl | SubpDecl | Inner | pkg.adb:17:7:20:17 | SubpBody | SubpBody |
+| pkg.ads:1:1:6:9 | PackageDecl | PackageDecl | Pkg | pkg.adb:1:1:24:9 | PackageBody | PackageBody |
+| pkg.ads:2:4:2:32 | SubpDecl | SubpDecl | Foo | pkg.adb:2:4:5:12 | SubpBody | SubpBody |
+| pkg.ads:3:4:3:30 | SubpDecl | SubpDecl | Foo | pkg.adb:7:4:10:12 | SubpBody | SubpBody |
+| pkg.ads:4:4:4:49 | SubpDecl | SubpDecl | Square | pkg.adb:12:4:12:60 | ExprFunction | ExprFunction |
+| pkg.ads:5:4:5:20 | SubpDecl | SubpDecl | Outer | pkg.adb:14:4:23:14 | SubpBody | SubpBody |

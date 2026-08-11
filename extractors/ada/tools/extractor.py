@@ -90,7 +90,7 @@ class Extractor:
     def __init__(self, sources):
         self.sources = {norm(s) for s in sources}
         self.stats = {"nodes": 0, "xref": 0, "types": 0, "diags": 0,
-                      "nameres_errors": 0, "comments": 0}
+                      "nameres_errors": 0, "comments": 0, "body_part": 0}
 
     def emit_file_tree(self, w: TrapWriter, path: str) -> str:
         """files() row plus folder chain; returns the file label."""
@@ -209,6 +209,15 @@ class Extractor:
                 if self.in_sources(d):
                     w.row("ada_generic_instantiation", lbl,
                           w.label(node_key(d)))
+            if isinstance(node, lal.BasicDecl):
+                # p_body_part is a property on some BasicDecl subclasses
+                # (e.g. BasePackageDecl) and a method on others (e.g.
+                # ClassicSubpDecl) -- normalize both shapes here (D-021).
+                bp = getattr(node, "p_body_part", None)
+                body = bp() if callable(bp) else bp
+                if self.in_sources(body):
+                    w.row("ada_body_part", lbl, w.label(node_key(body)))
+                    self.stats["body_part"] += 1
         except lal.PropertyError:
             self.stats["nameres_errors"] += 1
         except Exception:
@@ -283,7 +292,8 @@ def main() -> int:
                               str(os.cpu_count() or 1)))
     jobs = max(1, min(jobs, len(files) or 1))
     totals = dict.fromkeys(
-        ("nodes", "xref", "types", "diags", "nameres_errors", "comments"), 0)
+        ("nodes", "xref", "types", "diags", "nameres_errors", "comments",
+         "body_part"), 0)
 
     if jobs == 1 or not hasattr(os, "fork"):
         _init_worker(gpr, files, trap_dir, archive_dir)
