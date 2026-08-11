@@ -186,3 +186,46 @@ offer. Note honestly that this audience is small.
   (Phase 10). Everything else is table stakes.
 - **Open and undecided:** whether that audience justifies Phase 9's cost. This decision
   does not settle it, and the project is at a natural stopping point either way.
+
+### D-020 appendix (2026-08-11) — Joern as an alternative host
+
+Assessed because it bears directly on the undecided Phase 9 question above.
+
+Joern is Apache-2.0 (compatible with our MIT, and with Libadalang's Apache-2.0, so
+contributing this work is unblocked). Its 15 frontends are **Scala modules** — `abap2cpg`
+and `rust2cpg` show legacy and systems languages are in scope — and there are no `.proto`
+files left in the tree, so the external protobuf-CPG emitter route is gone. A frontend is a
+Scala module, not a plug-in binary.
+
+**What would carry over, and it is most of the expensive part:**
+
+- `docs/cfg-design.md`. Joern's `x2cpg` ships a shared `CfgCreator` that builds a CFG from
+  an AST by declaring each node type's control-flow semantics — structurally the same job
+  as instantiating `codeql/controlflow`. Our construct-by-construct spec is close to a
+  direct input, and it is the artifact that took the most care to get right.
+- The Libadalang extraction knowledge: GPR discovery and its fallbacks, process-based
+  parallelism (LAL contexts are not picklable), xref being source-set-relative (D-015), the
+  unextracted `Standard`, the `EndName` double-xref quirk.
+- `schema/lal-nodes.json`, the coverage discipline of D-016, and the conformance/query test
+  corpora — the `.adb` files and their expectations are language-level truth and re-validate
+  any implementation.
+
+**What would not:** the 24 queries, the dbscheme, the TRAP emitter and the CFG QL — different
+paradigm and storage. The Python extractor would have to be rewritten against Libadalang's
+**experimental** Java bindings, which is the main technical risk; a subprocess emitting an
+intermediate format into a thin Scala frontend avoids that.
+
+**Why it is tempting.** Joern ships `dataflowengineoss`: data-dependence edges and
+`reachableBy` come with the platform. The largest remaining cost on the CodeQL path — Phase
+9 — is substantially provided *given a good CFG*, which is precisely what this project has
+already specified and machine-checked.
+
+**Why it does not settle anything.** It does not address D-020's actual finding: same
+analysis, different engine, same 211-vs-24 asymmetry against GNATcheck, same absent
+qualification story. And the audience argument does not transfer — "already standardised on
+CodeQL" becomes "already standardised on Joern", which among conservative Ada shops is a
+smaller set with no code-scanning-style compliance surface.
+
+**Status: an option, not a plan.** Recorded so that a future decision to continue can weigh
+"finish Phase 9 in CodeQL" against "port the frontend to Joern and inherit its dataflow",
+rather than rediscovering the trade-off.
