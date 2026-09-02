@@ -9,3 +9,16 @@ dependencies:
   # of github/codeql (shared/controlflow/qlpack.yml). Transitively pulls
   # codeql/util 2.0.38. Do not bump without re-verifying against CLI 2.25.6.
   codeql/controlflow: 2.0.35
+  # SSA + dataflow frameworks (D-022..D-025, Phase 9.2). Versions pinned to
+  # the same codeql-cli/v2.25.6 tag (shared/ssa, shared/dataflow qlpack.yml).
+  # Transitively pulls codeql/typetracking 2.0.35. These are the exact
+  # versions published alongside codeql/controlflow 2.0.35 above -- pinning
+  # anything newer (e.g. 2.0.30/2.1.10, the floating latest as of
+  # 2026-08-11) makes `codeql pack install` resolve forward to a 2.26.x-era
+  # patch release whose OCI manifest CLI 2.25.6 cannot parse, even from a
+  # clean pack cache -- see docs/phase9.2-plan.md S2.1-2.2. Verified
+  # 2026-09-01: with the versions below, `codeql pack install` resolves and
+  # installs cleanly on a fully empty cache; no pre-download step is needed.
+  # Do not bump without re-verifying against CLI 2.25.6.
+  codeql/ssa: 2.0.27
+  codeql/dataflow: 2.1.7

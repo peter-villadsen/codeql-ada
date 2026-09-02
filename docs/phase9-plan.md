@@ -97,9 +97,10 @@ between invocations.
    `codeql/dataflow` 2.1.10, the floating latest on 2026-08-11) are **2.26.x-era packs and
    must not be used**. The versions at the `codeql-cli/v2.25.6` tag of `github/codeql` are
    `codeql/ssa` **2.0.27**, `codeql/dataflow` **2.1.7** and `codeql/typetracking` **2.0.35**
-   (a transitive dependency of `dataflow` that this plan originally missed). They must also
-   be `codeql pack download`ed by exact version before `pack install` will resolve at all —
-   see [phase9.2-plan.md](phase9.2-plan.md) §2.1–2.2 for the failure mode and D-025.
+   (a transitive dependency of `dataflow` that this plan originally missed). With those
+   exact versions, ordinary `codeql pack install` resolves cleanly even from an empty pack
+   cache — no extra download step needed. See [phase9.2-plan.md](phase9.2-plan.md) §2.1–2.2
+   for the failure mode this pin avoids, and D-025.
 5. **Both workflows install packs before compiling** — do not undo that.
 
 ---

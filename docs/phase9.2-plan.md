@@ -96,10 +96,16 @@ The versions that ship with CLI 2.25.6, read from `shared/*/qlpack.yml` at the
 `codeql/typetracking` is a transitive dependency of `codeql/dataflow` and is not mentioned
 anywhere in phase9-plan.md. It does not go in `qlpack.yml`; `pack install` resolves it.
 
-### 2.2 A bare version constraint in `qlpack.yml` fails
+### 2.2 The wrong version, not the constraint syntax, is what fails — and the right one needs no pre-download
 
-Putting `codeql/ssa: 2.0.30` (or even `=2.0.30`) in `ql/lib/qlpack.yml` and running
-`codeql pack install` fails:
+The first cut of this plan (and the corrected Global trap 4 in phase9-plan.md, before this
+section existed) claimed a bare version constraint in `qlpack.yml` fails and a
+`codeql pack download` pre-step is required. **That was wrong, and disproven by testing the
+final versions on a fully empty pack cache.** What actually happens:
+
+Putting `codeql/ssa: 2.0.30` in `ql/lib/qlpack.yml` (paired with the already-pinned
+`codeql/controlflow: 2.0.35`) and running `codeql pack install` fails, reproducibly, on a
+clean cache:
 
 ```
 A fatal error occurred: Could not get manifest for codeql/ssa@2.0.31.
@@ -107,16 +113,22 @@ A fatal error occurred: Could not get manifest for codeql/ssa@2.0.31.
  (class com.semmle.cli2.pack.docker.DockerManifest$Co...")
 ```
 
-CLI 2.25.6 cannot parse the OCI manifest of packs published by CLI 2.26.x. **Download the
-exact versions into the local cache first**, after which resolution succeeds against the
-cache:
+CLI 2.25.6 cannot parse the OCI manifest of packs published by CLI 2.26.x, and asking for
+`2.0.30` makes the resolver reach for `2.0.31` — the newest version satisfying the
+constraint — which is a 2.26.x-era release. **Putting `codeql/ssa: 2.0.27` instead (the
+version actually published alongside `codeql/controlflow` 2.0.35 at the CLI 2.25.6 cut)
+resolves and installs cleanly, with a plain `codeql pack install`, on a fully empty pack
+cache — no `codeql pack download` pre-step needed.** Verified 2026-09-01 by deleting
+`codeql/ssa`, `codeql/dataflow` and `codeql/typetracking` from `/root/.codeql/packages`
+entirely and re-running `codeql pack install ql/lib` (and `ql/src`, `ql/test`) fresh; each
+installed from network on the first pass with no error, and produced exactly the lock file
+in Task 9.2.0 below.
 
-```sh
-codeql pack download codeql/ssa@2.0.27 codeql/dataflow@2.1.7 codeql/typetracking@2.0.35
-```
-
-This is not merely a version-hygiene point — it is the difference between the pack step
-working and not working at all.
+The lesson is simply: **pin `codeql/ssa`/`codeql/dataflow` to the exact versions published
+together with the `codeql/controlflow` version already pinned** (section 2.1's table), not
+"the floating latest" at any given date. Once that is done, the pack step is ordinary —
+nothing needs adding to `ci.yml` or `release.yml` beyond the version bump in
+`ql/lib/qlpack.yml` itself.
 
 ### 2.3 `CfgImpl::BasicBlocks` does not satisfy `BB::CfgSig`; a four-line adapter does
 
@@ -211,29 +223,27 @@ phase9-plan.md and should be written up when 9.2 starts. Two new ones fall out o
   reference's, which is exact because identifiers within one declaration are distinct by
   construction. The extractor is *not* changed; `p_referenced_defining_name` is recorded as
   the fallback if a case is found that text matching cannot settle.
-- **D-025 — Shared packs are pinned to the CLI 2.25.6 tag and pre-downloaded by exact
-  version.** Bare version constraints resolve forward to 2.26.x-era packs whose OCI
-  manifests CLI 2.25.6 cannot parse (section 2.2). Every shared pack is installed with
-  `codeql pack download <pack>@<exact>` before `pack install` runs.
+- **D-025 — Shared packs are pinned to the exact version published alongside the
+  `codeql/controlflow` version already pinned, not "the current latest".** A version
+  chosen by "whatever resolves today" (section 2.2) will eventually be a 2.26.x-era patch
+  release whose OCI manifest CLI 2.25.6 cannot parse. Pinning the sibling version from the
+  same CLI tag needs no special install step — ordinary `codeql pack install` handles it,
+  even from an empty cache.
 
 ---
 
 ## Task 9.2 — SSA
 
-### 9.2.0 Pack wiring
+### 9.2.0 Pack wiring — **done 2026-09-01**
 
-1. Download the exact versions (sections 2.1/2.2):
-   ```sh
-   codeql pack download codeql/ssa@2.0.27 codeql/dataflow@2.1.7 codeql/typetracking@2.0.35
-   ```
-2. Append to the `dependencies:` block of `ql/lib/qlpack.yml`, with a comment matching the
+1. Append to the `dependencies:` block of `ql/lib/qlpack.yml`, with a comment matching the
    existing `codeql/controlflow` one (why the version is what it is, and not to bump it):
    ```yaml
      codeql/ssa: 2.0.27
      codeql/dataflow: 2.1.7
    ```
-3. `for pack in ql/lib ql/src ql/test; do codeql pack install "$pack" --additional-packs=ql; done`
-4. Commit the changed lock files. `ql/lib/codeql-pack.lock.yml` must end up exactly:
+2. `for pack in ql/lib ql/src ql/test; do codeql pack install "$pack" --additional-packs=ql; done`
+3. Commit the changed lock files. `ql/lib/codeql-pack.lock.yml` must end up exactly:
    ```yaml
    ---
    lockVersion: 1.0.0
@@ -251,14 +261,21 @@ phase9-plan.md and should be written up when 9.2 starts. Two new ones fall out o
    compiled: false
    ```
 
-**Acceptance:** the lock file matches the block above and `codeql test run ql/test` is still
-green — adding a dependency must not change any existing result.
+No `codeql pack download` step is needed (section 2.2) — a plain `pack install` resolves and
+installs all three new packs from a completely empty cache, verified by deleting
+`codeql/ssa`, `codeql/dataflow` and `codeql/typetracking` from
+`/root/.codeql/packages/codeql/` and re-running the loop above from scratch.
 
-**CI note.** A clean checkout has an empty pack cache, so CI will hit section 2.2's failure
-unless the pre-download is added. Add the `codeql pack download` line to the "Install QL
-pack dependencies" step in **both** `ci.yml` and `release.yml`, immediately before the
-existing loop. This is the same class of omission as the one recorded at `ci.yml:108-113`
-for `codeql/controlflow` — it went unnoticed for a whole phase last time.
+**Acceptance:** the lock file matches the block above and `codeql test run ql/test` is still
+green (41/41, confirmed) — adding a dependency did not change any existing result.
+
+**CI note.** Nothing needs to change in `ci.yml` or `release.yml`. Both already loop
+`codeql pack install` over `ql/lib ql/src ql/test` (`ci.yml:114-119`,
+`release.yml:112-117`) before compiling anything, and — per the finding above — that is
+sufficient for the new dependencies on a clean runner exactly as it was for
+`codeql/controlflow` in Phase 7.0. (An earlier draft of this plan claimed otherwise and
+would have had you add a redundant `codeql pack download` step; that claim did not survive
+testing against a genuinely empty cache and has been removed.)
 
 ### 9.2.1 The `SsaCfg` adapter
 

@@ -584,17 +584,23 @@ assignment of every initialised local, which it could not have before.
       become portable (D-014 Wave C).
       → **Step-by-step execution plan: [docs/phase9.2-plan.md](docs/phase9.2-plan.md)**
       (2026-09-01), covering tasks 9.2 (SSA), 9.3 (local dataflow), 9.4 (cross-procedure)
-      and 9.5 (first taint query). Four things were verified against the toolchain while
-      writing it, each of which would otherwise have been discovered the expensive way:
-      the shared pack versions named in the Phase 9 plan are 2.26.x-era and unusable on
-      CLI 2.25.6 (correct set: ssa 2.0.27, dataflow 2.1.7, typetracking 2.0.35, the last
-      of which the plan had missed entirely); a bare version constraint in `qlpack.yml`
-      fails outright with an OCI manifest parse error, so exact versions must be
-      `codeql pack download`ed first; `CfgImpl::BasicBlocks` does not satisfy the SSA
-      pack's `CfgSig` because it does not export `ControlFlowNode`, so a small adapter
-      module is needed (written and compiled successfully); and `ada_xref` resolves a
-      name to its `BasicDecl` rather than its `DefiningName`, so `X, Y : Integer` would
-      collapse into one SSA variable unless references are narrowed by name text.
+      and 9.5 (first taint query). Findings verified against the toolchain while writing
+      it, each of which would otherwise have been discovered the expensive way: the
+      shared pack versions named in the Phase 9 plan are 2.26.x-era and unusable on CLI
+      2.25.6 (correct set: ssa 2.0.27, dataflow 2.1.7, typetracking 2.0.35, the last of
+      which the plan had missed entirely) — pinned to those exact versions, a plain
+      `codeql pack install` resolves cleanly even from a fully empty pack cache, no extra
+      download step needed (an earlier pass at this plan claimed one was required; that
+      did not survive testing against a genuinely empty cache); `CfgImpl::BasicBlocks`
+      does not satisfy the SSA pack's `CfgSig` because it does not export
+      `ControlFlowNode`, so a small adapter module is needed (written and compiled
+      successfully); and `ada_xref` resolves a name to its `BasicDecl` rather than its
+      `DefiningName`, so `X, Y : Integer` would collapse into one SSA variable unless
+      references are narrowed by name text.
+- [x] **9.2.0 Pack wiring.** *Done 2026-09-01.* `codeql/ssa` 2.0.27 and `codeql/dataflow`
+      2.1.7 added to `ql/lib/qlpack.yml` (pulling `codeql/typetracking` 2.0.35
+      transitively); lock files regenerated for `ql/lib`, `ql/src`, `ql/test`. Full suite
+      green (41/41) with the new dependencies present but unused.
 
 ---
 
