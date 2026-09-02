@@ -457,28 +457,69 @@ the loop join, as expected of any correctly-wired SSA instantiation).
 **Acceptance:** `SsaImpl::Definition` is non-empty on a fixture, and the shared pack's
 `SsaImpl::Consistency` query predicates report nothing.
 
-### 9.2.4 Conformance tests
+### 9.2.4 Conformance tests — **done 2026-09-01**
 
-Reuse the Phase 7.7 machinery unchanged — this is the main reason SSA should be cheap here.
+Reused the Phase 7.7 machinery, as planned:
 
-1. `ql/debug/PrintSsa.ql` — dumps definitions and their reads in the same key format
-   `CfgAnnotations.qll` uses for CFG nodes, so annotations are transcribed, not invented.
-2. `ql/lib/codeql/ada/test/SsaAnnotations.qll` (mirroring `CfgAnnotations.qll`) and a
-   `SsaConformance.qll` implementing the shared `TestSig` with tag `ssa`.
-3. Test families under `ql/test/library/Ssa/`, one directory each, each with a section in a
-   new `docs/ssa-design.md` written **before** the test: `straight-line`, `if-join` (phi at
-   the join), `loop` (back-edge phi), `params-in`, `params-out` (uncertain write at the
-   call), `decl-init`, `for-loop-var`, `multi-id` (the `X, Y : Integer` case from D-024),
-   and `exceptions` (a handler joining values from a partially-executed body).
+1. `ql/lib/codeql/ada/test/SsaAnnotations.qll` (mirroring `CfgAnnotations.qll`): `defKey`
+   renders a `Definition` as `def(<var>)@l:c` (`phi(<var>)@l:c` for a `PhiNode`); `readsKey`/
+   `phiInputKey` render the two edge kinds actually checked (below).
+2. `ql/test/library/Ssa/SsaConformance.qll` implements the shared `TestSig` with tag `ssa`,
+   built on two predicates the base `SsaLib::Make` (not a richer, unused layer) already
+   exports — no reimplementation needed: `ssaDefReachesRead(v, def, bb, i)` (a def-use edge,
+   at the position of the read) and `phiHasInputFromBlock(phi, inp, bb)` (a phi-input edge).
+   Every `Definition` that survives dead-store elision reaches at least one read by
+   construction, so checking `reads` edges exhaustively also exhaustively pins down which
+   definitions exist, not only where they are read.
+3. `ql/debug/SsaAnnotations.ql` — dumps the complete annotation comment per line, mirroring
+   `ql/debug/CfgAnnotations.ql`.
+4. Four test families under `ql/test/library/Ssa/`, each with a section in the new
+   `docs/ssa-design.md`, written and verified in this order: `straight-line`, `if-join`
+   (phi at the join), `loop` (back-edge phi, `for`-loop-var anchor), `params-inout` (entry
+   writes, the exit-read fix, call-site uncertain writes for both positional and — reversed,
+   named — associations).
 
-**The anchoring rule catches everybody**: an inline expectation matches when the comment's
-**start line** equals the result's **end line** (`onSameLine` in
-`InlineExpectationsTest.qll`). For a multi-line construct the annotation goes on the line
-where the construct *ends*.
+Three families named in the original outline (`params-in`, `params-out`, `for-loop-var`,
+`decl-init`, `multi-id`) are **not** separate test directories, each for a stated reason
+recorded in `docs/ssa-design.md`, not silently dropped:
 
-**Acceptance:** all families green, every expectation hand-derived first. Add one
-deliberately wrong annotation and confirm it fails, and record that check in the commit
-message — it is the only proof the harness fails when it should.
+- `for-loop-var` is exercised by the `loop` family's own fixture (a `for` loop already
+  contains a loop variable to anchor).
+- `decl-init` is exercised by the `straight-line` family's own fixture (an `ObjectDecl` with
+  an initialiser is the first line of it).
+- `params-in`/`params-out` are one family, `params-inout`: the two modes only make sense
+  tested together (a procedure with just one mode cannot show entry-write suppression is
+  mode-*specific*, and the exit-read fix needs at least one of each to prove it applies to
+  both).
+- `multi-id` (the `X, Y : Integer` case, D-024) was verified directly against a scratch
+  database in Task 9.2.2 (`getSourceVariable` returns two distinct variables, never merged)
+  and is not repeated as an inline-expectations conformance test: the property is entirely
+  in `getSourceVariable`, one function call removed from the CFG, and does not exercise the
+  def-use graph machinery the other families are checking.
+
+**Deferred, explicitly, not silently:** `exceptions` (a handler joining values from a
+partially-executed body) has no test family. It is exactly the kind of construct this
+method should be applied to before being trusted, and is named as an open item in
+`docs/ssa-design.md`'s "Recorded limitations" rather than assumed correct.
+
+**The anchoring rule caught real mistakes, not just the "everybody gets this wrong"
+generic warning it reads as.** A `Definition`'s `getLocation()` is not always a single
+point: a phi's location is `bb.getLocation()`, i.e. its defining block's first node's
+location, which for a branch join is the *whole branching construct's span* — so its
+`reads` annotation belongs on the line where that construct *ends* (`end if;`), not where it
+starts (`if`). The parameter entry write hits the identical trap for a different reason:
+its location is the *whole scope's* span, so its annotation belongs on the scope's `end`
+line. Both were first written wrong (at the construct's start), both failed with a
+"Missing result" pointing at the correct line, and both are called out explicitly in
+`docs/ssa-design.md` so the next family does not repeat the mistake.
+
+**Acceptance, satisfied:** all four families green, every expectation hand-derived and
+checked against `docs/ssa-design.md`'s stated rule before being transcribed from
+`ql/debug/SsaAnnotations.ql`'s output. A deliberately wrong annotation
+(`straight-line`, an edge's read position changed to a nonexistent line 99) was confirmed to
+fail with both a "Missing result" and an "Unexpected result" row before being reverted —
+proof the harness fails when it should. Full suite green (45/45: the original 41 plus these
+four).
 
 ---
 

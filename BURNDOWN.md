@@ -630,6 +630,30 @@ assignment of every initialised local, which it could not have before.
       `count` fixed it. Both confirmed with scratch databases before and after: full
       writeup with fixtures in `docs/phase9.2-plan.md` Task 9.2.3. Full suite still green
       (41/41).
+- [x] **9.2.4 Conformance tests.** *Done 2026-09-01.* `docs/ssa-design.md` (the SSA
+      counterpart to `cfg-design.md`) plus four inline-expectation test families under
+      `ql/test/library/Ssa/`: `straight-line`, `if-join` (phi at a branch join),
+      `loop` (back-edge phi, `for`-loop-var), `params-inout` (entry writes, the 9.2.3
+      exit-read fix, and call-site uncertain writes for both positional and reversed-named
+      associations, all in one fixture). `params-in`/`params-out`/`for-loop-var`/
+      `decl-init`/`multi-id` from the original outline are folded into these four or
+      already verified in 9.2.2, each with its reasoning recorded in `docs/ssa-design.md`
+      rather than silently dropped; `exceptions` is explicitly deferred, not assumed
+      correct.
+      The anchoring rule (comment start line = result end line) caught two real mistakes
+      while writing these, not just the CFG tests' well-known trap: a `Definition`'s own
+      `getLocation()` is the *whole enclosing construct's* span for both a phi
+      (`bb.getLocation()`, the branching construct) and a parameter's entry write (the
+      whole scope) — so each one's `reads` annotation belongs on the construct's *end*
+      line, not its start. Both were first written wrong and both failed with a correctly
+      pointed "Missing result" before being fixed. A deliberately wrong annotation was
+      separately confirmed to fail both directions (Missing + Unexpected). Full suite
+      green (45/45).
+
+**Phase 9.2 (SSA) is complete** — `SsaImpl.qll` (`ql/lib/codeql/ada/dataflow/internal/`),
+specified in `docs/ssa-design.md` and conformance-tested. Next: Task 9.3, local dataflow
+(`codeql/ssa`'s `DataFlowIntegration`), then Task 9.4, cross-procedure dataflow — see
+[docs/phase9.2-plan.md](docs/phase9.2-plan.md).
 
 ---
 
