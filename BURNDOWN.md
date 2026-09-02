@@ -655,6 +655,25 @@ specified in `docs/ssa-design.md` and conformance-tested. Next: Task 9.3, local 
 (`codeql/ssa`'s `DataFlowIntegration`), then Task 9.4, cross-procedure dataflow — see
 [docs/phase9.2-plan.md](docs/phase9.2-plan.md).
 
+- [x] **SSA renamed-source debug tool** (requested, not in the original Phase 9 plan).
+      `scripts/render_ssa.py` renders a source file with every write/read subscripted
+      (`X_1`, `X_2`, ...) and every phi shown as a comment — a readable complement to the
+      edge-table debug queries, for when the SSA calculation itself is suspect. Building it
+      immediately surfaced two real issues, exactly its intended purpose: (1) a call's
+      uncertain write-back (D-022) and the actual argument's own read collide at the exact
+      same text span, corrupting the naive rendering (`X_1_2`) — fixed by rendering the
+      write-back as a comment instead of a substitution, since the read already owns that
+      position; (2) a named association's designator (`X` in `Foo (X => Y)`) was being
+      registered as a read of the *callee's* formal, positioned in the *caller's* basic
+      blocks — harmless to the actual `Definition`/phi graph (nothing there ever writes the
+      callee's formal, so nothing was ever inserted incorrectly) and invisible to the
+      existing edge-based conformance tests (which only check edges that have a reaching
+      definition), but genuinely wrong and something a future reads-iterating consumer would
+      have shown. Fixed with a new `isDesignator` exclusion in `SsaImpl.qll`'s
+      `variableRead`, alongside the existing `isAssignTarget` one. Full suite green (45/45,
+      confirming the fix changes no existing conformance edge). Full write-up in
+      `docs/ssa-design.md`, "Renamed-source rendering".
+
 ---
 
 ## Top risks

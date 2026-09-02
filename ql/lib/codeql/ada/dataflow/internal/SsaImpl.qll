@@ -102,6 +102,26 @@ private predicate cfgPos(Raw::AdaNode astNode, SsaCfg::BasicBlock bb, int i) {
 private predicate isAssignTarget(Name n) { n = any(Raw::AssignStmt s).getDest() }
 
 /**
+ * Holds if `n` is a named association's designator (`X` in `Foo (X => Y)`) --
+ * a syntactic label identifying which formal an actual binds to, not a value
+ * reference, even though `ada_xref` resolves it (to the formal's own
+ * `ParamSpec`) and `GenericPostOrderTree` evaluates it like any other
+ * `Identifier` (the CFG's node-kind classification does not distinguish a
+ * designator's *role* from an ordinary reference; see `docs/cfg-design.md`'s
+ * coverage appendix, whose "designators" bullet is a different node kind, not
+ * this one). Found by the renamed-source debug tool (`ql/debug/
+ * PrintSsaRenamed.ql`, `docs/ssa-design.md`): without this exclusion, a call
+ * with a named association registers a spurious read of the *callee's*
+ * formal, positioned in the *caller's* basic blocks -- harmless to the actual
+ * `Definition`/phi graph (that scope has no write of the callee's formal for
+ * any dominance-frontier or liveness computation to act on, so nothing is
+ * ever inserted incorrectly), but genuinely wrong, and something a future
+ * consumer that iterates reads for reporting (a path-problem query, say)
+ * would otherwise show.
+ */
+private predicate isDesignator(Name n) { n = any(Raw::ParamAssoc pa).getDesignator() }
+
+/**
  * A write to the assignment's target, at the `AssignStmt`'s own node (its
  * post-order self-node, evaluated after both the RHS and the target -- see
  * `AssignStmtTree`). Only fires when the target is itself a `SourceVariable`
@@ -110,10 +130,17 @@ private predicate isAssignTarget(Name n) { n = any(Raw::AssignStmt s).getDest() 
  * it -- sub-element writes are out of scope for v1 (D-023), and this falls
  * out of `getSourceVariable`'s own restriction rather than needing a
  * separate check here.
+ *
+ * `nameNode` is the target reference itself -- not the same as this write's
+ * CFG anchor `(bb, i)` (the whole `AssignStmt`), but where the variable's
+ * name actually appears in the source. Carried through only for
+ * `getWriteNameOccurrence` (a debug-tooling accessor, see its own doc); every
+ * other caller ignores it.
  */
-private predicate assignWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+private predicate assignWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v, Name nameNode) {
   exists(Raw::AssignStmt s |
-    v = getSourceVariable(s.getDest()) and
+    nameNode = s.getDest() and
+    v = getSourceVariable(nameNode) and
     cfgPos(s, bb, i)
   )
 }
@@ -126,11 +153,17 @@ private predicate assignWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v)
  * `X, Y : Integer := F (1);` writes both `X` and `Y` at the same position,
  * from the one shared initialiser -- correct, since Ada evaluates it once and
  * assigns the (copied) result to each name.
+ *
+ * `nameNode` is `v` itself: for a declaration-based write, the `SourceVariable`
+ * already *is* the `DefiningName` to render (unlike `assignWrite`, there is no
+ * separate reference node). See `assignWrite`'s doc for why this column
+ * exists.
  */
-private predicate objectDeclInitWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+private predicate objectDeclInitWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v, Raw::AdaNode nameNode) {
   exists(Raw::ObjectDecl d, Raw::Expr e |
     e = d.getDefaultExpr() and
     v = d.(BasicDecl).getADefiningName() and
+    nameNode = v and
     cfgPos(e, bb, i)
   )
 }
@@ -147,11 +180,14 @@ private predicate objectDeclInitWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVar
  * including across the back edge) and a value origin a later taint step can
  * use (the iterable itself -- taint into the iterated collection should reach
  * the loop variable).
+ *
+ * `nameNode` is `v` itself, same reasoning as `objectDeclInitWrite`.
  */
-private predicate forLoopVarWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+private predicate forLoopVarWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v, Raw::AdaNode nameNode) {
   exists(Raw::ForLoopStmt s, Raw::ForLoopSpec spec |
     spec = s.getSpec() and
     v = spec.getVarDecl().(BasicDecl).getADefiningName() and
+    nameNode = v and
     cfgPos(spec.getIterExpr(), bb, i)
   )
 }
@@ -209,10 +245,13 @@ private predicate receivesArgument(Raw::ParamSpec ps) {
  * framework to correctly report "no reaching definition" for a read that
  * precedes the first explicit write inside the body -- not on a synthetic
  * placeholder write with an undefined value.
+ *
+ * `nameNode` is `v` itself, same reasoning as `objectDeclInitWrite`.
  */
-private predicate paramEntryWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+private predicate paramEntryWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v, Raw::AdaNode nameNode) {
   exists(Raw::ParamSpec ps |
     v = ps.(BasicDecl).getADefiningName() and
+    nameNode = v and
     receivesArgument(ps) and
     bb.(Impl::CfgImpl::BasicBlocks::EntryBasicBlock).getScope() = paramOwningScope(ps) and
     i = 0
@@ -357,8 +396,15 @@ private predicate outOrInOutParamExitRead(SsaCfg::BasicBlock bb, int i, SsaSourc
  * expression) -- a harmless, conservative approximation for a pure `out`
  * actual, which Ada does not really read, and the accurate behaviour for
  * `in out`, which it does.
+ *
+ * `nameNode` is the actual argument reference itself -- not the same as this
+ * write's CFG anchor `(bb, i)` (the call's effect node), same reasoning as
+ * `assignWrite`'s `nameNode`. Unlike the other four write kinds, this one
+ * *does* coincide with a genuine reference occurrence rather than a
+ * declaration, so it doubles as `variableRead`'s generic "any reference is a
+ * read" occurrence for the same node -- see this predicate's own doc above.
  */
-private predicate outOrInOutActualWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+private predicate outOrInOutActualWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v, Name nameNode) {
   exists(
     Raw::CallExpr call, Raw::SubpSpec spec, Raw::AssocList args, Raw::ParamAssoc assoc, int argIdx,
     Raw::Mode mode
@@ -369,7 +415,8 @@ private predicate outOrInOutActualWrite(SsaCfg::BasicBlock bb, int i, SsaSourceV
     argIdx = assoc.getParentIndex() and
     mode = formalMode(spec, argFormalIndex(spec, assoc, argIdx)) and
     (mode instanceof Raw::ModeOut or mode instanceof Raw::ModeInOut) and
-    v = getSourceVariable(assoc.getRExpr().(Name)) and
+    nameNode = assoc.getRExpr().(Name) and
+    v = getSourceVariable(nameNode) and
     cfgPos(callEffectNode(call), bb, i)
   )
 }
@@ -380,14 +427,14 @@ private module SsaInput implements SsaLib::InputSig<Raw::Location, SsaCfg::Basic
 
   predicate variableWrite(SsaCfg::BasicBlock bb, int i, SourceVariable v, boolean certain) {
     (
-      assignWrite(bb, i, v) or
-      objectDeclInitWrite(bb, i, v) or
-      forLoopVarWrite(bb, i, v) or
-      paramEntryWrite(bb, i, v)
+      assignWrite(bb, i, v, _) or
+      objectDeclInitWrite(bb, i, v, _) or
+      forLoopVarWrite(bb, i, v, _) or
+      paramEntryWrite(bb, i, v, _)
     ) and
     certain = true
     or
-    outOrInOutActualWrite(bb, i, v) and certain = false
+    outOrInOutActualWrite(bb, i, v, _) and certain = false
   }
 
   predicate variableRead(SsaCfg::BasicBlock bb, int i, SourceVariable v, boolean certain) {
@@ -395,6 +442,7 @@ private module SsaInput implements SsaLib::InputSig<Raw::Location, SsaCfg::Basic
       exists(Name n |
         v = getSourceVariable(n) and
         not isAssignTarget(n) and
+        not isDesignator(n) and
         cfgPos(n, bb, i)
       )
       or
@@ -406,3 +454,26 @@ private module SsaInput implements SsaLib::InputSig<Raw::Location, SsaCfg::Basic
 
 /** The Ada SSA implementation. */
 module SsaImpl = SsaLib::Make<Raw::Location, SsaCfg, SsaInput>;
+
+/**
+ * Gets the AST node whose text represents write `wd` in the source -- as
+ * opposed to `wd`'s own `getLocation()`, which is its CFG anchor and, for
+ * every write kind except a call-site `out`/`in out` actual, a different
+ * point entirely (see each write predicate's own doc comment above for why).
+ *
+ * Built for the SSA-renamed-source debug tool (`ql/debug/PrintSsaRenamed.ql`,
+ * `docs/ssa-design.md` "Renamed-source rendering"); has no effect on the SSA
+ * graph itself, and exists only so that tool has one place to ask "where do
+ * I print this write's subscript" without re-deriving the write-kind
+ * classification independently (and risking it drifting from the real
+ * logic above).
+ */
+Raw::AdaNode getWriteNameOccurrence(SsaImpl::WriteDefinition wd) {
+  exists(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v | wd.definesAt(v, bb, i) |
+    assignWrite(bb, i, v, result) or
+    objectDeclInitWrite(bb, i, v, result) or
+    forLoopVarWrite(bb, i, v, result) or
+    paramEntryWrite(bb, i, v, result) or
+    outOrInOutActualWrite(bb, i, v, result)
+  )
+}

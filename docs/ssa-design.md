@@ -192,6 +192,73 @@ than as a dedicated conformance-test family here: the property lives entirely in
 `getSourceVariable`, one function call away from the CFG, and does not need the def-use
 graph machinery this document's other families are testing.
 
+## Renamed-source rendering
+
+A debugging aid, not a conformance check: `scripts/render_ssa.py` (via
+`ql/debug/PrintSsaRenamed.ql` and `ql/lib/codeql/ada/test/SsaRenderAnnotations.qll`) renders
+a source file with every write and read subscripted (`X_1`, `X_2`, ...) and every phi shown
+as a comment, so a suspected SSA miscalculation can be read directly rather than
+reconstructed from a table of edges:
+
+```
+   if True then
+      X_1 := 1;
+   else
+      X_2 := 2;
+   end if;  --  X_3 = phi(X_1, X_2)
+   X := X_3 + 1;
+```
+
+Usage: `python3 scripts/render_ssa.py path/to/file.adb` writes `file.ssa.adb` alongside the
+input (never overwrites it). The design problem this had to solve: a write's CFG *anchor*
+(where `SsaImpl.qll`'s `variableWrite` fires, needed for dataflow correctness) is frequently
+not where the variable's *name* appears in the source — an `AssignStmt` write is anchored at
+the whole statement but its name is just the target; a declaration-based write (`ObjectDecl`
+init, parameter entry, `for`-loop var) is anchored elsewhere entirely but its name is the
+`SourceVariable`'s own `DefiningName`. `SsaImpl.qll` exposes `getWriteNameOccurrence` for
+exactly this — one place to ask "where do I print this write's subscript" that cannot drift
+from the real write-classification logic, because it is built from the same predicates
+(each extended with an extra, ignored-everywhere-else output column) rather than
+re-derived independently.
+
+**Building this immediately surfaced two real, previously-unknown issues** — exactly the
+tool's purpose, working as intended:
+
+1. **A call's uncertain write-back and the actual's own read collide at one text span.**
+   `Modify (A => X)`'s `X` is simultaneously a read (the pre-call value, from the generic
+   "any reference is a read" rule) and an `UncertainWriteDefinition`'s name occurrence (the
+   write-back, D-022) — the same AST node, so substituting both at once corrupted the
+   output (`X_1_2`, confirmed and then fixed). Resolved by making a call-site uncertain
+   write a *comment* (`writeEdit` now excludes `UncertainWriteDefinition`; a separate
+   `write-back: X_2` comment is appended at the call's own line) rather than a
+   substitution — the read wins the one available text position, matching how a phi's
+   synthetic merge is already shown as a comment rather than forced into source text that
+   has no place for it.
+2. **A named association's designator (`X` in `Foo (X => Y)`) was being read at all.**
+   `ada_xref` resolves a designator to the *callee's* formal `ParamSpec` (semantically
+   reasonable — it does name that parameter), and the CFG evaluates it like any other
+   `Identifier` (node-kind classification does not know about a reference's *role*; the
+   coverage appendix's "designators" bullet is a different node kind, not this one) — so
+   `variableRead` registered it as a read of the callee's `SourceVariable`, positioned in
+   the *caller's* basic blocks. Harmless to the actual `Definition`/phi graph (that scope
+   has no write of the callee's formal for any dominance/liveness computation to act on, so
+   nothing was ever inserted incorrectly, and the existing edge-based conformance tests
+   cannot see it either way, since `ssaDefReachesRead` requires a definition to exist) — but
+   genuinely wrong, rendered as a confusing `B_UNDEF` on plain "B" text, and something a
+   future consumer that iterates reads for reporting (a path-problem query) would otherwise
+   show. Fixed with `isDesignator`, added to `SsaImpl.qll`'s `variableRead` alongside the
+   existing `isAssignTarget` exclusion. Confirmed via the full SSA conformance suite that
+   this changes no existing edge (as expected — the excluded reads never had a reaching
+   definition to check), and via the render tool that the designator now renders as plain,
+   unlabelled text, as any other syntax SSA does not track does.
+
+Separately, and *not* a bug: a pure `out`-mode actual can render as `_UNDEF` even though its
+"read" is real and correctly modelled — Ada does not actually consult an `out` parameter's
+prior value, but the render tool (like `variableWrite`/`variableRead` themselves) treats
+argument evaluation as a read unconditionally, a documented, harmless over-approximation
+(see `outOrInOutActualWrite`'s doc comment). Seeing `_UNDEF` there is expected, not a defect
+to chase.
+
 ## Recorded limitations (D-023)
 
 - **Record components, array elements, dereferences, `NumberDecl`s and renamings are not
