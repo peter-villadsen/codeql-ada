@@ -582,6 +582,19 @@ assignment of every initialised local, which it could not have before.
       queries with Ada sources/sinks (`Ada.Command_Line` → `GNAT.OS_Lib.Spawn`,
       `GNATCOLL.SQL`, file-path sinks). This is where the C# security suite's ideas
       become portable (D-014 Wave C).
+      → **Step-by-step execution plan: [docs/phase9.2-plan.md](docs/phase9.2-plan.md)**
+      (2026-09-01), covering tasks 9.2 (SSA), 9.3 (local dataflow), 9.4 (cross-procedure)
+      and 9.5 (first taint query). Four things were verified against the toolchain while
+      writing it, each of which would otherwise have been discovered the expensive way:
+      the shared pack versions named in the Phase 9 plan are 2.26.x-era and unusable on
+      CLI 2.25.6 (correct set: ssa 2.0.27, dataflow 2.1.7, typetracking 2.0.35, the last
+      of which the plan had missed entirely); a bare version constraint in `qlpack.yml`
+      fails outright with an OCI manifest parse error, so exact versions must be
+      `codeql pack download`ed first; `CfgImpl::BasicBlocks` does not satisfy the SSA
+      pack's `CfgSig` because it does not export `ControlFlowNode`, so a small adapter
+      module is needed (written and compiled successfully); and `ada_xref` resolves a
+      name to its `BasicDecl` rather than its `DefiningName`, so `X, Y : Integer` would
+      collapse into one SSA variable unless references are narrowed by name text.
 
 ---
 

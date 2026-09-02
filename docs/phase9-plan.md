@@ -93,10 +93,13 @@ between invocations.
    is not in the analyzed source set, so `Ada.Command_Line.Argument` does not resolve to a
    declaration. `OpenWithoutClose.ql` is the precedent — read it before writing 9.5.
 4. **Pin the shared packs to CLI 2.25.6**, exactly as Task 7.0 did for `codeql/controlflow`.
-   `codeql/ssa` and `codeql/dataflow` both resolve today (2.0.30 and 2.1.10 were the
-   floating latest on 2026-08-11) — take the versions from the `codeql-cli/v2.25.6` tag of
-   `github/codeql`, not the latest. Run `codeql pack install` in all three packs and commit
-   the lock files.
+   *Corrected 2026-09-01:* the versions this trap originally named (`codeql/ssa` 2.0.30 and
+   `codeql/dataflow` 2.1.10, the floating latest on 2026-08-11) are **2.26.x-era packs and
+   must not be used**. The versions at the `codeql-cli/v2.25.6` tag of `github/codeql` are
+   `codeql/ssa` **2.0.27**, `codeql/dataflow` **2.1.7** and `codeql/typetracking` **2.0.35**
+   (a transitive dependency of `dataflow` that this plan originally missed). They must also
+   be `codeql pack download`ed by exact version before `pack install` will resolve at all —
+   see [phase9.2-plan.md](phase9.2-plan.md) §2.1–2.2 for the failure mode and D-025.
 5. **Both workflows install packs before compiling** — do not undo that.
 
 ---
@@ -138,6 +141,13 @@ documented textual approximations can now be replaced (do not necessarily change
 just record the answer).
 
 ### 9.2 — SSA
+
+> **Tasks 9.2–9.5 have a step-by-step execution plan in
+> [phase9.2-plan.md](phase9.2-plan.md)**, written 2026-09-01 for an implementer taking the
+> work over cold. It supersedes the outline below wherever the two differ, and records four
+> findings verified against the toolchain — including the corrected pack versions (Global
+> trap 4 above) and the fact that `SourceVariable` cannot be the `BasicDecl` that
+> `ada_xref` resolves to.
 
 Instantiate `codeql/ssa` over the Phase 7 CFG and `BasicBlocks`. The input signature is
 small — `SourceVariable` plus `variableWrite`/`variableRead` positioned in a basic block —
