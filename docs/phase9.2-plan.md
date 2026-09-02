@@ -287,9 +287,12 @@ The directory is new; the `dataflow/` name matches how other CodeQL languages la
 compiles. (`ql/debug` needs its own lock file — `codeql pack install ql/debug
 --additional-packs=ql`; it is gitignored.)
 
-### 9.2.2 `SourceVariable`
+### 9.2.2 `SourceVariable` — **done 2026-09-01**
 
-Per D-024, `SourceVariable` is a `Raw::DefiningName`, restricted to those introduced by:
+Implemented as `SsaSourceVariable` in `SsaImpl.qll` (named that at file scope, not
+`SourceVariable`, only to avoid colliding with `SsaInput`'s own required member of that
+name, which aliases it — external code uses `SsaImpl::SourceVariable` or this file's
+`getSourceVariable`). Per D-024, restricted to those introduced by:
 
 - `Raw::ObjectDecl` — `getIds()` gives the `DefiningNameList`
 - `Raw::ParamSpec` — `getIds()`
@@ -319,6 +322,31 @@ SourceVariable getSourceVariable(Name n) { ... }
 **Acceptance:** a `ql/debug` query over a fixture containing `X, Y : Integer;` with reads of
 both shows `X` and `Y` as *two* variables, each read mapped to its own. Write the fixture
 first and predict the output before running it.
+
+Verified with `ql/debug/PrintSourceVariable.ql` against a scratch database for:
+
+```ada
+procedure Test is
+   X, Y : Integer;
+begin
+   X := 1;
+   Y := X;
+end Test;
+```
+
+predicted output — line 4's `X` resolves to variable `X`; line 5's `Y` (target) resolves
+to `Y` and its `X` (read) resolves to `X` — matched exactly:
+
+```
+| n          | line | variable |
+| Identifier | 4    | X        |
+| Identifier | 5    | X        |
+| Identifier | 5    | Y        |
+```
+
+`getReferencedDecl()` used by `getSourceVariable` is `ada.qll`'s `Name` wrapper (imported
+via `private import ada`), not the raw `ada_xref` relation directly — reuse over
+reimplementation, consistent with the rest of `ql/src`.
 
 ### 9.2.3 `variableWrite` / `variableRead`
 
