@@ -348,7 +348,7 @@ to `Y` and its `X` (read) resolves to `X` — matched exactly:
 via `private import ada`), not the raw `ada_xref` relation directly — reuse over
 reimplementation, consistent with the rest of `ql/src`.
 
-### 9.2.3 `variableWrite` / `variableRead`
+### 9.2.3 `variableWrite` / `variableRead` — **done 2026-09-01**
 
 The signature (verified, `Ssa.qll:15-42`):
 
@@ -358,40 +358,101 @@ predicate variableRead(BasicBlock bb, int i, SourceVariable v, boolean certain);
 ```
 
 `i` is the index such that `bb.getNode(i)` is the CFG node at which the reference happens.
-Get from a CFG node back to the AST with `CfgNode.getAstNode()` (see
-`ql/lib/codeql/ada/controlflow/Cfg.qll`).
+Implemented as `cfgPos(Raw::AdaNode, BasicBlock, int)` in `SsaImpl.qll`, going from an AST
+node to its unique `AstCfgNode` (unique because this project's `Make` instantiation does
+not split) and from there to its `(bb, i)`.
 
-**Before writing any of these, run `ql/debug/PrintCfg.ql` on a fixture containing each
-construct and read off which CFG node actually represents it.** Node granularity is
-documented per construct in `docs/cfg-design.md`; do not guess it. In particular
-`AssignStmt` and `CallStmt` are `StandardPostOrderTree`s — their own node comes *after*
-their operands — whereas an `ObjectDecl`'s position depends on how `BodyTree` /
-`DeclBlockTree` elaborate the declarative part. That elaboration is the C-1 fix from Phase
-7.7 and is the reason initialisers are visible to SSA at all.
+**Two things stated below turned out to be wrong** when actually implemented and tested
+against fixture databases — both corrected here rather than left standing:
 
-Writes to emit:
+1. **"`ObjectDecl` without initialiser: certain=true"** does not hold up: `ObjectDecl`
+   itself never gets a CFG node at all (it is "structural" in the coverage appendix), so
+   there is no node position to anchor a write on if there is no initialiser expression to
+   provide one. The correct behaviour — confirmed against `codeql/ssa`'s own semantics, see
+   finding 2 below — is to emit **no write at all** for an uninitialised local, exactly
+   like a pure `out`-mode parameter (next point): the framework correctly reports "no
+   reaching definition" for a read that precedes the first real write, which is the
+   accurate model of "this value is undefined."
+2. **"parameter, on scope entry: certain=true, one write per `ParamSpec` id"** needs a mode
+   qualification the original table did not make: a pure `out`-mode formal receives
+   *nothing* from the caller at entry (Ada does not pass it an initial value), so it gets
+   no entry write, by the same reasoning as point 1. Only `in` (`ModeDefault` included) and
+   `in out` formals get one.
 
-| Ada construct | `certain` | Note |
+**Verified finding 1 — `codeql/ssa` elides a write with no live read, and this is correct,
+not a bug to work around.** `Ssa.qll`'s `TWriteDef` newtype is constructed as
+`TWriteDef(v, bb, i) { variableWrite(bb, i, v, _) and liveAfterWrite(bb, i, v) }` — a write
+that reaches no later read produces **no `Definition` at all**, confirmed empirically with
+a fixture where a declared-but-never-read variable's write genuinely disappears from
+`SsaImpl::Definition`. This is standard, correct dead-store elision — except it also elides
+the **last** write to an `out`/`in out` parameter inside its own callee body, since nothing
+*inside that scope* reads it: the reader is the caller, after the call returns. Without
+something to represent that, the return-flow value Task 9.4 needs would already be gone
+before 9.4 ever runs. The fix: a synthetic `variableRead` at every normal-completion
+`AnnotatedExitNode` of the parameter's owning scope, for every `out`/`in out` formal (see
+`outOrInOutParamExitRead` in `SsaImpl.qll`). Confirmed with a fixture calling a procedure
+with one `in out` and one `out` parameter: before the fix, only the *entry* write to the
+`in out` parameter survived (the explicit reassignment inside the body, and the `out`
+parameter's only write, were both silently elided); after it, both survive, each read back
+by the synthetic exit read.
+
+**Verified finding 2 — `strictcount` silently drops results for an empty range; `count`
+does not.** The formal-parameter flattening (`formalIndex`, mapping a `ParamSpec` group's
+`i`th name to its overall 0-based position — needed because Ada allows `A, B : Integer` to
+declare two formals in one group, and positional argument matching counts names, not
+groups) computed "how many other formals precede this one" with `strictcount`. For the
+*first* formal, that count is legitimately zero — an empty range — and `strictcount`,
+unlike `count`, has **no result** over an empty range rather than reporting `0`. The
+practical effect: every `SubpSpec`'s first formal silently vanished from `formalAt`, so
+`out`/`in out` mode resolution was wrong for exactly the first parameter of any callable.
+Confirmed with a two-parameter procedure (`in out`, `out`): before the fix, only the
+*second* parameter's mode resolved at all; after switching to `count`, both did. Recorded
+here because this is a natural mistake to repeat — `count`/`strictcount` read as
+interchangeable but are not once a range can be empty.
+
+Writes emitted (`SsaImpl.qll`; each anchored per the reasoning in its own doc comment —
+read those before changing this table, since several anchors are not the first position
+that comes to mind):
+
+| Ada construct | `certain` | Anchored at |
 | --- | --- | --- |
-| `AssignStmt` target | `true` | the common case |
-| `ObjectDecl` with `getDefaultExpr()` | `true` | the C-1 fix put these in the CFG |
-| `ObjectDecl` without initialiser | `true` | Ada leaves it uninitialised, but it is still a definition — otherwise reads have none |
-| parameter, on scope entry | `true` | one write per `ParamSpec` id, at the entry node |
-| `ForLoopVarDecl` | `true` | defined by the iteration |
-| actual passed to an `out` / `in out` parameter | **`false`** | D-022 — the callee may or may not write it |
+| `AssignStmt` target | `true` | the `AssignStmt`'s own post-order node (after both operands) |
+| `ObjectDecl` with `getDefaultExpr()` | `true` | the initialiser expression's own node — `ObjectDecl` itself has none |
+| `ObjectDecl` without initialiser | *(no write)* | matches an uninitialised out-parameter; see finding 1 |
+| `in`/`in out` parameter | `true` | index 0 of the owning scope's `EntryBasicBlock` — `ParamSpec` itself has no node |
+| pure `out` parameter | *(no write)* | receives nothing at entry; see the corrected table row above |
+| `ForLoopVarDecl` | `true` | the loop's iterable expression's own node — neither it nor `ForLoopSpec` has one; a single static write here dominates every iteration's reads via the back edge, which is all SSA needs (no per-dynamic-iteration write) |
+| actual passed to an `out`/`in out` formal | **`false`** | the call's own "effect" node: the wrapping `CallStmt`'s node if there is one, else the `CallExpr`'s own |
 
 Parameter modes come from `ParamSpec.getMode()`, returning `Raw::ModeIn`, `Raw::ModeOut`,
 `Raw::ModeInOut` or `Raw::ModeDefault` (`Raw.qll:1660-1676`). **`ModeDefault` means `in`** —
-handle it explicitly rather than letting it fall through a default branch.
+handled explicitly (`receivesArgument`) rather than falling through a default branch.
 
-The `out` / `in out` row matters most and is easiest to get wrong: it needs the callee's
-`ParamSpec` for the argument position, which means going call → `ada_xref` → declaration →
-the declaration's `SubpSpec`. Positional and named associations (`Foo (X => Y)`,
-`Raw::ParamAssoc`) both occur and both must map to the right position.
+The `out`/`in out` row needed the callee's `ParamSpec` for the argument position: call →
+`ada_xref` (via `Name.getReferencedDecl()`, D-021) → declaration → the declaration's
+`SubpSpec` (`getSubpSpecOf`, covering `ClassicSubpDecl` and `BaseSubpBody` — functions and
+procedures only; entries and generics are unresolved in v1, D-023). Positional and named
+associations (`Foo (X => Y)`, `Raw::ParamAssoc`) both occur and both had to map to the
+right formal position (`argFormalIndex`) — verified end-to-end with a fixture using
+`Modify (B => Y, A => X)` (arguments in reversed, named order): the `in out` write-back
+landed on `X` (bound via `A => X`) and the `out` write-back on `Y` (via `B => Y`), matching
+the *names*, not the source-list order.
 
 Reads: a `Name` for which `getSourceVariable/1` has a result, at its CFG node, with
-`certain = true`. Exclude the target of an `AssignStmt` (that is a write, not a read) but
-**not** an `in out` actual, which is both.
+`certain = true`. Excludes the target of an `AssignStmt` (that is a write, not a read) but
+**not** an `in out` actual, which is both (the read is the ordinary "any reference is a
+read" rule; nothing extra was needed for it). Also includes the synthetic exit reads from
+finding 1 above.
+
+**Acceptance, satisfied:** `SsaImpl::Definition` is non-empty on every fixture tried, with
+no consistency-query concerns noticed. Verified end-to-end (not just compiled) against four
+scratch databases: a two-name declaration with both read (confirms Task 9.2.2's
+disambiguation carries through); an unread declaration (confirms dead-store elision is
+real, not a bug); a two-parameter (`in out`, `out`) procedure called twice, once
+positionally and once named-and-reversed (confirms mode resolution, entry-write
+suppression for `out`, and the exit-read fix, all together); and a `for` loop with an
+accumulator (confirms the loop-var anchor and produced a phi node for the accumulator at
+the loop join, as expected of any correctly-wired SSA instantiation).
 
 **Acceptance:** `SsaImpl::Definition` is non-empty on a fixture, and the shared pack's
 `SsaImpl::Consistency` query predicates report nothing.

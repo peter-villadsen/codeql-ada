@@ -10,10 +10,12 @@
  * construction) but does not export `ControlFlowNode` under that name, so
  * `SsaCfg` below is a thin renaming adapter, not a reimplementation.
  *
- * `SsaInput` is filled in incrementally: `SourceVariable` in Task 9.2.2,
- * `variableWrite`/`variableRead` in Task 9.2.3. Until the latter lands, the
- * relations hold `none()` so this module compiles and `SsaImpl` can be
- * referenced without producing SSA definitions.
+ * `SsaInput` was filled in incrementally: `SourceVariable` in Task 9.2.2,
+ * `variableWrite`/`variableRead` in Task 9.2.3. See `docs/phase9.2-plan.md` for
+ * the design decisions behind each anchor choice and two real bugs (one in
+ * `codeql/ssa`'s dead-store elision interacting with `out`/`in out`
+ * parameters, one a `strictcount`-over-an-empty-range mistake of this file's
+ * own) that testing against scratch databases surfaced and fixed.
  */
 
 private import codeql.ssa.Ssa as SsaLib
@@ -86,16 +88,319 @@ SsaSourceVariable getSourceVariable(Name n) {
   )
 }
 
-/** The `InputSig` implementation consumed by `SsaLib::Make`. Writes/reads land in Task 9.2.3. */
+/**
+ * Gets the position `(bb, i)` of `astNode`'s control-flow node -- unique,
+ * since this project's `Make` instantiation (`ControlFlowGraphImpl.qll`) does
+ * not use CFG splitting, so an `AstCfgNode` maps to at most one node per AST
+ * element. No result if `astNode` is unreachable.
+ */
+private predicate cfgPos(Raw::AdaNode astNode, SsaCfg::BasicBlock bb, int i) {
+  exists(Impl::CfgImpl::AstCfgNode n | n.getAstNode() = astNode | bb.getNode(i) = n)
+}
+
+/** Holds if `n` is the target of an assignment -- a write, never a read. */
+private predicate isAssignTarget(Name n) { n = any(Raw::AssignStmt s).getDest() }
+
+/**
+ * A write to the assignment's target, at the `AssignStmt`'s own node (its
+ * post-order self-node, evaluated after both the RHS and the target -- see
+ * `AssignStmtTree`). Only fires when the target is itself a `SourceVariable`
+ * reference: a complex target (`Arr (I) := ...`, `Rec.Field := ...`) has no
+ * result from `getSourceVariable`, so no whole-variable write is claimed for
+ * it -- sub-element writes are out of scope for v1 (D-023), and this falls
+ * out of `getSourceVariable`'s own restriction rather than needing a
+ * separate check here.
+ */
+private predicate assignWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+  exists(Raw::AssignStmt s |
+    v = getSourceVariable(s.getDest()) and
+    cfgPos(s, bb, i)
+  )
+}
+
+/**
+ * A write from an `ObjectDecl`'s initialiser, at the initialiser expression's
+ * own node -- `ObjectDecl` itself never gets a CFG node ("structural" in the
+ * coverage appendix; the C-1 fix made `BodyTree`/`DeclBlockTree` elaborate the
+ * initialiser directly), so its own top expression node is the only anchor.
+ * `X, Y : Integer := F (1);` writes both `X` and `Y` at the same position,
+ * from the one shared initialiser -- correct, since Ada evaluates it once and
+ * assigns the (copied) result to each name.
+ */
+private predicate objectDeclInitWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+  exists(Raw::ObjectDecl d, Raw::Expr e |
+    e = d.getDefaultExpr() and
+    v = d.(BasicDecl).getADefiningName() and
+    cfgPos(e, bb, i)
+  )
+}
+
+/**
+ * A write to a `for` loop's variable, at the position of the loop's iterable
+ * expression -- `ForLoopVarDecl` and `ForLoopSpec` are both "n/a" in the
+ * coverage appendix (no CFG node of their own: `ForLoopStmtTree` evaluates the
+ * iterable once, then jumps straight into the body on each iteration, with no
+ * per-iteration node representing "the variable takes its next value"). This
+ * is a deliberate approximation, not a gap this task can close: SSA does not
+ * need one write per dynamic iteration, only a static definition that
+ * dominates every read inside the body (which the iterable's node does,
+ * including across the back edge) and a value origin a later taint step can
+ * use (the iterable itself -- taint into the iterated collection should reach
+ * the loop variable).
+ */
+private predicate forLoopVarWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+  exists(Raw::ForLoopStmt s, Raw::ForLoopSpec spec |
+    spec = s.getSpec() and
+    v = spec.getVarDecl().(BasicDecl).getADefiningName() and
+    cfgPos(spec.getIterExpr(), bb, i)
+  )
+}
+
+/**
+ * Gets the `SubpSpec` of a callable declaration -- the shapes Task 9.2.3
+ * resolves calls to (functions and procedures only; entries, protected
+ * operations and generic instantiations are unresolved in v1, D-023).
+ */
+private Raw::SubpSpec getSubpSpecOf(Raw::BasicDecl d) {
+  result = d.(Raw::ClassicSubpDecl).getSubpSpec()
+  or
+  result = d.(Raw::BaseSubpBody).getSubpSpec()
+}
+
+/**
+ * Gets the `CfgScope` that formal parameter `ps` belongs to, if it is part of
+ * a body's own parameter list (not a separate spec's -- that copy is never
+ * entered, so it gets no entry write). Precise even for a nested subprogram's
+ * parameter, unlike `AdaNode.getEnclosingSubprogram()` (`ada.qll`), which
+ * would also match an *outer* enclosing subprogram and so cannot be reused
+ * here: `ps` is tied directly to the one `SubpSpec` it is part of, and from
+ * there to the one scope whose own `getSubpSpec()` is that same node.
+ */
+private Impl::Scopes::CfgScope paramOwningScope(Raw::ParamSpec ps) {
+  exists(Raw::SubpSpec spec |
+    ps = spec.getSubpParams().getParams().getChild(_) and
+    result.(Raw::BaseSubpBody).getSubpSpec() = spec
+  )
+}
+
+/**
+ * Holds if `ps` receives an incoming value from the caller: mode `in`
+ * (`ModeDefault` included -- that is what an unwritten mode means) or
+ * `in out`. A pure `out` formal receives nothing at entry -- Ada leaves it
+ * exactly as uninitialised as a local object with no initialiser, which gets
+ * no write either (see `paramEntryWrite`'s doc) -- by the same reasoning.
+ */
+private predicate receivesArgument(Raw::ParamSpec ps) {
+  ps.getMode() instanceof Raw::ModeIn or
+  ps.getMode() instanceof Raw::ModeDefault or
+  ps.getMode() instanceof Raw::ModeInOut
+}
+
+/**
+ * A write to a parameter's initial value, at its owning scope's entry node.
+ * `ParamSpec` never gets its own CFG node ("n/a" in the coverage appendix;
+ * entry jumps straight to the body's first real node), so the scope's entry
+ * node -- index 0 of its `EntryBasicBlock`, by that class's own definition --
+ * is the only anchor, matching the `SsaParameterInit` convention `codeql/ssa`
+ * documents for exactly this case (a write co-located with scope entry).
+ *
+ * A pure `out` formal is deliberately excluded (`receivesArgument`): like an
+ * uninitialised local, it gets no write here at all, relying on the SSA
+ * framework to correctly report "no reaching definition" for a read that
+ * precedes the first explicit write inside the body -- not on a synthetic
+ * placeholder write with an undefined value.
+ */
+private predicate paramEntryWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+  exists(Raw::ParamSpec ps |
+    v = ps.(BasicDecl).getADefiningName() and
+    receivesArgument(ps) and
+    bb.(Impl::CfgImpl::BasicBlocks::EntryBasicBlock).getScope() = paramOwningScope(ps) and
+    i = 0
+  )
+}
+
+/**
+ * Gets any formal parameter's defining name, from any `ParamSpec` group, of
+ * `spec` -- flattened across groups, since Ada allows one group to declare
+ * several names sharing a mode and type (`A, B : in out Integer`), and
+ * positional argument matching counts each name, not each group.
+ */
+private Raw::DefiningName anyFormalName(Raw::SubpSpec spec) {
+  result = spec.getSubpParams().getParams().getChild(_).(Raw::ParamSpec).getIds().getChild(_)
+}
+
+/**
+ * Gets a sort key placing `dn` -- one of `spec`'s formals, see `anyFormalName`
+ * -- in formal-parameter order: group index, then id-within-group index, each
+ * read off `dn`'s own position among its siblings (`getParentIndex()`) rather
+ * than by inverting `getChild` (which needs its index argument already
+ * bound).
+ */
+private int formalKey(Raw::SubpSpec spec, Raw::DefiningName dn) {
+  exists(Raw::ParamSpec ps |
+    dn = anyFormalName(spec) and
+    dn = ps.getIds().getChild(_) and
+    ps = spec.getSubpParams().getParams().getChild(_) and
+    result = ps.getParentIndex() * 1000 + dn.getParentIndex()
+  )
+}
+
+/**
+ * Gets the 0-based flattened formal index of `dn` among `spec`'s formals (see
+ * `formalKey`). `count`, not `strictcount`: the first formal has nothing
+ * preceding it, an empty range, and `strictcount` -- unlike `count` -- has no
+ * result at all over an empty range, which silently dropped the first formal
+ * of every `SubpSpec` (confirmed empirically: only the second of two formals
+ * ever showed up, see `docs/phase9.2-plan.md` Task 9.2.3).
+ */
+private int formalIndex(Raw::SubpSpec spec, Raw::DefiningName dn) {
+  dn = anyFormalName(spec) and
+  result =
+    count(Raw::DefiningName other |
+      other = anyFormalName(spec) and formalKey(spec, other) < formalKey(spec, dn)
+    )
+}
+
+/** Gets the `i`th formal (0-based, flattened across `ParamSpec` groups -- see `anyFormalName`) of `spec`. */
+private Raw::DefiningName formalAt(Raw::SubpSpec spec, int i) { i = formalIndex(spec, result) }
+
+/** Gets the mode of the `i`th formal of `spec` (see `formalAt`). */
+private Raw::Mode formalMode(Raw::SubpSpec spec, int i) {
+  exists(Raw::DefiningName dn, Raw::ParamSpec ps |
+    dn = formalAt(spec, i) and
+    dn.getParent().getParent() = ps and
+    result = ps.getMode()
+  )
+}
+
+/** Gets the 0-based formal index of `spec`'s formal named `name`. */
+private int formalIndexNamed(Raw::SubpSpec spec, string name) {
+  exists(Raw::DefiningName dn |
+    dn = formalAt(spec, result) and
+    dn.getName().(Name).getText() = name
+  )
+}
+
+/**
+ * Gets the formal index that the `argIdx`th association (0-based source-list
+ * position, read off its own `getParentIndex()`) of a call to `spec` binds:
+ * named if the association carries a designator (`X => Y`); otherwise
+ * positional, and Ada requires every positional association to precede every
+ * named one, so a positional association's own source position already *is*
+ * its formal index.
+ */
+private int argFormalIndex(Raw::SubpSpec spec, Raw::ParamAssoc assoc, int argIdx) {
+  argIdx = assoc.getParentIndex() and
+  (
+    not exists(assoc.getDesignator()) and result = argIdx
+    or
+    result = formalIndexNamed(spec, assoc.getDesignator().(Name).getText())
+  )
+}
+
+/**
+ * Gets the `SubpSpec` of the callable `call` invokes, if its callee name
+ * resolves to one (D-021: via `ada_xref`/`Name.getReferencedDecl()`, never by
+ * name text). Libadalang parses array/component indexing identically to a
+ * call (`CallExpr`); those simply have no result here, since the resolved
+ * declaration has no `SubpSpec`.
+ */
+private Raw::SubpSpec calleeSpec(Raw::CallExpr call) {
+  exists(Raw::BasicDecl d | d = call.getName().(Name).getReferencedDecl() | result = getSubpSpecOf(d))
+}
+
+/**
+ * Gets the node whose CFG position represents "the call has now happened":
+ * the wrapping `CallStmt`'s own node when `call` is a procedure-call
+ * statement (its own node follows the `CallExpr`'s, per `CallStmtTree`), or
+ * `call` itself otherwise (an inline function call).
+ */
+private Raw::AdaNode callEffectNode(Raw::CallExpr call) {
+  exists(Raw::CallStmt cs | cs.getCall() = call | result = cs)
+  or
+  not exists(Raw::CallStmt cs | cs.getCall() = call) and result = call
+}
+
+/**
+ * Holds if `v` is an `out`/`in out` formal parameter and `(bb, i)` is a
+ * normal-completion `AnnotatedExitNode` of its owning scope.
+ *
+ * `codeql/ssa`'s own `TWriteDef` construction requires a write to be followed
+ * by a live read before it becomes a `Definition` at all (correct dead-store
+ * elision for a genuinely-unused local -- confirmed empirically: a plain
+ * local written but never read produces no `Definition`, see
+ * `docs/phase9.2-plan.md` Task 9.2.3). An `out`/`in out` parameter's *last*
+ * write is never really dead -- the caller reads it back when the call
+ * returns -- but with nothing modelling that read, it would silently vanish
+ * from the SSA universe before Task 9.4 ever gets a chance to model the
+ * return flow. This synthetic read at the scope's own normal exit is what
+ * keeps it alive; `getAnUltimateDefinition()` from that read is exactly what
+ * Task 9.4's `out`/`in out` return-flow step needs.
+ */
+private predicate outOrInOutParamExitRead(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+  exists(Raw::ParamSpec ps, Raw::Mode mode, Impl::CfgImpl::AnnotatedExitNode exitNode |
+    v = ps.(BasicDecl).getADefiningName() and
+    mode = ps.getMode() and
+    (mode instanceof Raw::ModeOut or mode instanceof Raw::ModeInOut) and
+    exitNode.getScope() = paramOwningScope(ps) and
+    exitNode.isNormal() and
+    bb.getNode(i) = exitNode
+  )
+}
+
+/**
+ * An uncertain write (D-022) to an actual passed as an `out`/`in out` formal
+ * of a resolved call: the callee may or may not actually update it, which is
+ * exactly what the shared SSA framework's `certain` flag exists to express.
+ * The actual's own reference is *also* a normal read (from the generic rule
+ * in `variableRead`, since argument evaluation walks it like any other
+ * expression) -- a harmless, conservative approximation for a pure `out`
+ * actual, which Ada does not really read, and the accurate behaviour for
+ * `in out`, which it does.
+ */
+private predicate outOrInOutActualWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+  exists(
+    Raw::CallExpr call, Raw::SubpSpec spec, Raw::AssocList args, Raw::ParamAssoc assoc, int argIdx,
+    Raw::Mode mode
+  |
+    spec = calleeSpec(call) and
+    args = call.getSuffix() and
+    assoc = args.getChild(_) and
+    argIdx = assoc.getParentIndex() and
+    mode = formalMode(spec, argFormalIndex(spec, assoc, argIdx)) and
+    (mode instanceof Raw::ModeOut or mode instanceof Raw::ModeInOut) and
+    v = getSourceVariable(assoc.getRExpr().(Name)) and
+    cfgPos(callEffectNode(call), bb, i)
+  )
+}
+
+/** The `InputSig` implementation consumed by `SsaLib::Make`. */
 private module SsaInput implements SsaLib::InputSig<Raw::Location, SsaCfg::BasicBlock> {
   class SourceVariable = SsaSourceVariable;
 
   predicate variableWrite(SsaCfg::BasicBlock bb, int i, SourceVariable v, boolean certain) {
-    none()
+    (
+      assignWrite(bb, i, v) or
+      objectDeclInitWrite(bb, i, v) or
+      forLoopVarWrite(bb, i, v) or
+      paramEntryWrite(bb, i, v)
+    ) and
+    certain = true
+    or
+    outOrInOutActualWrite(bb, i, v) and certain = false
   }
 
   predicate variableRead(SsaCfg::BasicBlock bb, int i, SourceVariable v, boolean certain) {
-    none()
+    (
+      exists(Name n |
+        v = getSourceVariable(n) and
+        not isAssignTarget(n) and
+        cfgPos(n, bb, i)
+      )
+      or
+      outOrInOutParamExitRead(bb, i, v)
+    ) and
+    certain = true
   }
 }
 

@@ -601,6 +601,35 @@ assignment of every initialised local, which it could not have before.
       2.1.7 added to `ql/lib/qlpack.yml` (pulling `codeql/typetracking` 2.0.35
       transitively); lock files regenerated for `ql/lib`, `ql/src`, `ql/test`. Full suite
       green (41/41) with the new dependencies present but unused.
+- [x] **9.2.1 The `SsaCfg` adapter.** *Done 2026-09-01.* `codeql/ada/dataflow/internal/
+      SsaImpl.qll` renames `CfgImpl::BasicBlocks` into the shape `codeql/ssa`'s `Make`
+      wants (it does not itself export `ControlFlowNode`). Compiled with a placeholder
+      `SsaInput` (`SourceVariable`/`variableWrite`/`variableRead` all `none()`); 9.2.2/9.2.3
+      filled it in.
+- [x] **9.2.2 `SourceVariable`.** *Done 2026-09-01.* `SsaSourceVariable`: `ObjectDecl`,
+      `ParamSpec` and `ForLoopVarDecl` ids only. `ada_xref` resolves to a `BasicDecl`, not
+      the specific name within it, so `getSourceVariable` disambiguates a multi-identifier
+      declaration (`X, Y : Integer`) by matching the reference's own name text against the
+      declaration's defining names — verified against a scratch database that `X` and `Y`
+      resolve as two distinct variables, never merged (D-024).
+- [x] **9.2.3 `variableWrite`/`variableRead`.** *Done 2026-09-01.* Full write/read model:
+      assignment targets, object-declaration initialisers, `in`/`in out` parameter entry
+      (never `out`, which receives nothing from the caller), `for`-loop variables (anchored
+      at the iterable, since neither it nor `ForLoopVarDecl` has a CFG node of its own),
+      and `out`/`in out` actuals at call sites (uncertain writes, D-022, resolved through
+      `ada_body_part`/`ada_xref` — never name text, D-021 — and correct for both positional
+      and named associations).
+      Two real bugs surfaced by testing against scratch databases, not by inspection:
+      **`codeql/ssa`'s own dead-store elision** (`TWriteDef` requires a write to reach a
+      live read to become a `Definition` at all) silently dropped the *last* write to any
+      `out`/`in out` parameter, since its only reader is the caller after the call returns
+      — fixed with a synthetic read at the callee's own normal-exit node, so the SSA
+      framework itself doesn't discard the value Task 9.4 needs. And **`strictcount` has no
+      result over an empty range** (unlike `count`), which silently dropped the *first*
+      formal parameter of every callable from the mode-resolution logic — switching to
+      `count` fixed it. Both confirmed with scratch databases before and after: full
+      writeup with fixtures in `docs/phase9.2-plan.md` Task 9.2.3. Full suite still green
+      (41/41).
 
 ---
 
