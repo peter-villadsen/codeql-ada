@@ -209,8 +209,25 @@ reconstructed from a table of edges:
    X := X_3 + 1;
 ```
 
-Usage: `python3 scripts/render_ssa.py path/to/file.adb` writes `file.ssa.adb` alongside the
-input (never overwrites it). The design problem this had to solve: a write's CFG *anchor*
+**Usage** (inside the WSL/Linux LAL build env, with `codeql` on `PATH` — same environment as
+every other `scripts/*.py`):
+
+```sh
+python3 scripts/render_ssa.py path/to/file.adb
+```
+
+Writes `file.ssa.adb` alongside the input; never overwrites it. Flags:
+
+| Flag | Meaning |
+| --- | --- |
+| `--out <path>` | Write the rendering somewhere other than the default `<file>.ssa.adb` sibling. |
+| `--file <path>` | Required when the first argument is a **directory** rather than a file: extracts that whole directory as the source root (needed when `file.adb` requires sibling files or a project to resolve names) and renders the one file named here. Without it, a single file is extracted in isolation. |
+| `--codeql <path>` | Path to the `codeql` binary, if not already on `PATH`. Defaults to the `CODEQL_BIN` environment variable, then plain `codeql`. |
+
+Not wired into `codeql test run`, CI, or any other automation — it is a standalone,
+on-demand tool; there is no flag or setting that "turns it on" beyond invoking it directly.
+
+The design problem this had to solve: a write's CFG *anchor*
 (where `SsaImpl.qll`'s `variableWrite` fires, needed for dataflow correctness) is frequently
 not where the variable's *name* appears in the source — an `AssignStmt` write is anchored at
 the whole statement but its name is just the target; a declaration-based write (`ObjectDecl`
