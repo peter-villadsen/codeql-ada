@@ -96,13 +96,15 @@ jobs:
             echo "::error::version mismatch across manifests: extractor=$v_extractor lib=$v_lib src=$v_src"
             exit 1
           fi
-          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-            tag_version="${GITHUB_REF#refs/tags/v}"
-            if [ "$v_extractor" != "$tag_version" ]; then
-              echo "::error::tag v$tag_version does not match manifest version $v_extractor"
-              exit 1
-            fi
-          fi
+          case "$GITHUB_REF" in
+            refs/tags/v*)
+              tag_version="${GITHUB_REF#refs/tags/v}"
+              if [ "$v_extractor" != "$tag_version" ]; then
+                echo "::error::tag v$tag_version does not match manifest version $v_extractor"
+                exit 1
+              fi
+              ;;
+          esac
 
       # Same reason as in ci.yml: a committed lock file pins the version but does
       # not put the pack in the local download cache, and a release runner is
@@ -147,7 +149,7 @@ jobs:
         run: |
           set -euo pipefail
           codeql pack install ql/src --additional-packs=ql
-          codeql pack publish ql/lib --github-auth-stdin <<< "$GITHUB_TOKEN"
-          codeql pack publish ql/src --additional-packs=ql --github-auth-stdin <<< "$GITHUB_TOKEN"
+          printf '%s' "$GITHUB_TOKEN" | codeql pack publish ql/lib --github-auth-stdin
+          printf '%s' "$GITHUB_TOKEN" | codeql pack publish ql/src --additional-packs=ql --github-auth-stdin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
