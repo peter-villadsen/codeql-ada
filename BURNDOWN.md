@@ -469,11 +469,41 @@ assignment of every initialised local, which it could not have before.
 - [x] 10.2 `docs/releasing.md` + release prep: `release.yml`'s missing `codeql pack
       install` fixed (it would have failed any tag), manifests bumped 0.0.1 → 0.1.0,
       release checklist with a verified isolation test.
-- [ ] **10.3 Cut v0.1.0.** Nothing else in Phase 10 is usable until this exists: the
-      guide's download URLs 404 and `codeql pack download` has nothing to serve.
-      Blocked only on the decision to publish — the checklist has been run locally and
-      passes. Outward-facing and irreversible (GHCR will not let a version be
-      republished), so it needs an explicit go-ahead.
+- [x] **10.3 Cut v0.1.0.** *Done 2026-09-25.* GitHub Release published with
+      `codeql-extractor-ada-linux64.tar.gz` attached; `peter-villadsen/ada-all` and
+      `peter-villadsen/ada-queries` published to GHCR at `0.1.0`. Verified after the fact:
+      authenticated `gh release download` retrieves the tarball; `gh api .../packages`
+      shows both container packages tagged `0.1.0`.
+      - **First tag attempt failed and was redone.** `release.yml`'s `Publish QL packs`
+        step used `codeql pack publish ... --github-auth-stdin <<< "$GITHUB_TOKEN"` — the
+        job runs in a `container: debian:13`, where GitHub Actions defaults `run:` steps to
+        the container's `/bin/sh` (dash), not `bash`. `<<<` is a bash-only here-string, so
+        this was a dash **syntax error**: the publish command never executed at all, only
+        the preceding `codeql pack install` did. Fixed by piping instead:
+        `printf '%s' "$GITHUB_TOKEN" | codeql pack publish ... --github-auth-stdin`.
+      - **Found alongside it, not yet consequential:** the version-consistency gate's tag
+        check used `if [[ "$GITHUB_REF" == refs/tags/v* ]]`. dash has no `[[`, so it treats
+        `[[` as an external command, gets "not found," and — because that failure sits
+        inside an `if` condition — POSIX `errexit` doesn't fire on it. The check silently
+        no-ops instead of failing loudly. Harmless this time (tag and manifests already
+        matched) but latent. Fixed with a POSIX `case` statement.
+      - **Recovery:** the failed run's `Create GitHub Release` step had already succeeded
+        (tarball attached, no packs) before `Publish QL packs` failed, and dash's
+        statement-by-statement execution meant neither `codeql pack publish` call had run —
+        confirmed via `gh api` before deleting anything. Since nothing had reached GHCR,
+        deleted the `v0.1.0` Release and tag, fixed `release.yml`, and re-tagged `v0.1.0` on
+        the fixed commit rather than bumping to `0.1.1` — no consumers existed yet to
+        protect against a version bump. The Libadalang/CodeQL CLI build caches survived the
+        failed run (only the last step failed), so the redo completed in 3m30s instead of
+        the ~50 minutes a cold cache would need.
+      - **Environment note for next time:** this machine's WSL only had Ubuntu 26.04
+        installed, not the Debian 13 used to build Libadalang in burndown 1.1/5.4 — the
+        local pre-tag checklist in `docs/releasing.md` (tarball build + isolation test)
+        could not be run here. The release was cut by trusting `release.yml`'s own
+        server-side test suite/corpus-regression/tarball-build steps instead, which is what
+        caught nothing here (the bug was in code the local checklist doesn't exercise:
+        publish-step shell syntax, not extraction correctness). Rebuilding the WSL Debian
+        Libadalang environment is still open if a fully-local pre-tag check is wanted again.
 - [ ] 10.4 Cross-implementation validation — **blocked on tool acquisition**, see the
       note under Phase 9 below.
 
