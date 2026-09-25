@@ -31,7 +31,8 @@ that audience justifies Phase 9's cost is deliberately left undecided.**
 | Option | Cost | Value |
 |---|---|---|
 | Cut `v0.1.0` | one Actions run | Makes the artifacts real. Prerequisite for anything else, including your own use. Checklist already passes locally. |
-| 8.12 — extract `Standard` as pseudo-sources | self-contained extractor work | Removes the D-015 blindness; `float-equality` starts catching plain `Float`, several textual matchers become semantic. Best value-per-effort of the technical items. |
+| 8.12a — make the GNAT runtime visible to the auto provider | small extractor change + two query fixes | **Spiked 2026-09-25, do this first.** Fixes hundreds of false positives per project in shipped `unused-*`/`dead-local-subprogram` queries (libkeccak 322, alire 748). See [docs/phase8.12-plan.md](docs/phase8.12-plan.md). |
+| 8.12b — extract `Standard` + direct runtime targets as pseudo-sources | two-pass extraction, dbscheme marker | Removes the D-015 blindness; `float-equality` catches plain `Float`; Task 9.5 gets semantic sources/sinks. Do before 9.5. |
 | Cross-check the 7–9 rules overlapping GNATcheck | small | Read AdaCore's LKQL rule sources (GPLv3 — read, never copy) and confirm our scope matches theirs. Catches subtly-wrong edge cases. |
 | Phase 9 — SSA → dataflow → taint | large, needs its own plan (9.0) | The only genuinely differentiated capability. Gated on the undecided question in D-020. |
 
@@ -552,6 +553,24 @@ assignment of every initialised local, which it could not have before.
       in D-015: `float-equality` starts catching plain `Standard.Float` comparisons,
       and the textual matchers listed in D-015 become candidates for semantic
       rewrites. Extractor-side work; re-audit those queries when this lands.
+      → **Spiked 2026-09-25: [docs/phase8.12-plan.md](docs/phase8.12-plan.md)**
+      (`scripts/spike_standard.py`). The spike reframed the item: under the auto unit
+      provider (4 of 5 corpus projects) the GNAT runtime is not visible at all, so every
+      statement mentioning a runtime entity fails resolution *including the user's own
+      names in it*. The result is false positives in shipped queries: libkeccak
+      unused-parameter 155 → 10 and unused-local 181 → 8 once the runtime is visible,
+      322 results lost in total, alire 748 lost. The corpus baseline's large
+      `nameres_errors` counts were this, undiagnosed. Making resolution work also
+      exposes two latent bugs in `self-comparison`/`identical-operands` (dotted names
+      compared by declaration only; multi-identifier declarations, cf. D-024). Split into:
+  - [ ] **8.12a** Runtime discovery for the auto provider
+        (`CODEQL_EXTRACTOR_ADA_RUNTIME`, else `gcc -print-file-name=adainclude`, else a
+        warning diagnostic), plus the two query fixes, plus a corpus-baseline refresh.
+  - [ ] **8.12b** Extract `Standard` (real unit, 1,800 nodes, but reported at
+        `<cwd>/__standard`, so it needs a pseudo path) and the *direct* target units
+        only (+26–37% nodes; the transitive closure is +300–1,700%), marked with a new
+        `ada_predefined_file` table so queries can report `fromSource()` only. Records
+        D-026, superseding D-015's textual-matching rule. Before Task 9.5.
 - [ ] **10.4 Cross-implementation validation — GNATcheck differential is blocked.**
       The intent was to run GNATcheck over the 5-project corpus and diff its findings
       against ours rule by rule: no files copied (so no licensing question), ~1,700 real
