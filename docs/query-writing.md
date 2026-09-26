@@ -96,6 +96,9 @@ by `database analyze` — only run directly (`codeql query run`) or by
    (`getReferencedDecl()`) rather than matching on node kind alone;
    `UnreachableStatement.ql` shows sibling-position reasoning within a
    statement list (`getChild(i)`/`getChild(i + 1)`) without needing a CFG.
+   Whatever you report, add `x.(AdaNode).fromSource()` (or
+   `c.(Comment).fromSource()`) so nothing is reported inside a predefined
+   pseudo-source (D-026).
 2. Add a test: create `ql/test/queries/YourQuery/` containing
    `YourQuery.qlref` (one line: `queries/YourQuery.ql`) and one or more Ada
    source snippets exercising both a case that should be flagged and one
@@ -168,19 +171,18 @@ A few things worth knowing before you instantiate it:
   exception is usually not what you mean by "leaked". Use
   `missingPairedCallStrict` if you want every path considered, including
   ones that only escape via an unhandled exception.
-- **Resolving what a call "is" is the hard part, not the CFG part.** Per
-  [Global trap 7](phase7-plan.md) in the Phase 7 plan: before assuming
-  `getReferencedDecl()` will tell you a call resolves to a specific
-  standard-library subprogram, check empirically — the GNAT runtime is
-  normally *not* part of the analyzed source set (see the note on
-  `UnusedWithClause.ql` above), so xref resolution silently fails for calls
-  into it and you fall back to matching the dotted callee name as text (see
-  `isTextIoOp` in `OpenWithoutClose.ql` for the pattern: try xref first, in
-  case a project has bundled the runtime sources, then fall back to a
-  textual dotted-name match). This also means a call shortened by a `use`
-  clause (bare `Open(...)` instead of `Ada.Text_IO.Open(...)`) generally
-  can't be told apart from an unrelated same-named subprogram without xref —
-  document that as a limitation rather than guessing.
+- **Resolving what a call "is" is the hard part, not the CFG part.** Package
+  `Standard` and the runtime units a project refers to directly are extracted
+  as predefined pseudo-sources (D-026), so `getReferencedDecl()` on a call to
+  `Ada.Text_IO.Open` gives its `SubpDecl` in `a-textio.ads`, whether it was
+  spelled in full, through a `use` clause, or through a renaming. Prefer that
+  to matching the callee's text. It depends on a GNAT runtime being found at
+  extraction time (see the user guide), so give such a query a test that fails
+  when the runtime entity does not resolve. `isTextIoOp` in
+  `OpenWithoutClose.ql` still keeps a textual fallback from before D-026.
+- **Report only project code.** Every query restricts its reported element
+  with `fromSource()` (on `AdaNode` and `Comment`), so nothing is reported
+  inside a predefined file (D-026).
 
 ### Testing a query
 

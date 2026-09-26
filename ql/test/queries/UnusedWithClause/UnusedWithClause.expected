@@ -1,1 +1,2 @@
 | test.adb:1:13:1:18 | Identifier | With clause for Pkg_B is never used. |
+| test.adb:2:6:2:17 | DottedName | With clause for Ada.Text_IO is never used. |

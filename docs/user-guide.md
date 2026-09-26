@@ -58,8 +58,8 @@ In auto-provider mode the extractor also needs the GNAT runtime's specs
 (`Ada.*`, `Interfaces.*`, `GNAT.*`, `System.*`) to be resolvable. Without
 them, Libadalang fails to resolve any statement that mentions a runtime
 entity — *including the project's own names in that statement* — which shows
-up as false positives in queries such as `ada/unused-parameter`. The runtime
-is made resolvable, never extracted. It is found by:
+up as false positives in queries such as `ada/unused-parameter`. It is found
+by:
 
 1. **`CODEQL_EXTRACTOR_ADA_RUNTIME`** — an explicit directory containing the
    runtime's `.ads` files (GNAT's `adainclude`).
@@ -70,6 +70,17 @@ If neither yields a directory, extraction still succeeds but records a
 `no-runtime` warning diagnostic (and prints it) saying resolution is
 degraded. A `.gpr` project finds its runtime through the toolchain on its
 own, so none of this applies to modes 1 and 2 above.
+
+### Predefined pseudo-sources
+
+In every mode, package `Standard` and the runtime units your code refers to
+*directly* are extracted too, so that `Float`, `Constraint_Error` or
+`Ada.Text_IO.Put_Line` resolve to real declarations (D-026). They are marked
+as predefined: `Standard` appears at the pseudo path
+`/__codeql_ada_predefined__/standard.ads`, runtime units at their real paths,
+and no query reports anything inside them. Units reached only indirectly
+through the runtime itself are not extracted. The extractor's summary line
+reports their number as `predefined_files`.
 
 ## Parallelism
 

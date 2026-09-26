@@ -42,5 +42,6 @@ where
   // separate declaration when present.
   not param.(BasicDecl).isReferenced() and
   not hasUnreferencedPragma(body, param) and
-  not body.getOverriding() instanceof Raw::OverridingOverriding
+  not body.getOverriding() instanceof Raw::OverridingOverriding and
+  param.(AdaNode).fromSource()
 select param, "This parameter is never used in this body."

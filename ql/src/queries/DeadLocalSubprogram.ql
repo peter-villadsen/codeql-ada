@@ -57,5 +57,6 @@ from Raw::SubpBody body
 where
   exists(Raw::BaseSubpBody enclosing | enclosing = body.getParent+()) and
   not isCalled(body) and
-  not isAddressTaken(body)
+  not isAddressTaken(body) and
+  body.(AdaNode).fromSource()
 select body, "This nested subprogram is never called."

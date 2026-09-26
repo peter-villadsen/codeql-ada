@@ -89,9 +89,9 @@ between invocations.
    regenerate `ql/lib/ada.dbscheme.stats` and update the generator — the opposite of the
    Phase 7 rule. Do it in Task 9.1 and not incrementally afterwards.
 2. **Never resolve a call by name text** (D-021).
-3. **Sources and sinks in the runtime must be matched textually** (D-015): the GNAT runtime
-   is not in the analyzed source set, so `Ada.Command_Line.Argument` does not resolve to a
-   declaration. `OpenWithoutClose.ql` is the precedent — read it before writing 9.5.
+3. ~~**Sources and sinks in the runtime must be matched textually** (D-015).~~ *Superseded
+   2026-09-25 by D-026:* runtime entities the project refers to are extracted as predefined
+   pseudo-sources and match semantically; see `docs/phase9.2-plan.md` Task 9.5.
 4. **Pin the shared packs to CLI 2.25.6**, exactly as Task 7.0 did for `codeql/controlflow`.
    *Corrected 2026-09-01:* the versions this trap originally named (`codeql/ssa` 2.0.30 and
    `codeql/dataflow` 2.1.10, the floating latest on 2026-08-11) are **2.26.x-era packs and
@@ -211,7 +211,8 @@ building.
 
 One query, with a path, that is genuinely cross-procedure.
 
-- Source: `Ada.Command_Line.Argument` (a function result — matched textually per D-015).
+- Source: `Ada.Command_Line.Argument` (a function result — matched semantically per D-026;
+  originally textually per D-015).
 - Sink: a command-execution or file-path sink; `GNAT.OS_Lib.Spawn` is the obvious first
   choice.
 - The test must route the tainted value **through at least one intermediate subprogram**,

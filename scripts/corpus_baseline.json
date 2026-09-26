@@ -1,47 +1,47 @@
 {
   "adasat": {
     "diags": 0,
-    "extractor_seconds": 2.6,
+    "extractor_seconds": 5.0,
     "files": 16,
     "nameres_errors": 0,
-    "nodes": 9600,
-    "types": 1036,
-    "xref": 2048
+    "nodes": 17924,
+    "types": 2931,
+    "xref": 3455
   },
   "alire": {
     "diags": 81,
-    "extractor_seconds": 43.9,
+    "extractor_seconds": 49.8,
     "files": 479,
     "nameres_errors": 69617,
-    "nodes": 352518,
-    "types": 9283,
-    "xref": 41275
+    "nodes": 443171,
+    "types": 37793,
+    "xref": 64169
   },
   "gpr2": {
     "diags": 106,
-    "extractor_seconds": 62.4,
+    "extractor_seconds": 61.3,
     "files": 1718,
-    "nameres_errors": 92935,
-    "nodes": 1016939,
-    "types": 70760,
-    "xref": 193324
+    "nameres_errors": 93105,
+    "nodes": 1140493,
+    "types": 147083,
+    "xref": 256290
   },
   "libadalang-tools": {
     "diags": 55,
-    "extractor_seconds": 28.6,
+    "extractor_seconds": 30.6,
     "files": 524,
     "nameres_errors": 53997,
-    "nodes": 432917,
-    "types": 26377,
-    "xref": 58768
+    "nodes": 527807,
+    "types": 60441,
+    "xref": 83789
   },
   "libkeccak": {
     "diags": 0,
-    "extractor_seconds": 8.4,
+    "extractor_seconds": 13.5,
     "files": 159,
     "nameres_errors": 3017,
-    "nodes": 112001,
-    "types": 13136,
-    "xref": 29414
+    "nodes": 153125,
+    "types": 34453,
+    "xref": 39907
   }
 }

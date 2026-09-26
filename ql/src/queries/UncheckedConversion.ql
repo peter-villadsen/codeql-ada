@@ -12,5 +12,6 @@ import ada
 
 from Raw::GenericSubpInstantiation gi
 where
-  gi.getGenericSubpName().(Name).getText().toLowerCase().matches("%unchecked_conversion")
+  gi.getGenericSubpName().(Name).getText().toLowerCase().matches("%unchecked_conversion") and
+  gi.(AdaNode).fromSource()
 select gi, "Instantiation of Unchecked_Conversion bypasses type safety."

@@ -19,6 +19,7 @@ where
   d.(BasicDecl)
       .getAName()
       .toLowerCase()
-      .regexpMatch(".*(password|passwd|secret|api_key|apikey|token|credential).*")
+      .regexpMatch(".*(password|passwd|secret|api_key|apikey|token|credential).*") and
+  d.(AdaNode).fromSource()
 select d,
   "Object " + d.(BasicDecl).getAName() + " is initialized with a hardcoded credential-like string."

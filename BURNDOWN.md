@@ -30,7 +30,6 @@ that audience justifies Phase 9's cost is deliberately left undecided.**
 
 | Option | Cost | Value |
 |---|---|---|
-| 8.12b — extract `Standard` + direct runtime targets as pseudo-sources | two-pass extraction, dbscheme marker | Removes the D-015 blindness; `float-equality` catches plain `Float`; Task 9.5 gets semantic sources/sinks. Do before 9.5. |
 | Cross-check the 7–9 rules overlapping GNATcheck | small | Read AdaCore's LKQL rule sources (GPLv3 — read, never copy) and confirm our scope matches theirs. Catches subtly-wrong edge cases. |
 | Phase 9 — SSA → dataflow → taint | large, needs its own plan (9.0) | The only genuinely differentiated capability. Gated on the undecided question in D-020. |
 
@@ -576,11 +575,45 @@ assignment of every initialised local, which it could not have before.
         textual spec pairing matched *other overloads* in the same declarative part
         (gpr2 9), so it now uses `ada_body_part` (D-021). Extraction time up (alire
         19 s → 44 s), as the spike predicted.
-  - [ ] **8.12b** Extract `Standard` (real unit, 1,800 nodes, but reported at
+  - [x] **8.12b** Extract `Standard` (real unit, 1,800 nodes, but reported at
         `<cwd>/__standard`, so it needs a pseudo path) and the *direct* target units
         only (+26–37% nodes; the transitive closure is +300–1,700%), marked with a new
         `ada_predefined_file` table so queries can report `fromSource()` only. Records
         D-026, superseding D-015's textual-matching rule. Before Task 9.5.
+        **Done 2026-09-25.** Two-pass extractor; `Standard` at
+        `/__codeql_ada_predefined__/standard.ads`; out-of-project targets only when
+        walkable (excludes Libadalang's synthetic operator/class-wide/char-literal nodes,
+        which would dangle). Predefined units per project: adasat 9, libkeccak 30, alire
+        67, libadalang-tools 74, gpr2 121; nodes +12–87%; extraction alire 44 s → 50 s,
+        libkeccak 8 s → 14 s. All 24 queries report `fromSource()` only (guarded by the
+        `WarningsOff`/`TodoComment` fixtures, whose runtime dependencies would otherwise
+        report; `PrintPredefined` guards the extraction). `float-equality` catches plain
+        `Float` (libadalang-tools +2, true positives). `unused-with-clause` sees runtime
+        units, and two latent bugs surfaced with them: the with clause's own selector
+        (`Text_IO` in `with Ada.Text_IO;`) counted as a use, so a dotted `with` was never
+        reported; and where a use fails name resolution the query reported a false
+        positive (gpr2's testsuite, 143 in 8.12a). Fixed both; the second by not reporting
+        when an unresolved identifier spelled like the unit occurs in the file. Results
+        8.12a → 8.12b: adasat 34 → 34, alire 2,095 → 2,105, gpr2 5,039 → 5,241,
+        libadalang-tools 3,804 → 3,819, libkeccak 350 → 341; the changes are all
+        `unused-with-clause` except the two float hits and gpr2 noise (next item). CFG/SSA
+        conformance unchanged; `PrintSsa` over alire/libkeccak fine (12 s / 5 s).
+        Deferred from the plan's step 4: the four textual matchers stay textual (8.12c).
+  - [ ] **8.12c** Semantic rewrites of the textual matchers D-015 listed
+        (`unchecked-conversion`, `unchecked-deallocation`, `raise-predefined-exception`,
+        `boolean-literal-comparison`), and of `OpenWithoutClose`'s `isTextIoOp` fallback.
+        Each only with a test that the rewrite loses no case the textual form caught
+        (renamings, `use` clauses, `Standard.`-qualified names), and one that fails if the
+        runtime entity stops resolving.
+  - [ ] **Nondeterministic resolution in projects with duplicate unit names.** Found in
+        8.12b: two identical extractions of gpr2 gave `nameres_errors` 93,114 and 93,105.
+        gpr2's testsuite reuses unit names (`Test`, `Pkg`, ...); under the auto provider
+        which duplicate a name resolves to depends on what the worker's Libadalang
+        context loaded earlier, and `pool.map` hands out chunks by timing. E.g.
+        `testsuite/tests/exchange/test.adb` resolves nothing in a fresh context but did
+        in the 8.12a database. Predates 8.12b; small (±0.01% of names) but it makes
+        corpus diffs noisy. Options: a fresh context per file (cost), deterministic
+        chunk assignment, or a diagnostic for duplicate unit names.
 - [ ] **10.4 Cross-implementation validation — GNATcheck differential is blocked.**
       The intent was to run GNATcheck over the 5-project corpus and diff its findings
       against ours rule by rule: no files copied (so no licensing question), ~1,700 real

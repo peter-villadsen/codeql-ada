@@ -101,6 +101,8 @@ Growth is organized in waves keyed to infrastructure: Wave A needs only AST+xref
 (available today), Wave B needs the CFG (Phase 7), Wave C needs dataflow (Phase 9).
 
 ## D-015 (2026-07-03) — Semantic relations are source-set-relative; query authors must not rely on resolving out-of-source entities
+*Superseded in part by D-026 (2026-09-25): `Standard` and directly referenced runtime units
+are now extracted as marked pseudo-sources, so semantic matching of predefined entities works.*
 All three semantic relations (`ada_xref`, `ada_expr_type`, `ada_generic_instantiation`) are
 emitted only when the resolved declaration is itself in the analyzed source set
 (`extractor.py`, `in_sources` guard). Anything declared in package `Standard` (`Float`,
@@ -246,3 +248,35 @@ visibly, rather than guess.
 `BasePackageDecl`/`GenericPackageDecl`, a callable method (with an `imprecise_fallback`
 parameter, left at its default) on `ClassicSubpDecl`/`EntryDecl`/`GenericSubpDecl` — so the
 extractor normalizes both shapes with `callable(bp)` rather than special-casing node kinds.
+
+## D-026 (2026-09-25) — Predefined and runtime entities are extracted as marked pseudo-sources
+Supersedes D-015's rule that queries targeting language- or runtime-defined entities must
+match textually. Spike and plan: `docs/phase8.12-plan.md`.
+
+The extractor runs two passes. Pass 1 extracts the project and emits semantic rows
+(`ada_xref`, `ada_expr_type`, `ada_generic_instantiation`, `ada_body_part`) for *any*
+resolved target, recording the out-of-project units they land in. Pass 2 extracts exactly
+those units — package `Standard` and the runtime units the project refers to **directly** —
+with semantic rows limited to targets in the project or that set. The transitive closure is
+never extracted: it costs +300–1,700% nodes against +26–37% for direct targets.
+
+- **Marking.** Pass-2 files are listed in `ada_predefined_file(@file)`, exposed as
+  `File.isPredefined()`. `AdaNode.fromSource()` / `Comment.fromSource()` hold outside them.
+  **Every query restricts its reported element to `fromSource()`**; runtime specs contain
+  `pragma Warnings (Off)`, TODO comments and unreferenced parameters, and would otherwise be
+  reported. `PrintPredefined` and the `WarningsOff`/`TodoComment` fixtures guard this.
+- **`Standard`'s path.** Libadalang names it `<cwd>/__standard`, which would place it inside
+  the project. It gets the fixed pseudo path `/__codeql_ada_predefined__/standard.ads`, and
+  its text is written to the source archive directly.
+- **Synthetic nodes are not targets.** An out-of-project target gets a row only if walking
+  its unit reaches it (it is among its parent's children). This excludes Libadalang's
+  synthetic declarations — predefined operators, class-wide types, character literals —
+  which have no text and would otherwise leave dangling references. So `X + 1` still does
+  not resolve to a declaration of `"+"`.
+- **Consequences for queries.** Semantic matching of runtime entities is now possible and
+  preferred: `Ada.Command_Line.Argument` resolves to its `SubpDecl` in `a-comlin.ads`, and
+  `GNAT.OS_Lib.Spawn` resolves through the renaming to `System.OS_Lib.Spawn`, so a semantic
+  sink catches both spellings. It is only as good as runtime discovery (8.12a): with no GNAT
+  runtime found, runtime units neither resolve nor get extracted, and the `no-runtime`
+  diagnostic says so. Queries whose correctness depends on a runtime entity should keep a
+  test that fails when it does not resolve, rather than silently going blind.

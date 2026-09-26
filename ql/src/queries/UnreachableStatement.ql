@@ -29,5 +29,6 @@ from Raw::StmtList list, int i, Raw::AdaNode stmt
 where
   stmt = list.getChild(i) and
   not isReachable(stmt) and
-  (i = 0 or isReachable(list.getChild(i - 1)))
+  (i = 0 or isReachable(list.getChild(i - 1))) and
+  stmt.(AdaNode).fromSource()
 select stmt, "This statement is unreachable."

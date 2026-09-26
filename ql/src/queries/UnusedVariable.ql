@@ -17,5 +17,6 @@ where
   not d.(BasicDecl).isReferenced() and
   not exists(d.getRenamingClause()) and
   // An extended-return object is the returned value; "unused" is meaningless.
-  not d instanceof Raw::ExtendedReturnStmtObjectDecl
+  not d instanceof Raw::ExtendedReturnStmtObjectDecl and
+  d.(AdaNode).fromSource()
 select d, "Local object " + d.(BasicDecl).getAName() + " is never referenced."

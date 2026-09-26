@@ -19,5 +19,6 @@ where
   text.regexpReplaceAll("^standard\\.", "") in
     [
       "constraint_error", "program_error", "storage_error", "tasking_error", "numeric_error"
-    ]
+    ] and
+  r.(AdaNode).fromSource()
 select r, "Explicit raise of predefined exception " + n.getText() + "."

@@ -13,5 +13,6 @@ import ada
 
 from Raw::GenericSubpInstantiation gi
 where
-  gi.getGenericSubpName().(Name).getText().toLowerCase().matches("%unchecked_deallocation")
+  gi.getGenericSubpName().(Name).getText().toLowerCase().matches("%unchecked_deallocation") and
+  gi.(AdaNode).fromSource()
 select gi, "Instantiation of Unchecked_Deallocation risks dangling pointers or double-free."

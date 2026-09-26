@@ -11,15 +11,13 @@
 
 import ada
 
-// Limitation (see DECISIONS.md D-015): only catches user-declared floating-point types.
-// `ada_expr_type` is only
-// emitted when the resolved type declaration is itself in the analyzed source set, so
-// predefined types (`Float`, `Long_Float`, ...), which live in package `Standard`, never
-// resolve here. Derived-type chains to a user-declared float base are also not followed
-// (v1 matches direct type decls only).
+// Predefined types (`Float`, `Long_Float`, ...) resolve into package `Standard`, which is
+// extracted as a pseudo-source (D-026). Limitation: only direct type declarations are
+// matched; subtypes and derived-type chains to a floating-point base are not followed.
 from Raw::RelationOp cmp, Expr operand
 where
   (cmp.getOp() instanceof Raw::OpEq or cmp.getOp() instanceof Raw::OpNeq) and
   operand = [cmp.getLeft(), cmp.getRight()] and
-  operand.getType().(Raw::TypeDecl).getTypeDef() instanceof Raw::FloatingPointDef
+  operand.getType().(Raw::TypeDecl).getTypeDef() instanceof Raw::FloatingPointDef and
+  cmp.(AdaNode).fromSource()
 select cmp, "This comparison uses floating-point equality."

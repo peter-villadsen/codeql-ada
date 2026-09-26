@@ -11,9 +11,6 @@
 
 import ada
 
-// Limitation (see DECISIONS.md D-015): `ada_xref` is only emitted when the referenced
-// declaration is in the analyzed source set, so identical operands naming an entity
-// declared in an unanalyzed library unit (e.g. `Lib.X and Lib.X`) are not detected.
 from Raw::BinOp op, Name left, Name right
 where
   (
@@ -29,5 +26,6 @@ where
   not left.getAPrimaryQlClass() = "CallExpr" and
   not right.getAPrimaryQlClass() = "CallExpr" and
   not exists(Raw::AdaNode c | c.getParent+() = left and c.getAPrimaryQlClass() = "CallExpr") and
-  not exists(Raw::AdaNode c | c.getParent+() = right and c.getAPrimaryQlClass() = "CallExpr")
+  not exists(Raw::AdaNode c | c.getParent+() = right and c.getAPrimaryQlClass() = "CallExpr") and
+  op.(AdaNode).fromSource()
 select op, "Both operands of this expression are " + left.getText() + "."

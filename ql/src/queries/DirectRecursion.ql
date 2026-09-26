@@ -25,5 +25,6 @@ from Raw::SubpBody b, Raw::CallExpr call, Raw::BasicDecl target
 where
   b = getInnermostEnclosingSubprogram(call) and
   target = call.(Name).getReferencedDecl() and
-  (target = b or target = b.(BaseSubpBody).getDeclaration())
+  (target = b or target = b.(BaseSubpBody).getDeclaration()) and
+  call.(AdaNode).fromSource()
 select call, "This call is a direct recursive call."

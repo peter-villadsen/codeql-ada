@@ -14,5 +14,6 @@ from Raw::RelationOp cmp, Name lit
 where
   (cmp.getOp() instanceof Raw::OpEq or cmp.getOp() instanceof Raw::OpNeq) and
   lit = [cmp.getLeft(), cmp.getRight()] and
-  lit.getText().toLowerCase() = ["true", "false"]
+  lit.getText().toLowerCase() = ["true", "false"] and
+  cmp.(AdaNode).fromSource()
 select cmp, "Comparison with boolean literal " + lit.getText() + " is redundant."

@@ -3,13 +3,38 @@
 import codeql.ada.ast.internal.Raw
 
 /** A file in the snapshot. */
-class File = Raw::File;
+class File extends Raw::File {
+  /**
+   * Holds if this file is a predefined pseudo-source: package `Standard` or a runtime
+   * unit the project refers to directly. These are extracted only so that names
+   * resolve into them (D-026); queries report nothing in them.
+   */
+  predicate isPredefined() { ada_predefined_file(this) }
+}
 
 /** A location in the snapshot. */
 class Location = Raw::Location;
 
+/** Holds if `loc` lies in a predefined pseudo-source file (D-026). */
+private predicate inPredefinedFile(Location loc) {
+  exists(File f | locations_default(loc, f, _, _, _, _) and f.isPredefined())
+}
+
+/** A source comment. */
+class Comment extends Raw::Comment {
+  /** Holds if this comment is in the project's own sources, not a predefined file (D-026). */
+  predicate fromSource() { not inPredefinedFile(this.getLocation()) }
+}
+
 /** An Ada AST node, with scope navigation helpers. */
 class AdaNode extends Raw::AdaNode {
+  /**
+   * Holds if this node is in the project's own sources, not in a predefined
+   * pseudo-source such as package `Standard` (D-026). Every query restricts its
+   * reported element to this.
+   */
+  predicate fromSource() { not inPredefinedFile(this.getLocation()) }
+
   /** Gets the compilation unit containing this node. */
   Raw::CompilationUnit getEnclosingUnit() { result = this.getParent*() }
 

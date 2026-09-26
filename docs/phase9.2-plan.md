@@ -200,9 +200,12 @@ the resolution; Libadalang does expose `p_referenced_defining_name` (confirmed a
 4. **The dbscheme should not change again in 9.2–9.5.** Task 9.1 already spent the
    database-format bump. If Task 9.2.2 pushes you toward an extractor change, stop and
    raise it (section 6) rather than bundling a second bump silently.
-5. **Sources and sinks in the GNAT runtime must be matched textually** (D-015) — the
-   runtime is not in the analyzed source set, so `Ada.Command_Line.Argument` does not
-   resolve to a declaration. Read `ql/src/queries/OpenWithoutClose.ql` before writing 9.5.
+5. **Sources and sinks in the GNAT runtime are matched semantically** (D-026, superseding
+   D-015's textual rule, 2026-09-25). Burndown 8.12b extracts `Standard` and the runtime
+   units a project refers to directly, so `Ada.Command_Line.Argument` resolves to its
+   `SubpDecl` in `a-comlin.ads`, and `GNAT.OS_Lib.Spawn` resolves through the renaming to
+   `System.OS_Lib.Spawn` in `s-os_lib.ads`. (8.12b also bumped the dbscheme, adding
+   `ada_predefined_file`; point 4 is about 9.2–9.5 themselves.)
 6. **Both workflows install packs before compiling** (`.github/workflows/ci.yml:118`,
    `release.yml:116`, looping over `ql/lib ql/src ql/test`). Do not undo that.
 7. **Hand-derive every test expectation before transcribing it** (D-017/D-018). If actual
@@ -625,10 +628,16 @@ expectations. If this is not met, nothing downstream is worth building.
 One query, with a displayed path, that is genuinely cross-procedure.
 
 - Instantiate `TaintTracking` from `codeql/dataflow` over the 9.4 model.
-- Source: `Ada.Command_Line.Argument` — a function result, matched **textually** per D-015,
-  because the runtime is not in the source set. `ql/src/queries/OpenWithoutClose.ql` is the
-  precedent for the matching style; read it first.
-- Sink: `GNAT.OS_Lib.Spawn` (command execution) is the obvious first choice.
+- Source: `Ada.Command_Line.Argument` — a function result, matched **semantically**: the
+  call's `Name.getReferencedDecl()` is the `SubpDecl` named `Argument` in package
+  `Ada.Command_Line`, a predefined pseudo-source (D-026). Identify the package by its
+  declaration, not by the call's spelling, so `use` clauses and renamings are covered.
+- Sink: `GNAT.OS_Lib.Spawn` (command execution) is the obvious first choice. It resolves
+  through `package GNAT.OS_Lib renames System.OS_Lib` to `System.OS_Lib.Spawn`, so match
+  that declaration and one sink catches both spellings (phase8.12-plan.md §1.7). Test both
+  spellings, and include a fixture assertion that fails if the runtime does not resolve,
+  since without a GNAT runtime the query would go silently blind (D-026).
+- Report only `fromSource()` elements, like every query (D-026).
 - `@kind path-problem`, so the path is displayed. That is the visible payoff and the reason
   to have built the rest.
 - **The test must route the tainted value through at least one intermediate subprogram**, so

@@ -4197,6 +4197,12 @@ ada_body_part(
   int body: @ada_basic_decl ref
 );
 
+/*- Ada predefined pseudo-sources: Standard and runtime units (D-026) -*/
+
+ada_predefined_file(
+  unique int file: @file ref
+);
+
 /*- Ada trivia: comments (not part of the AST tree) -*/
 
 ada_comments(

@@ -16,5 +16,6 @@ where
   thenStmts.getChild(0) instanceof Raw::NullStmt and
   not exists(thenStmts.getChild(1)) and
   not exists(s.getAlternatives().getChild(0)) and
-  not exists(s.getElsePart())
+  not exists(s.getElsePart()) and
+  s.(AdaNode).fromSource()
 select s, "This if statement does nothing and can be removed."

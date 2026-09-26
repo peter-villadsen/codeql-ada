@@ -12,15 +12,28 @@ Runtime discovery (burndown 8.12a): the auto unit provider only knows the files
 it is given, and without the GNAT runtime specs Libadalang fails to resolve any
 statement that mentions a runtime entity -- including the user's own names in
 it. So the auto provider is also given the runtime's *.ads files, found via
-CODEQL_EXTRACTOR_ADA_RUNTIME -> `gcc -print-file-name=adainclude`. They are made
-resolvable, not extracted. A GPR project finds its runtime by itself.
+CODEQL_EXTRACTOR_ADA_RUNTIME -> `gcc -print-file-name=adainclude`. A GPR
+project finds its runtime by itself.
+
+Predefined pseudo-sources (burndown 8.12b, decision D-026): extraction runs in
+two passes. Pass 1 extracts the project files (in parallel) and emits semantic
+rows for *any* resolved target, recording which out-of-project units those
+targets land in -- package Standard and the runtime units the project refers to
+directly. Pass 2 extracts exactly those units, marked in `ada_predefined_file`,
+with semantic rows limited to targets in the project or the pass-2 set, so there
+is no transitive closure. Standard has no file of its own (Libadalang names it
+`<cwd>/__standard`), so it gets the fixed pseudo path STANDARD_PATH and its text
+is written to the source archive directly.
 
 Node identity: nodes are keyed by (file, kind, source span). This is stable and
 computable from any reference to the node (needed for cross-unit xref), at the
 cost of merging pathological same-kind-same-span nodes. Cross-unit references
-are only emitted when the target lies in an extracted file.
+are only emitted when the target lies in an extracted file; an out-of-project
+target must also be reachable by walking its unit's tree, which excludes
+Libadalang's synthetic nodes (predefined operators, class-wide types, ...).
 """
 
+import functools
 import json
 import os
 import pathlib
@@ -39,6 +52,9 @@ TABLES = json.loads(
 
 DIAG_ERROR = 40
 DIAG_WARNING = 30
+
+# Package Standard's path in the database: fixed, and outside any source root.
+STANDARD_PATH = "/__codeql_ada_predefined__/standard.ads"
 
 
 def env_path(suffix: str) -> pathlib.Path:
@@ -84,9 +100,17 @@ class TrapWriter:
         return "\n".join(self.lines) + "\n"
 
 
+@functools.lru_cache(maxsize=None)
+def path_of(filename: str) -> str:
+    """Database path of the unit Libadalang calls `filename`."""
+    if os.path.basename(filename) == "__standard" and not os.path.exists(filename):
+        return STANDARD_PATH
+    return norm(filename)
+
+
 def node_key(node: lal.AdaNode) -> str:
     s = node.sloc_range
-    return (f"{norm(node.unit.filename)};{node.kind_name};"
+    return (f"{path_of(node.unit.filename)};{node.kind_name};"
             f"{s.start.line}:{s.start.column}-{s.end.line}:{s.end.column}")
 
 
@@ -95,8 +119,14 @@ def file_key(path: str) -> str:
 
 
 class Extractor:
-    def __init__(self, sources):
+    def __init__(self, sources, predefined=None):
+        """`predefined`: None in pass 1 (accept any walkable out-of-project
+        target, recording its unit in `out_units`), else the set of pass-2
+        unit paths that out-of-project targets are limited to."""
         self.sources = {norm(s) for s in sources}
+        self.predefined = predefined
+        self.out_units = set()
+        self._walkable = {}
         self.stats = {"nodes": 0, "xref": 0, "types": 0, "diags": 0,
                       "nameres_errors": 0, "comments": 0, "body_part": 0}
 
@@ -132,10 +162,13 @@ class Extractor:
         w.row("diagnostics", d, str(severity), q(tag), q(msg), q(msg), loc_lbl)
         self.stats["diags"] += 1
 
-    def extract_unit(self, unit: lal.AnalysisUnit, trap_dir: pathlib.Path):
-        path = norm(unit.filename)
+    def extract_unit(self, unit: lal.AnalysisUnit, trap_dir: pathlib.Path,
+                     predefined=False):
+        path = path_of(unit.filename)
         w = TrapWriter()
         file_lbl = self.emit_file_tree(w, path)
+        if predefined:
+            w.row("ada_predefined_file", file_lbl)
 
         for d in unit.diagnostics:
             key = (f"loc,{path},{d.sloc_range.start.line},"
@@ -197,24 +230,50 @@ class Extractor:
             if child is not None:
                 self.walk(w, file_lbl, path, child, lbl, i)
 
-    def in_sources(self, node) -> bool:
-        return node is not None and norm(node.unit.filename) in self.sources
+    def is_walkable(self, t) -> bool:
+        """Holds if `walk` reaches `t` from its unit's root, so a row pointing
+        at it cannot dangle. Libadalang's synthetic nodes are not among their
+        parent's children. Instantiated-generic targets are distinct objects
+        from the generic's own nodes, hence the comparison by key."""
+        key = node_key(t)
+        ok = self._walkable.get(key)
+        if ok is None:
+            p = t.parent
+            ok = TABLES.get(t.kind_name) is not None and (
+                p is None or any(c is not None and node_key(c) == key
+                                 for c in p.children))
+            self._walkable[key] = ok
+        return ok
+
+    def accept(self, t) -> bool:
+        """Holds if a semantic row may point at `t`."""
+        if t is None:
+            return False
+        path = path_of(t.unit.filename)
+        if path in self.sources:
+            return True
+        if not self.is_walkable(t):
+            return False
+        if self.predefined is None:
+            self.out_units.add(t.unit.filename)
+            return True
+        return path in self.predefined
 
     def semantics(self, w, node, lbl):
         try:
             if isinstance(node, lal.Name) and not node.p_is_defining:
                 decl = node.p_referenced_decl()
-                if self.in_sources(decl):
+                if self.accept(decl):
                     w.row("ada_xref", lbl, w.label(node_key(decl)))
                     self.stats["xref"] += 1
             if isinstance(node, lal.Expr):
                 t = node.p_expression_type
-                if self.in_sources(t):
+                if self.accept(t):
                     w.row("ada_expr_type", lbl, w.label(node_key(t)))
                     self.stats["types"] += 1
             if isinstance(node, lal.GenericInstantiation):
                 d = node.p_designated_generic_decl
-                if self.in_sources(d):
+                if self.accept(d):
                     w.row("ada_generic_instantiation", lbl,
                           w.label(node_key(d)))
             if isinstance(node, lal.BasicDecl):
@@ -223,7 +282,7 @@ class Extractor:
                 # ClassicSubpDecl) -- normalize both shapes here (D-021).
                 bp = getattr(node, "p_body_part", None)
                 body = bp() if callable(bp) else bp
-                if self.in_sources(body):
+                if self.accept(body):
                     w.row("ada_body_part", lbl, w.label(node_key(body)))
                     self.stats["body_part"] += 1
         except lal.PropertyError:
@@ -285,6 +344,7 @@ def warn_no_runtime(trap_dir: pathlib.Path):
     w.row("files", f, q(""))
     loc = w.label("loc,,0,0,0,0")
     w.row("locations_default", loc, f, "0", "0", "0", "0")
+    w.row("empty_location", loc)
     d = w.fresh()
     w.row("diagnostics", d, str(DIAG_WARNING), q("no-runtime"), q(msg), q(msg), loc)
     (trap_dir / "no-runtime.trap").write_text(w.text(), encoding="utf-8")
@@ -316,22 +376,54 @@ def build_context(gpr, ada_files, runtime=None) -> lal.AnalysisContext:
 _state = None
 
 
-def _init_worker(gpr, files, runtime, trap_dir, archive_dir):
+def _init_worker(gpr, files, runtime, predefined, trap_dir, archive_dir):
     global _state
-    _state = (build_context(gpr, files, runtime), Extractor(files), trap_dir,
-              archive_dir)
+    _state = (build_context(gpr, files, runtime), files,
+              Extractor(files, predefined), trap_dir, archive_dir)
+
+
+def _archive(archive_dir, path, write):
+    dest = archive_dir / path.replace(":", "_").lstrip("/")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    write(dest)
 
 
 def _extract_one(f):
-    ctx, ex, trap_dir, archive_dir = _state
+    """Pass 1: one project file."""
+    ctx, _, ex, trap_dir, archive_dir = _state
     ex.stats = dict.fromkeys(ex.stats, 0)
-    path = norm(f)
+    ex.out_units = set()
     unit = ctx.get_from_file(f)
     ex.extract_unit(unit, trap_dir)
-    dest = archive_dir / path.replace(":", "_").lstrip("/")
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(f, dest)
+    path = norm(f)
+    _archive(archive_dir, path, lambda d: shutil.copyfile(f, d))
+    return path, ex.stats, ex.out_units
+
+
+def _extract_predefined(filename):
+    """Pass 2: one predefined or runtime unit, by Libadalang filename."""
+    ctx, files, ex, trap_dir, archive_dir = _state
+    ex.stats = dict.fromkeys(ex.stats, 0)
+    path = path_of(filename)
+    if path == STANDARD_PATH:
+        unit = ctx.get_from_file(files[0]).root.p_standard_unit
+        _archive(archive_dir, path,
+                 lambda d: d.write_text(unit.text, encoding="utf-8"))
+    else:
+        unit = ctx.get_from_file(filename)
+        _archive(archive_dir, path, lambda d: shutil.copyfile(filename, d))
+    ex.extract_unit(unit, trap_dir, predefined=True)
     return path, ex.stats
+
+
+def run_pass(fn, items, jobs, init_args):
+    jobs = max(1, min(jobs, len(items) or 1))
+    if jobs == 1 or not hasattr(os, "fork"):
+        _init_worker(*init_args)
+        return list(map(fn, items)), jobs
+    import multiprocessing
+    with multiprocessing.Pool(jobs, _init_worker, init_args) as pool:
+        return pool.map(fn, items, chunksize=4), jobs
 
 
 def main() -> int:
@@ -356,28 +448,35 @@ def main() -> int:
         f"sourceLocationPrefix({q(norm(src_root))})\n", encoding="utf-8"
     )
 
-    jobs = int(os.environ.get("CODEQL_EXTRACTOR_ADA_JOBS",
-                              str(os.cpu_count() or 1)))
-    jobs = max(1, min(jobs, len(files) or 1))
+    max_jobs = int(os.environ.get("CODEQL_EXTRACTOR_ADA_JOBS",
+                                  str(os.cpu_count() or 1)))
     totals = dict.fromkeys(
         ("nodes", "xref", "types", "diags", "nameres_errors", "comments",
-         "body_part"), 0)
+         "body_part", "predefined_files"), 0)
 
-    if jobs == 1 or not hasattr(os, "fork"):
-        _init_worker(gpr, files, runtime, trap_dir, archive_dir)
-        results = map(_extract_one, files)
-        self_stats = [r for r in results]
-    else:
-        import multiprocessing
-        with multiprocessing.Pool(
-            jobs, _init_worker, (gpr, files, runtime, trap_dir, archive_dir)
-        ) as pool:
-            self_stats = pool.map(_extract_one, files, chunksize=4)
-
-    for path, st in self_stats:
+    results, jobs = run_pass(_extract_one, files, max_jobs,
+                             (gpr, files, runtime, None, trap_dir, archive_dir))
+    out_units = set()
+    for path, st, units in results:
         print(f"[ada-extractor] {path}")
         for k, v in st.items():
             totals[k] += v
+        out_units |= units
+
+    # Pass 2: exactly the units pass 1's semantic rows point into.
+    by_path = {path_of(u): u for u in out_units}
+    t1 = time.monotonic()
+    if by_path:
+        results, _ = run_pass(
+            _extract_predefined, sorted(by_path.values()), max_jobs,
+            (gpr, files, runtime, set(by_path), trap_dir, archive_dir))
+        for path, st in results:
+            print(f"[ada-extractor] predefined: {path}")
+            for k, v in st.items():
+                totals[k] += v
+        totals["predefined_files"] = len(results)
+    print(f"[ada-extractor] pass 2: {len(by_path)} predefined units in "
+          f"{time.monotonic() - t1:.1f}s")
 
     dt = time.monotonic() - t0
     print(f"[ada-extractor] {len(files)} files in {dt:.1f}s "

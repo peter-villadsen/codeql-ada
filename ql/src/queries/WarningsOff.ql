@@ -17,5 +17,6 @@ where
   args = p.getArgs() and
   first = args.getChild(0) and
   first.getExpr().(Raw::Identifier).getValue().toLowerCase() = "off" and
-  not exists(args.getChild(1))
+  not exists(args.getChild(1)) and
+  p.(AdaNode).fromSource()
 select p, "pragma Warnings (Off) disables all warnings without restriction."

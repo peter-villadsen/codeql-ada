@@ -179,6 +179,10 @@ results listed as lost in §1.2 stay lost; the new query tests pass; full suite 
 
 ### 3.2 Task 8.12b — extract `Standard` and direct targets as pseudo-sources
 
+**Done 2026-09-25** except step 4's semantic rewrites of the textual matchers, which are
+split out as burndown 8.12c. Results and the two `unused-with-clause` bugs this surfaced
+are recorded in BURNDOWN.md 8.12b.
+
 1. **Two passes.** Pass 1 (existing, parallel) emits semantic rows for *any* resolved
    target and returns the set of out-of-source units they land in. Pass 2 extracts
    exactly those units, in parallel, with semantic rows limited to targets in the

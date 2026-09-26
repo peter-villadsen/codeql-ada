@@ -23,6 +23,7 @@ private predicate fallsOffEnd(Raw::SubpBody body) {
 from Raw::SubpBody body
 where
   body.getSubpSpec().getSubpKind() instanceof Raw::SubpKindFunction and
-  fallsOffEnd(body)
+  fallsOffEnd(body) and
+  body.(AdaNode).fromSource()
 select body,
   "This function may run off the end without executing a return statement, which raises Program_Error at run time."

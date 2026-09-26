@@ -12,5 +12,6 @@
 import ada
 
 from Raw::Comment c
-where c.getText().regexpMatch("(?i).*\\b(TODO|FIXME|XXX|HACK)\\b.*")
+where c.getText().regexpMatch("(?i).*\\b(TODO|FIXME|XXX|HACK)\\b.*") and
+  c.(Comment).fromSource()
 select c, "Comment marks incomplete or known-wrong code: " + c.getText()
