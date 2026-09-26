@@ -260,6 +260,14 @@ class Extractor:
         return path in self.predefined
 
     def semantics(self, w, node, lbl):
+        if isinstance(node, lal.BasicDecl):
+            # Separate from the rows below, so a failure here costs only this one.
+            try:
+                fq = node.p_fully_qualified_name
+                if fq:
+                    w.row("ada_qualified_name", lbl, q(fq))
+            except Exception:
+                pass
         try:
             if isinstance(node, lal.Name) and not node.p_is_defining:
                 decl = node.p_referenced_decl()

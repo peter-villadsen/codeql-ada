@@ -599,12 +599,31 @@ assignment of every initialised local, which it could not have before.
         `unused-with-clause` except the two float hits and gpr2 noise (next item). CFG/SSA
         conformance unchanged; `PrintSsa` over alire/libkeccak fine (12 s / 5 s).
         Deferred from the plan's step 4: the four textual matchers stay textual (8.12c).
-  - [ ] **8.12c** Semantic rewrites of the textual matchers D-015 listed
+  - [x] **8.12c** Semantic rewrites of the textual matchers D-015 listed
         (`unchecked-conversion`, `unchecked-deallocation`, `raise-predefined-exception`,
         `boolean-literal-comparison`), and of `OpenWithoutClose`'s `isTextIoOp` fallback.
         Each only with a test that the rewrite loses no case the textual form caught
         (renamings, `use` clauses, `Standard.`-qualified names), and one that fails if the
         runtime entity stops resolving.
+        **Done 2026-09-25.** New `ada_qualified_name` table (Libadalang's
+        `p_fully_qualified_name` for every declaration) behind
+        `BasicDecl.hasQualifiedName`, plus `BasicDecl.getUltimateDecl()` (follows
+        exception/object/subprogram/package renamings) and
+        `GenericInstantiation.getDesignatedGeneric()`. All five match semantically and
+        fall back to text only for names that do not resolve. Verified per query against
+        the old textual query on the same fixtures: every case the old one caught that
+        was right is still caught; it additionally caught user entities that merely share
+        the name (a user `My_Unchecked_Conversion`, a shadowing `Constraint_Error`, a user
+        enumeration literal `True`, a file closed through a renaming), and missed generic
+        renamings, exception renamings, `Standard.True`, derived-Boolean literals, and
+        `Open`/`Close` under `use` or a package renaming. On a database built with no
+        runtime the new queries equal or beat the old ones (`Standard` always resolves).
+        The old `isTextIoOp` "xref" branch never fired: it compared the package name to
+        `text_io`, but the package is declared as `Ada.Text_IO`. Corpus: adasat 34 → 24 and
+        gpr2 −10 `boolean-literal-comparison` (adasat's own `type Variable_Value is (True,
+        False, Unset)`, vendored in gpr2); `open-without-close` gpr2 −4/+5,
+        libadalang-tools +22 (bare `Open`/`Create` under `use`, and bare `Close` now
+        recognised). Extraction cost of the new table is within noise.
   - [ ] **Nondeterministic resolution in projects with duplicate unit names.** Found in
         8.12b: two identical extractions of gpr2 gave `nameres_errors` 93,114 and 93,105.
         gpr2's testsuite reuses unit names (`Test`, `Pkg`, ...); under the auto provider

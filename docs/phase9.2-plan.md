@@ -628,13 +628,14 @@ expectations. If this is not met, nothing downstream is worth building.
 One query, with a displayed path, that is genuinely cross-procedure.
 
 - Instantiate `TaintTracking` from `codeql/dataflow` over the 9.4 model.
-- Source: `Ada.Command_Line.Argument` — a function result, matched **semantically**: the
-  call's `Name.getReferencedDecl()` is the `SubpDecl` named `Argument` in package
-  `Ada.Command_Line`, a predefined pseudo-source (D-026). Identify the package by its
-  declaration, not by the call's spelling, so `use` clauses and renamings are covered.
+- Source: `Ada.Command_Line.Argument` — a function result, matched **semantically**:
+  `call.getName().getReferencedDecl().(BasicDecl).getUltimateDecl().(BasicDecl)
+  .hasQualifiedName("Ada.Command_Line.Argument")` (8.12c; D-026). That covers `use`
+  clauses and renamings; `isTextIoOp` in `OpenWithoutClose.ql` is the worked example.
 - Sink: `GNAT.OS_Lib.Spawn` (command execution) is the obvious first choice. It resolves
-  through `package GNAT.OS_Lib renames System.OS_Lib` to `System.OS_Lib.Spawn`, so match
-  that declaration and one sink catches both spellings (phase8.12-plan.md §1.7). Test both
+  through `package GNAT.OS_Lib renames System.OS_Lib` to `System.OS_Lib.Spawn`, so
+  `hasQualifiedName("System.OS_Lib.Spawn")` catches both spellings (phase8.12-plan.md
+  §1.7). `Spawn` is overloaded; decide whether every overload is a sink. Test both
   spellings, and include a fixture assertion that fails if the runtime does not resolve,
   since without a GNAT runtime the query would go silently blind (D-026).
 - Report only `fromSource()` elements, like every query (D-026).

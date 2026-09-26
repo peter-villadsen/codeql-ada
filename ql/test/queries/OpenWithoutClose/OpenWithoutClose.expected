@@ -1,2 +1,4 @@
 | test.adb:9:7:9:62 | CallStmt | This file may not be closed on every path: no call to Ada.Text_IO.Close/Delete follows on all non-exceptional paths from here. |
 | test.adb:24:7:24:66 | CallStmt | This file may not be closed on every path: no call to Ada.Text_IO.Close/Delete follows on all non-exceptional paths from here. |
+| test.adb:36:7:36:38 | CallStmt | This file may not be closed on every path: no call to Ada.Text_IO.Close/Delete follows on all non-exceptional paths from here. |
+| test.adb:44:7:44:46 | CallStmt | This file may not be closed on every path: no call to Ada.Text_IO.Close/Delete follows on all non-exceptional paths from here. |

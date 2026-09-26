@@ -10,10 +10,24 @@
 
 import ada
 
+/**
+ * Holds if `lit` denotes `Standard.Boolean`'s `True` or `False` (D-026), however
+ * spelled -- including `Standard.True` and the inherited literals of a type derived
+ * from `Boolean` -- but not a user enumeration literal named `True`. Only if `lit` does
+ * not resolve (no GNAT runtime at extraction) is its text used.
+ */
+private predicate isBooleanLiteral(Name lit) {
+  lit.getReferencedDecl()
+      .(BasicDecl)
+      .hasQualifiedName(["Standard.Boolean.True", "Standard.Boolean.False"])
+  or
+  not exists(lit.getReferencedDecl()) and lit.getText().toLowerCase() = ["true", "false"]
+}
+
 from Raw::RelationOp cmp, Name lit
 where
   (cmp.getOp() instanceof Raw::OpEq or cmp.getOp() instanceof Raw::OpNeq) and
   lit = [cmp.getLeft(), cmp.getRight()] and
-  lit.getText().toLowerCase() = ["true", "false"] and
+  isBooleanLiteral(lit) and
   cmp.(AdaNode).fromSource()
 select cmp, "Comparison with boolean literal " + lit.getText() + " is redundant."

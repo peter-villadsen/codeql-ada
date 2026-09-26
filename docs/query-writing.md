@@ -175,11 +175,18 @@ A few things worth knowing before you instantiate it:
   `Standard` and the runtime units a project refers to directly are extracted
   as predefined pseudo-sources (D-026), so `getReferencedDecl()` on a call to
   `Ada.Text_IO.Open` gives its `SubpDecl` in `a-textio.ads`, whether it was
-  spelled in full, through a `use` clause, or through a renaming. Prefer that
-  to matching the callee's text. It depends on a GNAT runtime being found at
-  extraction time (see the user guide), so give such a query a test that fails
-  when the runtime entity does not resolve. `isTextIoOp` in
-  `OpenWithoutClose.ql` still keeps a textual fallback from before D-026.
+  spelled in full or through a `use` clause or package renaming. Identify it
+  with `BasicDecl.hasQualifiedName("Ada.Text_IO.Open")` (case-insensitive;
+  Libadalang's fully qualified name, extracted for every declaration), and
+  call `getUltimateDecl()` first to see through subprogram, object, exception
+  and package renamings (`GenericInstantiation.getDesignatedGeneric()` already
+  sees through generic renamings). Runtime units resolve only if a GNAT
+  runtime was found at extraction (see the user guide); `Standard` always
+  does. The pattern the shipped queries use (`isTextIoOp` in
+  `OpenWithoutClose.ql`, `UncheckedConversion.ql`, ...) is: match
+  semantically, and fall back to the name's text only when it does not
+  resolve at all. Test it with a case only the semantic match catches (a
+  renaming), so the test fails if resolution stops working.
 - **Report only project code.** Every query restricts its reported element
   with `fromSource()` (on `AdaNode` and `Comment`), so nothing is reported
   inside a predefined file (D-026).

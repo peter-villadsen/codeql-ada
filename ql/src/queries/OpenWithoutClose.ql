@@ -9,12 +9,11 @@
  *              open/close-shaped pair). v1 limitations, documented rather than fixed
  *              here: (1) pairing is by call *kind*, not by which `File_Type` object is
  *              involved -- an unrelated `Close` elsewhere in the same body can suppress
- *              a genuine leak; (2) matching is by fully-qualified dotted name
- *              (`Ada.Text_IO.Open(...)`) -- a call shortened by a `use Ada.Text_IO;`
- *              clause (bare `Open(...)`) is not recognised, since without xref
- *              resolution (the GNAT runtime is normally not part of the analyzed
- *              source set -- see `UnusedWithClause.ql`) there is no way to distinguish
- *              it from an unrelated user-defined `Open`. Uses the `normalPathsOnly`
+ *              a genuine leak; (2) calls are recognised by what they resolve to
+ *              (D-026), so `use` clauses, package renamings and subprogram renamings
+ *              are covered; only when a callee does not resolve (no GNAT runtime at
+ *              extraction) is its dotted text matched instead, which misses a bare
+ *              `Open(...)` under `use Ada.Text_IO;`. Uses the `normalPathsOnly`
  *              variant of `MissingPairedCall`: a path that only reaches the exit by
  *              first raising an exception is not reported (see `PairedCalls.qll` for
  *              the `strict` variant, which does report it).
@@ -29,20 +28,17 @@ import codeql.ada.controlflow.Cfg
 import codeql.ada.controlflow.PairedCalls
 
 /**
- * Holds if `call` is a call to `Ada.Text_IO.<op>` (case-insensitively), resolved either
- * via xref (fires only when the GNAT runtime is part of the analyzed source set) or,
- * failing that, by matching the fully-qualified dotted callee name textually.
+ * Holds if `call` is a call to `Ada.Text_IO.<op>` (case-insensitively): semantically,
+ * the callee resolves, through any subprogram renamings, to that declaration in the
+ * runtime (D-026). Only if the callee does not resolve (no GNAT runtime at
+ * extraction) is its dotted text matched instead.
  */
 bindingset[op]
 private predicate isTextIoOp(Raw::AdaNode call, string op) {
   exists(Name callee | callee = call.(Raw::CallStmt).getCall().(Raw::CallExpr).getName() |
-    exists(Raw::BasicDecl decl, Raw::BasePackageDecl pkg |
-      decl = callee.getReferencedDecl() and
-      decl.(BasicDecl).getAName().toLowerCase() = op and
-      pkg = decl.getParent+() and
-      pkg.getPackageName().getName().(Name).getText().toLowerCase() = "text_io"
-    )
+    callee.getReferencedDecl().(BasicDecl).getUltimateDecl().(BasicDecl).hasQualifiedName("Ada.Text_IO." + op)
     or
+    not exists(callee.getReferencedDecl()) and
     exists(string full | full = callee.getText().toLowerCase() |
       full = "text_io." + op or full.matches("%.text_io." + op)
     )

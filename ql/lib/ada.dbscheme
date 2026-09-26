@@ -4197,6 +4197,11 @@ ada_body_part(
   int body: @ada_basic_decl ref
 );
 
+ada_qualified_name(
+  unique int decl: @ada_basic_decl ref,
+  string name: string ref
+);
+
 /*- Ada predefined pseudo-sources: Standard and runtime units (D-026) -*/
 
 ada_predefined_file(

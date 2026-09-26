@@ -280,3 +280,10 @@ never extracted: it costs +300–1,700% nodes against +26–37% for direct targe
   runtime found, runtime units neither resolve nor get extracted, and the `no-runtime`
   diagnostic says so. Queries whose correctness depends on a runtime entity should keep a
   test that fails when it does not resolve, rather than silently going blind.
+- **Identifying entities (8.12c).** Libadalang's `p_fully_qualified_name` is extracted for
+  every declaration (`ada_qualified_name`, `BasicDecl.hasQualifiedName`), and
+  `BasicDecl.getUltimateDecl()` follows renamings. The former textual matchers
+  (`unchecked-conversion`, `unchecked-deallocation`, `raise-predefined-exception`,
+  `boolean-literal-comparison`, `open-without-close`) now match semantically and fall
+  back to text only for names that do not resolve at all, so a database built without a
+  runtime behaves as before.

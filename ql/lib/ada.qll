@@ -111,6 +111,49 @@ class BasicDecl extends Raw::BasicDecl {
    * overloading makes textual pairing unsound (D-021).
    */
   Raw::BasicDecl getBody() { ada_body_part(this, result) }
+
+  /**
+   * Gets the fully qualified name of this declaration, as Libadalang computes it:
+   * `Ada.Text_IO.Open`, `Standard.Constraint_Error`, `Standard.Boolean.True`.
+   * Runtime entities have one when their unit is a predefined pseudo-source (D-026).
+   */
+  string getQualifiedName() { ada_qualified_name(this, result) }
+
+  /** Holds if this declaration's qualified name is `name`, ignoring case as Ada does. */
+  bindingset[name]
+  predicate hasQualifiedName(string name) {
+    this.getQualifiedName().toLowerCase() = name.toLowerCase()
+  }
+
+  /**
+   * Gets the declaration this one ultimately renames, following any chain of
+   * renamings (`E : exception renames Constraint_Error`, `procedure P renames
+   * Ada.Text_IO.Open`, `package T renames Ada.Text_IO`, ...), or this declaration
+   * itself if it is not a renaming. No result if a renamed name does not resolve.
+   * Generic renamings need no following: `ada_generic_instantiation` already
+   * resolves through them.
+   */
+  Raw::BasicDecl getUltimateDecl() {
+    not exists(renamingClause(this)) and result = this
+    or
+    result = renamingClause(this).getRenamedObject().(Name).getReferencedDecl().(BasicDecl).getUltimateDecl()
+  }
+}
+
+private Raw::RenamingClause renamingClause(Raw::BasicDecl d) {
+  result = d.(Raw::ExceptionDecl).getRenames() or
+  result = d.(Raw::SubpRenamingDecl).getRenames() or
+  result = d.(Raw::PackageRenamingDecl).getRenames() or
+  result = d.(Raw::ObjectDecl).getRenamingClause()
+}
+
+/** A generic instantiation, with the generic it designates. */
+class GenericInstantiation extends Raw::GenericInstantiation {
+  /**
+   * Gets the generic declaration this instantiates, resolved through generic
+   * renamings. No result if it does not resolve (e.g. no GNAT runtime was found).
+   */
+  Raw::BasicDecl getDesignatedGeneric() { ada_generic_instantiation(this, result) }
 }
 
 /** A subprogram body, with its declared name. */

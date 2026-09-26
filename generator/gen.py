@@ -238,6 +238,11 @@ def gen_dbscheme(m: Model) -> str:
         f"  unique int decl: {m.ref('BasicDecl')} ref,\n"
         f"  int body: {m.ref('BasicDecl')} ref\n);\n"
     )
+    out.append(
+        "ada_qualified_name(\n"
+        f"  unique int decl: {m.ref('BasicDecl')} ref,\n"
+        "  string name: string ref\n);\n"
+    )
     out.append("/*- Ada predefined pseudo-sources: Standard and runtime units (D-026) -*/\n")
     out.append(
         "ada_predefined_file(\n"

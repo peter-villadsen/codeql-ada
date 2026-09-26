@@ -25376,6 +25376,64 @@
             </dependencies>
         </relation>
         <relation>
+            <name>ada_qualified_name</name>
+            <cardinality>360</cardinality>
+            <columnsizes>
+                <e>
+                    <k>decl</k>
+                    <v>360</v>
+                </e>
+                <e>
+                    <k>name</k>
+                    <v>289</v>
+                </e>
+            </columnsizes>
+            <dependencies>
+                <dep>
+                    <src>decl</src>
+                    <trg>name</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>360</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+                <dep>
+                    <src>name</src>
+                    <trg>decl</trg>
+                    <val>
+                        <hist>
+                            <budget>12</budget>
+                            <bs>
+                                <b>
+                                    <a>1</a>
+                                    <b>2</b>
+                                    <v>232</v>
+                                </b>
+                                <b>
+                                    <a>2</a>
+                                    <b>3</b>
+                                    <v>50</v>
+                                </b>
+                                <b>
+                                    <a>4</a>
+                                    <b>5</b>
+                                    <v>7</v>
+                                </b>
+                            </bs>
+                        </hist>
+                    </val>
+                </dep>
+            </dependencies>
+        </relation>
+        <relation>
             <name>ada_predefined_file</name>
             <cardinality>3</cardinality>
             <columnsizes>

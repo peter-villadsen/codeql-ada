@@ -10,8 +10,25 @@
 
 import ada
 
-from Raw::GenericSubpInstantiation gi
+// Matched semantically (D-026): the designated generic, resolved through generic
+// renamings, is `Ada.Unchecked_Conversion` or its Ada 83 library-level twin
+// `Unchecked_Conversion` (a separate generic in GNAT, not a renaming). Only if the
+// generic does not resolve -- no GNAT runtime at extraction -- is the name's text used.
+from GenericInstantiation gi
 where
-  gi.getGenericSubpName().(Name).getText().toLowerCase().matches("%unchecked_conversion") and
+  gi instanceof Raw::GenericSubpInstantiation and
+  (
+    gi.getDesignatedGeneric()
+        .(BasicDecl)
+        .hasQualifiedName(["Ada.Unchecked_Conversion", "Unchecked_Conversion"])
+    or
+    not exists(gi.getDesignatedGeneric()) and
+    gi.(Raw::GenericSubpInstantiation)
+        .getGenericSubpName()
+        .(Name)
+        .getText()
+        .toLowerCase()
+        .matches("%unchecked_conversion")
+  ) and
   gi.(AdaNode).fromSource()
 select gi, "Instantiation of Unchecked_Conversion bypasses type safety."

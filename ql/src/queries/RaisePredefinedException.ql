@@ -12,13 +12,37 @@
 
 import ada
 
-from Raw::RaiseStmt r, Name n, string text
+/** Gets the lower-cased simple names of the exceptions package `Standard` declares. */
+private string predefinedException() {
+  result = ["constraint_error", "program_error", "storage_error", "tasking_error", "numeric_error"]
+}
+
+/**
+ * Holds if `n` denotes a predefined exception: semantically, through any renamings, to
+ * the declaration in package `Standard` (D-026) -- so a user exception that happens to
+ * be called `Constraint_Error` is not one. Only if `n` does not resolve (no GNAT
+ * runtime at extraction) is its text used.
+ */
+private predicate isPredefinedException(Name n) {
+  n.getReferencedDecl().(BasicDecl).getUltimateDecl().(BasicDecl).getQualifiedName().toLowerCase() =
+    "standard." + predefinedException()
+  or
+  not exists(n.getReferencedDecl()) and
+  n.getText().toLowerCase().regexpReplaceAll("^standard\\.", "") = predefinedException()
+}
+
+/** Gets ` (a renaming of X)` if `n` reaches its exception through a renaming, else "". */
+private string renamingNote(Name n) {
+  exists(BasicDecl d, BasicDecl u | d = n.getReferencedDecl() and u = d.getUltimateDecl() |
+    if u = d then result = "" else result = " (a renaming of " + u.getQualifiedName() + ")"
+  )
+  or
+  not exists(n.getReferencedDecl()) and result = ""
+}
+
+from Raw::RaiseStmt r, Name n
 where
   n = r.getExceptionName() and
-  text = n.getText().toLowerCase() and
-  text.regexpReplaceAll("^standard\\.", "") in
-    [
-      "constraint_error", "program_error", "storage_error", "tasking_error", "numeric_error"
-    ] and
+  isPredefinedException(n) and
   r.(AdaNode).fromSource()
-select r, "Explicit raise of predefined exception " + n.getText() + "."
+select r, "Explicit raise of predefined exception " + n.getText() + renamingNote(n) + "."

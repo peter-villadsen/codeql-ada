@@ -11,8 +11,25 @@
 
 import ada
 
-from Raw::GenericSubpInstantiation gi
+// Matched semantically (D-026): the designated generic, resolved through generic
+// renamings, is `Ada.Unchecked_Deallocation` or its Ada 83 library-level twin
+// `Unchecked_Deallocation`. Only if the generic does not resolve -- no GNAT runtime at
+// extraction -- is the name's text used.
+from GenericInstantiation gi
 where
-  gi.getGenericSubpName().(Name).getText().toLowerCase().matches("%unchecked_deallocation") and
+  gi instanceof Raw::GenericSubpInstantiation and
+  (
+    gi.getDesignatedGeneric()
+        .(BasicDecl)
+        .hasQualifiedName(["Ada.Unchecked_Deallocation", "Unchecked_Deallocation"])
+    or
+    not exists(gi.getDesignatedGeneric()) and
+    gi.(Raw::GenericSubpInstantiation)
+        .getGenericSubpName()
+        .(Name)
+        .getText()
+        .toLowerCase()
+        .matches("%unchecked_deallocation")
+  ) and
   gi.(AdaNode).fromSource()
 select gi, "Instantiation of Unchecked_Deallocation risks dangling pointers or double-free."

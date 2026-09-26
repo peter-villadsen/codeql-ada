@@ -1,2 +1,4 @@
-| test.adb:4:4:4:27 | RaiseStmt | Explicit raise of predefined exception Constraint_Error. |
-| test.adb:5:4:5:33 | RaiseStmt | Explicit raise of predefined exception Standard.Program_Error. |
+| test.adb:5:4:5:27 | RaiseStmt | Explicit raise of predefined exception Constraint_Error. |
+| test.adb:6:4:6:33 | RaiseStmt | Explicit raise of predefined exception Standard.Program_Error. |
+| test.adb:8:4:8:24 | RaiseStmt | Explicit raise of predefined exception Numeric_Error. |
+| test.adb:9:4:9:15 | RaiseStmt | Explicit raise of predefined exception Oops (a renaming of Standard.Constraint_Error). |
