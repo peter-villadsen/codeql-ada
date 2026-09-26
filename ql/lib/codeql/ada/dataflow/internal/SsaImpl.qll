@@ -477,3 +477,72 @@ Raw::AdaNode getWriteNameOccurrence(SsaImpl::WriteDefinition wd) {
     outOrInOutActualWrite(bb, i, v, result)
   )
 }
+
+/**
+ * Gets the expression whose value write definition `def` stores: an assignment's
+ * right-hand side, or an object declaration's initialiser. No result for the other
+ * write kinds, which have no local source expression -- a parameter's entry write
+ * (its value comes from the caller, Task 9.4), an `out`/`in out` actual's uncertain
+ * write (from the callee, Task 9.4), and a `for` loop variable, whose value is an
+ * element of the iterable, not the iterable itself (a taint step at most, never a
+ * value step).
+ */
+Raw::Expr getWrittenValue(SsaImpl::WriteDefinition def) {
+  exists(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v | def.definesAt(v, bb, i) |
+    exists(Raw::AssignStmt s | assignWrite(bb, i, v, _) and cfgPos(s, bb, i) | result = s.getExpr())
+    or
+    objectDeclInitWrite(bb, i, v, _) and cfgPos(result, bb, i)
+  )
+}
+
+/**
+ * The input to `codeql/ssa`'s `DataFlowIntegration` (Task 9.3), which builds the SSA
+ * part of the local data-flow graph: nodes for definitions, phis and reads, and the
+ * steps between them.
+ *
+ * Guards are implemented, not stubbed (decided in Task 9.3, see
+ * `docs/dataflow-design.md`): a guard is any expression whose CFG node ends a basic
+ * block with `BooleanSuccessor` edges -- a condition, or an operand of a
+ * short-circuit operator -- which gives `BarrierGuard` support
+ * (`if Is_Safe (X) then ... X ...`).
+ */
+module SsaDataFlowInput implements SsaImpl::DataFlowIntegrationInputSig {
+  private import codeql.controlflow.SuccessorType
+  private import codeql.util.Boolean
+
+  class Expr extends Raw::Expr {
+    predicate hasCfgNode(SsaCfg::BasicBlock bb, int i) { cfgPos(this, bb, i) }
+  }
+
+  /**
+   * Flow into an uncertain write -- an actual passed as an `out`/`in out` formal --
+   * is allowed: the callee may leave the variable unchanged (D-022), so its previous
+   * value may survive the call.
+   */
+  predicate allowFlowIntoUncertainDef(SsaImpl::UncertainWriteDefinition def) { any() }
+
+  class GuardValue = Boolean;
+
+  class Guard extends Raw::Expr {
+    /** Holds if evaluating this guard to `val` takes the CFG edge `bb1 -> bb2`. */
+    predicate hasValueBranchEdge(SsaCfg::BasicBlock bb1, SsaCfg::BasicBlock bb2, GuardValue val) {
+      bb1.getLastNode().(Impl::CfgImpl::AstCfgNode).getAstNode() = this and
+      bb2 = bb1.getASuccessor(any(BooleanSuccessor s | s.getValue() = val))
+    }
+
+    predicate valueControlsBranchEdge(SsaCfg::BasicBlock bb1, SsaCfg::BasicBlock bb2, GuardValue val) {
+      this.hasValueBranchEdge(bb1, bb2, val)
+    }
+  }
+
+  predicate guardDirectlyControlsBlock(Guard guard, SsaCfg::BasicBlock bb, GuardValue val) {
+    exists(SsaCfg::BasicBlock bb1, SsaCfg::BasicBlock bb2 |
+      guard.hasValueBranchEdge(bb1, bb2, val) and
+      SsaCfg::dominatingEdge(bb1, bb2) and
+      bb2.dominates(bb)
+    )
+  }
+}
+
+/** The SSA part of the local data-flow graph (Task 9.3); see `LocalFlow.qll`. */
+module SsaFlow = SsaImpl::DataFlowIntegration<SsaDataFlowInput>;

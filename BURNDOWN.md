@@ -766,6 +766,24 @@ specified in `docs/ssa-design.md` and conformance-tested. Next: Task 9.3, local 
 (`codeql/ssa`'s `DataFlowIntegration`), then Task 9.4, cross-procedure dataflow — see
 [docs/phase9.2-plan.md](docs/phase9.2-plan.md).
 
+- [x] **9.3 Local dataflow.** *Done 2026-09-25.* `SsaFlow` (`codeql/ssa`'s
+      `DataFlowIntegration`) in `SsaImpl.qll`, wrapped by `dataflow/internal/LocalFlow.qll`
+      (`Node`, `localFlowStep`, `localFlow`, `BarrierGuard`). The integration only makes
+      expression nodes for variable reads, so `Node` adds every CFG expression, plus steps
+      from a written value into its definition and through parentheses, qualified,
+      `if` and `case` expressions. **Guards implemented, not stubbed**, since the shared
+      basic-block API made them ~20 lines. Only an expression that *branches* is a guard,
+      and the right operand of `and then` does not (it completes into the operator), so
+      `BarrierGuard` lifts a check through `and then`/`or else`/`not`/parentheses. That
+      was found by testing, after the design note first claimed otherwise. Flow into
+      uncertain (`out`/`in out` actual)
+      writes is allowed (D-022). Design in the new `docs/dataflow-design.md`.
+      Test `ql/test/library/LocalFlow`, hand-derived: straight line, across a branch, into
+      and out of a loop, killed by overwrite, through an if-expression in parentheses, and
+      guarded vs unguarded uses under `Is_Safe` (plain, as a short-circuit operand, and
+      both branches of `not`). Debug dump `ql/debug/PrintLocalFlow.ql`
+      (the plan's acceptance query; kept in `ql/debug`, unpolished). Next: Task 9.4.
+
 - [x] **SSA renamed-source debug tool** (requested, not in the original Phase 9 plan).
       `scripts/render_ssa.py` renders a source file with every write/read subscripted
       (`X_1`, `X_2`, ...) and every phi shown as a comment — a readable complement to the
