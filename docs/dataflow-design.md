@@ -1,8 +1,8 @@
 # Data-flow design
 
-The data-flow layers on top of SSA (`docs/ssa-design.md`). Task 9.3 (local flow) is
-recorded here; Task 9.4 (cross-procedure flow) extends this document with its own design
-and the named v1 limitations `docs/phase9.2-plan.md` requires.
+The data-flow layers on top of SSA (`docs/ssa-design.md`): Task 9.3 (local flow) and
+Task 9.4 (cross-procedure flow), with the named v1 limitations `docs/phase9.2-plan.md`
+requires (D-023).
 
 ## Local flow (Task 9.3)
 
@@ -26,7 +26,8 @@ language:
 
 **Write kinds with no local source.** A parameter's entry write (its value comes from
 the caller) and an `out`/`in out` actual's uncertain write (its value comes from the
-callee) have no written-value step. Task 9.4 connects them. A `for` loop variable gets
+callee) have no written-value step. Task 9.4 connects them (parameter nodes and
+`out`/`in out` write-back, below). A `for` loop variable gets
 none either, deliberately: its value is an element of the iterable, not the iterable,
 so at most a *taint* step belongs there, never a value step.
 
@@ -57,3 +58,159 @@ The test pins a plain guard, a short-circuit operand, the failed branch of `not`
 attribute references do not propagate values; they are taint steps and belong to the
 taint layer (Task 9.5). Record components, array elements and dereferences are not
 tracked (SSA's own scope, D-023).
+
+## Cross-procedure flow (Task 9.4)
+
+**Files.** `ql/lib/codeql/ada/dataflow/internal/DataFlowImpl.qll` implements
+`codeql/dataflow`'s `InputSig` as `AdaDataFlowInput` and instantiates the global library
+as `AdaDataFlow` (`AdaDataFlow::Global<Config>`). The call model underneath it (which
+expressions are calls, what they call, which actual binds which formal) lives in
+`SsaImpl.qll`, because the SSA layer's `out`/`in out` write-backs (D-022) need the same
+answers. Tests: `ql/test/library/DataFlow/test.ql` (inline expectations,
+`-- $ flow=N`) and `Consistency.ql` (the shared library's consistency checks,
+`DataFlowConsistency.qll`, all empty). Debug: `ql/debug/DataFlowConsistency.ql` runs the
+same checks over any database.
+
+### Calls
+
+A `DataFlowCall` is an expression whose callee resolves (D-021: `ada_xref`, never name
+text) to a declaration with its own `SubpSpec`. This is `getCallTarget` in `SsaImpl.qll`.
+A call takes one of two syntactic shapes:
+
+- a `CallExpr`: `Foo (X)`, `Pkg.Foo (X)`, `Obj.Op (X)`;
+- a bare name, for a call without parentheses: `V := Get;`, `Obj.Op;`. A name counts
+  only where it is evaluated (it has a CFG node), which rules out `end` names, renamed
+  names and default expressions. It also does not count where it is part of a larger
+  callee: a `CallExpr`'s name, a dotted name's suffix, an expanded name's prefix, an
+  attribute's prefix (`F'Access`), or a designator.
+
+A dotted callee `P.S` can mean three different things, and the meaning decides the
+argument positions:
+
+| `P` | Meaning | Treatment |
+| --- | --- | --- |
+| a package, a package renaming or instance, or a unit that declares `S` | expanded name | ordinary call |
+| a value (it has an `ada_expr_type`) | prefixed view (`Obj.Op`) | `P` is the actual for formal 0, and positional actuals shift by one |
+| anything else (unresolved, or no type) | undecidable | not a call (unresolved) |
+
+Prefixed views are common in modern Ada: 5,374 of gpr2's call sites and 947 of alire's
+use them, so they had to be handled. A protected operation (`PO.Op`) looks like a prefixed
+view, but its prefix is not a formal, so it is left out (see the limitations below).
+
+`viableCallable` starts from the target and follows any subprogram renamings
+(`resolveSubpRenaming`). It then takes the `ada_body_part` completion, or keeps the target
+when it is itself a body with no separate declaration. A renaming-as-body completion is
+followed once more in the same way. Only a result that is a CFG scope survives. A renaming
+has the same number, order and modes of formals as what it renames, so binding actuals
+through the renaming's own spec is exact even when the renaming changes the formals'
+names. A target with no body row (imported, abstract, generic-formal and runtime
+subprograms; null procedures, which have no CFG; separate-body stubs) gives no result, so
+the call is visibly unresolved (D-021).
+
+### Positions, parameters, arguments
+
+`ParameterPosition` and `ArgumentPosition` are both the 0-based formal index, flattened
+across `ParamSpec` groups: in `A, B : in out Integer`, `A` is formal 0 and `B` is formal 1
+(`formalAt` in `SsaImpl.qll`). `callActual` binds each actual to one position:
+
+- a named association binds by its designator, compared ignoring case as Ada does;
+- a positional association binds by its source position, because Ada puts every
+  positional association before every named one;
+- in a prefixed view, the prefix is formal 0 and positional actuals shift by one;
+- a formal left to its default has no actual.
+
+The formals of the body and of the declaration are matched by position, which Ada's
+conformance rules make safe. Formal names are read only from the callee's declaration,
+when a named actual is bound.
+
+A `ParameterNode` is a new node for each formal of a body with a CFG that receives a
+value, meaning mode `in` or `in out`. It has a local step into the formal's entry
+definition (Task 9.2's `paramEntryWrite`). A pure `out` formal gets no parameter node,
+because it receives nothing. An `ArgumentNode` is the actual's expression node.
+
+### Returns: two kinds, as D-022 requires
+
+| `ReturnKind` | `ReturnNode` (callee) | `OutNode` (caller) |
+| --- | --- | --- |
+| `return` | a `return` statement's expression, or an expression function's body | the call expression |
+| `out i`, one per formal position | the exit read of the `i`th formal, which is `out` or `in out` | the source of the call's uncertain write-back to the `i`th actual |
+
+The exit read is Task 9.2's synthetic read of an `out`/`in out` formal at its scope's
+normal exit (`outOrInOutParamExitRead`), which keeps the formal's last write alive. It is
+not an expression, and `DataFlowIntegration` creates nodes only for reads that are. So
+`SsaDataFlowInput::Expr` is a union type (`DfExpr`): either an Ada expression or the exit
+read of one formal. There is one exit read per formal, not one per exit node, so that the
+formals stay separate.
+
+The union type alone did not keep them separate. All of a scope's exit reads sit at the
+same CFG node, and `DataFlowIntegration` matches a read node to a variable by position
+alone (`ReadNode.readsAt`). A step into one formal's exit read therefore arrives from
+every formal read at that node, so `Swap (A, B)` would have returned `B`'s value through
+`A`. Each step records which variable it is for, so `LocalFlow.localFlowStep` drops any
+step into or out of an exit read of a different variable (`isExitReadOfOther`). The
+`Two_Out` and `Swap` cases in the test pin this.
+
+The `OutNode` of an `out i` kind is the `WriteDefSourceNode` of the uncertain write that
+Task 9.2 already places at the call for that actual. The value flows into that write's
+definition and on to later reads. Because the write is uncertain, the definition also
+lets the old value through (Task 9.3's `allowFlowIntoUncertainDef`). So even a callee
+that always overwrites its `in out` formal still passes on the caller's old value. This
+is a deliberate over-approximation, pinned as `SPURIOUS` in the test.
+
+### Minimal in v1
+
+| Member | v1 |
+| --- | --- |
+| `DataFlowType` | One type, so `compatibleTypes` always holds. `ada_expr_type` is available if type pruning is wanted later. |
+| `Content`, `ContentSet`, `ContentApprox`, `readStep`, `storeStep`, `clearsContent`, `expectsContent` | Empty: no field or element flow. |
+| `PostUpdateNode` | None: there are no stores, so a post-update node would never receive anything. For the same reason the `argHasPostUpdate` consistency check is excluded. |
+| `jumpStep` | None: package-level variables are not SSA variables. |
+| `LambdaCallKind` and the lambda predicates | None: no access-to-subprogram flow. |
+| `isUnreachableInCall`, `NodeRegion`, `CastNode`, `localMustFlowStep`, `knownSourceModel`, `knownSinkModel`, `DataFlowSecondLevelScope` | Empty. |
+| `nodeIsHidden` | Hides the SSA layer's bookkeeping nodes, except an `out` write-back. That is where a value re-enters the caller, so a path should show it. |
+
+### Named v1 limitations (D-023)
+
+Where a limitation can be expressed as a test, it is pinned in `ql/test/library/DataFlow`
+as `MISSING` (a real flow that is not reported) or `SPURIOUS` (a reported flow that cannot
+happen):
+
+| Limitation | Effect | Pinned |
+| --- | --- | --- |
+| **Dispatching calls.** A call binds only to its static target. | A class-wide call misses every override. A call on a specific type is exact. | `MISSING: flow=22` |
+| **Access-to-subprogram calls** (`Fn (X)`, `Fn.all (X)`). | Unresolved. | `MISSING: flow=21` |
+| **Calls into generic instantiations.** | Unresolved, because the instance has no body row. Calls inside a generic body to its generic formal subprograms are also unresolved. | `MISSING: flow=20` |
+| **Task entry calls.** | Unresolved: an entry has no `SubpSpec` target. | `MISSING: flow=24` |
+| **Separate bodies.** The call resolves to the `is separate` stub, which has no body row. | Unresolved. | `MISSING: flow=25` |
+| **Protected operations** (`PO.Op`). | Left out, because the prefix is not a formal. | `MISSING: flow=31` |
+| **Default parameter values.** They are not evaluated in any CFG. | A formal left to its default receives nothing. | `MISSING: flow=27` |
+| **Extended return statements** (`return R : T do ... end return`). | Not a return node. | `MISSING: flow=30` |
+| **Uncertain write-back.** | The actual's old value survives every `out`/`in out` call. | `SPURIOUS: flow=12`, `flow=15` |
+| **Renamings of prefixed views or attributes** (`renames Obj.Op`, `renames T'Image`). | Unresolved. | none |
+| **Missing `ada_body_part` rows.** Some declarations that have a body have no row, because Libadalang's `p_body_part` fails or is not reached. | Unresolved. | none (see the corpus numbers below) |
+| **No content, no package-level variables, no call-context pruning.** | See "Minimal in v1". | none |
+
+### Measured on the corpus (2026-09-25)
+
+Call sites in project code (`fromSource()`), by how they resolve:
+
+| Project | Resolved | Runtime targets | No body row | Abstract / null / generic formal | Renaming not followed | Prefixed-view calls (of all) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| libkeccak | 525 | 504 | 9 | 452 | 0 | 187 |
+| adasat | 131 | 15 | 0 | 2 | 0 | 48 |
+| alire | 2,051 | 753 | 91 | 66 | 6 | 947 |
+| libadalang-tools | 5,385 | 1,194 | 59 | 19 | 21 | 39 |
+| gpr2 | 11,040 | 5,411 | 210 | 228 | 8 | 5,374 |
+
+Runtime subprograms have no bodies because only the runtime specs a project refers to are
+extracted (D-026). That is expected, and Task 9.5's source and sink models are built on
+those specs. The "no body row" column is a coverage gap in Task 9.1: 1–4% of calls into
+project code. That is small enough not to count as stop-and-ask case 3 in
+`docs/phase9.2-plan.md`.
+
+The consistency checks are empty on all five projects. A stress configuration (every
+string literal as a source, every argument of an unresolved call as a sink) runs in 5–20 s
+per project, compilation included. It finds 27 cross-procedure flows in alire, 18 in
+libadalang-tools and 80 in gpr2. The alire flows that were checked by hand were real: a
+literal passed down into `Locate_In_Path` and on to `Locate_Exec_On_Path`, and a
+`return ""` coming back up into the `Full_Path` passed to `GNAT.OS_Lib.Spawn`.

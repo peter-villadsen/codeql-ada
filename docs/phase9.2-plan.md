@@ -23,9 +23,9 @@ call edges, and one taint query that uses all three.
 | CFG | Done, specified in `docs/cfg-design.md`, conformance-tested (Phase 7/7.7) |
 | Basic blocks + dominance | Done — `ql/lib/codeql/ada/controlflow/BasicBlocks.qll` |
 | Call graph (`ada_body_part`) | Done (Task 9.1, D-021) |
-| **SSA** | **Not started — Task 9.2** |
-| **Local dataflow** | **Not started — Task 9.3** |
-| **Cross-procedure dataflow** | **Not started — Task 9.4** |
+| SSA | Done (Task 9.2) — `docs/ssa-design.md` |
+| Local dataflow | Done (Task 9.3) — `docs/dataflow-design.md` |
+| Cross-procedure dataflow | Done (Task 9.4) — `docs/dataflow-design.md` |
 | **First taint query** | **Not started — Task 9.5** |
 
 ---
@@ -526,7 +526,9 @@ four).
 
 ---
 
-## Task 9.3 — Local dataflow
+## Task 9.3 — Local dataflow — **done 2026-09-25**
+
+*Design as built: `docs/dataflow-design.md`, "Local flow".*
 
 Do **not** build a `DataFlow::Node` type by hand. `codeql/ssa` ships
 `SsaImpl::DataFlowIntegration<DfInput>` (verified, `Ssa.qll:1491`), which constructs the
@@ -564,7 +566,12 @@ not a deliverable and must not be presented as the result.
 
 ---
 
-## Task 9.4 — Cross-procedure dataflow — *the point of the phase*
+## Task 9.4 — Cross-procedure dataflow — *the point of the phase* — **done 2026-09-25**
+
+*Design as built, the named v1 limitations and corpus measurements:
+`docs/dataflow-design.md`, "Cross-procedure flow". Beyond the plan below, it also resolves
+prefixed-view (`Obj.Op`) calls, parameterless calls and subprogram renamings; separate
+bodies turned out to resolve to their stub, so they stay unresolved as planned.*
 
 Instantiate `codeql/dataflow`. This is the largest single task in the phase and the one
 whose estimate is least reliable.

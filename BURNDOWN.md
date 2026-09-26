@@ -784,6 +784,31 @@ specified in `docs/ssa-design.md` and conformance-tested. Next: Task 9.3, local 
       both branches of `not`). Debug dump `ql/debug/PrintLocalFlow.ql`
       (the plan's acceptance query; kept in `ql/debug`, unpolished). Next: Task 9.4.
 
+- [x] **9.4 Cross-procedure dataflow.** *Done 2026-09-25.* `dataflow/internal/DataFlowImpl.qll`
+      implements `codeql/dataflow`'s `InputSig` (`AdaDataFlowInput`) and instantiates
+      `AdaDataFlow`. **Acceptance met:** flow across two call frames downward (through
+      parameters, positional and named) and upward (through function results *and*
+      through `out` parameters), with inline expectations in `ql/test/library/DataFlow`.
+      `ReturnKind` has `return` plus one `out i` per formal position (D-022). The call
+      model is shared with SSA's write-backs in `SsaImpl.qll` (`getCallTarget`,
+      `callActual`). It covers parameterless calls, prefixed-view calls (`Obj.Op`,
+      where the prefix is formal 0; 5,374 of gpr2's call sites) and subprogram renamings,
+      including renaming-as-body. Two traps that testing surfaced: `DataFlowIntegration`
+      makes nodes only for reads that are expressions, so an `out` formal's exit read
+      needed a synthetic expression (`DfExpr`); and it matches a read to a variable by CFG
+      position alone, so several formals' exit reads at one exit node leaked into each
+      other (`Swap (A, B)` returned `B` through `A`). The fix filters local steps by
+      their variable (`isExitReadOfOther`). Named v1 limitations are pinned as `MISSING`
+      or `SPURIOUS`: dispatching, access-to-subprogram, generic instances, entries,
+      separate bodies (they resolve to the stub), protected operations, defaults, extended
+      return, and the uncertain write-back. The shared consistency checks are a test
+      (`Consistency.ql`) and are empty on all five corpus projects. Call resolution on
+      the corpus: 1–4% of project calls hit a declaration with no `ada_body_part` row,
+      not enough to trigger stop-and-ask 3. Broad global flow runs in 5–20 s per project.
+      Also fixed, from 9.2: a reference and a designator were matched to their variable
+      or formal by exact name text, but Ada ignores case (`x := 1` wrote no `X`).
+      Design, limitations and numbers are in `docs/dataflow-design.md`. Next: Task 9.5.
+
 - [x] **SSA renamed-source debug tool** (requested, not in the original Phase 9 plan).
       `scripts/render_ssa.py` renders a source file with every write/read subscripted
       (`X_1`, `X_2`, ...) and every phi shown as a comment — a readable complement to the

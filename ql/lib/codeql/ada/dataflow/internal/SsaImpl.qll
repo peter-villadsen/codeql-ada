@@ -77,14 +77,15 @@ class SsaSourceVariable extends Raw::DefiningName {
  * within its own scope, so `n` is always a plain reference for the
  * constructs `SsaSourceVariable` covers -- never itself a `DottedName`,
  * though `Name.getText()` is used regardless since it also handles that case
- * uniformly. `p_referenced_defining_name` is the documented extractor-side
- * fallback if a case is found this cannot settle.
+ * uniformly. The texts are compared ignoring case, as Ada does: `X` may be
+ * declared `X` and referenced as `x`. `p_referenced_defining_name` is the
+ * documented extractor-side fallback if a case is found this cannot settle.
  */
 SsaSourceVariable getSourceVariable(Name n) {
   exists(Raw::BasicDecl d |
     d = n.getReferencedDecl() and
     result = d.(BasicDecl).getADefiningName() and
-    result.getName().(Name).getText() = n.getText()
+    result.getName().(Name).getText().toLowerCase() = n.getText().toLowerCase()
   )
 }
 
@@ -312,49 +313,150 @@ private Raw::Mode formalMode(Raw::SubpSpec spec, int i) {
   )
 }
 
-/** Gets the 0-based formal index of `spec`'s formal named `name`. */
-private int formalIndexNamed(Raw::SubpSpec spec, string name) {
+/** Gets the 0-based formal index of `spec`'s formal whose name, lower-cased, is `lname` (Ada ignores case). */
+private int formalIndexNamed(Raw::SubpSpec spec, string lname) {
   exists(Raw::DefiningName dn |
     dn = formalAt(spec, result) and
-    dn.getName().(Name).getText() = name
+    dn.getName().(Name).getText().toLowerCase() = lname
   )
 }
 
 /**
- * Gets the formal index that the `argIdx`th association (0-based source-list
- * position, read off its own `getParentIndex()`) of a call to `spec` binds:
- * named if the association carries a designator (`X => Y`); otherwise
- * positional, and Ada requires every positional association to precede every
- * named one, so a positional association's own source position already *is*
- * its formal index.
+ * Holds if `p`, the prefix of a dotted name, is an expanded name's prefix -- it
+ * names the unit the suffix is declared in (`Pkg.Foo`, or `Outer.Foo` for a
+ * subprogram declared inside `Outer`) -- rather than an object whose type the
+ * suffix is an operation of (a prefixed view, `Obj.Op`). Any package-like prefix
+ * counts, since a renamed package does not contain its own declarations; any other
+ * prefix counts only if the suffix is declared inside it or its body.
  */
-private int argFormalIndex(Raw::SubpSpec spec, Raw::ParamAssoc assoc, int argIdx) {
-  argIdx = assoc.getParentIndex() and
-  (
-    not exists(assoc.getDesignator()) and result = argIdx
+private predicate isExpandedNamePrefix(Raw::Name p) {
+  exists(Raw::DottedName dn, Raw::BasicDecl pd | p = dn.getPrefix() and pd = p.(Name).getReferencedDecl() |
+    pd instanceof Raw::BasePackageDecl or
+    pd instanceof Raw::PackageBody or
+    pd instanceof Raw::PackageRenamingDecl or
+    pd instanceof Raw::GenericPackageDecl or
+    pd instanceof Raw::GenericPackageInstantiation or
+    pd instanceof Raw::GenericPackageRenamingDecl or
+    dn.getSuffix().(Name).getReferencedDecl().getParent+() = [pd, pd.(BasicDecl).getBody()]
+  )
+}
+
+/**
+ * Gets the name that `call` invokes its subprogram through: a `CallExpr`'s name,
+ * or `call` itself for a call written without parentheses (`X := Get;`,
+ * `Obj.Op;`). A bare name is a call only where it is evaluated (it has a CFG
+ * node, which excludes `end` names, renamed names and default expressions), and
+ * not where it is the callee part of a larger name: a `CallExpr`'s name, a dotted
+ * name's suffix, an expanded name's prefix, an attribute's prefix (`F'Access`) or
+ * a named association's designator.
+ */
+private Raw::Name calleeName(Raw::Expr call) {
+  result = call.(Raw::CallExpr).getName() and cfgPos(call, _, _)
+  or
+  result = call and
+  not call instanceof Raw::CallExpr and
+  not call = any(Raw::CallExpr c).getName() and
+  not call = any(Raw::DottedName d).getSuffix() and
+  not isExpandedNamePrefix(call) and
+  not call = any(Raw::AttributeRef a).getPrefix() and
+  not isDesignator(call) and
+  cfgPos(call, _, _)
+}
+
+/**
+ * Holds if `call` is written in prefixed-view (dot) notation, `Obj.Op (Args)`:
+ * `Obj` is then its first actual. Recognised by a dotted callee whose prefix is not
+ * an expanded name's and has a type, i.e. denotes a value.
+ */
+predicate isPrefixedViewCall(Raw::Expr call) {
+  exists(Raw::DottedName dn | dn = calleeName(call) |
+    not isExpandedNamePrefix(dn.getPrefix()) and
+    exists(dn.getPrefix().(Expr).getType())
+  )
+}
+
+/**
+ * Gets the declaration `call` invokes: a subprogram with a `SubpSpec` of its own,
+ * resolved through `ada_xref` (`Name.getReferencedDecl()`, D-021), never by name
+ * text. Libadalang parses indexing, slicing and type conversion as a `CallExpr`
+ * too; those resolve to an object or a type, so they have no result here, and
+ * neither do calls to generic instantiations, entries and access values
+ * (docs/dataflow-design.md, D-023). A subprogram renaming is a result -- it is a
+ * `BaseSubpBody` with a `SubpSpec` of its own, whose formals bind the actuals --
+ * and `resolveSubpRenaming` takes it on to the subprogram it renames. Two call
+ * shapes are also left out because their actuals cannot be matched to formals by
+ * position: a protected operation (`PO.Op`, whose prefix is the protected object,
+ * not a formal), and a dotted callee that is neither an expanded name nor a
+ * recognisable prefixed view.
+ */
+Raw::BasicDecl getCallTarget(Raw::Expr call) {
+  exists(Raw::Name callee | callee = calleeName(call) |
+    result = callee.(Name).getReferencedDecl() and
+    exists(getSubpSpecOf(result)) and
+    not result.getParent+() instanceof Raw::ProtectedDef and
+    (
+      not callee instanceof Raw::DottedName
+      or
+      isExpandedNamePrefix(callee.(Raw::DottedName).getPrefix())
+      or
+      isPrefixedViewCall(call)
+    )
+  )
+}
+
+/**
+ * Gets the subprogram that `d` denotes once subprogram renamings are followed: `d`
+ * itself if it is not a renaming. A renaming conforms to what it renames in the
+ * number, order and modes of its formals, so an actual bound through the renaming's
+ * own spec binds the same position in the target. No result for a renaming of a
+ * prefixed view (`renames Obj.Op`, whose target has one formal more) or of anything
+ * that does not resolve to a subprogram (an attribute, an entry, an instantiation).
+ */
+Raw::BasicDecl resolveSubpRenaming(Raw::BasicDecl d) {
+  not d instanceof Raw::SubpRenamingDecl and result = d
+  or
+  exists(Raw::Name n | n = d.(Raw::SubpRenamingDecl).getRenames().getRenamedObject() |
+    (not n instanceof Raw::DottedName or isExpandedNamePrefix(n.(Raw::DottedName).getPrefix())) and
+    result = resolveSubpRenaming(n.(Name).getReferencedDecl()) and
+    exists(getSubpSpecOf(result))
+  )
+}
+
+/** Gets the `SubpSpec` of the subprogram `call` invokes (see `getCallTarget`). */
+Raw::SubpSpec getCalleeSpec(Raw::Expr call) { result = getSubpSpecOf(getCallTarget(call)) }
+
+/**
+ * Holds if `actual` is the actual that `call` passes for its callee's `idx`th formal
+ * (0-based, flattened, see `formalAt`). A named association (`X => Y`) binds by
+ * designator. A positional one binds by its own source position, since Ada requires
+ * every positional association to precede every named one -- shifted by one in a
+ * prefixed-view call, whose prefix is the first actual. Formals left to their
+ * default have no actual.
+ */
+predicate callActual(Raw::Expr call, Raw::Expr actual, int idx) {
+  exists(Raw::SubpSpec spec | spec = getCalleeSpec(call) |
+    exists(Raw::ParamAssoc assoc |
+      assoc = call.(Raw::CallExpr).getSuffix().(Raw::AssocList).getChild(_) and
+      actual = assoc.getRExpr()
+    |
+      not exists(assoc.getDesignator()) and
+      (if isPrefixedViewCall(call) then idx = assoc.getParentIndex() + 1 else idx = assoc.getParentIndex())
+      or
+      idx = formalIndexNamed(spec, assoc.getDesignator().(Name).getText().toLowerCase())
+    )
     or
-    result = formalIndexNamed(spec, assoc.getDesignator().(Name).getText())
+    isPrefixedViewCall(call) and
+    actual = calleeName(call).(Raw::DottedName).getPrefix() and
+    idx = 0
   )
 }
 
 /**
- * Gets the `SubpSpec` of the callable `call` invokes, if its callee name
- * resolves to one (D-021: via `ada_xref`/`Name.getReferencedDecl()`, never by
- * name text). Libadalang parses array/component indexing identically to a
- * call (`CallExpr`); those simply have no result here, since the resolved
- * declaration has no `SubpSpec`.
+ * Gets the node whose CFG position represents "the call has now happened": the
+ * wrapping `CallStmt`'s own node when `call` is a procedure-call statement (its own
+ * node follows the call's, per `CallStmtTree`), or `call` itself otherwise.
  */
-private Raw::SubpSpec calleeSpec(Raw::CallExpr call) {
-  exists(Raw::BasicDecl d | d = call.getName().(Name).getReferencedDecl() | result = getSubpSpecOf(d))
-}
-
-/**
- * Gets the node whose CFG position represents "the call has now happened":
- * the wrapping `CallStmt`'s own node when `call` is a procedure-call
- * statement (its own node follows the `CallExpr`'s, per `CallStmtTree`), or
- * `call` itself otherwise (an inline function call).
- */
-private Raw::AdaNode callEffectNode(Raw::CallExpr call) {
+private Raw::AdaNode callEffectNode(Raw::Expr call) {
   exists(Raw::CallStmt cs | cs.getCall() = call | result = cs)
   or
   not exists(Raw::CallStmt cs | cs.getCall() = call) and result = call
@@ -405,17 +507,17 @@ private predicate outOrInOutParamExitRead(SsaCfg::BasicBlock bb, int i, SsaSourc
  * read" occurrence for the same node -- see this predicate's own doc above.
  */
 private predicate outOrInOutActualWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v, Name nameNode) {
-  exists(
-    Raw::CallExpr call, Raw::SubpSpec spec, Raw::AssocList args, Raw::ParamAssoc assoc, int argIdx,
-    Raw::Mode mode
-  |
-    spec = calleeSpec(call) and
-    args = call.getSuffix() and
-    assoc = args.getChild(_) and
-    argIdx = assoc.getParentIndex() and
-    mode = formalMode(spec, argFormalIndex(spec, assoc, argIdx)) and
+  outOrInOutActualWriteAt(bb, i, v, nameNode, _, _)
+}
+
+/** Like `outOrInOutActualWrite`, also giving the `call` and the formal index `idx` written back. */
+private predicate outOrInOutActualWriteAt(
+  SsaCfg::BasicBlock bb, int i, SsaSourceVariable v, Name nameNode, Raw::Expr call, int idx
+) {
+  exists(Raw::Mode mode |
+    callActual(call, nameNode, idx) and
+    mode = formalMode(getCalleeSpec(call), idx) and
     (mode instanceof Raw::ModeOut or mode instanceof Raw::ModeInOut) and
-    nameNode = assoc.getRExpr().(Name) and
     v = getSourceVariable(nameNode) and
     cfgPos(callEffectNode(call), bb, i)
   )
@@ -495,6 +597,40 @@ Raw::Expr getWrittenValue(SsaImpl::WriteDefinition def) {
   )
 }
 
+private newtype TDfExpr =
+  TAstExpr(Raw::Expr e) { cfgPos(e, _, _) } or
+  TParamExitRead(SsaSourceVariable v) { outOrInOutParamExitRead(_, _, v) }
+
+/**
+ * An expression as `DataFlowIntegration` sees it: an Ada expression with a CFG node,
+ * or the synthetic read of an `out`/`in out` formal at its scope's normal exit
+ * (`outOrInOutParamExitRead`). `DataFlowIntegration` only creates data-flow nodes
+ * for reads that are expressions, and that read is the value the caller gets back
+ * (D-022), so Task 9.4 needs a node for it: its return node. It is one per formal,
+ * not one per exit node, so that two formals written back by one scope stay apart.
+ */
+class DfExpr extends TDfExpr {
+  /** Gets the Ada expression this is, if it is not an exit read. */
+  Raw::Expr asExpr() { this = TAstExpr(result) }
+
+  /** Gets the `out`/`in out` formal this is the exit read of, if it is one. */
+  SsaSourceVariable asParamExitRead() { this = TParamExitRead(result) }
+
+  /** Gets a textual representation of this expression. */
+  string toString() {
+    result = this.asExpr().toString()
+    or
+    result = "[exit] " + this.asParamExitRead().toString()
+  }
+
+  /** Holds if the `i`th node of basic block `bb` evaluates this expression. */
+  predicate hasCfgNode(SsaCfg::BasicBlock bb, int i) {
+    cfgPos(this.asExpr(), bb, i)
+    or
+    outOrInOutParamExitRead(bb, i, this.asParamExitRead())
+  }
+}
+
 /**
  * The input to `codeql/ssa`'s `DataFlowIntegration` (Task 9.3), which builds the SSA
  * part of the local data-flow graph: nodes for definitions, phis and reads, and the
@@ -510,9 +646,7 @@ module SsaDataFlowInput implements SsaImpl::DataFlowIntegrationInputSig {
   private import codeql.controlflow.SuccessorType
   private import codeql.util.Boolean
 
-  class Expr extends Raw::Expr {
-    predicate hasCfgNode(SsaCfg::BasicBlock bb, int i) { cfgPos(this, bb, i) }
-  }
+  class Expr = DfExpr;
 
   /**
    * Flow into an uncertain write -- an actual passed as an `out`/`in out` formal --
@@ -546,3 +680,37 @@ module SsaDataFlowInput implements SsaImpl::DataFlowIntegrationInputSig {
 
 /** The SSA part of the local data-flow graph (Task 9.3); see `LocalFlow.qll`. */
 module SsaFlow = SsaImpl::DataFlowIntegration<SsaDataFlowInput>;
+
+/**
+ * Gets the formal parameter `v`'s owning scope `c`, its 0-based flattened position
+ * `idx` (see `formalAt`) and its `mode`, for a formal of a body with its own CFG --
+ * the formals Task 9.4's parameter and return nodes are built for.
+ */
+predicate formalOf(SsaSourceVariable v, Impl::Scopes::CfgScope c, int idx, Raw::Mode mode) {
+  exists(Raw::ParamSpec ps |
+    v = ps.(BasicDecl).getADefiningName() and
+    c = paramOwningScope(ps) and
+    idx = formalIndex(c.(Raw::BaseSubpBody).getSubpSpec(), v) and
+    mode = ps.getMode()
+  )
+}
+
+/** Holds if formal `v` receives a value from the caller: mode `in` or `in out`. */
+predicate formalReceivesArgument(SsaSourceVariable v) {
+  exists(Raw::ParamSpec ps | v = ps.(BasicDecl).getADefiningName() and receivesArgument(ps))
+}
+
+/** Holds if `def` is formal `v`'s entry write, the value the caller passed. */
+predicate isParameterEntryDef(SsaImpl::WriteDefinition def, SsaSourceVariable v) {
+  exists(SsaCfg::BasicBlock bb, int i | def.definesAt(v, bb, i) and paramEntryWrite(bb, i, v, _))
+}
+
+/**
+ * Holds if `def` is the uncertain write-back of `call`'s actual for its `idx`th
+ * formal, an `out`/`in out` one (D-022).
+ */
+predicate isOutActualDef(SsaImpl::WriteDefinition def, Raw::Expr call, int idx) {
+  exists(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v |
+    def.definesAt(v, bb, i) and outOrInOutActualWriteAt(bb, i, v, _, call, idx)
+  )
+}

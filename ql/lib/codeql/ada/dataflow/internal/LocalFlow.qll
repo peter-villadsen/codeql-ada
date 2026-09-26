@@ -12,9 +12,12 @@
  * - Value-preserving steps through expressions: parentheses, qualified expressions,
  *   and the branches of `if` and `case` expressions.
  *
- * Cross-procedure flow (parameters, arguments, returns, `out`/`in out` write-back) is
- * Task 9.4, which builds `codeql/dataflow`'s `InputSig` on top of this `Node` and uses
- * `localFlowStep` as its `simpleLocalFlowStep`.
+ * - A node for each formal parameter that receives a value from the caller, with a
+ *   step into the formal's entry definition.
+ *
+ * Cross-procedure flow (Task 9.4, `DataFlowImpl.qll`) builds `codeql/dataflow`'s
+ * `InputSig` on top of this `Node` and uses `localFlowStep` as its
+ * `simpleLocalFlowStep`.
  */
 
 private import codeql.ada.ast.internal.Raw
@@ -28,22 +31,30 @@ private predicate hasCfgNode(Raw::Expr e) {
 
 private newtype TNode =
   TExprNode(Raw::Expr e) { hasCfgNode(e) } or
-  TSsaNode(SsaFlow::Node n) { not n instanceof SsaFlow::ExprNode }
+  TSsaNode(SsaFlow::Node n) { not exists(n.(SsaFlow::ExprNode).getExpr().asExpr()) } or
+  TParameterNode(SsaSourceVariable p) { formalOf(p, _, _, _) and formalReceivesArgument(p) }
 
 /**
- * A node in the local data-flow graph: an expression (`asExpr()`), or a node the SSA
- * layer adds -- a definition, a phi, the source of a write, or a post-update node.
+ * A node in the local data-flow graph: an expression (`asExpr()`), a formal parameter
+ * receiving the caller's value (`asParameter()`), or a node the SSA layer adds -- a
+ * definition, a phi, the source of a write, a post-update node, or the exit read of an
+ * `out`/`in out` formal.
  */
 class Node extends TNode {
   /** Gets the expression this node is, if any. */
   Raw::Expr asExpr() { this = TExprNode(result) }
 
-  /** Gets the SSA data-flow node this node is, if it is not an expression. */
+  /** Gets the formal parameter this node is, if any. */
+  SsaSourceVariable asParameter() { this = TParameterNode(result) }
+
+  /** Gets the SSA data-flow node this node is, if it is neither of the above. */
   SsaFlow::Node asSsaNode() { this = TSsaNode(result) }
 
   /** Gets a textual representation of this node. */
   string toString() {
     result = this.asExpr().toString()
+    or
+    result = "[param] " + this.asParameter().toString()
     or
     result = this.asSsaNode().toString()
   }
@@ -52,15 +63,31 @@ class Node extends TNode {
   Raw::Location getLocation() {
     result = this.asExpr().getLocation()
     or
+    result = this.asParameter().getLocation()
+    or
     result = this.asSsaNode().getLocation()
   }
 }
 
 /** Gets the node for SSA data-flow node `n`: reads are represented by their expression. */
-private Node fromSsa(SsaFlow::Node n) {
-  result = TExprNode(n.(SsaFlow::ExprNode).getExpr())
+Node fromSsa(SsaFlow::Node n) {
+  result = TExprNode(n.(SsaFlow::ExprNode).getExpr().asExpr())
   or
   result = TSsaNode(n)
+}
+
+/**
+ * Holds if `n` is the exit read of an `out`/`in out` formal other than `v`.
+ *
+ * The exit reads of all of a scope's `out`/`in out` formals sit at the one normal
+ * exit node, and `DataFlowIntegration` matches a read to a variable by CFG position
+ * alone (`ReadNode.readsAt`), so its steps into one formal's exit read also arrive
+ * from every other formal read there. Each step carries its variable, which is what
+ * tells them apart: without this filter, `Swap (A, B)` would return `B`'s value
+ * through `A`.
+ */
+private predicate isExitReadOfOther(SsaFlow::Node n, SsaSourceVariable v) {
+  exists(SsaSourceVariable w | w = n.(SsaFlow::ExprNode).getExpr().asParamExitRead() | w != v)
 }
 
 /** Holds if `e2`'s value is `e1`'s value. */
@@ -78,8 +105,10 @@ private predicate exprStep(Raw::Expr e1, Raw::Expr e2) {
 
 /** Holds if there is a local, value-preserving flow step from `nodeFrom` to `nodeTo`. */
 predicate localFlowStep(Node nodeFrom, Node nodeTo) {
-  exists(SsaFlow::Node n1, SsaFlow::Node n2 |
-    SsaFlow::localFlowStep(_, n1, n2, _) and
+  exists(SsaFlow::Node n1, SsaFlow::Node n2, SsaSourceVariable v |
+    SsaFlow::localFlowStep(v, n1, n2, _) and
+    not isExitReadOfOther(n1, v) and
+    not isExitReadOfOther(n2, v) and
     nodeFrom = fromSsa(n1) and
     nodeTo = fromSsa(n2)
   )
@@ -90,6 +119,11 @@ predicate localFlowStep(Node nodeFrom, Node nodeTo) {
   )
   or
   exprStep(nodeFrom.asExpr(), nodeTo.asExpr())
+  or
+  exists(SsaFlow::WriteDefSourceNode w |
+    isParameterEntryDef(w.getDefinition(), nodeFrom.asParameter()) and
+    nodeTo = fromSsa(w)
+  )
 }
 
 /** Holds if the value of `source` may reach `sink` through zero or more local steps. */
@@ -137,7 +171,7 @@ module BarrierGuard<guardChecksSig/3 guardChecks> {
   private predicate guardChecksAdapted(
     SsaDataFlowInput::Guard g, SsaDataFlowInput::Expr e, SsaDataFlowInput::GuardValue branch
   ) {
-    guardChecksLifted(g, e, branch)
+    guardChecksLifted(g, e.asExpr(), branch)
   }
 
   /** Gets a node that is safely guarded by a `guardChecks` guard. */
