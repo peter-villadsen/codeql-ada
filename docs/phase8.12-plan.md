@@ -154,6 +154,10 @@ triples).
 
 ### 3.1 Task 8.12a — make the runtime visible to the auto provider
 
+**Done 2026-09-25** (commit 9e98eea). Results and triage are recorded in BURNDOWN.md
+8.12a and in the commit message. Step 6 (confirm discovery on CI) is still open until the
+first CI run after the push.
+
 1. **Runtime discovery** in `extractor.py`, in order: `CODEQL_EXTRACTOR_ADA_RUNTIME`
    (explicit directory); else `gcc -print-file-name=adainclude` if it names an existing
    directory; else none. Add its `*.ads` to the auto provider's `input_files` only; they

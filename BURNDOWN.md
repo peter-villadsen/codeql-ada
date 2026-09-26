@@ -30,7 +30,6 @@ that audience justifies Phase 9's cost is deliberately left undecided.**
 
 | Option | Cost | Value |
 |---|---|---|
-| Cut `v0.1.0` | one Actions run | Makes the artifacts real. Prerequisite for anything else, including your own use. Checklist already passes locally. |
 | 8.12b — extract `Standard` + direct runtime targets as pseudo-sources | two-pass extraction, dbscheme marker | Removes the D-015 blindness; `float-equality` catches plain `Float`; Task 9.5 gets semantic sources/sinks. Do before 9.5. |
 | Cross-check the 7–9 rules overlapping GNATcheck | small | Read AdaCore's LKQL rule sources (GPLv3 — read, never copy) and confirm our scope matches theirs. Catches subtly-wrong edge cases. |
 | Phase 9 — SSA → dataflow → taint | large, needs its own plan (9.0) | The only genuinely differentiated capability. Gated on the undecided question in D-020. |
