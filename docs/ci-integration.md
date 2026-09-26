@@ -304,6 +304,7 @@ things on day one.
 | `Pack 'codeql/...' was not found in the pack download cache` | Missing `codeql pack download`. A lock file alone does not put the pack on disk. |
 | `The CodeQL database is not compatible with a QL library...` | CLI/extractor version skew. Both must match the pinned pair. |
 | Analysis succeeds, zero results, and you expected some | Check the extraction diagnostics. A database built in project-less mode still extracts, but resolves far fewer names — set `CODEQL_EXTRACTOR_ADA_GPR`. |
+| `no-runtime` warning diagnostic; many `unused-parameter` / `unused-local` results on names that are plainly used | No GNAT runtime visible to a project-less extraction. Install `gnat` on the runner, or set `CODEQL_EXTRACTOR_ADA_RUNTIME` to its `adainclude` directory. |
 | Alerts from a previous run get closed unexpectedly | Missing or inconsistent `category:` when more than one analysis uploads to the repo. |
 | `Resource not accessible by integration` on upload | Missing `security-events: write` in `permissions:`. |
 

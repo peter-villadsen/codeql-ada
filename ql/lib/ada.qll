@@ -35,6 +35,27 @@ class Name extends Raw::Name {
 
   /** Gets the declaration this name resolves to, if extracted. */
   Raw::BasicDecl getReferencedDecl() { ada_xref(this, result) }
+
+  /**
+   * Holds if this name and `other` denote the same entity, compared structurally:
+   * simple names must resolve to the same declaration *and* name the same defining
+   * name within it, since a multi-identifier declaration such as `A, B : T` is one
+   * `BasicDecl` (D-024); dotted names must match component-wise, prefix and selector
+   * both, so `L.Size` and `R.Size` differ even though both resolve to the component
+   * `Size`. Anything else (calls, indexing, dereferences) never matches. Names that
+   * do not resolve never match.
+   */
+  predicate denotesSameEntityAs(Name other) {
+    this instanceof Raw::Identifier and
+    other instanceof Raw::Identifier and
+    this.getReferencedDecl() = other.getReferencedDecl() and
+    this.getText().toLowerCase() = other.getText().toLowerCase()
+    or
+    exists(Raw::DottedName d, Raw::DottedName e | d = this and e = other |
+      d.getPrefix().(Name).denotesSameEntityAs(e.getPrefix()) and
+      d.getSuffix().(Name).denotesSameEntityAs(e.getSuffix())
+    )
+  }
 }
 
 /** An expression, with stored type information. */

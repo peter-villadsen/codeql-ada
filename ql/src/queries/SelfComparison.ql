@@ -18,6 +18,6 @@ from Raw::RelationOp cmp, Name left, Name right
 where
   left = cmp.getLeft() and
   right = cmp.getRight() and
-  left.getReferencedDecl() = right.getReferencedDecl()
+  left.denotesSameEntityAs(right)
 select cmp,
   "This comparison always yields the same result, since both sides are " + left.getText() + "."

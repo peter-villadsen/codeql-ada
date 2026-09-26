@@ -52,6 +52,25 @@ your queries rely heavily on `Name.getReferencedDecl()` or `Expr.getType()`
 (see [query-writing.md](query-writing.md)), a working `.gpr` is worth setting
 up.
 
+### The GNAT runtime (auto provider only)
+
+In auto-provider mode the extractor also needs the GNAT runtime's specs
+(`Ada.*`, `Interfaces.*`, `GNAT.*`, `System.*`) to be resolvable. Without
+them, Libadalang fails to resolve any statement that mentions a runtime
+entity — *including the project's own names in that statement* — which shows
+up as false positives in queries such as `ada/unused-parameter`. The runtime
+is made resolvable, never extracted. It is found by:
+
+1. **`CODEQL_EXTRACTOR_ADA_RUNTIME`** — an explicit directory containing the
+   runtime's `.ads` files (GNAT's `adainclude`).
+2. **`gcc -print-file-name=adainclude`** — works whenever a GNAT toolchain is
+   installed (e.g. Debian/Ubuntu `apt install gnat`).
+
+If neither yields a directory, extraction still succeeds but records a
+`no-runtime` warning diagnostic (and prints it) saying resolution is
+degraded. A `.gpr` project finds its runtime through the toolchain on its
+own, so none of this applies to modes 1 and 2 above.
+
 ## Parallelism
 
 Extraction runs one file per worker process, controlled by

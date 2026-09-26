@@ -25,7 +25,7 @@ where
   ) and
   left = op.getLeft() and
   right = op.getRight() and
-  left.getReferencedDecl() = right.getReferencedDecl() and
+  left.denotesSameEntityAs(right) and
   not left.getAPrimaryQlClass() = "CallExpr" and
   not right.getAPrimaryQlClass() = "CallExpr" and
   not exists(Raw::AdaNode c | c.getParent+() = left and c.getAPrimaryQlClass() = "CallExpr") and

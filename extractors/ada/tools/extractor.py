@@ -8,6 +8,13 @@ same Libadalang introspection dump as the dbscheme (decision D-004).
 Project discovery (decision D-003): explicit CODEQL_EXTRACTOR_ADA_GPR env var ->
 single .gpr found under the source root -> auto unit provider over all Ada files.
 
+Runtime discovery (burndown 8.12a): the auto unit provider only knows the files
+it is given, and without the GNAT runtime specs Libadalang fails to resolve any
+statement that mentions a runtime entity -- including the user's own names in
+it. So the auto provider is also given the runtime's *.ads files, found via
+CODEQL_EXTRACTOR_ADA_RUNTIME -> `gcc -print-file-name=adainclude`. They are made
+resolvable, not extracted. A GPR project finds its runtime by itself.
+
 Node identity: nodes are keyed by (file, kind, source span). This is stable and
 computable from any reference to the node (needed for cross-unit xref), at the
 cost of merging pathological same-kind-same-span nodes. Cross-unit references
@@ -18,6 +25,7 @@ import json
 import os
 import pathlib
 import shutil
+import subprocess
 import sys
 import time
 
@@ -243,10 +251,63 @@ def project_files(src_root: pathlib.Path, gpr):
     )
 
 
-def build_context(gpr, ada_files) -> lal.AnalysisContext:
+def find_runtime():
+    """GNAT runtime source directory for the auto provider, or None."""
+    explicit = os.environ.get("CODEQL_EXTRACTOR_ADA_RUNTIME")
+    if explicit:
+        return explicit if os.path.isdir(explicit) else None
+    try:
+        out = subprocess.run(["gcc", "-print-file-name=adainclude"],
+                             capture_output=True, text=True, timeout=30,
+                             check=False).stdout.strip()
+    except (OSError, subprocess.SubprocessError):
+        return None
+    # gcc echoes the bare name back when it has no such directory.
+    return out if os.path.isabs(out) and os.path.isdir(out) else None
+
+
+def runtime_specs(runtime):
+    if runtime is None:
+        return []
+    return sorted(str(p) for p in pathlib.Path(runtime).glob("*.ads"))
+
+
+def warn_no_runtime(trap_dir: pathlib.Path):
+    """One warning diagnostic, both in the database and for the tool-status page."""
+    msg = ("No GNAT runtime found: names that mention runtime units (Ada.*, "
+           "Interfaces.*, GNAT.*, System.*) will not resolve, which degrades "
+           "name resolution of the statements containing them. Install GNAT, or "
+           "set CODEQL_EXTRACTOR_ADA_RUNTIME to the runtime's adainclude "
+           "directory.")
+    print(f"[ada-extractor] warning: {msg}", file=sys.stderr)
+    w = TrapWriter()
+    f = w.label(file_key(""))
+    w.row("files", f, q(""))
+    loc = w.label("loc,,0,0,0,0")
+    w.row("locations_default", loc, f, "0", "0", "0", "0")
+    d = w.fresh()
+    w.row("diagnostics", d, str(DIAG_WARNING), q("no-runtime"), q(msg), q(msg), loc)
+    (trap_dir / "no-runtime.trap").write_text(w.text(), encoding="utf-8")
+    diag_dir = os.environ.get(f"CODEQL_EXTRACTOR_{LANG}_DIAGNOSTIC_DIR")
+    if diag_dir:
+        pathlib.Path(diag_dir).mkdir(parents=True, exist_ok=True)
+        (pathlib.Path(diag_dir) / "no-runtime.json").write_text(json.dumps({
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "source": {"id": "ada/extractor/no-runtime",
+                       "name": "No GNAT runtime found",
+                       "extractorName": "ada"},
+            "markdownMessage": msg,
+            "severity": "warning",
+            "visibility": {"statusPage": True, "cliSummaryTable": True,
+                           "telemetry": True},
+        }), encoding="utf-8")
+
+
+def build_context(gpr, ada_files, runtime=None) -> lal.AnalysisContext:
     if gpr:
         return lal.GPRProject(gpr).create_context()
-    provider = lal.UnitProvider.auto(input_files=ada_files)
+    provider = lal.UnitProvider.auto(
+        input_files=ada_files + runtime_specs(runtime))
     return lal.AnalysisContext(unit_provider=provider)
 
 
@@ -255,9 +316,10 @@ def build_context(gpr, ada_files) -> lal.AnalysisContext:
 _state = None
 
 
-def _init_worker(gpr, files, trap_dir, archive_dir):
+def _init_worker(gpr, files, runtime, trap_dir, archive_dir):
     global _state
-    _state = (build_context(gpr, files), Extractor(files), trap_dir, archive_dir)
+    _state = (build_context(gpr, files, runtime), Extractor(files), trap_dir,
+              archive_dir)
 
 
 def _extract_one(f):
@@ -283,6 +345,12 @@ def main() -> int:
     gpr = find_gpr(src_root)
     print(f"[ada-extractor] project: {gpr or 'none (auto unit provider)'}")
     files = project_files(src_root, gpr)
+    runtime = None
+    if not gpr:
+        runtime = find_runtime()
+        print(f"[ada-extractor] runtime: {runtime or 'none'}")
+        if runtime is None:
+            warn_no_runtime(trap_dir)
 
     (trap_dir / "metadata.trap").write_text(
         f"sourceLocationPrefix({q(norm(src_root))})\n", encoding="utf-8"
@@ -296,13 +364,13 @@ def main() -> int:
          "body_part"), 0)
 
     if jobs == 1 or not hasattr(os, "fork"):
-        _init_worker(gpr, files, trap_dir, archive_dir)
+        _init_worker(gpr, files, runtime, trap_dir, archive_dir)
         results = map(_extract_one, files)
         self_stats = [r for r in results]
     else:
         import multiprocessing
         with multiprocessing.Pool(
-            jobs, _init_worker, (gpr, files, trap_dir, archive_dir)
+            jobs, _init_worker, (gpr, files, runtime, trap_dir, archive_dir)
         ) as pool:
             self_stats = pool.map(_extract_one, files, chunksize=4)
 

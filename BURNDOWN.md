@@ -31,7 +31,6 @@ that audience justifies Phase 9's cost is deliberately left undecided.**
 | Option | Cost | Value |
 |---|---|---|
 | Cut `v0.1.0` | one Actions run | Makes the artifacts real. Prerequisite for anything else, including your own use. Checklist already passes locally. |
-| 8.12a — make the GNAT runtime visible to the auto provider | small extractor change + two query fixes | **Spiked 2026-09-25, do this first.** Fixes hundreds of false positives per project in shipped `unused-*`/`dead-local-subprogram` queries (libkeccak 322, alire 748). See [docs/phase8.12-plan.md](docs/phase8.12-plan.md). |
 | 8.12b — extract `Standard` + direct runtime targets as pseudo-sources | two-pass extraction, dbscheme marker | Removes the D-015 blindness; `float-equality` catches plain `Float`; Task 9.5 gets semantic sources/sinks. Do before 9.5. |
 | Cross-check the 7–9 rules overlapping GNATcheck | small | Read AdaCore's LKQL rule sources (GPLv3 — read, never copy) and confirm our scope matches theirs. Catches subtly-wrong edge cases. |
 | Phase 9 — SSA → dataflow → taint | large, needs its own plan (9.0) | The only genuinely differentiated capability. Gated on the undecided question in D-020. |
@@ -563,9 +562,21 @@ assignment of every initialised local, which it could not have before.
       `nameres_errors` counts were this, undiagnosed. Making resolution work also
       exposes two latent bugs in `self-comparison`/`identical-operands` (dotted names
       compared by declaration only; multi-identifier declarations, cf. D-024). Split into:
-  - [ ] **8.12a** Runtime discovery for the auto provider
+  - [x] **8.12a** Runtime discovery for the auto provider
         (`CODEQL_EXTRACTOR_ADA_RUNTIME`, else `gcc -print-file-name=adainclude`, else a
-        warning diagnostic), plus the two query fixes, plus a corpus-baseline refresh.
+        `no-runtime` warning diagnostic), plus the two query fixes, plus a
+        corpus-baseline refresh. **Done 2026-09-25.** libkeccak `nameres_errors`
+        16,458 → 3,017. Full-suite results before → after: adasat 36 → 34, alire
+        2,854 → 2,095, gpr2 11,868 → 5,039, libadalang-tools 4,538 → 3,804, libkeccak
+        732 → 350; only additions are true-positive `direct-recursion` hits (alire 6,
+        gpr2 59, libadalang-tools 3). `self-comparison`/`identical-operands` now compare
+        via `Name.denotesSameEntityAs` (component-wise dotted names, D-024 narrowing),
+        which also removed long-standing false positives on multi-identifier
+        declarations (e.g. libkeccak 40, libadalang-tools 146). Triage of the new
+        `direct-recursion` results: the sampled ones are real self-calls; the query's
+        textual spec pairing matched *other overloads* in the same declarative part
+        (gpr2 9), so it now uses `ada_body_part` (D-021). Extraction time up (alire
+        19 s → 44 s), as the spike predicted.
   - [ ] **8.12b** Extract `Standard` (real unit, 1,800 nodes, but reported at
         `<cwd>/__standard`, so it needs a pseudo path) and the *direct* target units
         only (+26–37% nodes; the transitive closure is +300–1,700%), marked with a new

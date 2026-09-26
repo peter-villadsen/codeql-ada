@@ -17,3 +17,20 @@ procedure NonRec (N : Integer) is    --  not recursive: fine
 begin
    null;
 end NonRec;
+
+procedure Outer is
+   procedure Over (N : Integer);
+   procedure Over (S : String);
+
+   procedure Over (N : Integer) is  --  calls the other overload: fine
+   begin
+      Over (Integer'Image (N));
+   end Over;
+
+   procedure Over (S : String) is
+   begin
+      null;
+   end Over;
+begin
+   Over (1);
+end Outer;
