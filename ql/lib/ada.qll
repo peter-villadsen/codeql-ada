@@ -155,6 +155,7 @@ class BasicDecl extends Raw::BasicDecl {
    * Gets the fully qualified name of this declaration, as Libadalang computes it:
    * `Ada.Text_IO.Open`, `Standard.Constraint_Error`, `Standard.Boolean.True`.
    * Runtime entities have one when their unit is a predefined pseudo-source (D-026).
+   * A declaration of several names (`A, B : T`) has one per name (`Pkg.A`, `Pkg.B`).
    */
   string getQualifiedName() { ada_qualified_name(this, result) }
 

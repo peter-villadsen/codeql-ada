@@ -1,7 +1,12 @@
+| broken.ads:4:1:8:12 | PackageDecl | PackageDecl | Broken | broken.adb:1:1:16:12 | PackageBody | PackageBody |
+| broken.ads:5:4:5:73 | SubpDecl | SubpDecl | Put | broken.adb:2:4:5:12 | SubpBody | SubpBody |
+| broken.ads:6:4:6:34 | SubpDecl | SubpDecl | Log | broken.adb:12:4:15:12 | SubpBody | SubpBody |
+| broken.ads:7:4:7:34 | SubpDecl | SubpDecl | Log | broken.adb:7:4:10:12 | SubpBody | SubpBody |
 | lib_proc.ads:1:1:1:34 | SubpDecl | SubpDecl | Lib_Proc | lib_proc.adb:1:1:4:14 | SubpBody | SubpBody |
-| pkg.adb:15:7:15:23 | SubpDecl | SubpDecl | Inner | pkg.adb:17:7:20:17 | SubpBody | SubpBody |
-| pkg.ads:1:1:6:9 | PackageDecl | PackageDecl | Pkg | pkg.adb:1:1:24:9 | PackageBody | PackageBody |
+| pkg.adb:14:4:14:36 | SubpBodyStub | SubpBodyStub | Stub_Only | pkg-stub_only.adb:2:1:5:15 | SubpBody | SubpBody |
+| pkg.adb:17:7:17:23 | SubpDecl | SubpDecl | Inner | pkg.adb:19:7:22:17 | SubpBody | SubpBody |
+| pkg.ads:1:1:6:9 | PackageDecl | PackageDecl | Pkg | pkg.adb:1:1:26:9 | PackageBody | PackageBody |
 | pkg.ads:2:4:2:32 | SubpDecl | SubpDecl | Foo | pkg.adb:2:4:5:12 | SubpBody | SubpBody |
 | pkg.ads:3:4:3:30 | SubpDecl | SubpDecl | Foo | pkg.adb:7:4:10:12 | SubpBody | SubpBody |
 | pkg.ads:4:4:4:49 | SubpDecl | SubpDecl | Square | pkg.adb:12:4:12:60 | ExprFunction | ExprFunction |
-| pkg.ads:5:4:5:20 | SubpDecl | SubpDecl | Outer | pkg.adb:14:4:23:14 | SubpBody | SubpBody |
+| pkg.ads:5:4:5:20 | SubpDecl | SubpDecl | Outer | pkg.adb:16:4:25:14 | SubpBody | SubpBody |

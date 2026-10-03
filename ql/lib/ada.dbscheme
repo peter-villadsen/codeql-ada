@@ -4198,7 +4198,7 @@ ada_body_part(
 );
 
 ada_qualified_name(
-  unique int decl: @ada_basic_decl ref,
+  int decl: @ada_basic_decl ref,
   string name: string ref
 );
 

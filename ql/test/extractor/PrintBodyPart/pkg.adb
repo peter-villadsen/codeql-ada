@@ -11,6 +11,8 @@ package body Pkg is
 
    function Square (X : Integer) return Integer is (X * X);
 
+   procedure Stub_Only is separate;  --  no separate declaration: the stub pairs with the subunit
+
    procedure Outer is
       procedure Inner;
 

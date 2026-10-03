@@ -1,0 +1,7 @@
+| multi.ads:1:1:7:11 | PackageDecl | PackageDecl | Multi |
+| multi.ads:2:4:2:24 | ObjectDecl | ObjectDecl | Multi.A |
+| multi.ads:2:4:2:24 | ObjectDecl | ObjectDecl | Multi.B |
+| multi.ads:3:4:3:24 | ObjectDecl | ObjectDecl | Multi.C |
+| multi.ads:4:4:6:15 | ConcreteTypeDecl | ConcreteTypeDecl | Multi.R |
+| multi.ads:5:7:5:22 | ComponentDecl | ComponentDecl | Multi.R.X |
+| multi.ads:5:7:5:22 | ComponentDecl | ComponentDecl | Multi.R.Y |

@@ -25,9 +25,9 @@ accessor: Class token -> resolution
 - **`Class`** is the node's `Raw` class (`n.getAPrimaryQlClass()`).
 - **`token`** is the text of an identifier, literal or operator (`getValue()`).
 - **`-> resolution`** is what a name resolves to (`Name.getReferencedDecl()`),
-  shown as the declaration's qualified name. When Libadalang gives the declaration
-  no qualified name, it shows the class, names and position instead
-  (`-> ObjectDecl A, B @5:4`; see [Name resolution](#name-resolution)).
+  shown as the qualified name of the defining name it denotes (for `A, B : T`, a
+  reference to `B` shows `-> Pkg.B`; see [Name resolution](#name-resolution)). A
+  declaration with no qualified name shows its class, names and position.
 
 So this tree:
 
@@ -157,7 +157,7 @@ R : Integer renames A;
   getTypeExpr: SubtypeIndication
     getName: Identifier Integer -> Standard.Integer
   getRenamingClause: RenamingClause
-    getRenamedObject: Identifier A -> ObjectDecl A, B @5:4
+    getRenamedObject: Identifier A -> Reference.A
 ```
 
 ### Types
@@ -381,12 +381,12 @@ Put_Line (Item => Name);
 
 ```
 [0]: AssignStmt
-  getDest: Identifier A -> ObjectDecl A, B @5:4
+  getDest: Identifier A -> Reference.A
   getExpr: CallExpr -> Reference.Twice
     getName: Identifier Twice -> Reference.Twice
     getSuffix: AssocList
       [0]: ParamAssoc
-        getRExpr: Identifier B -> ObjectDecl A, B @5:4
+        getRExpr: Identifier B -> Reference.B
 [1]: CallStmt
   getCall: CallExpr -> Reference.Log
     getName: Identifier Log -> Reference.Log
@@ -643,21 +643,21 @@ P.X := Ptr.all.Y;
 
 ```
 [10]: AssignStmt
-  getDest: DottedName -> ComponentDecl X, Y @3:7
+  getDest: DottedName -> Ref_Pkg.Point.X
     getPrefix: Identifier P -> Reference.P
-    getSuffix: Identifier X -> ComponentDecl X, Y @3:7
-  getExpr: DottedName -> ComponentDecl X, Y @3:7
+    getSuffix: Identifier X -> Ref_Pkg.Point.X
+  getExpr: DottedName -> Ref_Pkg.Point.Y
     getPrefix: ExplicitDeref -> Reference.Ptr
       getPrefix: Identifier Ptr -> Reference.Ptr
-    getSuffix: Identifier Y -> ComponentDecl X, Y @3:7
+    getSuffix: Identifier Y -> Ref_Pkg.Point.Y
 ```
 
 - `Ptr.all` is an `ExplicitDeref`. It resolves to the *pointer* object, not to
   what it points at.
 - A component selection resolves, as a whole and in its suffix, to the
-  `ComponentDecl`. Here that declaration names both `X` and `Y`, so it has no
-  qualified name (see [Name resolution](#name-resolution)); `S.Id` shows
-  `-> Ref_Pkg.Shape.Id`.
+  `ComponentDecl`. That declaration names both `X` and `Y`, so it carries both
+  qualified names, and the tree shows the one each name denotes
+  (see [Name resolution](#name-resolution)).
 - An implicit dereference has no node at all. With `Q : Rec_Access`, `Q.Field` is
   just `DottedName -> Test.Rec.Field` with prefix `Identifier Q -> Test.Q`. You
   can't tell it from a selection on a record object without looking at `Q`'s type.
@@ -675,7 +675,7 @@ getDefaultExpr: Aggregate
   getAssocs: AssocList
     [0]: AggregateAssoc
       getDesignators: AlternativesList
-        [0]: Identifier X -> ComponentDecl X, Y @3:7
+        [0]: Identifier X -> Ref_Pkg.Point.X
       getRExpr: IntLiteral 1
     [1]: AggregateAssoc  ...  Y => 2
 getDefaultExpr: Aggregate
@@ -800,12 +800,13 @@ What to expect:
   `Put_Line` resolves into `a-textio.ads`, a predefined pseudo-source (D-026). Match
   them with `hasQualifiedName("Ada.Text_IO.Put_Line")`, after `getUltimateDecl()`
   to see through renamings.
-- **Declarations of several names have no qualified name.** `A, B : Integer` and
-  record components `X, Y : Integer` resolve, but `getQualifiedName()` has no result
-  for them, so `hasQualifiedName` never matches. Subprograms, packages, types and
-  exceptions are declared one name at a time in practice, so matching runtime
-  entities is unaffected; matching a multi-name object by qualified name is not
-  possible.
+- **A declaration of several names has one qualified name per name.** For
+  `A, B : Integer`, `getQualifiedName()` gives both `Reference.A` and `Reference.B`,
+  and `hasQualifiedName` matches either. The declaration is one node, so a reference
+  to `A` resolves to the same `ObjectDecl` as a reference to `B`, and
+  `n.getReferencedDecl().hasQualifiedName("Reference.B")` holds for both. When it
+  matters which name, compare the name's text too, or use `Name.denotesSameEntityAs`.
+  (Before the 2026-10-03 extractor change, such declarations had no qualified name.)
 - **What does not resolve:** predefined operators, attributes, pragma and aspect
   identifiers, and names the extractor's project setup could not see (see the user
   guide, "Project discovery and name-resolution quality").

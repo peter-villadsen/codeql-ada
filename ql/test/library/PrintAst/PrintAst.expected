@@ -283,11 +283,11 @@
 | reference.adb | 43 | 4:29 |               getAssocs: AssocList |
 | reference.adb | 44 | 4:29 |                 [0]: AggregateAssoc |
 | reference.adb | 45 | 4:29 |                   getDesignators: AlternativesList |
-| reference.adb | 46 | 4:29 |                     [0]: Identifier X -> ComponentDecl X, Y @3:7 |
+| reference.adb | 46 | 4:29 |                     [0]: Identifier X -> Ref_Pkg.Point.X |
 | reference.adb | 47 | 4:34 |                   getRExpr: IntLiteral 1 |
 | reference.adb | 48 | 4:37 |                 [1]: AggregateAssoc |
 | reference.adb | 49 | 4:37 |                   getDesignators: AlternativesList |
-| reference.adb | 50 | 4:37 |                     [0]: Identifier Y -> ComponentDecl X, Y @3:7 |
+| reference.adb | 50 | 4:37 |                     [0]: Identifier Y -> Ref_Pkg.Point.Y |
 | reference.adb | 51 | 4:42 |                   getRExpr: IntLiteral 2 |
 | reference.adb | 52 | 5:4 |           [1]: ObjectDecl |
 | reference.adb | 53 | 5:4 |             getIds: DefiningNameList |
@@ -387,7 +387,7 @@
 | reference.adb | 147 | 10:10 |               getHasNotNull: NotNullAbsent |
 | reference.adb | 148 | 10:11 |               getName: Identifier Integer -> Standard.Integer |
 | reference.adb | 149 | 10:19 |             getRenamingClause: RenamingClause |
-| reference.adb | 150 | 10:27 |               getRenamedObject: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 150 | 10:27 |               getRenamedObject: Identifier A -> Reference.A |
 | reference.adb | 151 | 11:4 |           [7]: SubpRenamingDecl |
 | reference.adb | 152 | 10:29 |             getOverriding: OverridingUnspecified |
 | reference.adb | 153 | 11:4 |             getSubpSpec: SubpSpec |
@@ -466,12 +466,12 @@
 | reference.adb | 226 | 16:6 |       getStmts: HandledStmts |
 | reference.adb | 227 | 17:4 |         getStmts: StmtList |
 | reference.adb | 228 | 17:4 |           [0]: AssignStmt |
-| reference.adb | 229 | 17:4 |             getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 229 | 17:4 |             getDest: Identifier A -> Reference.A |
 | reference.adb | 230 | 17:9 |             getExpr: CallExpr -> Reference.Twice |
 | reference.adb | 231 | 17:9 |               getName: Identifier Twice -> Reference.Twice |
 | reference.adb | 232 | 17:16 |               getSuffix: AssocList |
 | reference.adb | 233 | 17:16 |                 [0]: ParamAssoc |
-| reference.adb | 234 | 17:16 |                   getRExpr: Identifier B -> ObjectDecl A, B @5:4 |
+| reference.adb | 234 | 17:16 |                   getRExpr: Identifier B -> Reference.B |
 | reference.adb | 235 | 18:4 |           [1]: CallStmt |
 | reference.adb | 236 | 18:4 |             getCall: CallExpr -> Reference.Log |
 | reference.adb | 237 | 18:4 |               getName: Identifier Log -> Reference.Log |
@@ -507,7 +507,7 @@
 | reference.adb | 267 | 22:21 |                 [1]: ParamAssoc |
 | reference.adb | 268 | 22:21 |                   getRExpr: IntLiteral 3 |
 | reference.adb | 269 | 23:4 |           [6]: AssignStmt |
-| reference.adb | 270 | 23:4 |             getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 270 | 23:4 |             getDest: Identifier A -> Reference.A |
 | reference.adb | 271 | 23:9 |             getExpr: CallExpr -> Reference.Arr |
 | reference.adb | 272 | 23:9 |               getName: Identifier Arr -> Reference.Arr |
 | reference.adb | 273 | 23:14 |               getSuffix: AssocList |
@@ -525,7 +525,7 @@
 | reference.adb | 285 | 24:22 |                       getOp: OpDoubleDot .. |
 | reference.adb | 286 | 24:25 |                       getRight: IntLiteral 2 |
 | reference.adb | 287 | 25:4 |           [8]: AssignStmt |
-| reference.adb | 288 | 25:4 |             getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 288 | 25:4 |             getDest: Identifier A -> Reference.A |
 | reference.adb | 289 | 25:9 |             getExpr: CallExpr -> Standard.Integer |
 | reference.adb | 290 | 25:9 |               getName: Identifier Integer -> Standard.Integer |
 | reference.adb | 291 | 25:18 |               getSuffix: AssocList |
@@ -537,7 +537,7 @@
 | reference.adb | 297 | 25:32 |                     getSuffix: ParenExpr |
 | reference.adb | 298 | 25:33 |                       getExpr: IntLiteral 3 |
 | reference.adb | 299 | 26:4 |           [9]: AssignStmt |
-| reference.adb | 300 | 26:4 |             getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 300 | 26:4 |             getDest: Identifier A -> Reference.A |
 | reference.adb | 301 | 26:9 |             getExpr: BinOp |
 | reference.adb | 302 | 26:9 |               getLeft: AttributeRef |
 | reference.adb | 303 | 26:9 |                 getPrefix: Identifier Name -> Reference.Name |
@@ -553,18 +553,18 @@
 | reference.adb | 313 | 26:38 |                   [0]: ParamAssoc |
 | reference.adb | 314 | 26:38 |                     getRExpr: StringLiteral "4" |
 | reference.adb | 315 | 27:4 |           [10]: AssignStmt |
-| reference.adb | 316 | 27:4 |             getDest: DottedName -> ComponentDecl X, Y @3:7 |
+| reference.adb | 316 | 27:4 |             getDest: DottedName -> Ref_Pkg.Point.X |
 | reference.adb | 317 | 27:4 |               getPrefix: Identifier P -> Reference.P |
-| reference.adb | 318 | 27:6 |               getSuffix: Identifier X -> ComponentDecl X, Y @3:7 |
-| reference.adb | 319 | 27:11 |             getExpr: DottedName -> ComponentDecl X, Y @3:7 |
+| reference.adb | 318 | 27:6 |               getSuffix: Identifier X -> Ref_Pkg.Point.X |
+| reference.adb | 319 | 27:11 |             getExpr: DottedName -> Ref_Pkg.Point.Y |
 | reference.adb | 320 | 27:11 |               getPrefix: ExplicitDeref -> Reference.Ptr |
 | reference.adb | 321 | 27:11 |                 getPrefix: Identifier Ptr -> Reference.Ptr |
-| reference.adb | 322 | 27:19 |               getSuffix: Identifier Y -> ComponentDecl X, Y @3:7 |
+| reference.adb | 322 | 27:19 |               getSuffix: Identifier Y -> Ref_Pkg.Point.Y |
 | reference.adb | 323 | 28:4 |           [11]: AssignStmt |
 | reference.adb | 324 | 28:4 |             getDest: Identifier Flag -> Reference.Flag |
 | reference.adb | 325 | 28:12 |             getExpr: BinOp |
 | reference.adb | 326 | 28:12 |               getLeft: RelationOp |
-| reference.adb | 327 | 28:12 |                 getLeft: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 327 | 28:12 |                 getLeft: Identifier A -> Reference.A |
 | reference.adb | 328 | 28:14 |                 getOp: OpGt > |
 | reference.adb | 329 | 28:16 |                 getRight: IntLiteral 0 |
 | reference.adb | 330 | 28:18 |               getOp: OpAndThen and then |
@@ -572,7 +572,7 @@
 | reference.adb | 332 | 28:27 |                 getOp: OpNot not |
 | reference.adb | 333 | 28:31 |                 getExpr: Identifier Flag -> Reference.Flag |
 | reference.adb | 334 | 29:4 |           [12]: AssignStmt |
-| reference.adb | 335 | 29:4 |             getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 335 | 29:4 |             getDest: Identifier A -> Reference.A |
 | reference.adb | 336 | 29:9 |             getExpr: ParenExpr |
 | reference.adb | 337 | 29:10 |               getExpr: IfExpr |
 | reference.adb | 338 | 29:13 |                 getCondExpr: Identifier Flag -> Reference.Flag |
@@ -581,7 +581,7 @@
 | reference.adb | 341 | 29:30 |                 getElseExpr: IntLiteral 2 |
 | reference.adb | 342 | 30:4 |           [13]: IfStmt |
 | reference.adb | 343 | 30:7 |             getCondExpr: RelationOp |
-| reference.adb | 344 | 30:7 |               getLeft: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 344 | 30:7 |               getLeft: Identifier A -> Reference.A |
 | reference.adb | 345 | 30:9 |               getOp: OpEq = |
 | reference.adb | 346 | 30:11 |               getRight: IntLiteral 1 |
 | reference.adb | 347 | 30:18 |             getThenStmts: StmtList |
@@ -589,20 +589,20 @@
 | reference.adb | 349 | 30:24 |             getAlternatives: ElsifStmtPartList |
 | reference.adb | 350 | 30:24 |               [0]: ElsifStmtPart |
 | reference.adb | 351 | 30:30 |                 getCondExpr: RelationOp |
-| reference.adb | 352 | 30:30 |                   getLeft: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 352 | 30:30 |                   getLeft: Identifier A -> Reference.A |
 | reference.adb | 353 | 30:32 |                   getOp: OpEq = |
 | reference.adb | 354 | 30:34 |                   getRight: IntLiteral 2 |
 | reference.adb | 355 | 30:41 |                 getStmts: StmtList |
 | reference.adb | 356 | 30:41 |                   [0]: AssignStmt |
-| reference.adb | 357 | 30:41 |                     getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 357 | 30:41 |                     getDest: Identifier A -> Reference.A |
 | reference.adb | 358 | 30:46 |                     getExpr: IntLiteral 3 |
 | reference.adb | 359 | 30:49 |             getElsePart: ElsePart |
 | reference.adb | 360 | 30:54 |               getStmts: StmtList |
 | reference.adb | 361 | 30:54 |                 [0]: AssignStmt |
-| reference.adb | 362 | 30:54 |                   getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 362 | 30:54 |                   getDest: Identifier A -> Reference.A |
 | reference.adb | 363 | 30:59 |                   getExpr: IntLiteral 4 |
 | reference.adb | 364 | 31:4 |           [14]: CaseStmt |
-| reference.adb | 365 | 31:9 |             getExpr: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 365 | 31:9 |             getExpr: Identifier A -> Reference.A |
 | reference.adb | 366 | 31:13 |             getPragmas: PragmaNodeList |
 | reference.adb | 367 | 31:14 |             getAlternatives: CaseStmtAlternativeList |
 | reference.adb | 368 | 31:14 |               [0]: CaseStmtAlternative |
@@ -616,7 +616,7 @@
 | reference.adb | 376 | 31:39 |                   [0]: OthersDesignator |
 | reference.adb | 377 | 31:49 |                 getStmts: StmtList |
 | reference.adb | 378 | 31:49 |                   [0]: AssignStmt |
-| reference.adb | 379 | 31:49 |                     getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 379 | 31:49 |                     getDest: Identifier A -> Reference.A |
 | reference.adb | 380 | 31:54 |                     getExpr: IntLiteral 0 |
 | reference.adb | 381 | 32:4 |           [15]: ForLoopStmt |
 | reference.adb | 382 | 32:8 |             getSpec: ForLoopSpec |
@@ -640,19 +640,19 @@
 | reference.adb | 400 | 33:4 |           [16]: WhileLoopStmt |
 | reference.adb | 401 | 33:4 |             getSpec: WhileLoopSpec |
 | reference.adb | 402 | 33:10 |               getExpr: RelationOp |
-| reference.adb | 403 | 33:10 |                 getLeft: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 403 | 33:10 |                 getLeft: Identifier A -> Reference.A |
 | reference.adb | 404 | 33:12 |                 getOp: OpLt < |
 | reference.adb | 405 | 33:14 |                 getRight: IntLiteral 10 |
 | reference.adb | 406 | 33:22 |             getStmts: StmtList |
 | reference.adb | 407 | 33:22 |               [0]: AssignStmt |
-| reference.adb | 408 | 33:22 |                 getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 408 | 33:22 |                 getDest: Identifier A -> Reference.A |
 | reference.adb | 409 | 33:27 |                 getExpr: BinOp |
-| reference.adb | 410 | 33:27 |                   getLeft: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 410 | 33:27 |                   getLeft: Identifier A -> Reference.A |
 | reference.adb | 411 | 33:29 |                   getOp: OpPlus + |
 | reference.adb | 412 | 33:31 |                   getRight: IntLiteral 1 |
 | reference.adb | 413 | 33:34 |               [1]: ExitStmt |
 | reference.adb | 414 | 33:44 |                 getCondExpr: RelationOp |
-| reference.adb | 415 | 33:44 |                   getLeft: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 415 | 33:44 |                   getLeft: Identifier A -> Reference.A |
 | reference.adb | 416 | 33:46 |                   getOp: OpEq = |
 | reference.adb | 417 | 33:48 |                   getRight: IntLiteral 5 |
 | reference.adb | 418 | 34:4 |           [17]: DeclBlock |
@@ -668,11 +668,11 @@
 | reference.adb | 428 | 34:18 |                   getTypeExpr: SubtypeIndication |
 | reference.adb | 429 | 34:17 |                     getHasNotNull: NotNullAbsent |
 | reference.adb | 430 | 34:18 |                     getName: Identifier Integer -> Standard.Integer |
-| reference.adb | 431 | 34:29 |                   getDefaultExpr: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 431 | 34:29 |                   getDefaultExpr: Identifier A -> Reference.A |
 | reference.adb | 432 | 34:37 |             getStmts: HandledStmts |
 | reference.adb | 433 | 34:38 |               getStmts: StmtList |
 | reference.adb | 434 | 34:38 |                 [0]: AssignStmt |
-| reference.adb | 435 | 34:38 |                   getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 435 | 34:38 |                   getDest: Identifier A -> Reference.A |
 | reference.adb | 436 | 34:43 |                   getExpr: Identifier Tmp -> Reference.Tmp |
 | reference.adb | 437 | 34:58 |               getExceptions: AdaNodeList |
 | reference.adb | 438 | 34:58 |                 [0]: ExceptionHandler |
@@ -689,7 +689,7 @@
 | reference.adb | 449 | 35:11 |                 getSuffix: Identifier Put -> Ada.Text_IO.Integer_IO.Put |
 | reference.adb | 450 | 35:16 |               getSuffix: AssocList |
 | reference.adb | 451 | 35:16 |                 [0]: ParamAssoc |
-| reference.adb | 452 | 35:16 |                   getRExpr: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 452 | 35:16 |                   getRExpr: Identifier A -> Reference.A |
 | reference.adb | 453 | 35:19 |         getExceptions: AdaNodeList |
 | reference.adb | 454 | 36:5 |       getEndName: EndName -> Reference |
 | reference.adb | 455 | 36:5 |         getName: Identifier Reference -> Reference |

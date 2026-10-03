@@ -37,6 +37,7 @@ import functools
 import json
 import os
 import pathlib
+import re
 import shutil
 import subprocess
 import sys
@@ -128,7 +129,8 @@ class Extractor:
         self.out_units = set()
         self._walkable = {}
         self.stats = {"nodes": 0, "xref": 0, "types": 0, "diags": 0,
-                      "nameres_errors": 0, "comments": 0, "body_part": 0}
+                      "nameres_errors": 0, "comments": 0, "body_part": 0,
+                      "body_part_syntactic": 0}
 
     def emit_file_tree(self, w: TrapWriter, path: str) -> str:
         """files() row plus folder chain; returns the file label."""
@@ -259,15 +261,55 @@ class Extractor:
             return True
         return path in self.predefined
 
+    def body_part(self, w, node, lbl):
+        """Emits `ada_body_part(node, body)` (D-021). `p_body_part` is a property
+        on some BasicDecl subclasses (e.g. BasePackageDecl) and a method on others
+        (e.g. ClassicSubpDecl); both shapes are normalized here. A stub
+        (`procedure P is separate;`) is paired with its subunit's body. When
+        Libadalang finds no body for a subprogram declaration -- its pairing checks
+        profile conformance, which needs the formals' types resolved, so with a type
+        from a missing dependency it raises or returns nothing -- a syntactic
+        pairing (`syntactic_body`) is tried. That finds nothing for an abstract or
+        imported subprogram, which has no same-profile body."""
+        body = None
+        try:
+            if isinstance(node, lal.BodyStub):
+                body = node.p_next_part_for_decl()
+            else:
+                bp = getattr(node, "p_body_part", None)
+                body = bp() if callable(bp) else bp
+        except Exception:
+            body = None
+        if body is None and isinstance(node, lal.SubpDecl):
+            try:
+                body = syntactic_body(node)
+            except Exception:
+                body = None
+            if body is not None:
+                self.stats["body_part_syntactic"] += 1
+        if self.accept(body):
+            w.row("ada_body_part", lbl, w.label(node_key(body)))
+            self.stats["body_part"] += 1
+
     def semantics(self, w, node, lbl):
         if isinstance(node, lal.BasicDecl):
             # Separate from the rows below, so a failure here costs only this one.
+            # One row per defining name: Libadalang refuses the declaration-level
+            # property for a declaration of several names (`A, B : T`).
             try:
-                fq = node.p_fully_qualified_name
-                if fq:
-                    w.row("ada_qualified_name", lbl, q(fq))
+                names = node.p_defining_names
+                if len(names) == 1:
+                    fqs = [node.p_fully_qualified_name]
+                else:
+                    fqs = [n.p_fully_qualified_name for n in names]
+                for fq in fqs:
+                    if fq:
+                        w.row("ada_qualified_name", lbl, q(fq))
             except Exception:
                 pass
+            # Also separate: a body pairing that needs name resolution can fail on
+            # its own (e.g. a parameter type from a missing dependency).
+            self.body_part(w, node, lbl)
         try:
             if isinstance(node, lal.Name) and not node.p_is_defining:
                 decl = node.p_referenced_decl()
@@ -284,19 +326,85 @@ class Extractor:
                 if self.accept(d):
                     w.row("ada_generic_instantiation", lbl,
                           w.label(node_key(d)))
-            if isinstance(node, lal.BasicDecl):
-                # p_body_part is a property on some BasicDecl subclasses
-                # (e.g. BasePackageDecl) and a method on others (e.g.
-                # ClassicSubpDecl) -- normalize both shapes here (D-021).
-                bp = getattr(node, "p_body_part", None)
-                body = bp() if callable(bp) else bp
-                if self.accept(body):
-                    w.row("ada_body_part", lbl, w.label(node_key(body)))
-                    self.stats["body_part"] += 1
         except lal.PropertyError:
             self.stats["nameres_errors"] += 1
         except Exception:
             self.stats["nameres_errors"] += 1
+
+
+def _squash(text: str) -> str:
+    """Lower-cased text without whitespace, for comparing source fragments."""
+    return re.sub(r"\s+", "", text).lower()
+
+
+def _profile(spec):
+    """The syntactic profile of a SubpSpec: its kind, then (name, mode) for each
+    formal, then the formals' type texts and the result type text. An absent mode
+    is `in`, as Ada defines it."""
+    kind = spec.f_subp_kind.kind_name
+    names, types = [], []
+    if spec.f_subp_params is not None:
+        for ps in spec.f_subp_params.f_params:
+            mode = ps.f_mode.kind_name if ps.f_mode is not None else "ModeDefault"
+            mode = "ModeIn" if mode == "ModeDefault" else mode
+            for dn in ps.f_ids:
+                names.append((dn.text.lower(), mode))
+                types.append(_squash(ps.f_type_expr.text))
+    ret = _squash(spec.f_subp_returns.text) if spec.f_subp_returns is not None else ""
+    return (kind, tuple(names)), (tuple(types), ret)
+
+
+def _decl_list_of_body(region):
+    """The declaration list of the body that completes the package whose public or
+    private part is `region`, if it can be found."""
+    pkg = region.parent
+    if isinstance(pkg, lal.GenericPackageInternal):
+        pkg = pkg.parent
+    body = pkg.p_body_part
+    if body is None or body.f_decls is None:
+        return None
+    return body.f_decls.f_decls
+
+
+def syntactic_body(decl):
+    """Pairs subprogram declaration `decl` with its completion by syntax, for when
+    Libadalang's own pairing fails (it needs the formals' types resolved). Ada
+    requires a completion to be fully conformant: same name, kind, formal names
+    and modes, and lexically equivalent types. Candidates are the same-named bodies
+    (and stubs) in the matching region: the package body for a declaration in a
+    package spec, else the rest of the same declarative part. A unique candidate
+    with the same kind, formal names and modes is the completion; if several
+    remain, the type texts decide; still ambiguous gives none."""
+    name = decl.p_defining_name.text.lower()
+    spec_key, spec_types = _profile(decl.f_subp_spec)
+    region = decl.parent.parent
+    if isinstance(region, (lal.PublicPart, lal.PrivatePart)):
+        lists = [_decl_list_of_body(region)]
+    elif isinstance(region, lal.DeclarativePart):
+        lists = [decl.parent]
+    else:
+        return None
+    found_decl = False
+    candidates = []
+    for lst in lists:
+        if lst is None:
+            continue
+        for c in lst:
+            if c == decl:
+                found_decl = True
+                continue
+            if lst is decl.parent and not found_decl:
+                continue  # a completion follows its declaration
+            if not isinstance(c, (lal.BaseSubpBody, lal.SubpBodyStub)):
+                continue
+            if c.p_defining_name.text.lower() != name:
+                continue
+            key, types = _profile(c.f_subp_spec)
+            if key == spec_key:
+                candidates.append((c, types))
+    if len(candidates) > 1:
+        candidates = [(c, t) for c, t in candidates if t == spec_types]
+    return candidates[0][0] if len(candidates) == 1 else None
 
 
 def find_gpr(src_root: pathlib.Path):
@@ -460,7 +568,7 @@ def main() -> int:
                                   str(os.cpu_count() or 1)))
     totals = dict.fromkeys(
         ("nodes", "xref", "types", "diags", "nameres_errors", "comments",
-         "body_part", "predefined_files"), 0)
+         "body_part", "body_part_syntactic", "predefined_files"), 0)
 
     results, jobs = run_pass(_extract_one, files, max_jobs,
                              (gpr, files, runtime, None, trap_dir, archive_dir))

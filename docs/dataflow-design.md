@@ -187,13 +187,11 @@ happen):
 | **Access-to-subprogram calls** (`Fn (X)`, `Fn.all (X)`). | Unresolved. | `MISSING: flow=21` |
 | **Calls to a generic subprogram instance** (`function Inst is new G`). | Unresolved, because the instance has no body row. Calls inside a generic body to its generic formal subprograms are also unresolved. A subprogram of a generic *package* instance is different: the call resolves to its declaration in the generic, so flow enters the generic's single body, shared by all instances, and each return still goes back to its own call site (corrected in Task 9.6). | `MISSING: flow=20`; package instance `flow=32` |
 | **Task entry calls.** | Unresolved: an entry has no `SubpSpec` target. | `MISSING: flow=24` |
-| **Separate bodies.** The call resolves to the `is separate` stub, which has no body row. | Unresolved. | `MISSING: flow=25` |
 | **Protected operations** (`PO.Op`). | Left out, because the prefix is not a formal. | `MISSING: flow=31` |
 | **Default parameter values.** They are not evaluated in any CFG. | A formal left to its default receives nothing. | `MISSING: flow=27` |
 | **Extended return statements** (`return R : T do ... end return`). | Not a return node. | `MISSING: flow=30` |
 | **Uncertain write-back.** | The actual's old value survives every `out`/`in out` call. | `SPURIOUS: flow=12`, `flow=15` |
 | **Renamings of prefixed views or attributes** (`renames Obj.Op`, `renames T'Image`). | Unresolved. | none |
-| **Missing `ada_body_part` rows.** Some declarations that have a body have no row, because Libadalang's `p_body_part` fails or is not reached. | Unresolved. | none (see the corpus numbers below) |
 | **No content, no package-level variables, no call-context pruning.** | See "Minimal in v1". | none |
 
 ### Measured on the corpus (2026-09-25)
@@ -213,6 +211,28 @@ extracted (D-026). That is expected, and Task 9.5's source and sink models are b
 those specs. The "no body row" column is a coverage gap in Task 9.1: 1–4% of calls into
 project code. That is small enough not to count as stop-and-ask case 3 in
 `docs/phase9.2-plan.md`.
+
+**Closed (2026-10-03).** The gap had one cause. Libadalang pairs a spec with its body by
+checking that their profiles conform, which needs the formals' types resolved, so a type
+from a missing dependency made the pairing raise or return nothing (alire's
+`Put_Info (Text : String; Level : Trace.Levels := Info)`). The extractor now falls back to
+a syntactic pairing for a subprogram declaration with no body: same name, kind, formal
+names and modes in the matching region, with the type text breaking ties. It also pairs a
+`separate` stub with its subunit's body. Calls to a project declaration with no body row,
+re-measured:
+
+| Project | Before | After | Of which imported |
+| --- | ---: | ---: | ---: |
+| alire | 91 | 4 | 3 |
+| gpr2 | 210 | 207 | 206 |
+| libadalang-tools | 59 | 59 | 42 |
+| libkeccak | 9 | 11 | 11 |
+
+libkeccak's count rose because two imported SIMD operators became calls when user-defined
+operators did. Apart from imported foreign subprograms, what remains is 17 test-suite
+specs in libadalang-tools whose bodies are not in the repository, plus one call each in
+alire and gpr2. libadalang-tools' count did not drop: its remaining gaps were never
+pairing failures.
 
 The consistency checks are empty on all five projects. A stress configuration (every
 string literal as a source, every argument of an unresolved call as a sink) runs in 5–20 s

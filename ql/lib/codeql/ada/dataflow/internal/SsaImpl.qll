@@ -202,6 +202,10 @@ private Raw::SubpSpec getSubpSpecOf(Raw::BasicDecl d) {
   result = d.(Raw::ClassicSubpDecl).getSubpSpec()
   or
   result = d.(Raw::BaseSubpBody).getSubpSpec()
+  or
+  // a separate body's stub (`procedure P is separate;`), the declaration when there
+  // is no other; `ada_body_part` pairs it with the subunit's body
+  result = d.(Raw::SubpBodyStub).getSubpSpec()
 }
 
 /**

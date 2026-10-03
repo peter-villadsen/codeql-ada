@@ -46,19 +46,13 @@ limitations found" lists, in order of payoff:
 **Open items, deliberately not started** (details in `docs/dataflow-design.md`,
 "Named v1 limitations"):
 
-- **Missing `ada_body_part` rows.** 1–4% of calls into project code reach a declaration
-  that has a body but no row (for example `Alire.Put_Info`), so those calls stay
-  unresolved. This is an extractor coverage gap from 9.1 and is not diagnosed yet. It is
-  the only open item that is a defect rather than a scope choice, and is worth doing
-  soon whatever 9.6 shows.
-- **Multi-name declarations have no qualified name.** `A, B : Integer` and `X, Y : T`
-  components resolve, but `ada_qualified_name` has no row for them (Libadalang computes the
-  name per declaration), so `hasQualifiedName` cannot match them. Fixing it means keying the
-  qualified name by defining name: a dbscheme change. Low impact today: no shipped query
-  matches an object by qualified name.
+- ~~Missing `ada_body_part` rows~~ **fixed 2026-10-03**: syntactic pairing when Libadalang's
+  fails (alire 91 -> 4 unresolved calls; the rest are imported subprograms).
+- ~~Multi-name declarations have no qualified name~~ **fixed 2026-10-03**: one
+  `ada_qualified_name` row per defining name (dbscheme change: `decl` is no longer unique).
+- ~~Separate bodies~~ **fixed 2026-10-03**: stub-to-body rows (`flow=25` now passes).
 - **Small limitations (hours each):** protected operations, default parameter values,
-  extended `return` statements, and separate bodies. For separate bodies the extractor
-  could emit a stub-to-body row; that needs no schema change, only rebuilt databases.
+  extended `return` statements.
 - **Large limitations (each a project of its own):** dispatching calls,
   access-to-subprogram calls, calls into generic instances.
 - **Kept on purpose:** an `out`/`in out` write-back is uncertain, so the caller's old

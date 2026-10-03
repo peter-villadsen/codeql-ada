@@ -14,17 +14,42 @@ private import ada
 private import codeql.ada.ast.internal.RawMeta
 
 /**
- * Gets how declaration `d` is shown as a resolution target: its qualified name, or,
- * when Libadalang gives it none (a declaration of several names, `A, B : T`), its
- * class, names and position.
+ * Gets how declaration `d`, as the target of name `n`, is shown: the qualified name
+ * of the defining name `n` denotes. A declaration of several names (`A, B : T`) has
+ * one qualified name per name, so the one whose last component is spelled like `n`
+ * is chosen; all of them when none is. A declaration with no qualified name shows
+ * its class, names and position.
  */
-private string declLabel(Raw::BasicDecl d) {
+private string declLabel(Raw::Name n, Raw::BasicDecl d) {
+  d = n.(Name).getReferencedDecl() and
   if exists(d.(BasicDecl).getQualifiedName())
-  then result = d.(BasicDecl).getQualifiedName()
+  then
+    exists(string last | last = lastComponent(n) |
+      if exists(string q | q = d.(BasicDecl).getQualifiedName() and endsWithName(q, last))
+      then result = d.(BasicDecl).getQualifiedName() and endsWithName(result, last)
+      else result = d.(BasicDecl).getQualifiedName()
+    )
+    or
+    not exists(lastComponent(n)) and result = d.(BasicDecl).getQualifiedName()
   else
     result =
       d.getAPrimaryQlClass() + " " + concat(d.(BasicDecl).getAName(), ", ") + " @" +
         d.getLocation().getStartLine() + ":" + d.getLocation().getStartColumn()
+}
+
+/** Gets the text of `n`'s last component: a dotted name's suffix, else its own text. */
+private string lastComponent(Raw::Name n) {
+  result = n.(Raw::DottedName).getSuffix().(Name).getText()
+  or
+  not n instanceof Raw::DottedName and result = n.(Name).getText()
+}
+
+/** Holds if qualified name `q`'s last component is `last`, ignoring case. */
+bindingset[q, last]
+private predicate endsWithName(string q, string last) {
+  exists(string ql, string ll | ql = q.toLowerCase() and ll = last.toLowerCase() |
+    ql = ll or ql.suffix(ql.length() - ll.length() - 1) = "." + ll
+  )
 }
 
 /** Gets the label of `n`: its class, then its token text and resolution, if any. */
@@ -33,7 +58,9 @@ string nodeLabel(Raw::AdaNode n) {
     (if exists(tokenText(n)) then text = " " + tokenText(n) else text = "") and
     (
       if exists(n.(Name).getReferencedDecl())
-      then target = " -> " + concat(declLabel(n.(Name).getReferencedDecl()), " | ")
+      then
+        target =
+          " -> " + concat(string s | s = declLabel(n, _) | s, " | ")
       else target = ""
     ) and
     result = n.getAPrimaryQlClass() + text + target
