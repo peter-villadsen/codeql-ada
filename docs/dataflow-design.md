@@ -220,42 +220,68 @@ literal passed down into `Locate_In_Path` and on to `Locate_Exec_On_Path`, and a
 **Entry points.** Queries import `codeql.ada.dataflow.DataFlow` and
 `codeql.ada.dataflow.TaintTracking`, not the `internal` modules.
 `DataFlow::Global<Config>` is value-preserving flow and `TaintTracking::Global<Config>`
-adds derived-value steps; both take a `DataFlow::ConfigSig`. `DataFlow` also provides
-`getCallTarget(call)`, which resolves through subprogram renamings, and
-`isArgumentFor(call, actual, formal)`, which binds an actual to a formal *by name*
-whether it was passed by position or by name. That is the natural way to write a sink
-for one parameter of a runtime subprogram.
+adds derived-value steps; both take a `DataFlow::ConfigSig`. `DataFlow` also has the
+helpers sources and sinks are written with, all resolving through renamings and `use`
+clauses (D-026):
 
-**Taint steps** (`internal/TaintTrackingImpl.qll`; all are steps between expressions):
+| Helper | Holds / gives |
+| --- | --- |
+| `isCallTo(call, "Pkg.Sub")` | `call` invokes the subprogram with that qualified name (every overload). |
+| `getAnArgument(call)` | Any actual of `call`, positional or named. |
+| `isArgumentFor(call, actual, "Formal")` | `actual` is passed for the formal of that name, however it was associated. |
+| `isArgumentAt(call, actual, i)` | `actual` is passed for the `i`th formal (0-based). |
+| `isParameterOf(node, "Pkg.Sub")` | `node` is an `in`/`in out` formal of that subprogram as it receives the caller's value. |
+| `getCallTarget(call)` | The declaration called. |
+
+`docs/query-writing.md`, "Data flow and taint tracking", shows them used.
+
+**Taint steps** (`internal/TaintTrackingImpl.qll`; all are steps between expressions, and
+each is pinned in `ql/test/library/TaintTracking`):
 
 | Step | Why |
 | --- | --- |
 | `A & B` (both `BinOp` and `ConcatOp` chains) | Building a command line by concatenation. |
 | Aggregate element to aggregate, allocator operand to allocator, `P` to `P.all` | Stand-ins for the content flow v1 lacks: building an `Argument_List` as `(1 => new String'(X))` keeps `X`'s taint. Coarse: the whole aggregate is tainted, not one element. |
-| Type conversion `T (X)`, indexing and slicing `S (I)` | Derived values of the same data. |
-| `Ada.Strings.Unbounded.To_String` / `To_Unbounded_String`, `Ada.Strings.Fixed.Trim`, `Ada.Characters.Handling.To_Lower` / `To_Upper`, `System.OS_Lib.Argument_String_To_List` | Runtime functions have no bodies (D-026), so these are summarised "any argument to result". The list is deliberately short; it is the place to add models. |
+| Type conversion `T (X)`; indexing and slicing `S (I)` | Derived values of the same data. Only a simple or dotted prefix makes a conversion: `T'(...) (I)` indexes, although Libadalang has the qualified expression reference `T`. |
+| `Ada.Strings.Unbounded.To_String` / `To_Unbounded_String`, `Ada.Strings.Fixed.Trim`, `Ada.Characters.Handling.To_Lower` / `To_Upper`, `System.OS_Lib.Argument_String_To_List`, `Interfaces.C.To_C`, `Interfaces.C.Strings.New_String` | Runtime functions have no bodies (D-026), so these are summarised "any argument to result". The list is deliberately short; it is the place to add models. |
 
 There are no default sanitizers.
 
-**`ada/command-line-injection`** (`ql/src/queries/CommandLineInjection.ql`, path-problem).
-The source is a call to `Ada.Command_Line.Argument` and the sink is the
-`Program_Name` or `Args` actual of a call to `System.OS_Lib.Spawn` or
-`System.OS_Lib.Non_Blocking_Spawn`. Both ends are matched semantically (D-026), so a bare
-`Argument (1)` under a `use` clause, a renaming of `Argument`, and both the `GNAT.OS_Lib`
-and `System.OS_Lib` spellings are covered. **Every overload of either is a sink, but only
-at `Program_Name` and `Args`.** `Output_File`, `Stdout_File` and `Stderr_File` name files,
-which is a path problem, not a command; the descriptors, `Success`, `Return_Code` and
-`Err_To_Out` carry no command. All eight overloads (GNAT 14's `s-os_lib.ads`) have those two
-formals, so the sink is written by formal name and needs no overload list. Other ways to
-run a command (`GNAT.Expect`, `Interfaces.C` `system`) are not sinks yet.
+**`codeql/ada/security/CommandInjection.qll`** holds the query's model as extension
+points: abstract classes `CommandInjection::Source`, `Sink` and `Barrier`, which a query
+importing the module extends by declaring subclasses, plus `CommandInjection::Config` and
+`CommandInjection::Flow`. The built-in members:
 
-The test (`ql/test/queries/CommandLineInjection`) routes every tainted value through at
-least one intermediate subprogram. It covers up through a function result and then a
-concatenation, an `Argument_List` aggregate, named associations in a different order from
-the formals, and two negative cases (`Output_File`, a constant command). A second test,
-`RuntimeResolves.ql`, counts the fixture's calls that resolve to `Argument` and to `Spawn`.
-If the GNAT runtime was not found it has no rows and fails, so the query cannot go blind
-without the test noticing.
+- **Source:** the result of `Ada.Command_Line.Argument`.
+- **Sinks, GNAT runtime:** `Program_Name` and `Args` of every overload of
+  `System.OS_Lib.Spawn` and `Non_Blocking_Spawn` (so `GNAT.OS_Lib`, which renames it,
+  too); `Command` and `Args` of `GNAT.Expect.Non_Blocking_Spawn`; `Command` and
+  `Arguments` of `GNAT.Expect.Get_Command_Output`. Every overload is covered because the
+  sink is written by formal name, and all eight `OS_Lib` overloads (GNAT 14
+  `s-os_lib.ads`) share those two formals. Formals that name files (`Output_File`,
+  `Stdout_File`, `Stderr_File`), carry stdin data (`Input`) or return results are not sinks.
+- **Sinks, imported C:** a subprogram imported by `pragma Import` / `Interface` or by
+  the `Import` aspect whose external name is `system` or `popen` (its first argument), or
+  one of the `exec` family (every argument: the program and its argument vector). The
+  external name is the explicit `External_Name` / `Link_Name` (aspect, pragma third
+  argument, or named) or else the Ada name lower-cased, GNAT's default for C.
+- **Not yet:** `posix_spawn`, `GNAT.Expect.TTY`, and commands assembled in a record
+  component or a package-level variable (no content flow, no jump steps).
+
+**`ada/command-line-injection`** (`ql/src/queries/CommandLineInjection.ql`, path-problem)
+is `CommandInjection::Flow` restricted to sinks in project code. Its test
+(`ql/test/queries/CommandLineInjection`) routes every tainted value through at least one
+intermediate subprogram, and covers:
+- a function result followed by concatenation;
+- an `Argument_List` aggregate;
+- named associations in a different order from the formals;
+- each of the sink kinds above;
+- four negative cases: `Output_File`, a constant command, `Get_Command_Output`'s
+  `Input`, and `popen`'s mode argument.
+
+A second test, `RuntimeResolves.ql`, counts the fixture's calls that resolve to `Argument`
+and to `Spawn`. If the GNAT runtime was not found it has no rows and fails, so the query
+cannot go blind without the test noticing.
 
 **Path display.** A path shows the source call, each formal parameter it enters, any taint
 step that ends a local step (for example `... & ...`), and the sink. Steps inside a
@@ -263,7 +289,7 @@ procedure that only copy a value are folded away by the shared library. Node lab
 close to source text (`Argument (...)`, `[param] Cmd`, `Argument_String_To_List (...).all`).
 
 **On the corpus (2026-10-03).** `codeql database analyze` with this query completes on all
-five projects in 5–8 s each, with no errors and **no results**. None of them passes a
-command-line argument to `Spawn`, so this is the expected outcome rather than evidence of
-blindness: `RuntimeResolves` shows that both ends resolve when the runtime is present.
-Task 9.6 judges precision on the full suite.
+five projects in 7–28 s each, with no errors and **no results**. None of them passes a
+command-line argument to a command sink, so this is the expected outcome rather than
+evidence of blindness: `RuntimeResolves` shows that both ends resolve when the runtime is
+present. Task 9.6 judges precision on the full suite.

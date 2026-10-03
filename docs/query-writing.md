@@ -193,17 +193,91 @@ A few things worth knowing before you instantiate it:
 
 ## Data flow and taint tracking
 
-For "does this value reach that call", import `codeql.ada.dataflow.DataFlow` and
-`codeql.ada.dataflow.TaintTracking`, write a module implementing
-`DataFlow::ConfigSig` (`isSource`, `isSink`, optionally `isBarrier`), and instantiate
-`TaintTracking::Global<Config>`, or `DataFlow::Global<Config>` when only an unchanged
-value counts. `CommandLineInjection.ql` is the worked example: a `path-problem` query
-whose sink uses `DataFlow::getCallTarget` and `DataFlow::isArgumentFor` to name one
-parameter of a runtime subprogram. Flow crosses subprogram boundaries, and the test
-should make sure it has to. What is and is not followed is listed in
+To ask "can this value reach that call?", import `codeql.ada.dataflow.DataFlow` and
+`codeql.ada.dataflow.TaintTracking`. Then write a module implementing
+`DataFlow::ConfigSig` (`isSource`, `isSink`, and optionally `isBarrier`) and instantiate
+`TaintTracking::Global<Config>`. Use `DataFlow::Global<Config>` instead when only an
+unchanged value counts. Flow crosses subprogram boundaries.
+
+**"No tainted value may reach this subprogram."** Make every argument of a call to it a
+sink:
+
+```ql
+/**
+ * @name Untrusted data reaches My_App.Db.Execute
+ * @kind path-problem
+ * @id my-app/untrusted-to-execute
+ * @problem.severity error
+ */
+
+import ada
+import codeql.ada.dataflow.DataFlow
+import codeql.ada.dataflow.TaintTracking
+import codeql.ada.security.CommandInjection
+
+module Config implements DataFlow::ConfigSig {
+  // What counts as tainted: here the command line (the built-in source), and the
+  // inputs of a request handler.
+  predicate isSource(DataFlow::Node n) {
+    n instanceof CommandInjection::Source or
+    DataFlow::isParameterOf(n, "My_App.Server.Handle_Request")
+  }
+
+  // Every argument of every call to My_App.Db.Execute ...
+  predicate isSink(DataFlow::Node n) {
+    exists(Raw::Expr call | DataFlow::isCallTo(call, "My_App.Db.Execute") |
+      n.asExpr() = DataFlow::getAnArgument(call)
+    )
+  }
+  // ... or only one formal of it:
+  //   DataFlow::isArgumentFor(call, n.asExpr(), "Query")
+
+  // Values that passed a validator are clean.
+  predicate isBarrier(DataFlow::Node n) {
+    exists(Raw::Expr call | DataFlow::isCallTo(call, "My_App.Validate.Sanitize") |
+      n.asExpr() = call
+    )
+  }
+}
+
+module Flow = TaintTracking::Global<Config>;
+
+import Flow::PathGraph
+
+from Flow::PathNode source, Flow::PathNode sink
+where Flow::flowPath(source, sink) and sink.getNode().asExpr().(AdaNode).fromSource()
+select sink.getNode(), source, sink, "This argument depends on $@.", source.getNode(),
+  "untrusted data"
+```
+
+The helpers resolve by meaning, not text, so `use` clauses and renamings are covered and
+every overload of the name matches. Names are the fully qualified ones Libadalang computes:
+a subprogram nested in another is `Outer.Inner`. The full list is in
+[dataflow-design.md](dataflow-design.md), "Taint tracking".
+
+**Adding to the built-in command-injection query instead.** If the subprogram runs a
+command, extend `CommandInjection::Sink` in a `.qll` file. Then write a copy of
+`CommandLineInjection.ql` that imports that file as well. A subclass takes effect only in
+queries that import it.
+
+```ql
+class MyShellSink extends CommandInjection::Sink {
+  MyShellSink() {
+    exists(Raw::Expr call |
+      DataFlow::isCallTo(call, "My_App.Shell.Run") and
+      DataFlow::isArgumentFor(call, this.asExpr(), "Command")
+    )
+  }
+}
+```
+
+`CommandInjection::Source` and `CommandInjection::Barrier` extend the same way.
+`ql/test/library/TaintTracking` is a small working example of the first pattern. Its
+test should route the value through at least one other subprogram, so it fails if
+cross-procedure flow breaks. What is and is not followed is listed in
 [dataflow-design.md](dataflow-design.md), "Named v1 limitations" and "Taint tracking".
 
-### Testing a query
+## Testing a query
 
 The pattern above — `.qlref` pointing at the real query, plus fixtures, plus
 `.expected` — is how all 11 shipped queries are tested, and is what the

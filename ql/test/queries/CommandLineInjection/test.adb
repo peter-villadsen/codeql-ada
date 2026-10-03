@@ -1,6 +1,8 @@
 with Ada.Command_Line;
 with GNAT.OS_Lib;
 with System.OS_Lib;
+with GNAT.Expect;
+with Interfaces.C; use Interfaces.C;
 
 procedure Test is
    use GNAT.OS_Lib;
@@ -62,6 +64,42 @@ procedure Test is
       Spawn ("/bin/true", Args, Ok);  -- GOOD
    end Fixed;
 
+   --  GNAT.Expect: the command and its arguments are sinks; Input is stdin data.
+   procedure Run_Expect (Cmd : String) is
+      Pd     : GNAT.Expect.Process_Descriptor;
+      Status : aliased Integer;
+      Args   : Argument_List (1 .. 0);
+   begin
+      GNAT.Expect.Non_Blocking_Spawn (Pd, Cmd, Args);  -- BAD: Command
+      declare
+         Output : constant String :=
+           GNAT.Expect.Get_Command_Output ("/bin/cat", Args, Input => Cmd, Status => Status'Access);  -- GOOD: Input
+      begin
+         null;
+      end;
+   end Run_Expect;
+
+   --  Imported C functions: by pragma with an external name, by aspect with the
+   --  default name ("popen"), and by aspect with an external name.
+   function C_System (Command : char_array) return int;
+   pragma Import (C, C_System, "system");
+
+   function Popen (Command : char_array; Mode : char_array) return System.Address
+     with Import, Convention => C;
+
+   function Run_Program (Path : char_array; Argv : System.Address) return int
+     with Import, Convention => C, External_Name => "execv";
+
+   procedure Run_C (Cmd : String) is
+      R : int;
+      F : System.Address;
+   begin
+      R := C_System (To_C (Cmd));                         -- BAD: system
+      F := Popen (To_C (Cmd), To_C ("r"));                -- BAD: popen command
+      F := Popen (To_C ("ls"), To_C (Cmd));               -- GOOD: popen mode
+      R := Run_Program (To_C (Cmd), System.Null_Address);  -- BAD: execv
+   end Run_C;
+
    use Ada.Command_Line;
 begin
    Run (Argument (1));                -- bare name under a use clause
@@ -69,6 +107,8 @@ begin
    Run_With_Arg (Arg (3));            -- through a renaming of Argument
    Run_Named (Ada.Command_Line.Argument (4));
    Run_Async (Ada.Command_Line.Argument (6));
+   Run_Expect (Ada.Command_Line.Argument (7));
+   Run_C (Ada.Command_Line.Argument (8));
    Output_Only (Ada.Command_Line.Argument (5));
    Fixed;
 end Test;

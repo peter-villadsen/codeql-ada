@@ -34,20 +34,19 @@ private string taintPreservingRuntimeFunction() {
     [
       "ada.strings.unbounded.to_string", "ada.strings.unbounded.to_unbounded_string",
       "ada.strings.fixed.trim", "ada.characters.handling.to_lower",
-      "ada.characters.handling.to_upper", "system.os_lib.argument_string_to_list"
+      "ada.characters.handling.to_upper", "system.os_lib.argument_string_to_list",
+      "interfaces.c.to_c", "interfaces.c.strings.new_string"
     ]
 }
 
-/** Holds if the referenced declaration of `n` is a type, i.e. `n (X)` is a conversion. */
+/**
+ * Holds if `n` names a type, so `n (X)` is a conversion. Only a simple or dotted
+ * name counts: a qualified expression `T'(...)` also references `T`, but
+ * `T'(...) (I)` indexes it.
+ */
 private predicate denotesType(Raw::Name n) {
+  (n instanceof Raw::Identifier or n instanceof Raw::DottedName) and
   n.(Name).getReferencedDecl().(BasicDecl).getUltimateDecl() instanceof Raw::BaseTypeDecl
-}
-
-/** Holds if the referenced declaration of `n` is an object or formal, i.e. `n (I)` indexes or slices it. */
-private predicate denotesObject(Raw::Name n) {
-  exists(Raw::BasicDecl d | d = n.(Name).getReferencedDecl() |
-    d instanceof Raw::ObjectDecl or d instanceof Raw::ParamSpec
-  )
 }
 
 /** Holds if `e2`'s value is derived from `e1`'s (see the module comment). */
@@ -65,11 +64,15 @@ private predicate exprTaintStep(Raw::Expr e1, Raw::Expr e2) {
   or
   e1 = e2.(Raw::ExplicitDeref).getPrefix()
   or
+  // A call-shaped name with no subprogram target: a type conversion, or else
+  // indexing or slicing, whose prefix may be any name (`List'(...) (1)`). The
+  // latter also covers unresolved calls (an access-to-subprogram value flows to
+  // the result), which is harmless: such values are rarely tainted.
   exists(Raw::CallExpr c | c = e2 and not exists(getCallTarget(c)) |
     denotesType(c.getName()) and
     e1 = c.getSuffix().(Raw::AssocList).getChild(0).(Raw::ParamAssoc).getRExpr()
     or
-    denotesObject(c.getName()) and e1 = c.getName()
+    not denotesType(c.getName()) and e1 = c.getName()
   )
   or
   exists(Raw::BasicDecl target |

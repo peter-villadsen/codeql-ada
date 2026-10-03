@@ -13,12 +13,16 @@ D-026). Cross-procedure flow works across two or more call frames in both direct
 down through parameters, up through function results and through `out` parameters.
 `ada/command-line-injection` (`ql/src/queries/CommandLineInjection.ql`) is a
 `path-problem` query from `Ada.Command_Line.Argument` to the `Program_Name`/`Args` of
-every `Spawn` and `Non_Blocking_Spawn` overload, built on the public
+every `Spawn` and `Non_Blocking_Spawn` overload (and more, below), built on the public
 `codeql.ada.dataflow.DataFlow` / `TaintTracking` modules. The design, the taint steps, the
 named v1 limitations and the corpus measurements are in
 [docs/dataflow-design.md](docs/dataflow-design.md), and the step-by-step plan is
-[docs/phase9.2-plan.md](docs/phase9.2-plan.md). Full suite green (52/52). Task 9.5 found
-and fixed a CFG gap: every `&` operand after the first had no node (commit 97d1c5e).
+[docs/phase9.2-plan.md](docs/phase9.2-plan.md). Full suite green (54/54). Task 9.5 found
+and fixed two CFG gaps: `&` operands after the first, and membership alternatives
+(`X in A | B`), had no node (97d1c5e, bbdbdeb). Sinks now also cover `GNAT.Expect` and
+imported C `system` / `popen` / `exec*`, as extensible classes in
+`codeql/ada/security/CommandInjection.qll`; `docs/query-writing.md` shows how to write
+one's own source, sink and barrier.
 
 **Next: Task 9.6**, a run of the full suite over the five corpus projects with hand
 triage of the results. That run is what should decide which v1 limitations are worth
@@ -34,10 +38,6 @@ project that does would help.
   unresolved. This is an extractor coverage gap from 9.1 and is not diagnosed yet. It is
   the only open item that is a defect rather than a scope choice, and is worth doing
   soon whatever 9.6 shows.
-- **Suspected CFG gap, same shape as the `&` one (unverified).** A membership test's
-  alternatives (`X in A | B`) sit in an `ExprAlternativesList`, which `exprLike` in
-  `ControlFlowGraphImpl.qll` does not descend into either, so they probably have no CFG
-  node. Check with a CFG test before fixing (the plan's §6.2 asks first).
 - **Small limitations (hours each):** protected operations, default parameter values,
   extended `return` statements, and separate bodies. For separate bodies the extractor
   could emit a stub-to-body row; that needs no schema change, only rebuilt databases.
