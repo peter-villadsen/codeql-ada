@@ -105,8 +105,9 @@ do instead.
 
 For everything past this point — the 25 queries, environment variables that
 control project discovery and parallelism, how to write your own queries,
-and known limitations — see [docs/user-guide.md](docs/user-guide.md) and
-[docs/query-writing.md](docs/query-writing.md).
+and known limitations — see [docs/user-guide.md](docs/user-guide.md),
+[docs/query-writing.md](docs/query-writing.md), and, for what tree each Ada
+construct becomes, [docs/ast-reference.md](docs/ast-reference.md).
 
 ## Why
 

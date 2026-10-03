@@ -1,154 +1,958 @@
-| test.adb | 1 | 3:1 | CompilationUnit |
-| test.adb | 2 | 3:1 |   getPrelude: AdaNodeList |
-| test.adb | 3 | 3:1 |   getBody: LibraryItem |
-| test.adb | 4 | 3:1 |     getHasPrivate: PrivateAbsent |
-| test.adb | 5 | 3:1 |     getItem: SubpBody |
-| test.adb | 6 | 3:1 |       getOverriding: OverridingUnspecified |
-| test.adb | 7 | 3:1 |       getSubpSpec: SubpSpec |
-| test.adb | 8 | 3:1 |         getSubpKind: SubpKindProcedure |
-| test.adb | 9 | 3:11 |         getSubpName: DefiningName |
-| test.adb | 10 | 3:11 |           getName: Identifier Test |
-| test.adb | 11 | 3:18 |       getDecls: DeclarativePart |
-| test.adb | 12 | 4:4 |         getDecls: AdaNodeList |
-| test.adb | 13 | 4:4 |           [0]: ConcreteTypeDecl |
-| test.adb | 14 | 4:9 |             getName: DefiningName |
-| test.adb | 15 | 4:9 |               getName: Identifier Arr |
-| test.adb | 16 | 4:16 |             getTypeDef: ArrayTypeDef |
-| test.adb | 17 | 4:23 |               getIndices: ConstrainedArrayIndices |
-| test.adb | 18 | 4:23 |                 getList: ConstraintList |
-| test.adb | 19 | 4:23 |                   [0]: BinOp |
-| test.adb | 20 | 4:23 |                     getLeft: IntLiteral 1 |
-| test.adb | 21 | 4:25 |                     getOp: OpDoubleDot .. |
-| test.adb | 22 | 4:28 |                     getRight: IntLiteral 2 |
-| test.adb | 23 | 4:34 |               getComponentType: ComponentDef |
-| test.adb | 24 | 4:33 |                 getHasAliased: AliasedAbsent |
-| test.adb | 25 | 4:33 |                 getHasConstant: ConstantAbsent |
-| test.adb | 26 | 4:34 |                 getTypeExpr: SubtypeIndication |
-| test.adb | 27 | 4:33 |                   getHasNotNull: NotNullAbsent |
-| test.adb | 28 | 4:34 |                   getName: Identifier Integer -> Standard.Integer |
-| test.adb | 29 | 5:4 |           [1]: ConcreteTypeDecl |
-| test.adb | 30 | 5:9 |             getName: DefiningName |
-| test.adb | 31 | 5:9 |               getName: Identifier Count |
-| test.adb | 32 | 5:18 |             getTypeDef: DerivedTypeDef |
-| test.adb | 33 | 5:17 |               getHasAbstract: AbstractAbsent |
-| test.adb | 34 | 5:17 |               getHasLimited: LimitedAbsent |
-| test.adb | 35 | 5:17 |               getHasSynchronized: SynchronizedAbsent |
-| test.adb | 36 | 5:22 |               getSubtypeIndication: SubtypeIndication |
-| test.adb | 37 | 5:21 |                 getHasNotNull: NotNullAbsent |
-| test.adb | 38 | 5:22 |                 getName: Identifier Integer -> Standard.Integer |
-| test.adb | 39 | 5:29 |               getInterfaces: ParentList |
-| test.adb | 40 | 5:29 |               getHasWithPrivate: WithPrivateAbsent |
-| test.adb | 41 | 6:4 |           [2]: ExprFunction |
-| test.adb | 42 | 5:30 |             getOverriding: OverridingUnspecified |
-| test.adb | 43 | 6:4 |             getSubpSpec: SubpSpec |
-| test.adb | 44 | 6:4 |               getSubpKind: SubpKindFunction |
-| test.adb | 45 | 6:13 |               getSubpName: DefiningName |
-| test.adb | 46 | 6:13 |                 getName: Identifier F |
-| test.adb | 47 | 6:15 |               getSubpParams: Params |
-| test.adb | 48 | 6:16 |                 getParams: ParamSpecList |
-| test.adb | 49 | 6:16 |                   [0]: ParamSpec |
-| test.adb | 50 | 6:16 |                     getIds: DefiningNameList |
-| test.adb | 51 | 6:16 |                       [0]: DefiningName |
-| test.adb | 52 | 6:16 |                         getName: Identifier X |
-| test.adb | 53 | 6:19 |                     getHasAliased: AliasedAbsent |
-| test.adb | 54 | 6:19 |                     getMode: ModeDefault |
-| test.adb | 55 | 6:20 |                     getTypeExpr: SubtypeIndication |
-| test.adb | 56 | 6:19 |                       getHasNotNull: NotNullAbsent |
-| test.adb | 57 | 6:20 |                       getName: Identifier Integer -> Standard.Integer |
-| test.adb | 58 | 6:36 |               getSubpReturns: SubtypeIndication |
-| test.adb | 59 | 6:35 |                 getHasNotNull: NotNullAbsent |
-| test.adb | 60 | 6:36 |                 getName: Identifier Integer -> Standard.Integer |
-| test.adb | 61 | 6:47 |             getExpr: ParenExpr |
-| test.adb | 62 | 6:48 |               getExpr: Identifier X -> Test.F.X |
-| test.adb | 63 | 7:4 |           [3]: ObjectDecl |
-| test.adb | 64 | 7:4 |             getIds: DefiningNameList |
-| test.adb | 65 | 7:4 |               [0]: DefiningName |
-| test.adb | 66 | 7:4 |                 getName: Identifier A |
-| test.adb | 67 | 7:7 |             getHasAliased: AliasedAbsent |
-| test.adb | 68 | 7:7 |             getHasConstant: ConstantAbsent |
-| test.adb | 69 | 7:7 |             getMode: ModeDefault |
-| test.adb | 70 | 7:8 |             getTypeExpr: SubtypeIndication |
-| test.adb | 71 | 7:7 |               getHasNotNull: NotNullAbsent |
-| test.adb | 72 | 7:8 |               getName: Identifier Arr -> Test.Arr |
-| test.adb | 73 | 7:15 |             getDefaultExpr: Aggregate |
-| test.adb | 74 | 7:16 |               getAssocs: AssocList |
-| test.adb | 75 | 7:16 |                 [0]: AggregateAssoc |
-| test.adb | 76 | 7:16 |                   getDesignators: AlternativesList |
-| test.adb | 77 | 7:16 |                   getRExpr: IntLiteral 1 |
-| test.adb | 78 | 7:19 |                 [1]: AggregateAssoc |
-| test.adb | 79 | 7:18 |                   getDesignators: AlternativesList |
-| test.adb | 80 | 7:19 |                   getRExpr: IntLiteral 2 |
-| test.adb | 81 | 8:4 |           [4]: ObjectDecl |
-| test.adb | 82 | 8:4 |             getIds: DefiningNameList |
-| test.adb | 83 | 8:4 |               [0]: DefiningName |
-| test.adb | 84 | 8:4 |                 getName: Identifier C |
-| test.adb | 85 | 8:7 |             getHasAliased: AliasedAbsent |
-| test.adb | 86 | 8:7 |             getHasConstant: ConstantAbsent |
-| test.adb | 87 | 8:7 |             getMode: ModeDefault |
-| test.adb | 88 | 8:8 |             getTypeExpr: SubtypeIndication |
-| test.adb | 89 | 8:7 |               getHasNotNull: NotNullAbsent |
-| test.adb | 90 | 8:8 |               getName: Identifier Count -> Test.Count |
-| test.adb | 91 | 8:17 |             getDefaultExpr: CallExpr -> Test.Count |
-| test.adb | 92 | 8:17 |               getName: Identifier Count -> Test.Count |
-| test.adb | 93 | 8:24 |               getSuffix: AssocList |
-| test.adb | 94 | 8:24 |                 [0]: ParamAssoc |
-| test.adb | 95 | 8:24 |                   getRExpr: CallExpr -> Test.F |
-| test.adb | 96 | 8:24 |                     getName: Identifier F -> Test.F |
-| test.adb | 97 | 8:27 |                     getSuffix: AssocList |
-| test.adb | 98 | 8:27 |                       [0]: ParamAssoc |
-| test.adb | 99 | 8:27 |                         getRExpr: IntLiteral 1 |
-| test.adb | 100 | 9:4 |           [5]: ObjectDecl |
-| test.adb | 101 | 9:4 |             getIds: DefiningNameList |
-| test.adb | 102 | 9:4 |               [0]: DefiningName |
-| test.adb | 103 | 9:4 |                 getName: Identifier S |
-| test.adb | 104 | 9:7 |             getHasAliased: AliasedAbsent |
-| test.adb | 105 | 9:8 |             getHasConstant: ConstantPresent |
-| test.adb | 106 | 9:16 |             getMode: ModeDefault |
-| test.adb | 107 | 9:17 |             getTypeExpr: SubtypeIndication |
-| test.adb | 108 | 9:16 |               getHasNotNull: NotNullAbsent |
-| test.adb | 109 | 9:17 |               getName: Identifier String -> Standard.String |
-| test.adb | 110 | 9:27 |             getDefaultExpr: ConcatOp |
-| test.adb | 111 | 9:27 |               getFirstOperand: StringLiteral "a" |
-| test.adb | 112 | 9:31 |               getOtherOperands: ConcatOperandList |
-| test.adb | 113 | 9:31 |                 [0]: ConcatOperand |
-| test.adb | 114 | 9:31 |                   getOperator: OpConcat & |
-| test.adb | 115 | 9:33 |                   getOperand: StringLiteral "b" |
-| test.adb | 116 | 9:37 |                 [1]: ConcatOperand |
-| test.adb | 117 | 9:37 |                   getOperator: OpConcat & |
-| test.adb | 118 | 9:39 |                   getOperand: StringLiteral "c" |
-| test.adb | 119 | 10:4 |           [6]: ObjectDecl |
-| test.adb | 120 | 10:4 |             getIds: DefiningNameList |
-| test.adb | 121 | 10:4 |               [0]: DefiningName |
-| test.adb | 122 | 10:4 |                 getName: Identifier B |
-| test.adb | 123 | 10:7 |             getHasAliased: AliasedAbsent |
-| test.adb | 124 | 10:7 |             getHasConstant: ConstantAbsent |
-| test.adb | 125 | 10:7 |             getMode: ModeDefault |
-| test.adb | 126 | 10:8 |             getTypeExpr: SubtypeIndication |
-| test.adb | 127 | 10:7 |               getHasNotNull: NotNullAbsent |
-| test.adb | 128 | 10:8 |               getName: Identifier Boolean -> Standard.Boolean |
-| test.adb | 129 | 10:19 |             getDefaultExpr: MembershipExpr |
-| test.adb | 130 | 10:19 |               getExpr: CallExpr -> Test.Arr |
-| test.adb | 131 | 10:19 |                 getName: QualExpr -> Test.Arr |
-| test.adb | 132 | 10:19 |                   getPrefix: Identifier Arr -> Test.Arr |
-| test.adb | 133 | 10:23 |                   getSuffix: Aggregate |
-| test.adb | 134 | 10:24 |                     getAssocs: AssocList |
-| test.adb | 135 | 10:24 |                       [0]: AggregateAssoc |
-| test.adb | 136 | 10:24 |                         getDesignators: AlternativesList |
-| test.adb | 137 | 10:24 |                         getRExpr: IntLiteral 3 |
-| test.adb | 138 | 10:27 |                       [1]: AggregateAssoc |
-| test.adb | 139 | 10:26 |                         getDesignators: AlternativesList |
-| test.adb | 140 | 10:27 |                         getRExpr: IntLiteral 4 |
-| test.adb | 141 | 10:31 |                 getSuffix: AssocList |
-| test.adb | 142 | 10:31 |                   [0]: ParamAssoc |
-| test.adb | 143 | 10:31 |                     getRExpr: IntLiteral 1 |
-| test.adb | 144 | 10:34 |               getOp: OpIn in |
-| test.adb | 145 | 10:37 |               getMembershipExprs: ExprAlternativesList |
-| test.adb | 146 | 10:37 |                 [0]: IntLiteral 1 |
-| test.adb | 147 | 10:41 |                 [1]: IntLiteral 3 |
-| test.adb | 148 | 11:6 |       getStmts: HandledStmts |
-| test.adb | 149 | 12:4 |         getStmts: StmtList |
-| test.adb | 150 | 12:4 |           [0]: NullStmt |
-| test.adb | 151 | 12:9 |         getExceptions: AdaNodeList |
-| test.adb | 152 | 13:5 |       getEndName: EndName -> Test |
-| test.adb | 153 | 13:5 |         getName: Identifier Test -> Test |
-| test.adb | 154 | 13:10 |   getPragmas: PragmaNodeList |
+| ref_pkg.adb | 1 | 1:1 | CompilationUnit |
+| ref_pkg.adb | 2 | 1:1 |   getPrelude: AdaNodeList |
+| ref_pkg.adb | 3 | 1:1 |   getBody: LibraryItem |
+| ref_pkg.adb | 4 | 1:1 |     getHasPrivate: PrivateAbsent |
+| ref_pkg.adb | 5 | 1:1 |     getItem: PackageBody |
+| ref_pkg.adb | 6 | 1:14 |       getPackageName: DefiningName |
+| ref_pkg.adb | 7 | 1:14 |         getName: Identifier Ref_Pkg |
+| ref_pkg.adb | 8 | 1:24 |       getDecls: DeclarativePart |
+| ref_pkg.adb | 9 | 2:4 |         getDecls: AdaNodeList |
+| ref_pkg.adb | 10 | 2:4 |           [0]: SubpBody |
+| ref_pkg.adb | 11 | 1:24 |             getOverriding: OverridingUnspecified |
+| ref_pkg.adb | 12 | 2:4 |             getSubpSpec: SubpSpec |
+| ref_pkg.adb | 13 | 2:4 |               getSubpKind: SubpKindProcedure |
+| ref_pkg.adb | 14 | 2:14 |               getSubpName: DefiningName |
+| ref_pkg.adb | 15 | 2:14 |                 getName: Identifier Move |
+| ref_pkg.adb | 16 | 2:19 |               getSubpParams: Params |
+| ref_pkg.adb | 17 | 2:20 |                 getParams: ParamSpecList |
+| ref_pkg.adb | 18 | 2:20 |                   [0]: ParamSpec |
+| ref_pkg.adb | 19 | 2:20 |                     getIds: DefiningNameList |
+| ref_pkg.adb | 20 | 2:20 |                       [0]: DefiningName |
+| ref_pkg.adb | 21 | 2:20 |                         getName: Identifier S |
+| ref_pkg.adb | 22 | 2:23 |                     getHasAliased: AliasedAbsent |
+| ref_pkg.adb | 23 | 2:24 |                     getMode: ModeInOut |
+| ref_pkg.adb | 24 | 2:31 |                     getTypeExpr: SubtypeIndication |
+| ref_pkg.adb | 25 | 2:30 |                       getHasNotNull: NotNullAbsent |
+| ref_pkg.adb | 26 | 2:31 |                       getName: Identifier Shape -> Ref_Pkg.Shape |
+| ref_pkg.adb | 27 | 2:38 |                   [1]: ParamSpec |
+| ref_pkg.adb | 28 | 2:38 |                     getIds: DefiningNameList |
+| ref_pkg.adb | 29 | 2:38 |                       [0]: DefiningName |
+| ref_pkg.adb | 30 | 2:38 |                         getName: Identifier By |
+| ref_pkg.adb | 31 | 2:42 |                     getHasAliased: AliasedAbsent |
+| ref_pkg.adb | 32 | 2:42 |                     getMode: ModeDefault |
+| ref_pkg.adb | 33 | 2:43 |                     getTypeExpr: SubtypeIndication |
+| ref_pkg.adb | 34 | 2:42 |                       getHasNotNull: NotNullAbsent |
+| ref_pkg.adb | 35 | 2:43 |                       getName: Identifier Integer -> Standard.Integer |
+| ref_pkg.adb | 36 | 2:54 |             getDecls: DeclarativePart |
+| ref_pkg.adb | 37 | 2:54 |               getDecls: AdaNodeList |
+| ref_pkg.adb | 38 | 3:9 |             getStmts: HandledStmts |
+| ref_pkg.adb | 39 | 4:7 |               getStmts: StmtList |
+| ref_pkg.adb | 40 | 4:7 |                 [0]: AssignStmt |
+| ref_pkg.adb | 41 | 4:7 |                   getDest: DottedName -> Ref_Pkg.Shape.Id |
+| ref_pkg.adb | 42 | 4:7 |                     getPrefix: Identifier S -> Ref_Pkg.Move.S |
+| ref_pkg.adb | 43 | 4:9 |                     getSuffix: Identifier Id -> Ref_Pkg.Shape.Id |
+| ref_pkg.adb | 44 | 4:15 |                   getExpr: BinOp |
+| ref_pkg.adb | 45 | 4:15 |                     getLeft: DottedName -> Ref_Pkg.Shape.Id |
+| ref_pkg.adb | 46 | 4:15 |                       getPrefix: Identifier S -> Ref_Pkg.Move.S |
+| ref_pkg.adb | 47 | 4:17 |                       getSuffix: Identifier Id -> Ref_Pkg.Shape.Id |
+| ref_pkg.adb | 48 | 4:20 |                     getOp: OpPlus + |
+| ref_pkg.adb | 49 | 4:22 |                     getRight: Identifier By -> Ref_Pkg.Move.By |
+| ref_pkg.adb | 50 | 4:25 |               getExceptions: AdaNodeList |
+| ref_pkg.adb | 51 | 5:8 |             getEndName: EndName -> Ref_Pkg.Move |
+| ref_pkg.adb | 52 | 5:8 |               getName: Identifier Move -> Ref_Pkg.Move |
+| ref_pkg.adb | 53 | 7:4 |           [1]: SubpBody |
+| ref_pkg.adb | 54 | 5:13 |             getOverriding: OverridingUnspecified |
+| ref_pkg.adb | 55 | 7:4 |             getSubpSpec: SubpSpec |
+| ref_pkg.adb | 56 | 7:4 |               getSubpKind: SubpKindFunction |
+| ref_pkg.adb | 57 | 7:13 |               getSubpName: DefiningName |
+| ref_pkg.adb | 58 | 7:13 |                 getName: Identifier Area |
+| ref_pkg.adb | 59 | 7:18 |               getSubpParams: Params |
+| ref_pkg.adb | 60 | 7:19 |                 getParams: ParamSpecList |
+| ref_pkg.adb | 61 | 7:19 |                   [0]: ParamSpec |
+| ref_pkg.adb | 62 | 7:19 |                     getIds: DefiningNameList |
+| ref_pkg.adb | 63 | 7:19 |                       [0]: DefiningName |
+| ref_pkg.adb | 64 | 7:19 |                         getName: Identifier S |
+| ref_pkg.adb | 65 | 7:22 |                     getHasAliased: AliasedAbsent |
+| ref_pkg.adb | 66 | 7:22 |                     getMode: ModeDefault |
+| ref_pkg.adb | 67 | 7:23 |                     getTypeExpr: SubtypeIndication |
+| ref_pkg.adb | 68 | 7:22 |                       getHasNotNull: NotNullAbsent |
+| ref_pkg.adb | 69 | 7:23 |                       getName: Identifier Shape -> Ref_Pkg.Shape |
+| ref_pkg.adb | 70 | 7:37 |               getSubpReturns: SubtypeIndication |
+| ref_pkg.adb | 71 | 7:36 |                 getHasNotNull: NotNullAbsent |
+| ref_pkg.adb | 72 | 7:37 |                 getName: Identifier Integer -> Standard.Integer |
+| ref_pkg.adb | 73 | 7:47 |             getDecls: DeclarativePart |
+| ref_pkg.adb | 74 | 7:47 |               getDecls: AdaNodeList |
+| ref_pkg.adb | 75 | 8:9 |             getStmts: HandledStmts |
+| ref_pkg.adb | 76 | 9:7 |               getStmts: StmtList |
+| ref_pkg.adb | 77 | 9:7 |                 [0]: ReturnStmt |
+| ref_pkg.adb | 78 | 9:14 |                   getReturnExpr: BinOp |
+| ref_pkg.adb | 79 | 9:14 |                     getLeft: DottedName -> Ref_Pkg.Shape.Id |
+| ref_pkg.adb | 80 | 9:14 |                       getPrefix: Identifier S -> Ref_Pkg.Area.S |
+| ref_pkg.adb | 81 | 9:16 |                       getSuffix: Identifier Id -> Ref_Pkg.Shape.Id |
+| ref_pkg.adb | 82 | 9:19 |                     getOp: OpMult * |
+| ref_pkg.adb | 83 | 9:21 |                     getRight: IntLiteral 2 |
+| ref_pkg.adb | 84 | 9:23 |               getExceptions: AdaNodeList |
+| ref_pkg.adb | 85 | 10:8 |             getEndName: EndName -> Ref_Pkg.Area |
+| ref_pkg.adb | 86 | 10:8 |               getName: Identifier Area -> Ref_Pkg.Area |
+| ref_pkg.adb | 87 | 11:5 |       getEndName: EndName -> Ref_Pkg |
+| ref_pkg.adb | 88 | 11:5 |         getName: Identifier Ref_Pkg -> Ref_Pkg |
+| ref_pkg.adb | 89 | 11:13 |   getPragmas: PragmaNodeList |
+| ref_pkg.ads | 1 | 1:1 | CompilationUnit |
+| ref_pkg.ads | 2 | 1:1 |   getPrelude: AdaNodeList |
+| ref_pkg.ads | 3 | 1:1 |   getBody: LibraryItem |
+| ref_pkg.ads | 4 | 1:1 |     getHasPrivate: PrivateAbsent |
+| ref_pkg.ads | 5 | 1:1 |     getItem: PackageDecl |
+| ref_pkg.ads | 6 | 1:9 |       getPackageName: DefiningName |
+| ref_pkg.ads | 7 | 1:9 |         getName: Identifier Ref_Pkg |
+| ref_pkg.ads | 8 | 1:19 |       getPublicPart: PublicPart |
+| ref_pkg.ads | 9 | 2:4 |         getDecls: AdaNodeList |
+| ref_pkg.ads | 10 | 2:4 |           [0]: ConcreteTypeDecl |
+| ref_pkg.ads | 11 | 2:9 |             getName: DefiningName |
+| ref_pkg.ads | 12 | 2:9 |               getName: Identifier Point |
+| ref_pkg.ads | 13 | 2:18 |             getTypeDef: RecordTypeDef |
+| ref_pkg.ads | 14 | 2:17 |               getHasAbstract: AbstractAbsent |
+| ref_pkg.ads | 15 | 2:17 |               getHasTagged: TaggedAbsent |
+| ref_pkg.ads | 16 | 2:17 |               getHasLimited: LimitedAbsent |
+| ref_pkg.ads | 17 | 2:18 |               getRecordDef: RecordDef |
+| ref_pkg.ads | 18 | 3:7 |                 getComponents: ComponentList |
+| ref_pkg.ads | 19 | 3:7 |                   getComponents: AdaNodeList |
+| ref_pkg.ads | 20 | 3:7 |                     [0]: ComponentDecl |
+| ref_pkg.ads | 21 | 3:7 |                       getIds: DefiningNameList |
+| ref_pkg.ads | 22 | 3:7 |                         [0]: DefiningName |
+| ref_pkg.ads | 23 | 3:7 |                           getName: Identifier X |
+| ref_pkg.ads | 24 | 3:10 |                         [1]: DefiningName |
+| ref_pkg.ads | 25 | 3:10 |                           getName: Identifier Y |
+| ref_pkg.ads | 26 | 3:14 |                       getComponentDef: ComponentDef |
+| ref_pkg.ads | 27 | 3:13 |                         getHasAliased: AliasedAbsent |
+| ref_pkg.ads | 28 | 3:13 |                         getHasConstant: ConstantAbsent |
+| ref_pkg.ads | 29 | 3:14 |                         getTypeExpr: SubtypeIndication |
+| ref_pkg.ads | 30 | 3:13 |                           getHasNotNull: NotNullAbsent |
+| ref_pkg.ads | 31 | 3:14 |                           getName: Identifier Integer -> Standard.Integer |
+| ref_pkg.ads | 32 | 3:25 |                       getDefaultExpr: IntLiteral 0 |
+| ref_pkg.ads | 33 | 5:4 |           [1]: ConcreteTypeDecl |
+| ref_pkg.ads | 34 | 5:9 |             getName: DefiningName |
+| ref_pkg.ads | 35 | 5:9 |               getName: Identifier Color |
+| ref_pkg.ads | 36 | 5:18 |             getTypeDef: EnumTypeDef |
+| ref_pkg.ads | 37 | 5:19 |               getEnumLiterals: EnumLiteralDeclList |
+| ref_pkg.ads | 38 | 5:19 |                 [0]: EnumLiteralDecl |
+| ref_pkg.ads | 39 | 5:19 |                   getName: DefiningName |
+| ref_pkg.ads | 40 | 5:19 |                     getName: Identifier Red |
+| ref_pkg.ads | 41 | 5:24 |                 [1]: EnumLiteralDecl |
+| ref_pkg.ads | 42 | 5:24 |                   getName: DefiningName |
+| ref_pkg.ads | 43 | 5:24 |                     getName: Identifier Green |
+| ref_pkg.ads | 44 | 5:31 |                 [2]: EnumLiteralDecl |
+| ref_pkg.ads | 45 | 5:31 |                   getName: DefiningName |
+| ref_pkg.ads | 46 | 5:31 |                     getName: Identifier Blue |
+| ref_pkg.ads | 47 | 6:4 |           [2]: SubtypeDecl |
+| ref_pkg.ads | 48 | 6:12 |             getName: DefiningName |
+| ref_pkg.ads | 49 | 6:12 |               getName: Identifier Small |
+| ref_pkg.ads | 50 | 6:21 |             getSubtype: SubtypeIndication |
+| ref_pkg.ads | 51 | 6:20 |               getHasNotNull: NotNullAbsent |
+| ref_pkg.ads | 52 | 6:21 |               getName: Identifier Integer -> Standard.Integer |
+| ref_pkg.ads | 53 | 6:29 |               getConstraint: RangeConstraint |
+| ref_pkg.ads | 54 | 6:29 |                 getRange: RangeSpec |
+| ref_pkg.ads | 55 | 6:35 |                   getRange: BinOp |
+| ref_pkg.ads | 56 | 6:35 |                     getLeft: IntLiteral 0 |
+| ref_pkg.ads | 57 | 6:37 |                     getOp: OpDoubleDot .. |
+| ref_pkg.ads | 58 | 6:40 |                     getRight: IntLiteral 9 |
+| ref_pkg.ads | 59 | 7:4 |           [3]: ConcreteTypeDecl |
+| ref_pkg.ads | 60 | 7:9 |             getName: DefiningName |
+| ref_pkg.ads | 61 | 7:9 |               getName: Identifier Int_Array |
+| ref_pkg.ads | 62 | 7:22 |             getTypeDef: ArrayTypeDef |
+| ref_pkg.ads | 63 | 7:29 |               getIndices: UnconstrainedArrayIndices |
+| ref_pkg.ads | 64 | 7:29 |                 getTypes: UnconstrainedArrayIndexList |
+| ref_pkg.ads | 65 | 7:29 |                   [0]: UnconstrainedArrayIndex |
+| ref_pkg.ads | 66 | 7:29 |                     getSubtypeName: Identifier Positive -> Standard.Positive |
+| ref_pkg.ads | 67 | 7:51 |               getComponentType: ComponentDef |
+| ref_pkg.ads | 68 | 7:50 |                 getHasAliased: AliasedAbsent |
+| ref_pkg.ads | 69 | 7:50 |                 getHasConstant: ConstantAbsent |
+| ref_pkg.ads | 70 | 7:51 |                 getTypeExpr: SubtypeIndication |
+| ref_pkg.ads | 71 | 7:50 |                   getHasNotNull: NotNullAbsent |
+| ref_pkg.ads | 72 | 7:51 |                   getName: Identifier Integer -> Standard.Integer |
+| ref_pkg.ads | 73 | 8:4 |           [4]: ConcreteTypeDecl |
+| ref_pkg.ads | 74 | 8:9 |             getName: DefiningName |
+| ref_pkg.ads | 75 | 8:9 |               getName: Identifier Point_Access |
+| ref_pkg.ads | 76 | 8:25 |             getTypeDef: TypeAccessDef |
+| ref_pkg.ads | 77 | 8:24 |               getHasNotNull: NotNullAbsent |
+| ref_pkg.ads | 78 | 8:32 |               getHasAll: AllPresent |
+| ref_pkg.ads | 79 | 8:35 |               getHasConstant: ConstantAbsent |
+| ref_pkg.ads | 80 | 8:36 |               getSubtypeIndication: SubtypeIndication |
+| ref_pkg.ads | 81 | 8:35 |                 getHasNotNull: NotNullAbsent |
+| ref_pkg.ads | 82 | 8:36 |                 getName: Identifier Point -> Ref_Pkg.Point |
+| ref_pkg.ads | 83 | 9:4 |           [5]: ConcreteTypeDecl |
+| ref_pkg.ads | 84 | 9:9 |             getName: DefiningName |
+| ref_pkg.ads | 85 | 9:9 |               getName: Identifier Shape |
+| ref_pkg.ads | 86 | 9:18 |             getTypeDef: RecordTypeDef |
+| ref_pkg.ads | 87 | 9:17 |               getHasAbstract: AbstractAbsent |
+| ref_pkg.ads | 88 | 9:18 |               getHasTagged: TaggedPresent |
+| ref_pkg.ads | 89 | 9:24 |               getHasLimited: LimitedAbsent |
+| ref_pkg.ads | 90 | 9:25 |               getRecordDef: RecordDef |
+| ref_pkg.ads | 91 | 10:7 |                 getComponents: ComponentList |
+| ref_pkg.ads | 92 | 10:7 |                   getComponents: AdaNodeList |
+| ref_pkg.ads | 93 | 10:7 |                     [0]: ComponentDecl |
+| ref_pkg.ads | 94 | 10:7 |                       getIds: DefiningNameList |
+| ref_pkg.ads | 95 | 10:7 |                         [0]: DefiningName |
+| ref_pkg.ads | 96 | 10:7 |                           getName: Identifier Id |
+| ref_pkg.ads | 97 | 10:12 |                       getComponentDef: ComponentDef |
+| ref_pkg.ads | 98 | 10:11 |                         getHasAliased: AliasedAbsent |
+| ref_pkg.ads | 99 | 10:11 |                         getHasConstant: ConstantAbsent |
+| ref_pkg.ads | 100 | 10:12 |                         getTypeExpr: SubtypeIndication |
+| ref_pkg.ads | 101 | 10:11 |                           getHasNotNull: NotNullAbsent |
+| ref_pkg.ads | 102 | 10:12 |                           getName: Identifier Integer -> Standard.Integer |
+| ref_pkg.ads | 103 | 12:4 |           [6]: SubpDecl |
+| ref_pkg.ads | 104 | 11:15 |             getOverriding: OverridingUnspecified |
+| ref_pkg.ads | 105 | 12:4 |             getSubpSpec: SubpSpec |
+| ref_pkg.ads | 106 | 12:4 |               getSubpKind: SubpKindProcedure |
+| ref_pkg.ads | 107 | 12:14 |               getSubpName: DefiningName |
+| ref_pkg.ads | 108 | 12:14 |                 getName: Identifier Move |
+| ref_pkg.ads | 109 | 12:19 |               getSubpParams: Params |
+| ref_pkg.ads | 110 | 12:20 |                 getParams: ParamSpecList |
+| ref_pkg.ads | 111 | 12:20 |                   [0]: ParamSpec |
+| ref_pkg.ads | 112 | 12:20 |                     getIds: DefiningNameList |
+| ref_pkg.ads | 113 | 12:20 |                       [0]: DefiningName |
+| ref_pkg.ads | 114 | 12:20 |                         getName: Identifier S |
+| ref_pkg.ads | 115 | 12:23 |                     getHasAliased: AliasedAbsent |
+| ref_pkg.ads | 116 | 12:24 |                     getMode: ModeInOut |
+| ref_pkg.ads | 117 | 12:31 |                     getTypeExpr: SubtypeIndication |
+| ref_pkg.ads | 118 | 12:30 |                       getHasNotNull: NotNullAbsent |
+| ref_pkg.ads | 119 | 12:31 |                       getName: Identifier Shape -> Ref_Pkg.Shape |
+| ref_pkg.ads | 120 | 12:38 |                   [1]: ParamSpec |
+| ref_pkg.ads | 121 | 12:38 |                     getIds: DefiningNameList |
+| ref_pkg.ads | 122 | 12:38 |                       [0]: DefiningName |
+| ref_pkg.ads | 123 | 12:38 |                         getName: Identifier By |
+| ref_pkg.ads | 124 | 12:42 |                     getHasAliased: AliasedAbsent |
+| ref_pkg.ads | 125 | 12:42 |                     getMode: ModeDefault |
+| ref_pkg.ads | 126 | 12:43 |                     getTypeExpr: SubtypeIndication |
+| ref_pkg.ads | 127 | 12:42 |                       getHasNotNull: NotNullAbsent |
+| ref_pkg.ads | 128 | 12:43 |                       getName: Identifier Integer -> Standard.Integer |
+| ref_pkg.ads | 129 | 13:4 |           [7]: SubpDecl |
+| ref_pkg.ads | 130 | 12:52 |             getOverriding: OverridingUnspecified |
+| ref_pkg.ads | 131 | 13:4 |             getSubpSpec: SubpSpec |
+| ref_pkg.ads | 132 | 13:4 |               getSubpKind: SubpKindFunction |
+| ref_pkg.ads | 133 | 13:13 |               getSubpName: DefiningName |
+| ref_pkg.ads | 134 | 13:13 |                 getName: Identifier Area |
+| ref_pkg.ads | 135 | 13:18 |               getSubpParams: Params |
+| ref_pkg.ads | 136 | 13:19 |                 getParams: ParamSpecList |
+| ref_pkg.ads | 137 | 13:19 |                   [0]: ParamSpec |
+| ref_pkg.ads | 138 | 13:19 |                     getIds: DefiningNameList |
+| ref_pkg.ads | 139 | 13:19 |                       [0]: DefiningName |
+| ref_pkg.ads | 140 | 13:19 |                         getName: Identifier S |
+| ref_pkg.ads | 141 | 13:22 |                     getHasAliased: AliasedAbsent |
+| ref_pkg.ads | 142 | 13:22 |                     getMode: ModeDefault |
+| ref_pkg.ads | 143 | 13:23 |                     getTypeExpr: SubtypeIndication |
+| ref_pkg.ads | 144 | 13:22 |                       getHasNotNull: NotNullAbsent |
+| ref_pkg.ads | 145 | 13:23 |                       getName: Identifier Shape -> Ref_Pkg.Shape |
+| ref_pkg.ads | 146 | 13:37 |               getSubpReturns: SubtypeIndication |
+| ref_pkg.ads | 147 | 13:36 |                 getHasNotNull: NotNullAbsent |
+| ref_pkg.ads | 148 | 13:37 |                 getName: Identifier Integer -> Standard.Integer |
+| ref_pkg.ads | 149 | 14:5 |       getEndName: EndName -> Ref_Pkg |
+| ref_pkg.ads | 150 | 14:5 |         getName: Identifier Ref_Pkg -> Ref_Pkg |
+| ref_pkg.ads | 151 | 14:13 |   getPragmas: PragmaNodeList |
+| reference.adb | 1 | 1:1 | CompilationUnit |
+| reference.adb | 2 | 1:1 |   getPrelude: AdaNodeList |
+| reference.adb | 3 | 1:1 |     [0]: WithClause |
+| reference.adb | 4 | 1:1 |       getHasLimited: LimitedAbsent |
+| reference.adb | 5 | 1:1 |       getHasPrivate: PrivateAbsent |
+| reference.adb | 6 | 1:6 |       getPackages: NameList |
+| reference.adb | 7 | 1:6 |         [0]: DottedName -> Ada.Text_IO |
+| reference.adb | 8 | 1:6 |           getPrefix: Identifier Ada -> Ada |
+| reference.adb | 9 | 1:10 |           getSuffix: Identifier Text_IO -> Ada.Text_IO |
+| reference.adb | 10 | 1:19 |     [1]: UsePackageClause |
+| reference.adb | 11 | 1:23 |       getPackages: NameList |
+| reference.adb | 12 | 1:23 |         [0]: DottedName -> Ada.Text_IO |
+| reference.adb | 13 | 1:23 |           getPrefix: Identifier Ada -> Ada |
+| reference.adb | 14 | 1:27 |           getSuffix: Identifier Text_IO -> Ada.Text_IO |
+| reference.adb | 15 | 2:1 |     [2]: WithClause |
+| reference.adb | 16 | 1:35 |       getHasLimited: LimitedAbsent |
+| reference.adb | 17 | 1:35 |       getHasPrivate: PrivateAbsent |
+| reference.adb | 18 | 2:6 |       getPackages: NameList |
+| reference.adb | 19 | 2:6 |         [0]: Identifier Ref_Pkg -> Ref_Pkg |
+| reference.adb | 20 | 3:1 |   getBody: LibraryItem |
+| reference.adb | 21 | 2:14 |     getHasPrivate: PrivateAbsent |
+| reference.adb | 22 | 3:1 |     getItem: SubpBody |
+| reference.adb | 23 | 2:14 |       getOverriding: OverridingUnspecified |
+| reference.adb | 24 | 3:1 |       getSubpSpec: SubpSpec |
+| reference.adb | 25 | 3:1 |         getSubpKind: SubpKindProcedure |
+| reference.adb | 26 | 3:11 |         getSubpName: DefiningName |
+| reference.adb | 27 | 3:11 |           getName: Identifier Reference |
+| reference.adb | 28 | 3:23 |       getDecls: DeclarativePart |
+| reference.adb | 29 | 4:4 |         getDecls: AdaNodeList |
+| reference.adb | 30 | 4:4 |           [0]: ObjectDecl |
+| reference.adb | 31 | 4:4 |             getIds: DefiningNameList |
+| reference.adb | 32 | 4:4 |               [0]: DefiningName |
+| reference.adb | 33 | 4:4 |                 getName: Identifier P |
+| reference.adb | 34 | 4:10 |             getHasAliased: AliasedAbsent |
+| reference.adb | 35 | 4:10 |             getHasConstant: ConstantAbsent |
+| reference.adb | 36 | 4:10 |             getMode: ModeDefault |
+| reference.adb | 37 | 4:11 |             getTypeExpr: SubtypeIndication |
+| reference.adb | 38 | 4:10 |               getHasNotNull: NotNullAbsent |
+| reference.adb | 39 | 4:11 |               getName: DottedName -> Ref_Pkg.Point |
+| reference.adb | 40 | 4:11 |                 getPrefix: Identifier Ref_Pkg -> Ref_Pkg |
+| reference.adb | 41 | 4:19 |                 getSuffix: Identifier Point -> Ref_Pkg.Point |
+| reference.adb | 42 | 4:28 |             getDefaultExpr: Aggregate |
+| reference.adb | 43 | 4:29 |               getAssocs: AssocList |
+| reference.adb | 44 | 4:29 |                 [0]: AggregateAssoc |
+| reference.adb | 45 | 4:29 |                   getDesignators: AlternativesList |
+| reference.adb | 46 | 4:29 |                     [0]: Identifier X -> ComponentDecl X, Y @3:7 |
+| reference.adb | 47 | 4:34 |                   getRExpr: IntLiteral 1 |
+| reference.adb | 48 | 4:37 |                 [1]: AggregateAssoc |
+| reference.adb | 49 | 4:37 |                   getDesignators: AlternativesList |
+| reference.adb | 50 | 4:37 |                     [0]: Identifier Y -> ComponentDecl X, Y @3:7 |
+| reference.adb | 51 | 4:42 |                   getRExpr: IntLiteral 2 |
+| reference.adb | 52 | 5:4 |           [1]: ObjectDecl |
+| reference.adb | 53 | 5:4 |             getIds: DefiningNameList |
+| reference.adb | 54 | 5:4 |               [0]: DefiningName |
+| reference.adb | 55 | 5:4 |                 getName: Identifier A |
+| reference.adb | 56 | 5:7 |               [1]: DefiningName |
+| reference.adb | 57 | 5:7 |                 getName: Identifier B |
+| reference.adb | 58 | 5:10 |             getHasAliased: AliasedAbsent |
+| reference.adb | 59 | 5:10 |             getHasConstant: ConstantAbsent |
+| reference.adb | 60 | 5:10 |             getMode: ModeDefault |
+| reference.adb | 61 | 5:11 |             getTypeExpr: SubtypeIndication |
+| reference.adb | 62 | 5:10 |               getHasNotNull: NotNullAbsent |
+| reference.adb | 63 | 5:11 |               getName: Identifier Integer -> Standard.Integer |
+| reference.adb | 64 | 5:22 |             getDefaultExpr: IntLiteral 0 |
+| reference.adb | 65 | 6:4 |           [2]: ObjectDecl |
+| reference.adb | 66 | 6:4 |             getIds: DefiningNameList |
+| reference.adb | 67 | 6:4 |               [0]: DefiningName |
+| reference.adb | 68 | 6:4 |                 getName: Identifier Arr |
+| reference.adb | 69 | 6:10 |             getHasAliased: AliasedAbsent |
+| reference.adb | 70 | 6:10 |             getHasConstant: ConstantAbsent |
+| reference.adb | 71 | 6:10 |             getMode: ModeDefault |
+| reference.adb | 72 | 6:11 |             getTypeExpr: SubtypeIndication |
+| reference.adb | 73 | 6:10 |               getHasNotNull: NotNullAbsent |
+| reference.adb | 74 | 6:11 |               getName: DottedName -> Ref_Pkg.Int_Array |
+| reference.adb | 75 | 6:11 |                 getPrefix: Identifier Ref_Pkg -> Ref_Pkg |
+| reference.adb | 76 | 6:19 |                 getSuffix: Identifier Int_Array -> Ref_Pkg.Int_Array |
+| reference.adb | 77 | 6:29 |               getConstraint: CompositeConstraint |
+| reference.adb | 78 | 6:30 |                 getConstraints: AssocList |
+| reference.adb | 79 | 6:30 |                   [0]: CompositeConstraintAssoc |
+| reference.adb | 80 | 6:30 |                     getIds: DiscriminantChoiceList |
+| reference.adb | 81 | 6:30 |                     getConstraintExpr: BinOp |
+| reference.adb | 82 | 6:30 |                       getLeft: IntLiteral 1 |
+| reference.adb | 83 | 6:32 |                       getOp: OpDoubleDot .. |
+| reference.adb | 84 | 6:35 |                       getRight: IntLiteral 3 |
+| reference.adb | 85 | 6:41 |             getDefaultExpr: Aggregate |
+| reference.adb | 86 | 6:42 |               getAssocs: AssocList |
+| reference.adb | 87 | 6:42 |                 [0]: AggregateAssoc |
+| reference.adb | 88 | 6:42 |                   getDesignators: AlternativesList |
+| reference.adb | 89 | 6:42 |                     [0]: OthersDesignator |
+| reference.adb | 90 | 6:52 |                   getRExpr: IntLiteral 0 |
+| reference.adb | 91 | 7:4 |           [3]: ObjectDecl |
+| reference.adb | 92 | 7:4 |             getIds: DefiningNameList |
+| reference.adb | 93 | 7:4 |               [0]: DefiningName |
+| reference.adb | 94 | 7:4 |                 getName: Identifier Ptr |
+| reference.adb | 95 | 7:10 |             getHasAliased: AliasedAbsent |
+| reference.adb | 96 | 7:10 |             getHasConstant: ConstantAbsent |
+| reference.adb | 97 | 7:10 |             getMode: ModeDefault |
+| reference.adb | 98 | 7:11 |             getTypeExpr: SubtypeIndication |
+| reference.adb | 99 | 7:10 |               getHasNotNull: NotNullAbsent |
+| reference.adb | 100 | 7:11 |               getName: DottedName -> Ref_Pkg.Point_Access |
+| reference.adb | 101 | 7:11 |                 getPrefix: Identifier Ref_Pkg -> Ref_Pkg |
+| reference.adb | 102 | 7:19 |                 getSuffix: Identifier Point_Access -> Ref_Pkg.Point_Access |
+| reference.adb | 103 | 7:35 |             getDefaultExpr: Allocator |
+| reference.adb | 104 | 7:39 |               getTypeOrExpr: QualExpr -> Ref_Pkg.Point |
+| reference.adb | 105 | 7:39 |                 getPrefix: DottedName -> Ref_Pkg.Point |
+| reference.adb | 106 | 7:39 |                   getPrefix: Identifier Ref_Pkg -> Ref_Pkg |
+| reference.adb | 107 | 7:47 |                   getSuffix: Identifier Point -> Ref_Pkg.Point |
+| reference.adb | 108 | 7:53 |                 getSuffix: ParenExpr |
+| reference.adb | 109 | 7:54 |                   getExpr: Identifier P -> Reference.P |
+| reference.adb | 110 | 8:4 |           [4]: ObjectDecl |
+| reference.adb | 111 | 8:4 |             getIds: DefiningNameList |
+| reference.adb | 112 | 8:4 |               [0]: DefiningName |
+| reference.adb | 113 | 8:4 |                 getName: Identifier S |
+| reference.adb | 114 | 8:10 |             getHasAliased: AliasedAbsent |
+| reference.adb | 115 | 8:10 |             getHasConstant: ConstantAbsent |
+| reference.adb | 116 | 8:10 |             getMode: ModeDefault |
+| reference.adb | 117 | 8:11 |             getTypeExpr: SubtypeIndication |
+| reference.adb | 118 | 8:10 |               getHasNotNull: NotNullAbsent |
+| reference.adb | 119 | 8:11 |               getName: DottedName -> Ref_Pkg.Shape |
+| reference.adb | 120 | 8:11 |                 getPrefix: Identifier Ref_Pkg -> Ref_Pkg |
+| reference.adb | 121 | 8:19 |                 getSuffix: Identifier Shape -> Ref_Pkg.Shape |
+| reference.adb | 122 | 8:28 |             getDefaultExpr: Aggregate |
+| reference.adb | 123 | 8:29 |               getAssocs: AssocList |
+| reference.adb | 124 | 8:29 |                 [0]: AggregateAssoc |
+| reference.adb | 125 | 8:29 |                   getDesignators: AlternativesList |
+| reference.adb | 126 | 8:29 |                     [0]: Identifier Id -> Ref_Pkg.Shape.Id |
+| reference.adb | 127 | 8:35 |                   getRExpr: IntLiteral 1 |
+| reference.adb | 128 | 9:4 |           [5]: ObjectDecl |
+| reference.adb | 129 | 9:4 |             getIds: DefiningNameList |
+| reference.adb | 130 | 9:4 |               [0]: DefiningName |
+| reference.adb | 131 | 9:4 |                 getName: Identifier Name |
+| reference.adb | 132 | 9:10 |             getHasAliased: AliasedAbsent |
+| reference.adb | 133 | 9:11 |             getHasConstant: ConstantPresent |
+| reference.adb | 134 | 9:19 |             getMode: ModeDefault |
+| reference.adb | 135 | 9:20 |             getTypeExpr: SubtypeIndication |
+| reference.adb | 136 | 9:19 |               getHasNotNull: NotNullAbsent |
+| reference.adb | 137 | 9:20 |               getName: Identifier String -> Standard.String |
+| reference.adb | 138 | 9:30 |             getDefaultExpr: StringLiteral "abc" |
+| reference.adb | 139 | 10:4 |           [6]: ObjectDecl |
+| reference.adb | 140 | 10:4 |             getIds: DefiningNameList |
+| reference.adb | 141 | 10:4 |               [0]: DefiningName |
+| reference.adb | 142 | 10:4 |                 getName: Identifier R |
+| reference.adb | 143 | 10:10 |             getHasAliased: AliasedAbsent |
+| reference.adb | 144 | 10:10 |             getHasConstant: ConstantAbsent |
+| reference.adb | 145 | 10:10 |             getMode: ModeDefault |
+| reference.adb | 146 | 10:11 |             getTypeExpr: SubtypeIndication |
+| reference.adb | 147 | 10:10 |               getHasNotNull: NotNullAbsent |
+| reference.adb | 148 | 10:11 |               getName: Identifier Integer -> Standard.Integer |
+| reference.adb | 149 | 10:19 |             getRenamingClause: RenamingClause |
+| reference.adb | 150 | 10:27 |               getRenamedObject: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 151 | 11:4 |           [7]: SubpRenamingDecl |
+| reference.adb | 152 | 10:29 |             getOverriding: OverridingUnspecified |
+| reference.adb | 153 | 11:4 |             getSubpSpec: SubpSpec |
+| reference.adb | 154 | 11:4 |               getSubpKind: SubpKindProcedure |
+| reference.adb | 155 | 11:14 |               getSubpName: DefiningName |
+| reference.adb | 156 | 11:14 |                 getName: Identifier Log |
+| reference.adb | 157 | 11:18 |               getSubpParams: Params |
+| reference.adb | 158 | 11:19 |                 getParams: ParamSpecList |
+| reference.adb | 159 | 11:19 |                   [0]: ParamSpec |
+| reference.adb | 160 | 11:19 |                     getIds: DefiningNameList |
+| reference.adb | 161 | 11:19 |                       [0]: DefiningName |
+| reference.adb | 162 | 11:19 |                         getName: Identifier Msg |
+| reference.adb | 163 | 11:24 |                     getHasAliased: AliasedAbsent |
+| reference.adb | 164 | 11:24 |                     getMode: ModeDefault |
+| reference.adb | 165 | 11:25 |                     getTypeExpr: SubtypeIndication |
+| reference.adb | 166 | 11:24 |                       getHasNotNull: NotNullAbsent |
+| reference.adb | 167 | 11:25 |                       getName: Identifier String -> Standard.String |
+| reference.adb | 168 | 11:33 |             getRenames: RenamingClause |
+| reference.adb | 169 | 11:41 |               getRenamedObject: Identifier Put_Line -> Ada.Text_IO.Put_Line |
+| reference.adb | 170 | 12:4 |           [8]: GenericPackageInstantiation |
+| reference.adb | 171 | 12:12 |             getName: DefiningName |
+| reference.adb | 172 | 12:12 |               getName: Identifier Int_IO |
+| reference.adb | 173 | 12:26 |             getGenericPkgName: DottedName -> Ada.Text_IO.Integer_IO |
+| reference.adb | 174 | 12:26 |               getPrefix: DottedName -> Ada.Text_IO |
+| reference.adb | 175 | 12:26 |                 getPrefix: Identifier Ada -> Ada |
+| reference.adb | 176 | 12:30 |                 getSuffix: Identifier Text_IO -> Ada.Text_IO |
+| reference.adb | 177 | 12:38 |               getSuffix: Identifier Integer_IO -> Ada.Text_IO.Integer_IO |
+| reference.adb | 178 | 12:50 |             getParams: AssocList |
+| reference.adb | 179 | 12:50 |               [0]: ParamAssoc |
+| reference.adb | 180 | 12:50 |                 getRExpr: Identifier Integer -> Standard.Integer |
+| reference.adb | 181 | 13:4 |           [9]: ExprFunction |
+| reference.adb | 182 | 12:59 |             getOverriding: OverridingUnspecified |
+| reference.adb | 183 | 13:4 |             getSubpSpec: SubpSpec |
+| reference.adb | 184 | 13:4 |               getSubpKind: SubpKindFunction |
+| reference.adb | 185 | 13:13 |               getSubpName: DefiningName |
+| reference.adb | 186 | 13:13 |                 getName: Identifier Twice |
+| reference.adb | 187 | 13:19 |               getSubpParams: Params |
+| reference.adb | 188 | 13:20 |                 getParams: ParamSpecList |
+| reference.adb | 189 | 13:20 |                   [0]: ParamSpec |
+| reference.adb | 190 | 13:20 |                     getIds: DefiningNameList |
+| reference.adb | 191 | 13:20 |                       [0]: DefiningName |
+| reference.adb | 192 | 13:20 |                         getName: Identifier V |
+| reference.adb | 193 | 13:23 |                     getHasAliased: AliasedAbsent |
+| reference.adb | 194 | 13:23 |                     getMode: ModeDefault |
+| reference.adb | 195 | 13:24 |                     getTypeExpr: SubtypeIndication |
+| reference.adb | 196 | 13:23 |                       getHasNotNull: NotNullAbsent |
+| reference.adb | 197 | 13:24 |                       getName: Identifier Integer -> Standard.Integer |
+| reference.adb | 198 | 13:40 |               getSubpReturns: SubtypeIndication |
+| reference.adb | 199 | 13:39 |                 getHasNotNull: NotNullAbsent |
+| reference.adb | 200 | 13:40 |                 getName: Identifier Integer -> Standard.Integer |
+| reference.adb | 201 | 13:51 |             getExpr: ParenExpr |
+| reference.adb | 202 | 13:52 |               getExpr: BinOp |
+| reference.adb | 203 | 13:52 |                 getLeft: IntLiteral 2 |
+| reference.adb | 204 | 13:54 |                 getOp: OpMult * |
+| reference.adb | 205 | 13:56 |                 getRight: Identifier V -> Reference.Twice.V |
+| reference.adb | 206 | 14:4 |           [10]: PragmaNode |
+| reference.adb | 207 | 14:11 |             getId: Identifier Inline |
+| reference.adb | 208 | 14:19 |             getArgs: BaseAssocList |
+| reference.adb | 209 | 14:19 |               [0]: PragmaArgumentAssoc |
+| reference.adb | 210 | 14:19 |                 getExpr: Identifier Twice -> Reference.Twice |
+| reference.adb | 211 | 15:4 |           [11]: ObjectDecl |
+| reference.adb | 212 | 15:4 |             getIds: DefiningNameList |
+| reference.adb | 213 | 15:4 |               [0]: DefiningName |
+| reference.adb | 214 | 15:4 |                 getName: Identifier Flag |
+| reference.adb | 215 | 15:10 |             getHasAliased: AliasedAbsent |
+| reference.adb | 216 | 15:10 |             getHasConstant: ConstantAbsent |
+| reference.adb | 217 | 15:10 |             getMode: ModeDefault |
+| reference.adb | 218 | 15:11 |             getTypeExpr: SubtypeIndication |
+| reference.adb | 219 | 15:10 |               getHasNotNull: NotNullAbsent |
+| reference.adb | 220 | 15:11 |               getName: Identifier Boolean -> Standard.Boolean |
+| reference.adb | 221 | 15:22 |             getDefaultExpr: Identifier False -> Standard.Boolean.False |
+| reference.adb | 222 | 15:28 |             getAspects: AspectSpec |
+| reference.adb | 223 | 15:33 |               getAspectAssocs: AspectAssocList |
+| reference.adb | 224 | 15:33 |                 [0]: AspectAssoc |
+| reference.adb | 225 | 15:33 |                   getId: Identifier Volatile |
+| reference.adb | 226 | 16:6 |       getStmts: HandledStmts |
+| reference.adb | 227 | 17:4 |         getStmts: StmtList |
+| reference.adb | 228 | 17:4 |           [0]: AssignStmt |
+| reference.adb | 229 | 17:4 |             getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 230 | 17:9 |             getExpr: CallExpr -> Reference.Twice |
+| reference.adb | 231 | 17:9 |               getName: Identifier Twice -> Reference.Twice |
+| reference.adb | 232 | 17:16 |               getSuffix: AssocList |
+| reference.adb | 233 | 17:16 |                 [0]: ParamAssoc |
+| reference.adb | 234 | 17:16 |                   getRExpr: Identifier B -> ObjectDecl A, B @5:4 |
+| reference.adb | 235 | 18:4 |           [1]: CallStmt |
+| reference.adb | 236 | 18:4 |             getCall: CallExpr -> Reference.Log |
+| reference.adb | 237 | 18:4 |               getName: Identifier Log -> Reference.Log |
+| reference.adb | 238 | 18:9 |               getSuffix: AssocList |
+| reference.adb | 239 | 18:9 |                 [0]: ParamAssoc |
+| reference.adb | 240 | 18:9 |                   getRExpr: StringLiteral "hello" |
+| reference.adb | 241 | 19:4 |           [2]: CallStmt |
+| reference.adb | 242 | 19:4 |             getCall: Identifier New_Line -> Ada.Text_IO.New_Line |
+| reference.adb | 243 | 20:4 |           [3]: CallStmt |
+| reference.adb | 244 | 20:4 |             getCall: CallExpr -> Ada.Text_IO.Put_Line |
+| reference.adb | 245 | 20:4 |               getName: Identifier Put_Line -> Ada.Text_IO.Put_Line |
+| reference.adb | 246 | 20:14 |               getSuffix: AssocList |
+| reference.adb | 247 | 20:14 |                 [0]: ParamAssoc |
+| reference.adb | 248 | 20:14 |                   getDesignator: Identifier Item -> Ada.Text_IO.Put_Line.Item |
+| reference.adb | 249 | 20:22 |                   getRExpr: Identifier Name -> Reference.Name |
+| reference.adb | 250 | 21:4 |           [4]: CallStmt |
+| reference.adb | 251 | 21:4 |             getCall: CallExpr -> Ref_Pkg.Move |
+| reference.adb | 252 | 21:4 |               getName: DottedName -> Ref_Pkg.Move |
+| reference.adb | 253 | 21:4 |                 getPrefix: Identifier S -> Reference.S |
+| reference.adb | 254 | 21:6 |                 getSuffix: Identifier Move -> Ref_Pkg.Move |
+| reference.adb | 255 | 21:12 |               getSuffix: AssocList |
+| reference.adb | 256 | 21:12 |                 [0]: ParamAssoc |
+| reference.adb | 257 | 21:12 |                   getDesignator: Identifier By -> Ref_Pkg.Move.By |
+| reference.adb | 258 | 21:18 |                   getRExpr: IntLiteral 2 |
+| reference.adb | 259 | 22:4 |           [5]: CallStmt |
+| reference.adb | 260 | 22:4 |             getCall: CallExpr -> Ref_Pkg.Move |
+| reference.adb | 261 | 22:4 |               getName: DottedName -> Ref_Pkg.Move |
+| reference.adb | 262 | 22:4 |                 getPrefix: Identifier Ref_Pkg -> Ref_Pkg |
+| reference.adb | 263 | 22:12 |                 getSuffix: Identifier Move -> Ref_Pkg.Move |
+| reference.adb | 264 | 22:18 |               getSuffix: AssocList |
+| reference.adb | 265 | 22:18 |                 [0]: ParamAssoc |
+| reference.adb | 266 | 22:18 |                   getRExpr: Identifier S -> Reference.S |
+| reference.adb | 267 | 22:21 |                 [1]: ParamAssoc |
+| reference.adb | 268 | 22:21 |                   getRExpr: IntLiteral 3 |
+| reference.adb | 269 | 23:4 |           [6]: AssignStmt |
+| reference.adb | 270 | 23:4 |             getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 271 | 23:9 |             getExpr: CallExpr -> Reference.Arr |
+| reference.adb | 272 | 23:9 |               getName: Identifier Arr -> Reference.Arr |
+| reference.adb | 273 | 23:14 |               getSuffix: AssocList |
+| reference.adb | 274 | 23:14 |                 [0]: ParamAssoc |
+| reference.adb | 275 | 23:14 |                   getRExpr: IntLiteral 2 |
+| reference.adb | 276 | 24:4 |           [7]: CallStmt |
+| reference.adb | 277 | 24:4 |             getCall: CallExpr -> Ada.Text_IO.Put_Line |
+| reference.adb | 278 | 24:4 |               getName: Identifier Put_Line -> Ada.Text_IO.Put_Line |
+| reference.adb | 279 | 24:14 |               getSuffix: AssocList |
+| reference.adb | 280 | 24:14 |                 [0]: ParamAssoc |
+| reference.adb | 281 | 24:14 |                   getRExpr: CallExpr -> Reference.Name |
+| reference.adb | 282 | 24:14 |                     getName: Identifier Name -> Reference.Name |
+| reference.adb | 283 | 24:20 |                     getSuffix: BinOp |
+| reference.adb | 284 | 24:20 |                       getLeft: IntLiteral 1 |
+| reference.adb | 285 | 24:22 |                       getOp: OpDoubleDot .. |
+| reference.adb | 286 | 24:25 |                       getRight: IntLiteral 2 |
+| reference.adb | 287 | 25:4 |           [8]: AssignStmt |
+| reference.adb | 288 | 25:4 |             getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 289 | 25:9 |             getExpr: CallExpr -> Standard.Integer |
+| reference.adb | 290 | 25:9 |               getName: Identifier Integer -> Standard.Integer |
+| reference.adb | 291 | 25:18 |               getSuffix: AssocList |
+| reference.adb | 292 | 25:18 |                 [0]: ParamAssoc |
+| reference.adb | 293 | 25:18 |                   getRExpr: QualExpr -> Ref_Pkg.Small |
+| reference.adb | 294 | 25:18 |                     getPrefix: DottedName -> Ref_Pkg.Small |
+| reference.adb | 295 | 25:18 |                       getPrefix: Identifier Ref_Pkg -> Ref_Pkg |
+| reference.adb | 296 | 25:26 |                       getSuffix: Identifier Small -> Ref_Pkg.Small |
+| reference.adb | 297 | 25:32 |                     getSuffix: ParenExpr |
+| reference.adb | 298 | 25:33 |                       getExpr: IntLiteral 3 |
+| reference.adb | 299 | 26:4 |           [9]: AssignStmt |
+| reference.adb | 300 | 26:4 |             getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 301 | 26:9 |             getExpr: BinOp |
+| reference.adb | 302 | 26:9 |               getLeft: AttributeRef |
+| reference.adb | 303 | 26:9 |                 getPrefix: Identifier Name -> Reference.Name |
+| reference.adb | 304 | 26:14 |                 getAttribute: Identifier Length |
+| reference.adb | 305 | 26:20 |                 getArgs: AssocList |
+| reference.adb | 306 | 26:21 |               getOp: OpPlus + |
+| reference.adb | 307 | 26:23 |               getRight: CallExpr |
+| reference.adb | 308 | 26:23 |                 getName: AttributeRef |
+| reference.adb | 309 | 26:23 |                   getPrefix: Identifier Integer -> Standard.Integer |
+| reference.adb | 310 | 26:31 |                   getAttribute: Identifier Value |
+| reference.adb | 311 | 26:36 |                   getArgs: AssocList |
+| reference.adb | 312 | 26:38 |                 getSuffix: AssocList |
+| reference.adb | 313 | 26:38 |                   [0]: ParamAssoc |
+| reference.adb | 314 | 26:38 |                     getRExpr: StringLiteral "4" |
+| reference.adb | 315 | 27:4 |           [10]: AssignStmt |
+| reference.adb | 316 | 27:4 |             getDest: DottedName -> ComponentDecl X, Y @3:7 |
+| reference.adb | 317 | 27:4 |               getPrefix: Identifier P -> Reference.P |
+| reference.adb | 318 | 27:6 |               getSuffix: Identifier X -> ComponentDecl X, Y @3:7 |
+| reference.adb | 319 | 27:11 |             getExpr: DottedName -> ComponentDecl X, Y @3:7 |
+| reference.adb | 320 | 27:11 |               getPrefix: ExplicitDeref -> Reference.Ptr |
+| reference.adb | 321 | 27:11 |                 getPrefix: Identifier Ptr -> Reference.Ptr |
+| reference.adb | 322 | 27:19 |               getSuffix: Identifier Y -> ComponentDecl X, Y @3:7 |
+| reference.adb | 323 | 28:4 |           [11]: AssignStmt |
+| reference.adb | 324 | 28:4 |             getDest: Identifier Flag -> Reference.Flag |
+| reference.adb | 325 | 28:12 |             getExpr: BinOp |
+| reference.adb | 326 | 28:12 |               getLeft: RelationOp |
+| reference.adb | 327 | 28:12 |                 getLeft: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 328 | 28:14 |                 getOp: OpGt > |
+| reference.adb | 329 | 28:16 |                 getRight: IntLiteral 0 |
+| reference.adb | 330 | 28:18 |               getOp: OpAndThen and then |
+| reference.adb | 331 | 28:27 |               getRight: UnOp |
+| reference.adb | 332 | 28:27 |                 getOp: OpNot not |
+| reference.adb | 333 | 28:31 |                 getExpr: Identifier Flag -> Reference.Flag |
+| reference.adb | 334 | 29:4 |           [12]: AssignStmt |
+| reference.adb | 335 | 29:4 |             getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 336 | 29:9 |             getExpr: ParenExpr |
+| reference.adb | 337 | 29:10 |               getExpr: IfExpr |
+| reference.adb | 338 | 29:13 |                 getCondExpr: Identifier Flag -> Reference.Flag |
+| reference.adb | 339 | 29:23 |                 getThenExpr: IntLiteral 1 |
+| reference.adb | 340 | 29:24 |                 getAlternatives: ElsifExprPartList |
+| reference.adb | 341 | 29:30 |                 getElseExpr: IntLiteral 2 |
+| reference.adb | 342 | 30:4 |           [13]: IfStmt |
+| reference.adb | 343 | 30:7 |             getCondExpr: RelationOp |
+| reference.adb | 344 | 30:7 |               getLeft: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 345 | 30:9 |               getOp: OpEq = |
+| reference.adb | 346 | 30:11 |               getRight: IntLiteral 1 |
+| reference.adb | 347 | 30:18 |             getThenStmts: StmtList |
+| reference.adb | 348 | 30:18 |               [0]: NullStmt |
+| reference.adb | 349 | 30:24 |             getAlternatives: ElsifStmtPartList |
+| reference.adb | 350 | 30:24 |               [0]: ElsifStmtPart |
+| reference.adb | 351 | 30:30 |                 getCondExpr: RelationOp |
+| reference.adb | 352 | 30:30 |                   getLeft: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 353 | 30:32 |                   getOp: OpEq = |
+| reference.adb | 354 | 30:34 |                   getRight: IntLiteral 2 |
+| reference.adb | 355 | 30:41 |                 getStmts: StmtList |
+| reference.adb | 356 | 30:41 |                   [0]: AssignStmt |
+| reference.adb | 357 | 30:41 |                     getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 358 | 30:46 |                     getExpr: IntLiteral 3 |
+| reference.adb | 359 | 30:49 |             getElsePart: ElsePart |
+| reference.adb | 360 | 30:54 |               getStmts: StmtList |
+| reference.adb | 361 | 30:54 |                 [0]: AssignStmt |
+| reference.adb | 362 | 30:54 |                   getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 363 | 30:59 |                   getExpr: IntLiteral 4 |
+| reference.adb | 364 | 31:4 |           [14]: CaseStmt |
+| reference.adb | 365 | 31:9 |             getExpr: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 366 | 31:13 |             getPragmas: PragmaNodeList |
+| reference.adb | 367 | 31:14 |             getAlternatives: CaseStmtAlternativeList |
+| reference.adb | 368 | 31:14 |               [0]: CaseStmtAlternative |
+| reference.adb | 369 | 31:19 |                 getChoices: AlternativesList |
+| reference.adb | 370 | 31:19 |                   [0]: IntLiteral 1 |
+| reference.adb | 371 | 31:23 |                   [1]: IntLiteral 2 |
+| reference.adb | 372 | 31:28 |                 getStmts: StmtList |
+| reference.adb | 373 | 31:28 |                   [0]: NullStmt |
+| reference.adb | 374 | 31:34 |               [1]: CaseStmtAlternative |
+| reference.adb | 375 | 31:39 |                 getChoices: AlternativesList |
+| reference.adb | 376 | 31:39 |                   [0]: OthersDesignator |
+| reference.adb | 377 | 31:49 |                 getStmts: StmtList |
+| reference.adb | 378 | 31:49 |                   [0]: AssignStmt |
+| reference.adb | 379 | 31:49 |                     getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 380 | 31:54 |                     getExpr: IntLiteral 0 |
+| reference.adb | 381 | 32:4 |           [15]: ForLoopStmt |
+| reference.adb | 382 | 32:8 |             getSpec: ForLoopSpec |
+| reference.adb | 383 | 32:8 |               getVarDecl: ForLoopVarDecl |
+| reference.adb | 384 | 32:8 |                 getId: DefiningName |
+| reference.adb | 385 | 32:8 |                   getName: Identifier I |
+| reference.adb | 386 | 32:10 |               getLoopType: IterTypeIn |
+| reference.adb | 387 | 32:12 |               getHasReverse: ReverseAbsent |
+| reference.adb | 388 | 32:13 |               getIterExpr: AttributeRef |
+| reference.adb | 389 | 32:13 |                 getPrefix: Identifier Arr -> Reference.Arr |
+| reference.adb | 390 | 32:17 |                 getAttribute: Identifier Range |
+| reference.adb | 391 | 32:22 |                 getArgs: AssocList |
+| reference.adb | 392 | 32:28 |             getStmts: StmtList |
+| reference.adb | 393 | 32:28 |               [0]: AssignStmt |
+| reference.adb | 394 | 32:28 |                 getDest: CallExpr -> Reference.Arr |
+| reference.adb | 395 | 32:28 |                   getName: Identifier Arr -> Reference.Arr |
+| reference.adb | 396 | 32:33 |                   getSuffix: AssocList |
+| reference.adb | 397 | 32:33 |                     [0]: ParamAssoc |
+| reference.adb | 398 | 32:33 |                       getRExpr: Identifier I -> Reference.I |
+| reference.adb | 399 | 32:39 |                 getExpr: Identifier I -> Reference.I |
+| reference.adb | 400 | 33:4 |           [16]: WhileLoopStmt |
+| reference.adb | 401 | 33:4 |             getSpec: WhileLoopSpec |
+| reference.adb | 402 | 33:10 |               getExpr: RelationOp |
+| reference.adb | 403 | 33:10 |                 getLeft: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 404 | 33:12 |                 getOp: OpLt < |
+| reference.adb | 405 | 33:14 |                 getRight: IntLiteral 10 |
+| reference.adb | 406 | 33:22 |             getStmts: StmtList |
+| reference.adb | 407 | 33:22 |               [0]: AssignStmt |
+| reference.adb | 408 | 33:22 |                 getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 409 | 33:27 |                 getExpr: BinOp |
+| reference.adb | 410 | 33:27 |                   getLeft: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 411 | 33:29 |                   getOp: OpPlus + |
+| reference.adb | 412 | 33:31 |                   getRight: IntLiteral 1 |
+| reference.adb | 413 | 33:34 |               [1]: ExitStmt |
+| reference.adb | 414 | 33:44 |                 getCondExpr: RelationOp |
+| reference.adb | 415 | 33:44 |                   getLeft: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 416 | 33:46 |                   getOp: OpEq = |
+| reference.adb | 417 | 33:48 |                   getRight: IntLiteral 5 |
+| reference.adb | 418 | 34:4 |           [17]: DeclBlock |
+| reference.adb | 419 | 34:11 |             getDecls: DeclarativePart |
+| reference.adb | 420 | 34:12 |               getDecls: AdaNodeList |
+| reference.adb | 421 | 34:12 |                 [0]: ObjectDecl |
+| reference.adb | 422 | 34:12 |                   getIds: DefiningNameList |
+| reference.adb | 423 | 34:12 |                     [0]: DefiningName |
+| reference.adb | 424 | 34:12 |                       getName: Identifier Tmp |
+| reference.adb | 425 | 34:17 |                   getHasAliased: AliasedAbsent |
+| reference.adb | 426 | 34:17 |                   getHasConstant: ConstantAbsent |
+| reference.adb | 427 | 34:17 |                   getMode: ModeDefault |
+| reference.adb | 428 | 34:18 |                   getTypeExpr: SubtypeIndication |
+| reference.adb | 429 | 34:17 |                     getHasNotNull: NotNullAbsent |
+| reference.adb | 430 | 34:18 |                     getName: Identifier Integer -> Standard.Integer |
+| reference.adb | 431 | 34:29 |                   getDefaultExpr: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 432 | 34:37 |             getStmts: HandledStmts |
+| reference.adb | 433 | 34:38 |               getStmts: StmtList |
+| reference.adb | 434 | 34:38 |                 [0]: AssignStmt |
+| reference.adb | 435 | 34:38 |                   getDest: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 436 | 34:43 |                   getExpr: Identifier Tmp -> Reference.Tmp |
+| reference.adb | 437 | 34:58 |               getExceptions: AdaNodeList |
+| reference.adb | 438 | 34:58 |                 [0]: ExceptionHandler |
+| reference.adb | 439 | 34:63 |                   getExceptionName: DefiningName |
+| reference.adb | 440 | 34:63 |                     getName: Identifier E |
+| reference.adb | 441 | 34:67 |                   getHandledExceptions: AlternativesList |
+| reference.adb | 442 | 34:67 |                     [0]: Identifier Constraint_Error -> Standard.Constraint_Error |
+| reference.adb | 443 | 34:87 |                   getStmts: StmtList |
+| reference.adb | 444 | 34:87 |                     [0]: RaiseStmt |
+| reference.adb | 445 | 35:4 |           [18]: CallStmt |
+| reference.adb | 446 | 35:4 |             getCall: CallExpr -> Ada.Text_IO.Integer_IO.Put |
+| reference.adb | 447 | 35:4 |               getName: DottedName -> Ada.Text_IO.Integer_IO.Put |
+| reference.adb | 448 | 35:4 |                 getPrefix: Identifier Int_IO -> Reference.Int_IO |
+| reference.adb | 449 | 35:11 |                 getSuffix: Identifier Put -> Ada.Text_IO.Integer_IO.Put |
+| reference.adb | 450 | 35:16 |               getSuffix: AssocList |
+| reference.adb | 451 | 35:16 |                 [0]: ParamAssoc |
+| reference.adb | 452 | 35:16 |                   getRExpr: Identifier A -> ObjectDecl A, B @5:4 |
+| reference.adb | 453 | 35:19 |         getExceptions: AdaNodeList |
+| reference.adb | 454 | 36:5 |       getEndName: EndName -> Reference |
+| reference.adb | 455 | 36:5 |         getName: Identifier Reference -> Reference |
+| reference.adb | 456 | 36:15 |   getPragmas: PragmaNodeList |
+| test.adb | 1 | 5:1 | CompilationUnit |
+| test.adb | 2 | 5:1 |   getPrelude: AdaNodeList |
+| test.adb | 3 | 5:1 |   getBody: LibraryItem |
+| test.adb | 4 | 5:1 |     getHasPrivate: PrivateAbsent |
+| test.adb | 5 | 5:1 |     getItem: SubpBody |
+| test.adb | 6 | 5:1 |       getOverriding: OverridingUnspecified |
+| test.adb | 7 | 5:1 |       getSubpSpec: SubpSpec |
+| test.adb | 8 | 5:1 |         getSubpKind: SubpKindProcedure |
+| test.adb | 9 | 5:11 |         getSubpName: DefiningName |
+| test.adb | 10 | 5:11 |           getName: Identifier Test |
+| test.adb | 11 | 5:18 |       getDecls: DeclarativePart |
+| test.adb | 12 | 6:4 |         getDecls: AdaNodeList |
+| test.adb | 13 | 6:4 |           [0]: ConcreteTypeDecl |
+| test.adb | 14 | 6:9 |             getName: DefiningName |
+| test.adb | 15 | 6:9 |               getName: Identifier Arr |
+| test.adb | 16 | 6:16 |             getTypeDef: ArrayTypeDef |
+| test.adb | 17 | 6:23 |               getIndices: ConstrainedArrayIndices |
+| test.adb | 18 | 6:23 |                 getList: ConstraintList |
+| test.adb | 19 | 6:23 |                   [0]: BinOp |
+| test.adb | 20 | 6:23 |                     getLeft: IntLiteral 1 |
+| test.adb | 21 | 6:25 |                     getOp: OpDoubleDot .. |
+| test.adb | 22 | 6:28 |                     getRight: IntLiteral 2 |
+| test.adb | 23 | 6:34 |               getComponentType: ComponentDef |
+| test.adb | 24 | 6:33 |                 getHasAliased: AliasedAbsent |
+| test.adb | 25 | 6:33 |                 getHasConstant: ConstantAbsent |
+| test.adb | 26 | 6:34 |                 getTypeExpr: SubtypeIndication |
+| test.adb | 27 | 6:33 |                   getHasNotNull: NotNullAbsent |
+| test.adb | 28 | 6:34 |                   getName: Identifier Integer -> Standard.Integer |
+| test.adb | 29 | 7:4 |           [1]: ConcreteTypeDecl |
+| test.adb | 30 | 7:9 |             getName: DefiningName |
+| test.adb | 31 | 7:9 |               getName: Identifier Count |
+| test.adb | 32 | 7:18 |             getTypeDef: DerivedTypeDef |
+| test.adb | 33 | 7:17 |               getHasAbstract: AbstractAbsent |
+| test.adb | 34 | 7:17 |               getHasLimited: LimitedAbsent |
+| test.adb | 35 | 7:17 |               getHasSynchronized: SynchronizedAbsent |
+| test.adb | 36 | 7:22 |               getSubtypeIndication: SubtypeIndication |
+| test.adb | 37 | 7:21 |                 getHasNotNull: NotNullAbsent |
+| test.adb | 38 | 7:22 |                 getName: Identifier Integer -> Standard.Integer |
+| test.adb | 39 | 7:29 |               getInterfaces: ParentList |
+| test.adb | 40 | 7:29 |               getHasWithPrivate: WithPrivateAbsent |
+| test.adb | 41 | 8:4 |           [2]: ExprFunction |
+| test.adb | 42 | 7:30 |             getOverriding: OverridingUnspecified |
+| test.adb | 43 | 8:4 |             getSubpSpec: SubpSpec |
+| test.adb | 44 | 8:4 |               getSubpKind: SubpKindFunction |
+| test.adb | 45 | 8:13 |               getSubpName: DefiningName |
+| test.adb | 46 | 8:13 |                 getName: Identifier F |
+| test.adb | 47 | 8:15 |               getSubpParams: Params |
+| test.adb | 48 | 8:16 |                 getParams: ParamSpecList |
+| test.adb | 49 | 8:16 |                   [0]: ParamSpec |
+| test.adb | 50 | 8:16 |                     getIds: DefiningNameList |
+| test.adb | 51 | 8:16 |                       [0]: DefiningName |
+| test.adb | 52 | 8:16 |                         getName: Identifier X |
+| test.adb | 53 | 8:19 |                     getHasAliased: AliasedAbsent |
+| test.adb | 54 | 8:19 |                     getMode: ModeDefault |
+| test.adb | 55 | 8:20 |                     getTypeExpr: SubtypeIndication |
+| test.adb | 56 | 8:19 |                       getHasNotNull: NotNullAbsent |
+| test.adb | 57 | 8:20 |                       getName: Identifier Integer -> Standard.Integer |
+| test.adb | 58 | 8:36 |               getSubpReturns: SubtypeIndication |
+| test.adb | 59 | 8:35 |                 getHasNotNull: NotNullAbsent |
+| test.adb | 60 | 8:36 |                 getName: Identifier Integer -> Standard.Integer |
+| test.adb | 61 | 8:47 |             getExpr: ParenExpr |
+| test.adb | 62 | 8:48 |               getExpr: Identifier X -> Test.F.X |
+| test.adb | 63 | 9:4 |           [3]: ObjectDecl |
+| test.adb | 64 | 9:4 |             getIds: DefiningNameList |
+| test.adb | 65 | 9:4 |               [0]: DefiningName |
+| test.adb | 66 | 9:4 |                 getName: Identifier A |
+| test.adb | 67 | 9:7 |             getHasAliased: AliasedAbsent |
+| test.adb | 68 | 9:7 |             getHasConstant: ConstantAbsent |
+| test.adb | 69 | 9:7 |             getMode: ModeDefault |
+| test.adb | 70 | 9:8 |             getTypeExpr: SubtypeIndication |
+| test.adb | 71 | 9:7 |               getHasNotNull: NotNullAbsent |
+| test.adb | 72 | 9:8 |               getName: Identifier Arr -> Test.Arr |
+| test.adb | 73 | 9:15 |             getDefaultExpr: Aggregate |
+| test.adb | 74 | 9:16 |               getAssocs: AssocList |
+| test.adb | 75 | 9:16 |                 [0]: AggregateAssoc |
+| test.adb | 76 | 9:16 |                   getDesignators: AlternativesList |
+| test.adb | 77 | 9:16 |                   getRExpr: IntLiteral 1 |
+| test.adb | 78 | 9:19 |                 [1]: AggregateAssoc |
+| test.adb | 79 | 9:18 |                   getDesignators: AlternativesList |
+| test.adb | 80 | 9:19 |                   getRExpr: IntLiteral 2 |
+| test.adb | 81 | 10:4 |           [4]: ObjectDecl |
+| test.adb | 82 | 10:4 |             getIds: DefiningNameList |
+| test.adb | 83 | 10:4 |               [0]: DefiningName |
+| test.adb | 84 | 10:4 |                 getName: Identifier C |
+| test.adb | 85 | 10:7 |             getHasAliased: AliasedAbsent |
+| test.adb | 86 | 10:7 |             getHasConstant: ConstantAbsent |
+| test.adb | 87 | 10:7 |             getMode: ModeDefault |
+| test.adb | 88 | 10:8 |             getTypeExpr: SubtypeIndication |
+| test.adb | 89 | 10:7 |               getHasNotNull: NotNullAbsent |
+| test.adb | 90 | 10:8 |               getName: Identifier Count -> Test.Count |
+| test.adb | 91 | 10:17 |             getDefaultExpr: CallExpr -> Test.Count |
+| test.adb | 92 | 10:17 |               getName: Identifier Count -> Test.Count |
+| test.adb | 93 | 10:24 |               getSuffix: AssocList |
+| test.adb | 94 | 10:24 |                 [0]: ParamAssoc |
+| test.adb | 95 | 10:24 |                   getRExpr: CallExpr -> Test.F |
+| test.adb | 96 | 10:24 |                     getName: Identifier F -> Test.F |
+| test.adb | 97 | 10:27 |                     getSuffix: AssocList |
+| test.adb | 98 | 10:27 |                       [0]: ParamAssoc |
+| test.adb | 99 | 10:27 |                         getRExpr: IntLiteral 1 |
+| test.adb | 100 | 11:4 |           [5]: ObjectDecl |
+| test.adb | 101 | 11:4 |             getIds: DefiningNameList |
+| test.adb | 102 | 11:4 |               [0]: DefiningName |
+| test.adb | 103 | 11:4 |                 getName: Identifier S |
+| test.adb | 104 | 11:7 |             getHasAliased: AliasedAbsent |
+| test.adb | 105 | 11:8 |             getHasConstant: ConstantPresent |
+| test.adb | 106 | 11:16 |             getMode: ModeDefault |
+| test.adb | 107 | 11:17 |             getTypeExpr: SubtypeIndication |
+| test.adb | 108 | 11:16 |               getHasNotNull: NotNullAbsent |
+| test.adb | 109 | 11:17 |               getName: Identifier String -> Standard.String |
+| test.adb | 110 | 11:27 |             getDefaultExpr: ConcatOp |
+| test.adb | 111 | 11:27 |               getFirstOperand: StringLiteral "a" |
+| test.adb | 112 | 11:31 |               getOtherOperands: ConcatOperandList |
+| test.adb | 113 | 11:31 |                 [0]: ConcatOperand |
+| test.adb | 114 | 11:31 |                   getOperator: OpConcat & |
+| test.adb | 115 | 11:33 |                   getOperand: StringLiteral "b" |
+| test.adb | 116 | 11:37 |                 [1]: ConcatOperand |
+| test.adb | 117 | 11:37 |                   getOperator: OpConcat & |
+| test.adb | 118 | 11:39 |                   getOperand: StringLiteral "c" |
+| test.adb | 119 | 12:4 |           [6]: ObjectDecl |
+| test.adb | 120 | 12:4 |             getIds: DefiningNameList |
+| test.adb | 121 | 12:4 |               [0]: DefiningName |
+| test.adb | 122 | 12:4 |                 getName: Identifier B |
+| test.adb | 123 | 12:7 |             getHasAliased: AliasedAbsent |
+| test.adb | 124 | 12:7 |             getHasConstant: ConstantAbsent |
+| test.adb | 125 | 12:7 |             getMode: ModeDefault |
+| test.adb | 126 | 12:8 |             getTypeExpr: SubtypeIndication |
+| test.adb | 127 | 12:7 |               getHasNotNull: NotNullAbsent |
+| test.adb | 128 | 12:8 |               getName: Identifier Boolean -> Standard.Boolean |
+| test.adb | 129 | 12:19 |             getDefaultExpr: MembershipExpr |
+| test.adb | 130 | 12:19 |               getExpr: CallExpr -> Test.Arr |
+| test.adb | 131 | 12:19 |                 getName: QualExpr -> Test.Arr |
+| test.adb | 132 | 12:19 |                   getPrefix: Identifier Arr -> Test.Arr |
+| test.adb | 133 | 12:23 |                   getSuffix: Aggregate |
+| test.adb | 134 | 12:24 |                     getAssocs: AssocList |
+| test.adb | 135 | 12:24 |                       [0]: AggregateAssoc |
+| test.adb | 136 | 12:24 |                         getDesignators: AlternativesList |
+| test.adb | 137 | 12:24 |                         getRExpr: IntLiteral 3 |
+| test.adb | 138 | 12:27 |                       [1]: AggregateAssoc |
+| test.adb | 139 | 12:26 |                         getDesignators: AlternativesList |
+| test.adb | 140 | 12:27 |                         getRExpr: IntLiteral 4 |
+| test.adb | 141 | 12:31 |                 getSuffix: AssocList |
+| test.adb | 142 | 12:31 |                   [0]: ParamAssoc |
+| test.adb | 143 | 12:31 |                     getRExpr: IntLiteral 1 |
+| test.adb | 144 | 12:34 |               getOp: OpIn in |
+| test.adb | 145 | 12:37 |               getMembershipExprs: ExprAlternativesList |
+| test.adb | 146 | 12:37 |                 [0]: IntLiteral 1 |
+| test.adb | 147 | 12:41 |                 [1]: IntLiteral 3 |
+| test.adb | 148 | 13:4 |           [7]: ConcreteTypeDecl |
+| test.adb | 149 | 13:9 |             getName: DefiningName |
+| test.adb | 150 | 13:9 |               getName: Identifier Rec |
+| test.adb | 151 | 13:16 |             getTypeDef: RecordTypeDef |
+| test.adb | 152 | 13:15 |               getHasAbstract: AbstractAbsent |
+| test.adb | 153 | 13:15 |               getHasTagged: TaggedAbsent |
+| test.adb | 154 | 13:15 |               getHasLimited: LimitedAbsent |
+| test.adb | 155 | 13:16 |               getRecordDef: RecordDef |
+| test.adb | 156 | 14:7 |                 getComponents: ComponentList |
+| test.adb | 157 | 14:7 |                   getComponents: AdaNodeList |
+| test.adb | 158 | 14:7 |                     [0]: ComponentDecl |
+| test.adb | 159 | 14:7 |                       getIds: DefiningNameList |
+| test.adb | 160 | 14:7 |                         [0]: DefiningName |
+| test.adb | 161 | 14:7 |                           getName: Identifier Field |
+| test.adb | 162 | 14:15 |                       getComponentDef: ComponentDef |
+| test.adb | 163 | 14:14 |                         getHasAliased: AliasedAbsent |
+| test.adb | 164 | 14:14 |                         getHasConstant: ConstantAbsent |
+| test.adb | 165 | 14:15 |                         getTypeExpr: SubtypeIndication |
+| test.adb | 166 | 14:14 |                           getHasNotNull: NotNullAbsent |
+| test.adb | 167 | 14:15 |                           getName: Identifier Integer -> Standard.Integer |
+| test.adb | 168 | 16:4 |           [8]: ConcreteTypeDecl |
+| test.adb | 169 | 16:9 |             getName: DefiningName |
+| test.adb | 170 | 16:9 |               getName: Identifier Rec_Access |
+| test.adb | 171 | 16:23 |             getTypeDef: TypeAccessDef |
+| test.adb | 172 | 16:22 |               getHasNotNull: NotNullAbsent |
+| test.adb | 173 | 16:29 |               getHasAll: AllAbsent |
+| test.adb | 174 | 16:29 |               getHasConstant: ConstantAbsent |
+| test.adb | 175 | 16:30 |               getSubtypeIndication: SubtypeIndication |
+| test.adb | 176 | 16:29 |                 getHasNotNull: NotNullAbsent |
+| test.adb | 177 | 16:30 |                 getName: Identifier Rec -> Test.Rec |
+| test.adb | 178 | 17:4 |           [9]: ExprFunction |
+| test.adb | 179 | 16:34 |             getOverriding: OverridingUnspecified |
+| test.adb | 180 | 17:4 |             getSubpSpec: SubpSpec |
+| test.adb | 181 | 17:4 |               getSubpKind: SubpKindFunction |
+| test.adb | 182 | 17:13 |               getSubpName: DefiningName |
+| test.adb | 183 | 17:13 |                 getName: Identifier Get |
+| test.adb | 184 | 17:24 |               getSubpReturns: SubtypeIndication |
+| test.adb | 185 | 17:23 |                 getHasNotNull: NotNullAbsent |
+| test.adb | 186 | 17:24 |                 getName: Identifier Integer -> Standard.Integer |
+| test.adb | 187 | 17:35 |             getExpr: ParenExpr |
+| test.adb | 188 | 17:36 |               getExpr: IntLiteral 5 |
+| test.adb | 189 | 18:4 |           [10]: ObjectDecl |
+| test.adb | 190 | 18:4 |             getIds: DefiningNameList |
+| test.adb | 191 | 18:4 |               [0]: DefiningName |
+| test.adb | 192 | 18:4 |                 getName: Identifier Q |
+| test.adb | 193 | 18:8 |             getHasAliased: AliasedAbsent |
+| test.adb | 194 | 18:8 |             getHasConstant: ConstantAbsent |
+| test.adb | 195 | 18:8 |             getMode: ModeDefault |
+| test.adb | 196 | 18:9 |             getTypeExpr: SubtypeIndication |
+| test.adb | 197 | 18:8 |               getHasNotNull: NotNullAbsent |
+| test.adb | 198 | 18:9 |               getName: Identifier Rec_Access -> Test.Rec_Access |
+| test.adb | 199 | 18:23 |             getDefaultExpr: Allocator |
+| test.adb | 200 | 18:27 |               getTypeOrExpr: SubtypeIndication |
+| test.adb | 201 | 18:26 |                 getHasNotNull: NotNullAbsent |
+| test.adb | 202 | 18:27 |                 getName: Identifier Rec -> Test.Rec |
+| test.adb | 203 | 19:4 |           [11]: ObjectDecl |
+| test.adb | 204 | 19:4 |             getIds: DefiningNameList |
+| test.adb | 205 | 19:4 |               [0]: DefiningName |
+| test.adb | 206 | 19:4 |                 getName: Identifier N |
+| test.adb | 207 | 19:8 |             getHasAliased: AliasedAbsent |
+| test.adb | 208 | 19:8 |             getHasConstant: ConstantAbsent |
+| test.adb | 209 | 19:8 |             getMode: ModeDefault |
+| test.adb | 210 | 19:9 |             getTypeExpr: SubtypeIndication |
+| test.adb | 211 | 19:8 |               getHasNotNull: NotNullAbsent |
+| test.adb | 212 | 19:9 |               getName: Identifier Rec_Access -> Test.Rec_Access |
+| test.adb | 213 | 19:23 |             getDefaultExpr: NullLiteral null |
+| test.adb | 214 | 20:4 |           [12]: ObjectDecl |
+| test.adb | 215 | 20:4 |             getIds: DefiningNameList |
+| test.adb | 216 | 20:4 |               [0]: DefiningName |
+| test.adb | 217 | 20:4 |                 getName: Identifier Ch |
+| test.adb | 218 | 20:8 |             getHasAliased: AliasedAbsent |
+| test.adb | 219 | 20:8 |             getHasConstant: ConstantAbsent |
+| test.adb | 220 | 20:8 |             getMode: ModeDefault |
+| test.adb | 221 | 20:9 |             getTypeExpr: SubtypeIndication |
+| test.adb | 222 | 20:8 |               getHasNotNull: NotNullAbsent |
+| test.adb | 223 | 20:9 |               getName: Identifier Character -> Standard.Character |
+| test.adb | 224 | 20:22 |             getDefaultExpr: CharLiteral 'a' |
+| test.adb | 225 | 21:4 |           [13]: ObjectDecl |
+| test.adb | 226 | 21:4 |             getIds: DefiningNameList |
+| test.adb | 227 | 21:4 |               [0]: DefiningName |
+| test.adb | 228 | 21:4 |                 getName: Identifier G |
+| test.adb | 229 | 21:8 |             getHasAliased: AliasedAbsent |
+| test.adb | 230 | 21:8 |             getHasConstant: ConstantAbsent |
+| test.adb | 231 | 21:8 |             getMode: ModeDefault |
+| test.adb | 232 | 21:9 |             getTypeExpr: SubtypeIndication |
+| test.adb | 233 | 21:8 |               getHasNotNull: NotNullAbsent |
+| test.adb | 234 | 21:9 |               getName: Identifier Integer -> Standard.Integer |
+| test.adb | 235 | 21:20 |             getDefaultExpr: Identifier Get -> Test.Get |
+| test.adb | 236 | 22:4 |           [14]: ObjectDecl |
+| test.adb | 237 | 22:4 |             getIds: DefiningNameList |
+| test.adb | 238 | 22:4 |               [0]: DefiningName |
+| test.adb | 239 | 22:4 |                 getName: Identifier V |
+| test.adb | 240 | 22:8 |             getHasAliased: AliasedAbsent |
+| test.adb | 241 | 22:8 |             getHasConstant: ConstantAbsent |
+| test.adb | 242 | 22:8 |             getMode: ModeDefault |
+| test.adb | 243 | 22:9 |             getTypeExpr: SubtypeIndication |
+| test.adb | 244 | 22:8 |               getHasNotNull: NotNullAbsent |
+| test.adb | 245 | 22:9 |               getName: Identifier Integer -> Standard.Integer |
+| test.adb | 246 | 22:20 |             getDefaultExpr: DottedName -> Test.Rec.Field |
+| test.adb | 247 | 22:20 |               getPrefix: Identifier Q -> Test.Q |
+| test.adb | 248 | 22:22 |               getSuffix: Identifier Field -> Test.Rec.Field |
+| test.adb | 249 | 23:6 |       getStmts: HandledStmts |
+| test.adb | 250 | 24:4 |         getStmts: StmtList |
+| test.adb | 251 | 24:4 |           [0]: LoopStmt |
+| test.adb | 252 | 25:7 |             getStmts: StmtList |
+| test.adb | 253 | 25:7 |               [0]: ExitStmt |
+| test.adb | 254 | 27:4 |           [1]: BeginBlock |
+| test.adb | 255 | 27:9 |             getStmts: HandledStmts |
+| test.adb | 256 | 28:7 |               getStmts: StmtList |
+| test.adb | 257 | 28:7 |                 [0]: NullStmt |
+| test.adb | 258 | 28:12 |               getExceptions: AdaNodeList |
+| test.adb | 259 | 29:8 |         getExceptions: AdaNodeList |
+| test.adb | 260 | 30:5 |       getEndName: EndName -> Test |
+| test.adb | 261 | 30:5 |         getName: Identifier Test -> Test |
+| test.adb | 262 | 30:10 |   getPragmas: PragmaNodeList |

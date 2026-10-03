@@ -1,0 +1,36 @@
+with Ada.Text_IO; use Ada.Text_IO;
+with Ref_Pkg;
+procedure Reference is
+   P    : Ref_Pkg.Point := (X => 1, Y => 2);
+   A, B : Integer := 0;
+   Arr  : Ref_Pkg.Int_Array (1 .. 3) := (others => 0);
+   Ptr  : Ref_Pkg.Point_Access := new Ref_Pkg.Point'(P);
+   S    : Ref_Pkg.Shape := (Id => 1);
+   Name : constant String := "abc";
+   R    : Integer renames A;
+   procedure Log (Msg : String) renames Put_Line;
+   package Int_IO is new Ada.Text_IO.Integer_IO (Integer);
+   function Twice (V : Integer) return Integer is (2 * V);
+   pragma Inline (Twice);
+   Flag : Boolean := False with Volatile;
+begin
+   A := Twice (B);
+   Log ("hello");
+   New_Line;
+   Put_Line (Item => Name);
+   S.Move (By => 2);
+   Ref_Pkg.Move (S, 3);
+   A := Arr (2);
+   Put_Line (Name (1 .. 2));
+   A := Integer (Ref_Pkg.Small'(3));
+   A := Name'Length + Integer'Value ("4");
+   P.X := Ptr.all.Y;
+   Flag := A > 0 and then not Flag;
+   A := (if Flag then 1 else 2);
+   if A = 1 then null; elsif A = 2 then A := 3; else A := 4; end if;
+   case A is when 1 | 2 => null; when others => A := 0; end case;
+   for I in Arr'Range loop Arr (I) := I; end loop;
+   while A < 10 loop A := A + 1; exit when A = 5; end loop;
+   declare Tmp : Integer := A; begin A := Tmp; exception when E : Constraint_Error => raise; end;
+   Int_IO.Put (A);
+end Reference;

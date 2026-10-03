@@ -1,5 +1,7 @@
 --  Shapes the text tree should show as they are: a call, a type conversion, an
---  indexed qualified expression, a concatenation chain and a membership test.
+--  indexed qualified expression, a concatenation chain and a membership test;
+--  then allocators, literals, a parameterless call, an implicit dereference,
+--  a plain loop and a begin block.
 procedure Test is
    type Arr is array (1 .. 2) of Integer;
    type Count is new Integer;
@@ -8,6 +10,21 @@ procedure Test is
    C : Count := Count (F (1));
    S : constant String := "a" & "b" & "c";
    B : Boolean := Arr'(3, 4) (1) in 1 | 3;
+   type Rec is record
+      Field : Integer;
+   end record;
+   type Rec_Access is access Rec;
+   function Get return Integer is (5);
+   Q  : Rec_Access := new Rec;
+   N  : Rec_Access := null;
+   Ch : Character := 'a';
+   G  : Integer := Get;
+   V  : Integer := Q.Field;
 begin
-   null;
+   loop
+      exit;
+   end loop;
+   begin
+      null;
+   end;
 end Test;

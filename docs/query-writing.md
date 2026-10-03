@@ -5,14 +5,41 @@ build a private one). It assumes you've read the
 [user guide](user-guide.md) and know what a database and a QL pack are; it
 does not assume prior QL experience.
 
-## The two packs
+## Start here
 
-QL code here is split across two packs — the same "pack" concept as a
+QL is the same language for every CodeQL language; only the class library
+differs. A path that works:
+
+1. **Learn the language from GitHub's documentation.** The
+   [QL tutorials](https://codeql.github.com/docs/writing-codeql-queries/ql-tutorials/)
+   are small puzzles that teach predicates, classes, aggregates and
+   recursion without any codebase. Keep the
+   [QL language reference](https://codeql.github.com/docs/ql-language-reference/)
+   open while you write. For running queries from the editor, see
+   [CodeQL for VS Code](https://codeql.github.com/docs/codeql-for-visual-studio-code/).
+2. **Learn what Ada turns into.** Read [ast-reference.md](ast-reference.md)
+   for the common shapes and the traps, and look at your own code's tree
+   (see [Seeing the tree](#seeing-the-tree) below).
+3. **Read this guide**, then read shipped queries in order of difficulty:
+   - `GotoStatement.ql`: one node kind.
+   - `UnusedVariable.ql`: resolved declarations.
+   - `UnreachableStatement.ql`: sibling positions.
+   - `OpenWithoutClose.ql`: the control-flow graph.
+   - `CommandLineInjection.ql`: taint tracking across subprograms.
+4. **Write a test before trusting a query**
+   (see [Testing a query](#testing-a-query) below).
+
+## The packs
+
+QL code here is split across packs — the same "pack" concept as a
 language's package registry entry, just for QL:
 
-- **`ql/lib`, published as `peter-villadsen/ada-all`** — the library. No
-  queries live here, only reusable QL classes that queries import.
-- **`ql/src`, published as `peter-villadsen/ada-queries`** — the 11 shipped
+- **`ql/lib`, published as `peter-villadsen/ada-all`** — the library: the
+  classes queries import. It also holds two tools that are not analysis
+  queries: `ide-contextual-queries/printAst.ql` (VS Code's "View AST") and
+  `tools/PrintAst.ql` (the same tree as text). They live here rather than in
+  `ql/src` so that `codeql database analyze ql/src` never picks them up.
+- **`ql/src`, published as `peter-villadsen/ada-queries`** — the 25 shipped
   queries, each a standalone `.ql` file under `ql/src/queries/`. This pack
   depends on `ada-all`.
 
@@ -26,36 +53,87 @@ Every query starts with `import ada`, which pulls in `ql/lib/ada.qll`. That
 file re-exports two layers, and knowing which one you're using matters:
 
 **The generated layer, `Raw::`** (`ql/lib/codeql/ada/ast/internal/Raw.qll`,
-~2,300 lines and counting) mirrors Libadalang's node hierarchy one class per
-node kind (405 node kinds as of the last introspection dump, see
-[BURNDOWN.md](../BURNDOWN.md) Phase 1.3) — `Raw::ExceptionHandler`,
-`Raw::PragmaNode`, `Raw::GenericSubpInstantiation`, and so on, all the way
-down. It's generated from Libadalang's own introspection data
-(`generator/gen.py`, see [CONTRIBUTING.md](../CONTRIBUTING.md) if you need to
-regenerate it) and you should never need to edit it by hand. If you know the
-Ada construct you're after, its QL class name is almost always the obvious
-CamelCase version of its Libadalang kind name; when in doubt,
+~2,300 lines) mirrors Libadalang's node hierarchy one class per
+node kind — `Raw::CallExpr`, `Raw::PragmaNode`,
+`Raw::GenericSubpInstantiation`, and so on, all the way down. Each field of a
+node is an accessor named after Libadalang's field (`f_suffix` becomes
+`getSuffix()`); list nodes have `getChild(i)`; token nodes (identifiers,
+literals, operators) have `getValue()`. It's generated from Libadalang's own
+introspection data (`generator/gen.py`, see [CONTRIBUTING.md](../CONTRIBUTING.md)
+if you need to regenerate it) and you should never edit it by hand. The
+class name is the CamelCase Libadalang kind name;
 [docs/dbscheme-conventions.md](dbscheme-conventions.md) documents the naming
-rules precisely, and Libadalang's own
-[GitHub repository](https://github.com/AdaCore/libadalang) documents what
-each kind means in Ada terms.
+rules. **Don't guess the shape from the names.** Several Ada constructs parse
+differently from what you'd expect (a type conversion is a `CallExpr`, for
+example). Read [ast-reference.md](ast-reference.md) and look at the tree.
 
 **The hand-written layer** (`ql/lib/ada.qll`, unqualified class names) adds
-the conveniences a generated 1:1 mirror can't provide on its own:
+what a generated 1:1 mirror can't provide on its own:
 
 | Class / member | What it gives you |
 |---|---|
+| `AdaNode.fromSource()`, `Comment.fromSource()` | Holds outside the predefined pseudo-sources (package `Standard`, the runtime specs). **Every query restricts what it reports with this** (D-026). |
 | `Name.getText()` | Reconstructed source text of a name (handles simple identifiers, string/char literals used as names, and dotted names like `A.B.C` recursively) |
 | `Name.getReferencedDecl()` | The declaration a name resolves to, if extraction resolved it (backed by the `ada_xref` relation — see the user guide's note on name-resolution quality) |
+| `Name.denotesSameEntityAs(other)` | Two names denote the same entity, compared structurally (both prefix and selector of a dotted name) |
 | `Expr.getType()` | The expression's type declaration, if extraction resolved it (`ada_expr_type`) |
+| `BasicDecl.getQualifiedName()` / `hasQualifiedName("Ada.Text_IO.Open")` | Libadalang's fully qualified name; `has…` ignores case. The way to identify a runtime entity. |
+| `BasicDecl.getUltimateDecl()` | Follows subprogram, object, exception and package renamings to what is renamed |
 | `BasicDecl.getADefiningName()` / `getAName()` | The name(s) a declaration introduces, and their text |
+| `BasicDecl.getBody()`, `BaseSubpBody.getDeclaration()` | A declaration's completion and back (`ada_body_part`, D-021) |
 | `BasicDecl.isReferenced()` | Whether any resolved name anywhere points back at this declaration — the basis for `UnusedVariable.ql` |
-| `AdaNode.getEnclosingSubprogram()` / `getEnclosingUnit()` | Walk outward to the innermost subprogram body / the containing compilation unit |
+| `GenericInstantiation.getDesignatedGeneric()` | The generic an instantiation designates, through generic renamings |
+| `AdaNode.getEnclosingSubprogram()` / `getEnclosingUnit()` | Walk outward to an enclosing subprogram body / the containing compilation unit |
+| `File.isPredefined()` | The file is a predefined pseudo-source |
 | `Comment` (`Raw::Comment`) | Source comments — these are token trivia in Libadalang, not AST nodes, so they're a separate hand-written relation (`ada_comments`), not part of the `Raw::` node tree |
 
 Reach for the hand-written layer first; drop to `Raw::` for anything it
 doesn't cover, which in practice is most of the actual query logic — the
-hand layer is deliberately small.
+hand layer is deliberately small. Beyond these, `codeql.ada.controlflow.Cfg`
+gives the control-flow graph (see `MissingPairedCall` below), and
+`codeql.ada.dataflow.DataFlow` / `TaintTracking` give data flow (see
+[Data flow and taint tracking](#data-flow-and-taint-tracking)).
+
+## Seeing the tree
+
+The quickest way to learn which classes and accessors to use is to look at
+the tree the extractor builds for code like the code you want to match.
+
+**In VS Code.** Open an Ada database in the CodeQL extension, open a source
+file from it, and run **CodeQL: View AST**. The extension finds
+`ide-contextual-queries/printAst.ql` in `ada-all` by its tag. Each node shows
+its class, its token text, and what a name resolves to
+(`Identifier Argument -> Ada.Command_Line.Argument`). Each edge shows the
+accessor that reaches the child (`getSuffix`), or `[i]` for a list element.
+GitHub's page on
+[exploring the structure of your source code](https://codeql.github.com/docs/codeql-for-visual-studio-code/exploring-the-structure-of-your-source-code/)
+describes the viewer.
+
+**From the command line.** Put the Ada you want to look at in a scratch
+directory, build a small database from it, and print every project file's
+tree as indented text:
+
+```sh
+mkdir -p /tmp/ast && cp snippet.adb /tmp/ast/
+codeql database create /tmp/ast-db --language=ada --build-mode=none \
+  --search-path=<dir containing ada/> --source-root=/tmp/ast
+codeql query run --database=/tmp/ast-db --additional-packs=<repo>/ql \
+  <repo>/ql/lib/tools/PrintAst.ql
+```
+
+Each output line is `accessor: Class token -> resolved declaration`, indented
+by depth:
+
+```
+getCall: CallExpr -> Test.Sink
+  getName: Identifier Sink -> Test.Sink
+  getSuffix: AssocList
+    [0]: ParamAssoc
+      getRExpr: QualExpr -> Test.List
+```
+
+Read that as `call.(Raw::CallStmt).getCall().(Raw::CallExpr).getSuffix()...`.
+The query prints every project file, so keep the scratch directory small.
 
 ## Query metadata and `@kind`
 
@@ -79,15 +157,21 @@ alerts with a location and a message, which is how every downstream
 consumer (GitHub code scanning, editor integrations, `sarif-latest` output)
 expects results to look. `@problem.severity` is `error`, `warning`, or
 `recommendation` — roughly: certainly-a-bug, worth-a-look, and
-style/maintainability respectively; see the 11 shipped queries for examples
+style/maintainability respectively; see the shipped queries for examples
 of each. `@kind table` (arbitrary tuples, no location/message shape) exists
 for exploratory or diagnostic queries, but such a query can't be interpreted
 by `database analyze` — only run directly (`codeql query run`) or by
-`codeql test run` in a test fixture.
+`codeql test run` in a test fixture. Use `@kind path-problem` when the result is a
+flow from a source to a sink and the path should be shown (`select sink,
+source, sink, "message"`, with `import Flow::PathGraph`; see
+[Data flow and taint tracking](#data-flow-and-taint-tracking) and GitHub's
+[creating path queries](https://codeql.github.com/docs/writing-codeql-queries/creating-path-queries/)).
+The full set of metadata properties is in GitHub's
+[metadata reference](https://codeql.github.com/docs/writing-codeql-queries/metadata-for-codeql-queries/).
 
 ## Adding a query
 
-1. Write `ql/src/queries/YourQuery.ql`. The 11 existing queries in that
+1. Write `ql/src/queries/YourQuery.ql`. The existing queries in that
    directory are templates — `UnusedVariable.ql` and `TodoComment.ql` are
    good starting points if your query is a single `from`/`where`/`select`
    over one node type; `HardcodedCredential.ql` shows a multi-variable
@@ -280,11 +364,16 @@ cross-procedure flow breaks. What is and is not followed is listed in
 ## Testing a query
 
 The pattern above — `.qlref` pointing at the real query, plus fixtures, plus
-`.expected` — is how all 11 shipped queries are tested, and is what the
+`.expected` — is how every shipped query is tested, and is what the
 `ql/test` pack (`ada-tests`, depending on `ada-queries`, see
-[The two packs](#the-two-packs)) exists for. `ql/test/extractor/` holds a
+[The packs](#the-packs)) exists for. `ql/test/extractor/` holds a
 different kind of test: test-local `.ql` files with no `.qlref`,
 used for golden-output checks on the extractor itself (e.g. `PrintAst.ql`
 dumps every node's kind/parent/index to guard the extraction pipeline
 independent of any specific query). You won't need this pattern for a normal
 query addition — it's for changes to the extractor or generator.
+`ql/test/library/` uses a third kind: inline expectations, where the
+expected result is a `-- $ tag=value` comment on the line it belongs to
+(`codeql.ada.test.InlineExpectationsTest`; `ql/test/library/TaintTracking`
+is a short example). It suits library predicates that report many small
+facts.

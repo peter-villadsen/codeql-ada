@@ -13,16 +13,27 @@
 private import ada
 private import codeql.ada.ast.internal.RawMeta
 
+/**
+ * Gets how declaration `d` is shown as a resolution target: its qualified name, or,
+ * when Libadalang gives it none (a declaration of several names, `A, B : T`), its
+ * class, names and position.
+ */
+private string declLabel(Raw::BasicDecl d) {
+  if exists(d.(BasicDecl).getQualifiedName())
+  then result = d.(BasicDecl).getQualifiedName()
+  else
+    result =
+      d.getAPrimaryQlClass() + " " + concat(d.(BasicDecl).getAName(), ", ") + " @" +
+        d.getLocation().getStartLine() + ":" + d.getLocation().getStartColumn()
+}
+
 /** Gets the label of `n`: its class, then its token text and resolution, if any. */
 string nodeLabel(Raw::AdaNode n) {
   exists(string text, string target |
     (if exists(tokenText(n)) then text = " " + tokenText(n) else text = "") and
     (
-      if exists(n.(Name).getReferencedDecl().(BasicDecl).getQualifiedName())
-      then
-        target =
-          " -> " +
-            concat(n.(Name).getReferencedDecl().(BasicDecl).getQualifiedName(), " | ")
+      if exists(n.(Name).getReferencedDecl())
+      then target = " -> " + concat(declLabel(n.(Name).getReferencedDecl()), " | ")
       else target = ""
     ) and
     result = n.getAPrimaryQlClass() + text + target

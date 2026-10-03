@@ -22,7 +22,10 @@ and fixed two CFG gaps: `&` operands after the first, and membership alternative
 (`X in A | B`), had no node (97d1c5e, bbdbdeb). Sinks now also cover `GNAT.Expect` and
 imported C `system` / `popen` / `exec*`, as extensible classes in
 `codeql/ada/security/CommandInjection.qll`; `docs/query-writing.md` shows how to write
-one's own source, sink and barrier.
+one's own source, sink and barrier. For query authors: `docs/ast-reference.md` (Ada source to AST, built
+from pinned test output), a refreshed `docs/query-writing.md` with a "start here" path, and
+AST printing (VS Code "View AST" via `ql/lib/ide-contextual-queries/printAst.ql`, text via
+`ql/lib/tools/PrintAst.ql`). View AST has not been tried in VS Code itself yet.
 
 **Next: Task 9.6**, a run of the full suite over the five corpus projects with hand
 triage of the results. That run is what should decide which v1 limitations are worth
@@ -38,6 +41,11 @@ project that does would help.
   unresolved. This is an extractor coverage gap from 9.1 and is not diagnosed yet. It is
   the only open item that is a defect rather than a scope choice, and is worth doing
   soon whatever 9.6 shows.
+- **Multi-name declarations have no qualified name.** `A, B : Integer` and `X, Y : T`
+  components resolve, but `ada_qualified_name` has no row for them (Libadalang computes the
+  name per declaration), so `hasQualifiedName` cannot match them. Fixing it means keying the
+  qualified name by defining name: a dbscheme change. Low impact today: no shipped query
+  matches an object by qualified name.
 - **Small limitations (hours each):** protected operations, default parameter values,
   extended `return` statements, and separate bodies. For separate bodies the extractor
   could emit a stub-to-body row; that needs no schema change, only rebuilt databases.
