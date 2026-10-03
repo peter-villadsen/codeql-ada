@@ -53,12 +53,13 @@ python scripts/dump_lal_nodes.py > schema/lal-nodes.json
 python generator/gen.py
 ```
 
-`generator/gen.py` writes four files, all generated-but-committed (see
+`generator/gen.py` writes five files, all generated-but-committed (see
 [docs/dbscheme-conventions.md](docs/dbscheme-conventions.md) for the naming
 rules it follows):
 
 - `extractors/ada/ada.dbscheme` and `ql/lib/ada.dbscheme` (identical copies)
 - `ql/lib/codeql/ada/ast/internal/Raw.qll`
+- `ql/lib/codeql/ada/ast/internal/RawMeta.qll` (accessor names and token text, used to print the AST)
 - `extractors/ada/tools/ada_tables.json`
 
 If the dbscheme's relations actually changed shape (adding/removing a
