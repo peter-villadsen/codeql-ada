@@ -49,3 +49,14 @@ package body Pkg is
       null;
    end Foo;
 end Pkg;
+
+with Missing_Pkg;  --  not available: calls into it do not resolve, nor do their arguments
+procedure P6 (X : Integer) is        --  X used only in an unresolved call: fine (D-026)
+begin
+   Missing_Pkg.Run (X);
+end P6;
+
+procedure P7 (X : Integer with Unreferenced) is  --  marked by aspect: fine
+begin
+   null;
+end P7;

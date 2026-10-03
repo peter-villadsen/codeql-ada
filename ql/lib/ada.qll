@@ -106,6 +106,45 @@ class BasicDecl extends Raw::BasicDecl {
   predicate isReferenced() { ada_xref(_, this) }
 
   /**
+   * Holds if, inside subprogram body `body`, an identifier that did not resolve at all
+   * is spelled like one of this declaration's names (ignoring case), so it may be a
+   * reference that extraction could not resolve, typically because the project's
+   * dependencies were not available. A query that reports "never referenced" should
+   * treat this as a use: D-026's rule, falling back to text only when a name does not
+   * resolve.
+   */
+  predicate hasUnresolvedNamesakeIn(Raw::BaseSubpBody body) {
+    exists(Raw::Identifier i |
+      unresolvedIdentifier(i, this.getAName().toLowerCase()) and
+      i.(AdaNode).getEnclosingSubprogram() = body
+    )
+  }
+
+  /**
+   * Holds if this declaration is marked as intentionally unreferenced: by the
+   * `Unreferenced` aspect (`X : T with Unreferenced;`), or by a `pragma Unreferenced`
+   * naming it, matched by resolution or, if the argument does not resolve, by text
+   * within the same subprogram.
+   */
+  predicate isMarkedUnreferenced() {
+    exists(Raw::AspectAssoc a | a = this.getAspects().getAspectAssocs().getChild(_) |
+      a.getId().(Name).getText().toLowerCase() = "unreferenced" and
+      not a.getExpr().(Name).getText().toLowerCase() = "false"
+    )
+    or
+    exists(Raw::PragmaNode p, Name arg |
+      p.getId().getValue().toLowerCase() = "unreferenced" and
+      arg = p.getArgs().getChild(_).(Raw::PragmaArgumentAssoc).getExpr()
+    |
+      arg.getReferencedDecl() = this
+      or
+      not exists(arg.getReferencedDecl()) and
+      arg.getText().toLowerCase() = this.getAName().toLowerCase() and
+      p.(AdaNode).getEnclosingSubprogram() = this.(AdaNode).getEnclosingSubprogram()
+    )
+  }
+
+  /**
    * Gets the completion (body) of this declaration, if extracted. Extracted
    * from Libadalang's `p_body_part`, never inferred from name text, since
    * overloading makes textual pairing unsound (D-021).
@@ -138,6 +177,21 @@ class BasicDecl extends Raw::BasicDecl {
     or
     result = renamingClause(this).getRenamedObject().(Name).getReferencedDecl().(BasicDecl).getUltimateDecl()
   }
+}
+
+/**
+ * Holds if `i` is an identifier used as a name (not a declared name, an `end` name, an
+ * attribute designator, or a pragma or aspect identifier) that did not resolve, and
+ * `lname` is its text in lower case.
+ */
+private predicate unresolvedIdentifier(Raw::Identifier i, string lname) {
+  not ada_xref(i, _) and
+  lname = i.getValue().toLowerCase() and
+  not i.getParent() instanceof Raw::DefiningName and
+  not i.getParent+() instanceof Raw::EndName and
+  not i = any(Raw::AttributeRef a).getAttribute() and
+  not i = any(Raw::PragmaNode p).getId() and
+  not i = any(Raw::AspectAssoc a).getId()
 }
 
 private Raw::RenamingClause renamingClause(Raw::BasicDecl d) {

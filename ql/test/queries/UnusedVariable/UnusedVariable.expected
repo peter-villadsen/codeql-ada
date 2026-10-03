@@ -1,1 +1,2 @@
-| test.adb:5:4:5:26 | ObjectDecl | Local object Unused is never referenced. |
+| test.adb:6:4:6:26 | ObjectDecl | Local object Unused is never referenced. |
+| test.adb:12:4:12:26 | ObjectDecl | Local object Size is never referenced. |

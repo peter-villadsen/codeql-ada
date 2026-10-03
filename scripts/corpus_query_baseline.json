@@ -33,7 +33,7 @@
   "results": {
    "ada/boolean-literal-comparison": 3,
    "ada/command-line-injection": 0,
-   "ada/dead-local-subprogram": 125,
+   "ada/dead-local-subprogram": 2,
    "ada/direct-recursion": 13,
    "ada/empty-loop-body": 0,
    "ada/exception-swallowing": 2,
@@ -51,19 +51,19 @@
    "ada/unchecked-conversion": 1,
    "ada/unchecked-deallocation": 3,
    "ada/unreachable-statement": 38,
-   "ada/unused-local": 832,
-   "ada/unused-parameter": 904,
+   "ada/unused-local": 8,
+   "ada/unused-parameter": 11,
    "ada/unused-with-clause": 12,
    "ada/useless-if": 0,
    "ada/warnings-off": 4
   },
-  "total": 2103
+  "total": 263
  },
  "gpr2": {
   "results": {
    "ada/boolean-literal-comparison": 1,
    "ada/command-line-injection": 0,
-   "ada/dead-local-subprogram": 339,
+   "ada/dead-local-subprogram": 17,
    "ada/direct-recursion": 77,
    "ada/empty-loop-body": 1,
    "ada/exception-swallowing": 3,
@@ -81,19 +81,19 @@
    "ada/unchecked-conversion": 74,
    "ada/unchecked-deallocation": 72,
    "ada/unreachable-statement": 234,
-   "ada/unused-local": 1631,
-   "ada/unused-parameter": 1630,
+   "ada/unused-local": 45,
+   "ada/unused-parameter": 29,
    "ada/unused-with-clause": 342,
    "ada/useless-if": 4,
    "ada/warnings-off": 36
   },
-  "total": 5230
+  "total": 1721
  },
  "libadalang-tools": {
   "results": {
    "ada/boolean-literal-comparison": 0,
    "ada/command-line-injection": 0,
-   "ada/dead-local-subprogram": 305,
+   "ada/dead-local-subprogram": 14,
    "ada/direct-recursion": 15,
    "ada/empty-loop-body": 49,
    "ada/exception-swallowing": 0,
@@ -111,13 +111,13 @@
    "ada/unchecked-conversion": 7,
    "ada/unchecked-deallocation": 12,
    "ada/unreachable-statement": 811,
-   "ada/unused-local": 1262,
-   "ada/unused-parameter": 1015,
+   "ada/unused-local": 146,
+   "ada/unused-parameter": 23,
    "ada/unused-with-clause": 18,
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 3822
+  "total": 1423
  },
  "libkeccak": {
   "results": {
@@ -141,12 +141,12 @@
    "ada/unchecked-conversion": 8,
    "ada/unchecked-deallocation": 8,
    "ada/unreachable-statement": 298,
-   "ada/unused-local": 8,
+   "ada/unused-local": 0,
    "ada/unused-parameter": 10,
    "ada/unused-with-clause": 0,
    "ada/useless-if": 0,
    "ada/warnings-off": 0
   },
-  "total": 341
+  "total": 333
  }
 }

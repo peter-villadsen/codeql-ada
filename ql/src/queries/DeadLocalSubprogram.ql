@@ -1,7 +1,9 @@
 /**
  * @name Dead local subprogram
  * @description A subprogram nested inside another subprogram that is never called and
- *              whose address is never taken is dead code.
+ *              whose address is never taken is dead code. Not reported when its name
+ *              appears, unresolved, in the enclosing body: that may be a call extraction
+ *              could not resolve, usually because of a missing dependency (D-026).
  * @id ada/dead-local-subprogram
  * @kind problem
  * @problem.severity warning
@@ -53,10 +55,13 @@ private predicate isAddressTaken(Raw::SubpBody body) {
   )
 }
 
-from Raw::SubpBody body
+from Raw::SubpBody body, Raw::BaseSubpBody enclosing
 where
-  exists(Raw::BaseSubpBody enclosing | enclosing = body.getParent+()) and
+  enclosing = body.getParent+() and
   not isCalled(body) and
+  // A same-named call that did not resolve may be a call (missing dependencies, D-026).
+  // Checking every enclosing body amounts to checking the innermost one.
+  not body.(BasicDecl).hasUnresolvedNamesakeIn(enclosing) and
   not isAddressTaken(body) and
   body.(AdaNode).fromSource()
 select body, "This nested subprogram is never called."

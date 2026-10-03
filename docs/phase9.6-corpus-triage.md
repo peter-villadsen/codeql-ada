@@ -146,3 +146,25 @@ In order of results removed per hour of work:
 4. **H**: a narrower name heuristic.
 
 After 1–3, re-run `corpus_queries.py`; the baseline shows the change per query.
+
+## Follow-up: C and E fixed (2026-10-03)
+
+`unused-local`, `unused-parameter` and `dead-local-subprogram` now treat an unresolved
+identifier spelled like the declaration, inside the same subprogram body, as a possible
+use (`BasicDecl.hasUnresolvedNamesakeIn`). They also honour the `Unreferenced` aspect and
+pragma (`BasicDecl.isMarkedUnreferenced`). Attribute designators, pragma and aspect
+identifiers, declared names and `end` names never count. Each new fixture case was
+checked to be reported by the old query and not by the new one.
+
+| Query | Before | After |
+| --- | ---: | ---: |
+| unused-local | 3,733 | 199 |
+| unused-parameter | 3,559 | 73 |
+| dead-local-subprogram | 777 | 41 |
+| **All queries** | **11,520** | **3,764** |
+
+No other query changed. Spot checks of what was removed: all 8 libkeccak `unused-local`
+results (all used, in statements involving the absent AUnit), and 5 sampled from gpr2
+(each name is read or assigned in a later unresolved statement). All were false
+positives. The cost is false negatives when an unrelated unresolved name happens to match
+inside the same body. `scripts/corpus_query_baseline.json` now records the new counts.

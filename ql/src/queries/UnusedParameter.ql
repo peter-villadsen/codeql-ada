@@ -2,6 +2,10 @@
  * @name Unused parameter
  * @description A parameter that is never read or written in the body of a subprogram is
  *              either dead code or a sign that the wrong name was used inside the body.
+ *              Not reported: overriding bodies, parameters marked by `pragma
+ *              Unreferenced` or `with Unreferenced`, and parameters whose name appears,
+ *              unresolved, in the body (a reference extraction could not resolve,
+ *              usually a missing dependency; D-026).
  * @id ada/unused-parameter
  * @kind problem
  * @problem.severity recommendation
@@ -17,20 +21,6 @@ private Raw::ParamSpec getParam(Raw::SubpSpec spec, int i) {
   result = spec.getSubpParams().getParams().getChild(i)
 }
 
-/**
- * Holds if a `pragma Unreferenced` inside `body` names `param`.
- */
-private predicate hasUnreferencedPragma(Raw::SubpBody body, Raw::ParamSpec param) {
-  exists(Raw::PragmaNode p, Raw::PragmaArgumentAssoc a, Raw::DefiningName id |
-    p.getParent+() = body and
-    p.getId().getValue().toLowerCase() = "unreferenced" and
-    a = p.getArgs().getChild(_) and
-    a.getExpr().(Raw::Identifier).getValue().toLowerCase() =
-      id.getName().(Name).getText().toLowerCase() and
-    id = param.getIds().getChild(_)
-  )
-}
-
 from Raw::SubpBody body, Raw::SubpSpec spec, Raw::ParamSpec param, int i
 where
   spec = body.getSubpSpec() and
@@ -41,7 +31,10 @@ where
   // `ada/dead-local-subprogram` and `ada/direct-recursion`, where *calls* do resolve to the
   // separate declaration when present.
   not param.(BasicDecl).isReferenced() and
-  not hasUnreferencedPragma(body, param) and
+  // `pragma Unreferenced (X)` or `X : T with Unreferenced`.
+  not param.(BasicDecl).isMarkedUnreferenced() and
+  // A same-named name that did not resolve may be a use (missing dependencies, D-026).
+  not param.(BasicDecl).hasUnresolvedNamesakeIn(body) and
   not body.getOverriding() instanceof Raw::OverridingOverriding and
   param.(AdaNode).fromSource()
 select param, "This parameter is never used in this body."

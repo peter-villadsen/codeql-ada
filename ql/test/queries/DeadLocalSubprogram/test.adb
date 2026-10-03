@@ -3,6 +3,7 @@ begin
    null;
 end TopLevel;
 
+with Missing_Pkg;  --  not available: calls into it do not resolve, nor do their arguments
 procedure Outer is
    procedure Dead is               --  BAD, never called
    begin
@@ -25,9 +26,15 @@ procedure Outer is
       null;
    end Taken;
 
+   procedure Helper (X : Integer) is  --  only call is unresolved (argument from a missing package): fine (D-026)
+   begin
+      null;
+   end Helper;
+
    type Proc_Access is access procedure;
    P : Proc_Access;
 begin
    Live;
    P := Taken'Access;
+   Helper (Missing_Pkg.Value);
 end Outer;

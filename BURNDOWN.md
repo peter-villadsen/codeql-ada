@@ -34,8 +34,8 @@ no false positive in the 23 exploratory paths. Per-query counts are now recorded
 
 **Next: the fix list in that report, awaiting a decision.** Its section "Defects and
 limitations found" lists, in order of payoff:
-- C, E: query-only changes to `unused-local`, `unused-parameter` and
-  `dead-local-subprogram` (about 7,000 false positives).
+- ~~C, E~~ **done**: unused-local 3,733 -> 199, unused-parameter 3,559 -> 73,
+  dead-local-subprogram 777 -> 41 (corpus total 11,520 -> 3,764).
 - A, B, D: CFG changes (pragmas in statement lists, `for` over a subtype indication,
   `No_Return` calls; about 1,400 false positives, and code after pragmas becomes visible
   to SSA and data flow). These need approval first, per section 6.2 of docs/phase9.2-plan.md.
