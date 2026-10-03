@@ -177,6 +177,16 @@ private predicate hasOthersHandler(Raw::HandledStmts hs) {
 /** A `null;` statement: a leaf that completes normally. */
 class NullStmtTree extends LeafTree instanceof Raw::NullStmt { }
 
+/**
+ * A pragma among statements (`pragma Assert (...)`, `pragma Loop_Invariant (...)`): a
+ * leaf that completes normally; its arguments are not evaluated in the graph. A
+ * pragma is not a `Stmt`, and before Task 9.6 it had no tree at all, so the
+ * statement chain broke there and everything after it was unreachable.
+ */
+class PragmaInStmtsTree extends LeafTree instanceof Raw::PragmaNode {
+  PragmaInStmtsTree() { this.getParent() instanceof Raw::StmtList }
+}
+
 /** An assignment: evaluate RHS, then LHS, then the statement (post-order). */
 class AssignStmtTree extends StandardPostOrderTree instanceof Raw::AssignStmt {
   override Raw::AdaNode getChildNode(int i) {
@@ -444,6 +454,22 @@ class ForLoopStmtTree extends PostOrderTree instanceof Raw::ForLoopStmt {
     last(super.getStmts(), pred, c) and
     completionIsNormal(c) and
     (first(super.getStmts(), succ) or succ = this)
+  }
+}
+
+/**
+ * The iteration part of a `for` loop when it is a subtype indication rather than an
+ * expression: `for I in Natural range A .. B`. Evaluates the range expression of
+ * its constraint, if any, then the indication itself. Before Task 9.6 it had no
+ * tree, so such a loop had no first node and it, and everything after it, was
+ * unreachable.
+ */
+class ForLoopSubtypeIndicationTree extends StandardPostOrderTree instanceof Raw::SubtypeIndication
+{
+  ForLoopSubtypeIndicationTree() { this = any(Raw::ForLoopSpec s).getIterExpr() }
+
+  override Raw::AdaNode getChildNode(int i) {
+    i = 0 and result = super.getConstraint().(Raw::RangeConstraint).getRange().getRange()
   }
 }
 

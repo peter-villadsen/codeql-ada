@@ -20,14 +20,14 @@
    "ada/todo-comment": 2,
    "ada/unchecked-conversion": 3,
    "ada/unchecked-deallocation": 5,
-   "ada/unreachable-statement": 12,
+   "ada/unreachable-statement": 0,
    "ada/unused-local": 0,
    "ada/unused-parameter": 0,
    "ada/unused-with-clause": 0,
    "ada/useless-if": 0,
    "ada/warnings-off": 1
   },
-  "total": 24
+  "total": 12
  },
  "alire": {
   "results": {
@@ -38,7 +38,7 @@
    "ada/empty-loop-body": 0,
    "ada/exception-swallowing": 2,
    "ada/float-equality": 0,
-   "ada/function-missing-return": 35,
+   "ada/function-missing-return": 14,
    "ada/goto-statement": 9,
    "ada/hardcoded-credential": 3,
    "ada/identical-operands": 0,
@@ -50,14 +50,14 @@
    "ada/todo-comment": 48,
    "ada/unchecked-conversion": 1,
    "ada/unchecked-deallocation": 3,
-   "ada/unreachable-statement": 38,
+   "ada/unreachable-statement": 5,
    "ada/unused-local": 8,
    "ada/unused-parameter": 11,
    "ada/unused-with-clause": 12,
    "ada/useless-if": 0,
    "ada/warnings-off": 4
   },
-  "total": 263
+  "total": 209
  },
  "gpr2": {
   "results": {
@@ -68,7 +68,7 @@
    "ada/empty-loop-body": 1,
    "ada/exception-swallowing": 3,
    "ada/float-equality": 0,
-   "ada/function-missing-return": 11,
+   "ada/function-missing-return": 1,
    "ada/goto-statement": 566,
    "ada/hardcoded-credential": 51,
    "ada/identical-operands": 0,
@@ -80,14 +80,14 @@
    "ada/todo-comment": 58,
    "ada/unchecked-conversion": 74,
    "ada/unchecked-deallocation": 72,
-   "ada/unreachable-statement": 234,
+   "ada/unreachable-statement": 13,
    "ada/unused-local": 45,
    "ada/unused-parameter": 29,
    "ada/unused-with-clause": 342,
    "ada/useless-if": 4,
    "ada/warnings-off": 36
   },
-  "total": 1721
+  "total": 1490
  },
  "libadalang-tools": {
   "results": {
@@ -98,7 +98,7 @@
    "ada/empty-loop-body": 49,
    "ada/exception-swallowing": 0,
    "ada/float-equality": 2,
-   "ada/function-missing-return": 7,
+   "ada/function-missing-return": 2,
    "ada/goto-statement": 36,
    "ada/hardcoded-credential": 0,
    "ada/identical-operands": 0,
@@ -110,14 +110,14 @@
    "ada/todo-comment": 14,
    "ada/unchecked-conversion": 7,
    "ada/unchecked-deallocation": 12,
-   "ada/unreachable-statement": 811,
+   "ada/unreachable-statement": 16,
    "ada/unused-local": 146,
    "ada/unused-parameter": 23,
    "ada/unused-with-clause": 18,
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 1423
+  "total": 623
  },
  "libkeccak": {
   "results": {
@@ -140,13 +140,13 @@
    "ada/todo-comment": 0,
    "ada/unchecked-conversion": 8,
    "ada/unchecked-deallocation": 8,
-   "ada/unreachable-statement": 298,
+   "ada/unreachable-statement": 0,
    "ada/unused-local": 0,
    "ada/unused-parameter": 10,
    "ada/unused-with-clause": 0,
    "ada/useless-if": 0,
    "ada/warnings-off": 0
   },
-  "total": 333
+  "total": 35
  }
 }

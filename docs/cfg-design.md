@@ -244,6 +244,13 @@ modelled as evaluated, although Ada stops at the first that matches (RM 4.5.2(27
 over-approximates which nodes are reached, never under-approximates. (Before this fix the
 list was not descended into, the same gap as the `&` chain above.)
 
+**Pragmas among statements.** Test: [`ql/test/library/Cfg/pragmas/`](../ql/test/library/Cfg/pragmas/).
+A pragma in a statement list (`pragma Assert (X = 1);`, `pragma Loop_Invariant (...)`) is
+a leaf that completes normally, so control passes through it to the next statement. Its
+arguments are not evaluated in the graph, so `pragma Assert`'s possible raise is not
+modelled. (Before Task 9.6 a pragma had no tree: the chain broke there, and the pragma and
+everything after it were unreachable. It caused 1,215 corpus results.)
+
 ### Scopes
 
 Test: [`ql/test/library/Cfg/scopes/`](../ql/test/library/Cfg/scopes/)
@@ -481,6 +488,23 @@ l1 V -> l3 ForLoopStmt  ; or skip
 Because the loop node is reachable from the iterable directly, a `for` loop — unlike a
 plain `loop` — always has a path around it.
 
+**Over a subtype indication.** Test: [`ql/test/library/Cfg/for-subtype/`](../ql/test/library/Cfg/for-subtype/).
+In `for I in Natural range 0 .. N`, the iteration part is a `DiscreteSubtypeIndication`,
+not an expression. The range expression of its constraint is evaluated, then the
+indication node, and the loop continues as above, with the indication in the iterable's
+place. (Before Task 9.6 it had no tree, so such a loop had no first node: the loop, its
+body and everything after it were unreachable.)
+
+```
+l1: for I in Natural range 0 .. N loop
+
+l1 0           -> l1 N
+l1 N           -> l1 (0 .. N)
+l1 (0 .. N)    -> l1 Natural range 0 .. N
+l1 Natural range 0 .. N -> l2 ...         ; enter the body
+l1 Natural range 0 .. N -> l3 ForLoopStmt ; or skip
+```
+
 ### Exit
 
 Test: [`ql/test/library/Cfg/exit/`](../ql/test/library/Cfg/exit/)
@@ -671,6 +695,16 @@ Again there is no edge to the scope's abnormal exit: the outer `when others` sto
 
 The exception *name* of a `raise` is evaluated first (post-order), so `raise
 Constraint_Error;` is `Constraint_Error` → `RaiseStmt`.
+
+**Calls to `No_Return` subprograms.** Test: [`ql/test/library/Cfg/no-return/`](../ql/test/library/Cfg/no-return/).
+A `CallStmt` or `CallExpr` whose callee is marked `No_Return` completes only with a raise,
+never normally. The mark can be the aspect (`procedure Fail (Msg : String) with
+No_Return;`) or `pragma No_Return (Stop);`, on the callee or on the declaration it
+completes. The second case matters because a call inside a package body may resolve to the
+body, while the aspect is on the spec. So a function whose last statement is
+`Fail ("...")` cannot fall off its end, and a statement after `Stop;` is unreachable. A
+call whose callee does not resolve is still assumed to return. (Before Task 9.6
+`No_Return` was ignored. It caused 38 of 53 `function-missing-return` corpus results.)
 
 ### Return
 
@@ -877,11 +911,11 @@ A CFG scope: gets its own disconnected graph with an entry and an exit. See Part
 
 `EntryBody`, `ExprFunction`, `PackageBody`, `SubpBody`, `TaskBody`
 
-### shaped (25)
+### shaped (27)
 
 Has a dedicated control-flow tree: its successor structure is specified in Part 3 and pinned by a conformance test.
 
-`AcceptStmtWithStmts`, `AssignStmt`, `BeginBlock`, `BinOp`, `CallExpr`, `CallStmt`, `CaseExpr`, `CaseStmt`, `DeclBlock`, `ExitStmt`, `ExtendedReturnStmt`, `ForLoopStmt`, `GotoStmt`, `HandledStmts`, `IfExpr`, `IfStmt`, `Label`, `LoopStmt`, `NamedStmt`, `NullStmt`, `RaiseStmt`, `ReturnStmt`, `SelectStmt`, `StmtList`, `WhileLoopStmt`
+`AcceptStmtWithStmts`, `AssignStmt`, `BeginBlock`, `BinOp`, `CallExpr`, `CallStmt`, `CaseExpr`, `CaseStmt`, `DeclBlock`, `ExitStmt`, `ExtendedReturnStmt`, `ForLoopStmt`, `GotoStmt`, `HandledStmts`, `IfExpr`, `IfStmt`, `Label`, `LoopStmt`, `NamedStmt`, `NullStmt`, `PragmaNode`, `RaiseStmt`, `ReturnStmt`, `SelectStmt`, `StmtList`, `SubtypeIndication`, `WhileLoopStmt`
 
 ### expression (43)
 
@@ -895,13 +929,13 @@ A statement with no dedicated tree, so `OpaqueStmtTree` makes it a leaf that com
 
 `AbortStmt`, `AcceptStmt`, `DelayStmt`, `ErrorStmt`, `RequeueStmt`, `SimpleDeclStmt`, `TerminateAlternative`
 
-### structural (16)
+### structural (19)
 
 Read by the CFG but never becoming a node: its owning construct's tree consumes it directly. Making these nodes would leak spurious reachable elements into the graph -- see Part 1.
 
-`CaseExprAlternative`, `CaseStmtAlternative`, `DeclarativePart`, `ElsePart`, `ElsifExprPart`, `ElsifStmtPart`, `ExceptionHandler`, `ExtendedReturnStmtObjectDecl`, `ForLoopSpec`, `LabelDecl`, `NamedStmtDecl`, `ObjectDecl`, `OthersDesignator`, `SelectWhenPart`, `ThenAbortPart`, `WhileLoopSpec`
+`CaseExprAlternative`, `CaseStmtAlternative`, `ConcatOperandList`, `DeclarativePart`, `ElsePart`, `ElsifExprPart`, `ElsifStmtPart`, `ExceptionHandler`, `ExprAlternativesList`, `ExtendedReturnStmtObjectDecl`, `ForLoopSpec`, `LabelDecl`, `NamedStmtDecl`, `ObjectDecl`, `OthersDesignator`, `RangeConstraint`, `SelectWhenPart`, `ThenAbortPart`, `WhileLoopSpec`
 
-### n/a (309)
+### n/a (304)
 
 Not control-relevant: nothing here is executed, so nothing is in the graph.
 
@@ -913,25 +947,25 @@ Not control-relevant: nothing here is executed, so nothing is in the graph.
 
 `AbortAbsent`, `AbortPresent`, `AbstractAbsent`, `AbstractPresent`, `AliasedAbsent`, `AliasedPresent`, `AllAbsent`, `AllPresent`, `ConstantAbsent`, `ConstantPresent`, `LimitedAbsent`, `LimitedPresent`, `NotNullAbsent`, `NotNullPresent`, `PrivateAbsent`, `PrivatePresent`, `ProtectedAbsent`, `ProtectedPresent`, `ReverseAbsent`, `ReversePresent`, `SynchronizedAbsent`, `SynchronizedPresent`, `TaggedAbsent`, `TaggedPresent`, `UntilAbsent`, `UntilPresent`, `WithPrivateAbsent`, `WithPrivatePresent`
 
-**type definitions and constraints** (37) — The static type system: type definitions, subtype indications, constraints, ranges used as type bounds. Elaborating a type declaration can in principle run code (a dynamic bound, say), which the CFG does not model -- a documented limitation.
+**type definitions and constraints** (36) — The static type system: type definitions, subtype indications, constraints, ranges used as type bounds. Elaborating a type declaration can in principle run code (a dynamic bound, say), which the CFG does not model -- a documented limitation.
 
-`AccessToSubpDef`, `AnonymousTypeAccessDef`, `AnonymousTypeDecl`, `ArrayTypeDef`, `ClasswideTypeDecl`, `ComponentDef`, `CompositeConstraint`, `ConcreteTypeDecl`, `DecimalFixedPointDef`, `DeltaConstraint`, `DerivedTypeDef`, `DigitsConstraint`, `DiscreteBaseSubtypeDecl`, `EnumTypeDef`, `FloatingPointDef`, `FormalDiscreteTypeDef`, `FormalTypeDecl`, `IncompleteFormalTypeDecl`, `IncompleteTaggedTypeDecl`, `IncompleteTypeDecl`, `InterfaceTypeDef`, `ModIntTypeDef`, `NullRecordDef`, `OrdinaryFixedPointDef`, `PrivateTypeDef`, `ProtectedDef`, `ProtectedTypeDecl`, `RangeConstraint`, `RecordDef`, `RecordTypeDef`, `SignedIntTypeDef`, `SingleTaskTypeDecl`, `SubtypeDecl`, `SynthAnonymousTypeDecl`, `TaskDef`, `TaskTypeDecl`, `TypeAccessDef`
+`AccessToSubpDef`, `AnonymousTypeAccessDef`, `AnonymousTypeDecl`, `ArrayTypeDef`, `ClasswideTypeDecl`, `ComponentDef`, `CompositeConstraint`, `ConcreteTypeDecl`, `DecimalFixedPointDef`, `DeltaConstraint`, `DerivedTypeDef`, `DigitsConstraint`, `DiscreteBaseSubtypeDecl`, `EnumTypeDef`, `FloatingPointDef`, `FormalDiscreteTypeDef`, `FormalTypeDecl`, `IncompleteFormalTypeDecl`, `IncompleteTaggedTypeDecl`, `IncompleteTypeDecl`, `InterfaceTypeDef`, `ModIntTypeDef`, `NullRecordDef`, `OrdinaryFixedPointDef`, `PrivateTypeDef`, `ProtectedDef`, `ProtectedTypeDecl`, `RecordDef`, `RecordTypeDef`, `SignedIntTypeDef`, `SingleTaskTypeDecl`, `SubtypeDecl`, `SynthAnonymousTypeDecl`, `TaskDef`, `TaskTypeDecl`, `TypeAccessDef`
 
 **declarations** (46) — Declarations other than the object declarations whose initialisers are elaborated in a `declare` block or a body. The declarative part of a nested *package* is still not elaborated -- see Blocks.
 
 `AbstractFormalSubpDecl`, `AbstractStateDecl`, `AbstractSubpDecl`, `AcceptStmtBody`, `AnonymousExprDecl`, `AssertionLevelDecl`, `ComponentDecl`, `ConcreteFormalSubpDecl`, `DiscriminantSpec`, `EntryDecl`, `EntryIndexSpec`, `EnumLiteralDecl`, `ErrorDecl`, `ExceptionDecl`, `ForLoopVarDecl`, `GenericFormalObjDecl`, `GenericFormalPackage`, `GenericFormalSubpDecl`, `GenericFormalTypeDecl`, `GenericPackageDecl`, `GenericPackageInstantiation`, `GenericPackageInternal`, `GenericPackageRenamingDecl`, `GenericSubpDecl`, `GenericSubpInstantiation`, `GenericSubpInternal`, `GenericSubpRenamingDecl`, `NoTypeObjectRenamingDecl`, `NullSubpDecl`, `NumberDecl`, `PackageBodyStub`, `PackageDecl`, `PackageRenamingDecl`, `ParamSpec`, `ProtectedBody`, `ProtectedBodyStub`, `SingleProtectedDecl`, `SingleTaskDecl`, `SubpBodyStub`, `SubpDecl`, `SubpRenamingDecl`, `SyntheticCharEnumLit`, `SyntheticFormalParamDecl`, `SyntheticObjectDecl`, `SyntheticSubpDecl`, `TaskBodyStub`
 
-**lists** (26) — List wrappers whose elements the owning construct reads directly. `StmtList` and `AssocList` are the exceptions and appear above.
+**lists** (24) — List wrappers whose elements the owning construct reads directly. `StmtList` and `AssocList` are the exceptions and appear above.
 
-`AbstractStateDeclList`, `AdaNodeList`, `AlternativesList`, `AspectAssocList`, `BaseAssocList`, `CaseExprAlternativeList`, `CaseStmtAlternativeList`, `CompilationUnitList`, `ConcatOperandList`, `ConstraintList`, `DeclList`, `DefiningNameList`, `DiscriminantChoiceList`, `DiscriminantSpecList`, `ElsifExprPartList`, `ElsifStmtPartList`, `EnumLiteralDeclList`, `ExprAlternativesList`, `FormatStringChunkList`, `NameList`, `ParamSpecList`, `ParentList`, `PragmaNodeList`, `SelectWhenPartList`, `UnconstrainedArrayIndexList`, `VariantList`
+`AbstractStateDeclList`, `AdaNodeList`, `AlternativesList`, `AspectAssocList`, `BaseAssocList`, `CaseExprAlternativeList`, `CaseStmtAlternativeList`, `CompilationUnitList`, `ConstraintList`, `DeclList`, `DefiningNameList`, `DiscriminantChoiceList`, `DiscriminantSpecList`, `ElsifExprPartList`, `ElsifStmtPartList`, `EnumLiteralDeclList`, `FormatStringChunkList`, `NameList`, `ParamSpecList`, `ParentList`, `PragmaNodeList`, `SelectWhenPartList`, `UnconstrainedArrayIndexList`, `VariantList`
 
 **abstract base classes** (72) — Not instantiable: no node in a database has this kind.
 
 `AbortNode`, `AbstractNode`, `AccessDef`, `AdaList`, `AdaNode`, `AliasedNode`, `AllNode`, `ArrayIndices`, `AspectClause`, `BaseAggregate`, `BaseAssoc`, `BaseFormalParamDecl`, `BaseFormalParamHolder`, `BaseId`, `BaseLoopStmt`, `BasePackageDecl`, `BaseRecordDef`, `BaseSubpBody`, `BaseSubpSpec`, `BaseSubtypeDecl`, `BaseTypeAccessDef`, `BaseTypeDecl`, `BasicAssoc`, `BasicAssocList`, `BasicDecl`, `BasicSubpDecl`, `BlockStmt`, `BodyNode`, `BodyStub`, `ClassicSubpDecl`, `CompositeStmt`, `CondExpr`, `ConstantNode`, `Constraint`, `DiscriminantPart`, `Expr`, `ExprList`, `FormalSubpDecl`, `FormatStringTokNode`, `GenericDecl`, `GenericFormal`, `GenericInstantiation`, `GenericRenamingDecl`, `IdentifierList`, `InterfaceKind`, `IterType`, `LimitedNode`, `LoopSpec`, `Mode`, `Name`, `NotNull`, `NumLiteral`, `Op`, `OverridingNode`, `PpDirective`, `PrivateNode`, `ProtectedNode`, `Quantifier`, `RealTypeDef`, `ReverseNode`, `SimpleStmt`, `SingleTokNode`, `Stmt`, `SubpKind`, `SynchronizedNode`, `TaggedNode`, `TypeDecl`, `TypeDef`, `TypeExpr`, `UntilNode`, `UseClause`, `WithPrivate`
 
-**other syntax** (76) — Compilation units, with/use clauses, aspects, pragmas, defining names, designators and similar structure that carries no control flow.
+**other syntax** (74) — Compilation units, with/use clauses, aspects, pragmas, defining names, designators and similar structure that carries no control flow.
 
-`AnonymousType`, `AspectAssoc`, `AspectSpec`, `AtClause`, `AttributeDefClause`, `CompilationUnit`, `ComponentClause`, `ComponentList`, `ConstrainedArrayIndices`, `ConstrainedSubtypeIndication`, `DiscreteSubtypeIndication`, `EntryCompletionFormalParams`, `EntrySpec`, `EnumLitSynthTypeExpr`, `EnumRepClause`, `EnumSubpSpec`, `FinallyPart`, `ForLoopIterFilter`, `FormatStringChunk`, `FormatStringTokEnd`, `FormatStringTokMid`, `FormatStringTokStart`, `FormatStringTokString`, `GenericFormalPart`, `InterfaceKindLimited`, `InterfaceKindProtected`, `InterfaceKindSynchronized`, `InterfaceKindTask`, `IterTypeIn`, `IterTypeOf`, `KnownDiscriminantPart`, `LibraryItem`, `ModeDefault`, `ModeIn`, `ModeInOut`, `ModeOut`, `MultiAbstractStateDecl`, `NullComponentDecl`, `OverridingNotOverriding`, `OverridingOverriding`, `OverridingUnspecified`, `Params`, `ParenAbstractStateDecl`, `PpElseDirective`, `PpElsifDirective`, `PpEndIfDirective`, `PpIfDirective`, `PpThenKw`, `PragmaArgumentAssoc`, `PragmaNode`, `PrivatePart`, `PublicPart`, `QuantifierAll`, `QuantifierSome`, `RangeSpec`, `RecordRepClause`, `RenamingClause`, `SubpKindFunction`, `SubpKindProcedure`, `SubpSpec`, `SubtypeIndication`, `Subunit`, `SyntheticBinarySpec`, `SyntheticRenamingClause`, `SyntheticTypeExpr`, `SyntheticUnarySpec`, `TypeAttributesRepository`, `UnconstrainedArrayIndex`, `UnconstrainedArrayIndices`, `UnknownDiscriminantPart`, `UsePackageClause`, `UseTypeClause`, `ValueSequence`, `Variant`, `VariantPart`, `WithClause`
+`AnonymousType`, `AspectAssoc`, `AspectSpec`, `AtClause`, `AttributeDefClause`, `CompilationUnit`, `ComponentClause`, `ComponentList`, `ConstrainedArrayIndices`, `ConstrainedSubtypeIndication`, `DiscreteSubtypeIndication`, `EntryCompletionFormalParams`, `EntrySpec`, `EnumLitSynthTypeExpr`, `EnumRepClause`, `EnumSubpSpec`, `FinallyPart`, `ForLoopIterFilter`, `FormatStringChunk`, `FormatStringTokEnd`, `FormatStringTokMid`, `FormatStringTokStart`, `FormatStringTokString`, `GenericFormalPart`, `InterfaceKindLimited`, `InterfaceKindProtected`, `InterfaceKindSynchronized`, `InterfaceKindTask`, `IterTypeIn`, `IterTypeOf`, `KnownDiscriminantPart`, `LibraryItem`, `ModeDefault`, `ModeIn`, `ModeInOut`, `ModeOut`, `MultiAbstractStateDecl`, `NullComponentDecl`, `OverridingNotOverriding`, `OverridingOverriding`, `OverridingUnspecified`, `Params`, `ParenAbstractStateDecl`, `PpElseDirective`, `PpElsifDirective`, `PpEndIfDirective`, `PpIfDirective`, `PpThenKw`, `PragmaArgumentAssoc`, `PrivatePart`, `PublicPart`, `QuantifierAll`, `QuantifierSome`, `RangeSpec`, `RecordRepClause`, `RenamingClause`, `SubpKindFunction`, `SubpKindProcedure`, `SubpSpec`, `Subunit`, `SyntheticBinarySpec`, `SyntheticRenamingClause`, `SyntheticTypeExpr`, `SyntheticUnarySpec`, `TypeAttributesRepository`, `UnconstrainedArrayIndex`, `UnconstrainedArrayIndices`, `UnknownDiscriminantPart`, `UsePackageClause`, `UseTypeClause`, `ValueSequence`, `Variant`, `VariantPart`, `WithClause`
 
 <!-- END GENERATED COVERAGE -->
 
@@ -950,6 +984,10 @@ Not control-relevant: nothing here is executed, so nothing is in the graph.
 - **Ada 2022 `QuantifiedExpr` and `DeclExpr`** are treated as opaque post-order
   expressions; their quantifier/declaration sub-structure is not modelled.
 - **Tasking is opaque** (D-013): no inter-task edges, no rendezvous modelling.
+- **Calls without parentheses do not raise.** Only a `CallExpr` or `CallStmt` gets a raise
+  edge. A parameterless call in an expression (`return Id.P_Referenced_Decl;`) is a name,
+  so a handler protecting only such calls looks unreachable. When the callee does not
+  resolve, the graph cannot tell such a name is a call at all (Task 9.6, limitation I).
 
 Limitations that manifest as *specific missing edges* are recorded as `MISSING:`
 annotations in the relevant conformance test, not here.

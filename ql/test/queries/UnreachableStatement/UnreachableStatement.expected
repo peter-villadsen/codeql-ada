@@ -1,3 +1,4 @@
 | test.adb:7:7:7:57 | CallStmt | This statement is unreachable. |
 | test.adb:13:7:13:56 | CallStmt | This statement is unreachable. |
-| test.adb:29:7:29:75 | CallStmt | This statement is unreachable. |
+| test.adb:37:7:37:67 | CallStmt | This statement is unreachable. |
+| test.adb:47:7:47:75 | CallStmt | This statement is unreachable. |

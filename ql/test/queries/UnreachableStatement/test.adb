@@ -19,6 +19,24 @@ procedure Test is
       return;
    end P3;
 
+   procedure Stop with No_Return;
+   procedure Stop is
+   begin
+      raise Program_Error;
+   end Stop;
+
+   procedure P5 (N : Integer; X : in out Integer) is
+   begin
+      X := 1;
+      pragma Assert (X = 1);                     --  fine: a pragma is a step
+      for I in Natural range 0 .. N loop        --  fine: reachable loop over a subtype
+         X := I;
+      end loop;
+      X := 0;                                    --  fine: reachable after both
+      Stop;
+      Ada.Text_IO.Put_Line ("unreachable after a No_Return call");
+   end P5;
+
    procedure P4 (C : Boolean) is
    begin
       if C then
@@ -33,4 +51,9 @@ begin
    P2;
    P3;
    P4 (True);
+   declare
+      V : Integer := 0;
+   begin
+      P5 (1, V);
+   end;
 end Test;

@@ -36,9 +36,9 @@ no false positive in the 23 exploratory paths. Per-query counts are now recorded
 limitations found" lists, in order of payoff:
 - ~~C, E~~ **done**: unused-local 3,733 -> 199, unused-parameter 3,559 -> 73,
   dead-local-subprogram 777 -> 41 (corpus total 11,520 -> 3,764).
-- A, B, D: CFG changes (pragmas in statement lists, `for` over a subtype indication,
-  `No_Return` calls; about 1,400 false positives, and code after pragmas becomes visible
-  to SSA and data flow). These need approval first, per section 6.2 of docs/phase9.2-plan.md.
+- ~~A, B, D~~ **done**: unreachable-statement 1,393 -> 34, function-missing-return 53 -> 17
+  (corpus total 3,764 -> 2,369). New limitation I (parameterless calls without parentheses
+  get no raise edge) recorded, not fixed.
 - F: user-defined operators as calls in data flow.
 - H: a narrower credential heuristic.
 

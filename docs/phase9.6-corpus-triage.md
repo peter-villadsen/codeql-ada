@@ -168,3 +168,25 @@ results (all used, in statements involving the absent AUnit), and 5 sampled from
 (each name is read or assigned in a later unresolved statement). All were false
 positives. The cost is false negatives when an unrelated unresolved name happens to match
 inside the same body. `scripts/corpus_query_baseline.json` now records the new counts.
+
+## Follow-up: A, B and D fixed (2026-10-03)
+
+A pragma in a statement list is now a no-op step. A `for` loop over a subtype indication
+evaluates its range and enters normally. A call to a `No_Return` subprogram (aspect or
+pragma, on the callee or on the spec it completes) completes only by raising. New CFG
+conformance tests: `Cfg/pragmas`, `Cfg/for-subtype`, `Cfg/no-return`.
+
+| Query | Before | After |
+| --- | ---: | ---: |
+| unreachable-statement | 1,393 | 34 |
+| function-missing-return | 53 | 17 |
+| **All queries** | **3,764** | **2,369** |
+
+No other query changed. What remains in `unreachable-statement` (sampled 5):
+- two syntactically broken test fixtures (a missing `end`, preprocessor directives);
+- a `pragma Annotate (Xcov, Exempt_Off)` after `return`: unreachable by definition, but
+  a coverage-tool idiom;
+- two exception handlers that look unreachable, a new, smaller limitation **I**: a call
+  written without parentheses (`return Id.P_Referenced_Decl;`) is a name, not a
+  `CallExpr`, so it gets no raise edge. When the callee is unresolved, as here because the
+  Libadalang API is absent, the CFG cannot even tell it is a call. Not fixed.

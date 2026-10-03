@@ -33,6 +33,21 @@ procedure Test is
 
    --  fine: expression function always yields a value
    function F4 (X : Integer) return Integer is (X + 1);
+
+   procedure Fail (Msg : String) with No_Return;
+   procedure Fail (Msg : String) is
+   begin
+      raise Program_Error with Msg;
+   end Fail;
+
+   --  fine: the last statement is a call to a No_Return procedure, which only raises
+   function F5 (X : Integer) return Integer is
+   begin
+      if X > 0 then
+         return X;
+      end if;
+      Fail ("negative");
+   end F5;
 begin
    null;
 end Test;
