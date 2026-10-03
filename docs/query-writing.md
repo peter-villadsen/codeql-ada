@@ -191,6 +191,18 @@ A few things worth knowing before you instantiate it:
   with `fromSource()` (on `AdaNode` and `Comment`), so nothing is reported
   inside a predefined file (D-026).
 
+## Data flow and taint tracking
+
+For "does this value reach that call", import `codeql.ada.dataflow.DataFlow` and
+`codeql.ada.dataflow.TaintTracking`, write a module implementing
+`DataFlow::ConfigSig` (`isSource`, `isSink`, optionally `isBarrier`), and instantiate
+`TaintTracking::Global<Config>`, or `DataFlow::Global<Config>` when only an unchanged
+value counts. `CommandLineInjection.ql` is the worked example: a `path-problem` query
+whose sink uses `DataFlow::getCallTarget` and `DataFlow::isArgumentFor` to name one
+parameter of a runtime subprogram. Flow crosses subprogram boundaries, and the test
+should make sure it has to. What is and is not followed is listed in
+[dataflow-design.md](dataflow-design.md), "Named v1 limitations" and "Taint tracking".
+
 ### Testing a query
 
 The pattern above — `.qlref` pointing at the real query, plus fixtures, plus

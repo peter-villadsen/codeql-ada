@@ -240,7 +240,7 @@ whose closure covers the most source — or run the job once per `.gpr` with a d
 ## Performance
 
 Extraction dominates the run; query evaluation is comparatively cheap. Measured on this
-project's corpus, a 1,700-file codebase extracts in a few minutes and evaluates all 24
+project's corpus, a 1,700-file codebase extracts in a few minutes and evaluates all 25
 queries in seconds.
 
 - **`CODEQL_EXTRACTOR_ADA_JOBS`** controls parallelism (default: CPU count). Each worker
@@ -458,7 +458,7 @@ order of surprise:
    registry.
 
    This path is verified: with `~/.codeql/packages` removed entirely, the command above
-   resolves every dependency and produces SARIF listing all 24 rules.
+   resolves every dependency and produces SARIF listing all 25 rules.
 
 If your agents can reach an internal proxy but not GHCR, the alternative is a private
 CodeQL package registry, which the CLI supports through `--registries-auth-stdin` and a

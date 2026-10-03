@@ -26,7 +26,7 @@ call edges, and one taint query that uses all three.
 | SSA | Done (Task 9.2) — `docs/ssa-design.md` |
 | Local dataflow | Done (Task 9.3) — `docs/dataflow-design.md` |
 | Cross-procedure dataflow | Done (Task 9.4) — `docs/dataflow-design.md` |
-| **First taint query** | **Not started — Task 9.5** |
+| First taint query | Done (Task 9.5) — `ql/src/queries/CommandLineInjection.ql`, `docs/dataflow-design.md` |
 
 ---
 

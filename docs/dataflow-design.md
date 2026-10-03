@@ -214,3 +214,56 @@ per project, compilation included. It finds 27 cross-procedure flows in alire, 1
 libadalang-tools and 80 in gpr2. The alire flows that were checked by hand were real: a
 literal passed down into `Locate_In_Path` and on to `Locate_Exec_On_Path`, and a
 `return ""` coming back up into the `Full_Path` passed to `GNAT.OS_Lib.Spawn`.
+
+## Taint tracking and the first query (Task 9.5)
+
+**Entry points.** Queries import `codeql.ada.dataflow.DataFlow` and
+`codeql.ada.dataflow.TaintTracking`, not the `internal` modules.
+`DataFlow::Global<Config>` is value-preserving flow and `TaintTracking::Global<Config>`
+adds derived-value steps; both take a `DataFlow::ConfigSig`. `DataFlow` also provides
+`getCallTarget(call)`, which resolves through subprogram renamings, and
+`isArgumentFor(call, actual, formal)`, which binds an actual to a formal *by name*
+whether it was passed by position or by name. That is the natural way to write a sink
+for one parameter of a runtime subprogram.
+
+**Taint steps** (`internal/TaintTrackingImpl.qll`; all are steps between expressions):
+
+| Step | Why |
+| --- | --- |
+| `A & B` (both `BinOp` and `ConcatOp` chains) | Building a command line by concatenation. |
+| Aggregate element to aggregate, allocator operand to allocator, `P` to `P.all` | Stand-ins for the content flow v1 lacks: building an `Argument_List` as `(1 => new String'(X))` keeps `X`'s taint. Coarse: the whole aggregate is tainted, not one element. |
+| Type conversion `T (X)`, indexing and slicing `S (I)` | Derived values of the same data. |
+| `Ada.Strings.Unbounded.To_String` / `To_Unbounded_String`, `Ada.Strings.Fixed.Trim`, `Ada.Characters.Handling.To_Lower` / `To_Upper`, `System.OS_Lib.Argument_String_To_List` | Runtime functions have no bodies (D-026), so these are summarised "any argument to result". The list is deliberately short; it is the place to add models. |
+
+There are no default sanitizers.
+
+**`ada/command-line-injection`** (`ql/src/queries/CommandLineInjection.ql`, path-problem).
+The source is a call to `Ada.Command_Line.Argument` and the sink is the
+`Program_Name` or `Args` actual of a call to `System.OS_Lib.Spawn` or
+`System.OS_Lib.Non_Blocking_Spawn`. Both ends are matched semantically (D-026), so a bare
+`Argument (1)` under a `use` clause, a renaming of `Argument`, and both the `GNAT.OS_Lib`
+and `System.OS_Lib` spellings are covered. **Every overload of either is a sink, but only
+at `Program_Name` and `Args`.** `Output_File`, `Stdout_File` and `Stderr_File` name files,
+which is a path problem, not a command; the descriptors, `Success`, `Return_Code` and
+`Err_To_Out` carry no command. All eight overloads (GNAT 14's `s-os_lib.ads`) have those two
+formals, so the sink is written by formal name and needs no overload list. Other ways to
+run a command (`GNAT.Expect`, `Interfaces.C` `system`) are not sinks yet.
+
+The test (`ql/test/queries/CommandLineInjection`) routes every tainted value through at
+least one intermediate subprogram. It covers up through a function result and then a
+concatenation, an `Argument_List` aggregate, named associations in a different order from
+the formals, and two negative cases (`Output_File`, a constant command). A second test,
+`RuntimeResolves.ql`, counts the fixture's calls that resolve to `Argument` and to `Spawn`.
+If the GNAT runtime was not found it has no rows and fails, so the query cannot go blind
+without the test noticing.
+
+**Path display.** A path shows the source call, each formal parameter it enters, any taint
+step that ends a local step (for example `... & ...`), and the sink. Steps inside a
+procedure that only copy a value are folded away by the shared library. Node labels are
+close to source text (`Argument (...)`, `[param] Cmd`, `Argument_String_To_List (...).all`).
+
+**On the corpus (2026-10-03).** `codeql database analyze` with this query completes on all
+five projects in 5–8 s each, with no errors and **no results**. None of them passes a
+command-line argument to `Spawn`, so this is the expected outcome rather than evidence of
+blindness: `RuntimeResolves` shows that both ends resolve when the runtime is present.
+Task 9.6 judges precision on the full suite.

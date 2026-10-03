@@ -103,7 +103,7 @@ To run this on every push and get the findings into GitHub code scanning, see
 add `ada` to the CodeQL Action's language list, and the guide explains what to
 do instead.
 
-For everything past this point — the 24 queries, environment variables that
+For everything past this point — the 25 queries, environment variables that
 control project discovery and parallelism, how to write your own queries,
 and known limitations — see [docs/user-guide.md](docs/user-guide.md) and
 [docs/query-writing.md](docs/query-writing.md).

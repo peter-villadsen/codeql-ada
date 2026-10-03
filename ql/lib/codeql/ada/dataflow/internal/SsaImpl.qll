@@ -304,6 +304,14 @@ private int formalIndex(Raw::SubpSpec spec, Raw::DefiningName dn) {
 /** Gets the `i`th formal (0-based, flattened across `ParamSpec` groups -- see `anyFormalName`) of `spec`. */
 private Raw::DefiningName formalAt(Raw::SubpSpec spec, int i) { i = formalIndex(spec, result) }
 
+/**
+ * Gets the name, lower-cased, of the `i`th formal (see `formalAt`) of subprogram
+ * declaration `d`.
+ */
+string formalNameAt(Raw::BasicDecl d, int i) {
+  result = formalAt(getSubpSpecOf(d), i).getName().(Name).getText().toLowerCase()
+}
+
 /** Gets the mode of the `i`th formal of `spec` (see `formalAt`). */
 private Raw::Mode formalMode(Raw::SubpSpec spec, int i) {
   exists(Raw::DefiningName dn, Raw::ParamSpec ps |

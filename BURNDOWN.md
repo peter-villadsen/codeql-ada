@@ -5,22 +5,26 @@ QL standard library, and an initial query suite — usable via `codeql database 
 
 ---
 
-## Resume here (2026-09-25) — Phase 9 status
+## Resume here (2026-10-03) — Phase 9 status
 
-**Done:** 9.1 call graph, 9.2 SSA, 9.3 local dataflow, 9.4 cross-procedure dataflow, and
-burndown 8.12a–c (the GNAT runtime resolves semantically, D-026). Cross-procedure flow
-works across two or more call frames in both directions: down through parameters, up
-through function results and through `out` parameters. The design, the named v1
-limitations and the corpus measurements are in
+**Done:** 9.1 call graph, 9.2 SSA, 9.3 local dataflow, 9.4 cross-procedure dataflow,
+9.5 the first taint query, and burndown 8.12a–c (the GNAT runtime resolves semantically,
+D-026). Cross-procedure flow works across two or more call frames in both directions:
+down through parameters, up through function results and through `out` parameters.
+`ada/command-line-injection` (`ql/src/queries/CommandLineInjection.ql`) is a
+`path-problem` query from `Ada.Command_Line.Argument` to the `Program_Name`/`Args` of
+every `Spawn` and `Non_Blocking_Spawn` overload, built on the public
+`codeql.ada.dataflow.DataFlow` / `TaintTracking` modules. The design, the taint steps, the
+named v1 limitations and the corpus measurements are in
 [docs/dataflow-design.md](docs/dataflow-design.md), and the step-by-step plan is
-[docs/phase9.2-plan.md](docs/phase9.2-plan.md). Full suite green (49/49).
+[docs/phase9.2-plan.md](docs/phase9.2-plan.md). Full suite green (52/52). Task 9.5 found
+and fixed a CFG gap: every `&` operand after the first had no node (commit 97d1c5e).
 
-**Next: Task 9.5**, the first end-to-end taint query (the plan's "Task 9.5"). Source is
-`Ada.Command_Line.Argument` and sink is `GNAT.OS_Lib.Spawn`, both matched semantically.
-It is a `path-problem` query, and its test must route the tainted value through at least
-one intermediate subprogram. One decision is open: whether every `Spawn` overload is a
-sink. **Then Task 9.6**, a corpus run with hand triage of the results. That run is what
-should decide which v1 limitations are worth fixing.
+**Next: Task 9.6**, a run of the full suite over the five corpus projects with hand
+triage of the results. That run is what should decide which v1 limitations are worth
+fixing. The new query reports nothing on the corpus (none of the projects passes a
+command-line argument to `Spawn`), so 9.6 says little about its precision; a corpus
+project that does would help.
 
 **Open items, deliberately not started** (details in `docs/dataflow-design.md`,
 "Named v1 limitations"):
@@ -30,6 +34,10 @@ should decide which v1 limitations are worth fixing.
   unresolved. This is an extractor coverage gap from 9.1 and is not diagnosed yet. It is
   the only open item that is a defect rather than a scope choice, and is worth doing
   soon whatever 9.6 shows.
+- **Suspected CFG gap, same shape as the `&` one (unverified).** A membership test's
+  alternatives (`X in A | B`) sit in an `ExprAlternativesList`, which `exprLike` in
+  `ControlFlowGraphImpl.qll` does not descend into either, so they probably have no CFG
+  node. Check with a CFG test before fixing (the plan's §6.2 asks first).
 - **Small limitations (hours each):** protected operations, default parameter values,
   extended `return` statements, and separate bodies. For separate bodies the extractor
   could emit a stub-to-body row; that needs no schema change, only rebuilt databases.
