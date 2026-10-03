@@ -27,11 +27,20 @@ from pinned test output), a refreshed `docs/query-writing.md` with a "start here
 AST printing (VS Code "View AST" via `ql/lib/ide-contextual-queries/printAst.ql`, text via
 `ql/lib/tools/PrintAst.ql`). View AST has not been tried in VS Code itself yet.
 
-**Next: Task 9.6**, a run of the full suite over the five corpus projects with hand
-triage of the results. That run is what should decide which v1 limitations are worth
-fixing. The new query reports nothing on the corpus (none of the projects passes a
-command-line argument to `Spawn`), so 9.6 says little about its precision; a corpus
-project that does would help.
+**Task 9.6 done (2026-10-03):** [docs/phase9.6-corpus-triage.md](docs/phase9.6-corpus-triage.md).
+About 70% of the 11,520 corpus results trace to four causes. The dataflow engine produced
+no false positive in the 23 exploratory paths. Per-query counts are now recorded
+(`scripts/corpus_queries.py`, `scripts/corpus_query_baseline.json`).
+
+**Next: the fix list in that report, awaiting a decision.** Its section "Defects and
+limitations found" lists, in order of payoff:
+- C, E: query-only changes to `unused-local`, `unused-parameter` and
+  `dead-local-subprogram` (about 7,000 false positives).
+- A, B, D: CFG changes (pragmas in statement lists, `for` over a subtype indication,
+  `No_Return` calls; about 1,400 false positives, and code after pragmas becomes visible
+  to SSA and data flow). These need approval first, per section 6.2 of docs/phase9.2-plan.md.
+- F: user-defined operators as calls in data flow.
+- H: a narrower credential heuristic.
 
 **Open items, deliberately not started** (details in `docs/dataflow-design.md`,
 "Named v1 limitations"):

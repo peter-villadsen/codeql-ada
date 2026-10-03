@@ -91,11 +91,26 @@ procedure Test is
 
    --  v1 limitations (docs/dataflow-design.md), pinned as MISSING.
 
-   --  Calls into generic instantiations are unresolved.
+   --  Calls to a generic *subprogram* instance are unresolved: the instance has no body.
    generic
    function G_Id (P : Integer) return Integer;
    function G_Id (P : Integer) return Integer is (P);
    function Inst_Id is new G_Id;
+
+   --  A subprogram of a generic *package* instance resolves to its declaration in the
+   --  generic, so flow enters the generic's one body (shared by all instances; each
+   --  return still goes back to its own call site).
+   generic
+   package G_Pkg is
+      function Pass (P : Integer) return Integer;
+   end G_Pkg;
+
+   package body G_Pkg is
+      function Pass (P : Integer) return Integer is (P);
+   end G_Pkg;
+
+   package Inst_A is new G_Pkg;
+   package Inst_B is new G_Pkg;
 
    --  Access-to-subprogram calls are unresolved.
    type Int_Fn is access function (P : Integer) return Integer;
@@ -217,4 +232,6 @@ begin
    Dflt;
    Sink (Ext);  -- $ MISSING: flow=30
    Box.Put (Source (31));
+   Sink (Inst_A.Pass (Source (32)));  -- $ flow=32
+   Sink (Inst_B.Pass (0));
 end Test;

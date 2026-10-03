@@ -27,6 +27,7 @@ call edges, and one taint query that uses all three.
 | Local dataflow | Done (Task 9.3) — `docs/dataflow-design.md` |
 | Cross-procedure dataflow | Done (Task 9.4) — `docs/dataflow-design.md` |
 | First taint query | Done (Task 9.5) — `ql/src/queries/CommandLineInjection.ql`, `docs/dataflow-design.md` |
+| Corpus validation | Done (Task 9.6) — `docs/phase9.6-corpus-triage.md` |
 
 ---
 
