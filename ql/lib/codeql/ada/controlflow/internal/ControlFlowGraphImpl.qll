@@ -248,14 +248,18 @@ private predicate isShortCircuitBinOp(Raw::AdaNode n) {
  * the structural parts of statements (which their owning trees handle directly).
  * A `ConcatOperandList` holds every operand of an `&` chain after the first
  * (`A & B & C` is one `ConcatOp`), so without it those operands are never
- * evaluated.
+ * evaluated. Likewise an `ExprAlternativesList` holds a membership test's
+ * alternatives (`X in A | B`); they are modelled as all evaluated, left to
+ * right, although Ada stops at the first that matches (RM 4.5.2(27/3)) --
+ * an over-approximation, like evaluating both branches' operands would be.
  */
 private predicate exprLike(Raw::AdaNode n) {
   (
     n instanceof Raw::Expr or
     n instanceof Raw::AssocList or
     n instanceof Raw::BasicAssoc or
-    n instanceof Raw::ConcatOperandList
+    n instanceof Raw::ConcatOperandList or
+    n instanceof Raw::ExprAlternativesList
   ) and
   not n instanceof Raw::Op
 }

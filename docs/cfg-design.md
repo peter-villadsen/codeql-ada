@@ -237,6 +237,13 @@ walked like an argument list, so the order is `A`, `B`, `ConcatOperand`, `C`,
 descended into, so every operand after the first had no node, was invisible to data flow,
 and calls in it were missing from the call graph.)
 
+**Membership tests.** Test: [`ql/test/library/Cfg/membership/`](../ql/test/library/Cfg/membership/).
+`X in A | B` is a `MembershipExpr`: the tested expression, then an `ExprAlternativesList`.
+The order is `X`, `A`, `B`, `ExprAlternativesList`, `MembershipExpr`. Every alternative is
+modelled as evaluated, although Ada stops at the first that matches (RM 4.5.2(27/3)); this
+over-approximates which nodes are reached, never under-approximates. (Before this fix the
+list was not descended into, the same gap as the `&` chain above.)
+
 ### Scopes
 
 Test: [`ql/test/library/Cfg/scopes/`](../ql/test/library/Cfg/scopes/)
