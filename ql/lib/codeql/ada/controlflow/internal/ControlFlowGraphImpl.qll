@@ -246,12 +246,16 @@ private predicate isShortCircuitBinOp(Raw::AdaNode n) {
  * Holds if `n` is an expression or argument-list container that participates in
  * value evaluation — as opposed to operators (not executed), declarations, or
  * the structural parts of statements (which their owning trees handle directly).
+ * A `ConcatOperandList` holds every operand of an `&` chain after the first
+ * (`A & B & C` is one `ConcatOp`), so without it those operands are never
+ * evaluated.
  */
 private predicate exprLike(Raw::AdaNode n) {
   (
     n instanceof Raw::Expr or
     n instanceof Raw::AssocList or
-    n instanceof Raw::BasicAssoc
+    n instanceof Raw::BasicAssoc or
+    n instanceof Raw::ConcatOperandList
   ) and
   not n instanceof Raw::Op
 }

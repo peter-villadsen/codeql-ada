@@ -229,6 +229,14 @@ than a body, so it is not a scope and contributes nothing; `Total` on l3 has no
 initialiser, so nothing is elaborated. See [Scopes](#scopes-1) for what happens when a
 declaration *does* have an initialiser.
 
+**Concatenation chains.** Test: [`ql/test/library/Cfg/concat/`](../ql/test/library/Cfg/concat/).
+Libadalang parses `A & B & C` as one `ConcatOp`: the first operand, then a
+`ConcatOperandList` of `ConcatOperand`s, each wrapping one further operand. The list is
+walked like an argument list, so the order is `A`, `B`, `ConcatOperand`, `C`,
+`ConcatOperand`, `ConcatOperandList`, `ConcatOp`. (Before Task 9.5 the list was not
+descended into, so every operand after the first had no node, was invisible to data flow,
+and calls in it were missing from the call graph.)
+
 ### Scopes
 
 Test: [`ql/test/library/Cfg/scopes/`](../ql/test/library/Cfg/scopes/)
