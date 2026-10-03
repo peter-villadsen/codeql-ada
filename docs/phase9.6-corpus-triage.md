@@ -190,3 +190,36 @@ No other query changed. What remains in `unreachable-statement` (sampled 5):
   written without parentheses (`return Id.P_Referenced_Decl;`) is a name, not a
   `CallExpr`, so it gets no raise edge. When the callee is unresolved, as here because the
   Libadalang API is absent, the CFG cannot even tell it is a call. Not fixed.
+
+## Follow-up: F fixed (2026-10-03)
+
+An operator application whose operator resolves to a user-written subprogram is now a
+data-flow call; its operands bind formals 0 and 1 by position (`SsaImpl.qll`
+`getCallTarget`, `callActual`). It counts only where the operator has a CFG node: a first
+version without that guard broke `uniqueCallEnclosingCallable` on operators in type
+declarations, caught by the consistency check on the corpus. The consistency checks are
+empty on all five projects again. New DataFlow cases `flow=33` (binary) and `flow=34`
+(unary), plus an operator that ignores its right operand (no flow). The cases were
+checked to fail without the change.
+
+No shipped query's count changes, since only `command-line-injection` uses data flow.
+The exploratory taint query now finds **alire's first two paths**, both real:
+
+```
+src/alire/alire-os_lib.adb:49          GNAT.OS_Lib.Getenv (Name)         -- environment
+src/alire/alire-vcss-git.adb:857       Git_Dir is (OS_Lib.Getenv ("GIT_DIR", ...))
+src/alire/alire-origins-deployers-git.adb:25
+                                       Directories.Delete_Tree (Folder / VCSs.Git.Git_Dir)
+src/alire/alire-os_lib.adb:9           function "/" (L : Any_Path; R : Relative_Path)
+src/alire/alire-directories.adb:276    procedure Force_Delete (Path : Absolute_Path)
+src/alire/alire-directories.adb:346    Adirs.Delete_File (Path)  /  :355 Adirs.Delete_Tree (Path)
+```
+
+alire deletes `Folder/$GIT_DIR` recursively. That is intended behaviour, not a
+vulnerability, but it is the kind of flow the analysis exists to find: environment to a
+destructive file operation, across five subprograms including the user-defined `"/"`.
+Its other environment-to-`Spawn` flows still go through element-wise array writes and
+generic containers (documented limitations).
+
+Path labels now show operators and parentheses as `... / ...` and `(...)` instead of
+AST class names.

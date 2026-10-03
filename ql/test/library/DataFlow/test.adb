@@ -112,6 +112,12 @@ procedure Test is
    package Inst_A is new G_Pkg;
    package Inst_B is new G_Pkg;
 
+   --  User-defined operators are calls: operands bind to formals by position.
+   type Tag is new Integer;
+   function "+" (L : Integer; R : Tag) return Integer is (L);
+   function "not" (X : Integer) return Integer is (X);
+   function "*" (L : Tag; R : Integer) return Integer is (0);
+
    --  Access-to-subprogram calls are unresolved.
    type Int_Fn is access function (P : Integer) return Integer;
    Fn : constant Int_Fn := Id'Access;
@@ -234,4 +240,7 @@ begin
    Box.Put (Source (31));
    Sink (Inst_A.Pass (Source (32)));  -- $ flow=32
    Sink (Inst_B.Pass (0));
+   Sink (Source (33) + Tag'(0));  -- $ flow=33
+   Sink (not Source (34));  -- $ flow=34
+   Sink (Tag'(1) * Source (35));
 end Test;

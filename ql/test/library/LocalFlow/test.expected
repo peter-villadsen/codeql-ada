@@ -2,7 +2,7 @@
 | test.adb:11:12:11:18 | Source | test.adb:15:10:15:11 | B |  |
 | test.adb:17:9:17:15 | Source | test.adb:19:13:19:14 | D |  |
 | test.adb:20:12:20:18 | Source | test.adb:22:10:22:11 | E |  |
-| test.adb:28:21:28:27 | Source | test.adb:28:10:28:35 | ParenExpr |  |
+| test.adb:28:21:28:27 | Source | test.adb:28:10:28:35 | (...) |  |
 | test.adb:30:9:30:15 | Source | test.adb:32:13:32:14 | G | guarded |
 | test.adb:30:9:30:15 | Source | test.adb:34:10:34:11 | G |  |
 | test.adb:30:9:30:15 | Source | test.adb:37:13:37:14 | G | guarded |

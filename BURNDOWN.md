@@ -39,7 +39,8 @@ limitations found" lists, in order of payoff:
 - ~~A, B, D~~ **done**: unreachable-statement 1,393 -> 34, function-missing-return 53 -> 17
   (corpus total 3,764 -> 2,369). New limitation I (parameterless calls without parentheses
   get no raise edge) recorded, not fixed.
-- F: user-defined operators as calls in data flow.
+- ~~F~~ **done**: user-defined operators are data-flow calls. No shipped query count
+  changes; alire's first two exploratory paths appear (`$GIT_DIR` to `Delete_Tree`).
 - H: a narrower credential heuristic.
 
 **Open items, deliberately not started** (details in `docs/dataflow-design.md`,

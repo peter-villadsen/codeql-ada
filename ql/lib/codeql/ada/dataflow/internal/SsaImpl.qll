@@ -396,6 +396,12 @@ predicate isPrefixedViewCall(Raw::Expr call) {
  * position: a protected operation (`PO.Op`, whose prefix is the protected object,
  * not a formal), and a dotted callee that is neither an expanded name nor a
  * recognisable prefixed view.
+ *
+ * An operator application (`UnOp`, `BinOp`) is a call when its operator resolves to a
+ * user-written subprogram (`function "+" (L, R : T) return T`, or a renaming of one).
+ * Predefined operators do not resolve (D-026) and stay plain expressions.
+ * Like a named call, it counts only where it is evaluated: not in a type or range
+ * declaration, which has no CFG node.
  */
 Raw::BasicDecl getCallTarget(Raw::Expr call) {
   exists(Raw::Name callee | callee = calleeName(call) |
@@ -410,6 +416,17 @@ Raw::BasicDecl getCallTarget(Raw::Expr call) {
       isPrefixedViewCall(call)
     )
   )
+  or
+  // only where the operator is evaluated (has a CFG node), as for named calls
+  cfgPos(call, _, _) and
+  result = operatorOf(call).(Name).getReferencedDecl() and
+  exists(getSubpSpecOf(result)) and
+  not result.getParent+() instanceof Raw::ProtectedDef
+}
+
+/** Gets the operator node of operator application `call`. */
+private Raw::Op operatorOf(Raw::Expr call) {
+  result = call.(Raw::UnOp).getOp() or result = call.(Raw::BinOp).getOp()
 }
 
 /**
@@ -456,6 +473,16 @@ predicate callActual(Raw::Expr call, Raw::Expr actual, int idx) {
     isPrefixedViewCall(call) and
     actual = calleeName(call).(Raw::DottedName).getPrefix() and
     idx = 0
+  )
+  or
+  // an operator application: the operands, by position (operators take no named actuals)
+  exists(getCalleeSpec(call)) and
+  (
+    actual = call.(Raw::UnOp).getExpr() and idx = 0
+    or
+    actual = call.(Raw::BinOp).getLeft() and idx = 0
+    or
+    actual = call.(Raw::BinOp).getRight() and idx = 1
   )
 }
 

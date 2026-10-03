@@ -75,9 +75,15 @@ same checks over any database.
 
 A `DataFlowCall` is an expression whose callee resolves (D-021: `ada_xref`, never name
 text) to a declaration with its own `SubpSpec`. This is `getCallTarget` in `SsaImpl.qll`.
-A call takes one of two syntactic shapes:
+A call takes one of three syntactic shapes:
 
 - a `CallExpr`: `Foo (X)`, `Pkg.Foo (X)`, `Obj.Op (X)`;
+- an operator application (`UnOp`, `BinOp`) whose operator resolves to a user-written
+  subprogram (`function "/" (L : Path; R : Relative) return Path`, or a renaming such
+  as `"+" renames To_Unbounded_String`). The operands bind formals 0 and 1 by position.
+  Predefined operators do not resolve (D-026), so they stay plain expressions. Added in
+  Task 9.6: alire builds paths with a user `"/"` and converts strings with `"+"`, and
+  flow through them was lost;
 - a bare name, for a call without parentheses: `V := Get;`, `Obj.Op;`. A name counts
   only where it is evaluated (it has a CFG node), which rules out `end` names, renamed
   names and default expressions. It also does not count where it is part of a larger
@@ -180,7 +186,6 @@ happen):
 | **Dispatching calls.** A call binds only to its static target. | A class-wide call misses every override. A call on a specific type is exact. | `MISSING: flow=22` |
 | **Access-to-subprogram calls** (`Fn (X)`, `Fn.all (X)`). | Unresolved. | `MISSING: flow=21` |
 | **Calls to a generic subprogram instance** (`function Inst is new G`). | Unresolved, because the instance has no body row. Calls inside a generic body to its generic formal subprograms are also unresolved. A subprogram of a generic *package* instance is different: the call resolves to its declaration in the generic, so flow enters the generic's single body, shared by all instances, and each return still goes back to its own call site (corrected in Task 9.6). | `MISSING: flow=20`; package instance `flow=32` |
-| **User-defined operators** (`function "+" (S : String) return Unbounded_String`). | An operator application is a `UnOp`/`BinOp`, not a call, so flow through a user-written operator is lost. Found in Task 9.6: alire converts strings with `"+"` everywhere, which hides all its environment-to-command flows. | none |
 | **Task entry calls.** | Unresolved: an entry has no `SubpSpec` target. | `MISSING: flow=24` |
 | **Separate bodies.** The call resolves to the `is separate` stub, which has no body row. | Unresolved. | `MISSING: flow=25` |
 | **Protected operations** (`PO.Op`). | Left out, because the prefix is not a formal. | `MISSING: flow=31` |
