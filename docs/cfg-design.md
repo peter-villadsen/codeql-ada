@@ -89,7 +89,7 @@ enclosing body's CFG.
 
 | Scope | Raw class | Body content, in order |
 |---|---|---|
-| Subprogram | `Raw::SubpBody` | `getDecls()` elaborated, then `getStmts()` |
+| Subprogram | `Raw::SubpBody` | its formals' default values (Task 9.6), then `getDecls()` elaborated, then `getStmts()` |
 | Expression function | `Raw::ExprFunction` | `getExpr()` — no declarative part, no statements |
 | Task body | `Raw::TaskBody` | `getDecls()` elaborated, then `getStmts()` |
 | Entry body | `Raw::EntryBody` | `getBarrier()`, then `getDecls()` elaborated, then `getStmts()` |
@@ -696,6 +696,13 @@ Again there is no edge to the scope's abnormal exit: the outer `when others` sto
 The exception *name* of a `raise` is evaluated first (post-order), so `raise
 Constraint_Error;` is `Constraint_Error` → `RaiseStmt`.
 
+**Calls without parentheses.** Test: [`ql/test/library/Cfg/bare-call/`](../ql/test/library/Cfg/bare-call/).
+A name that resolves to a subprogram and is the whole callee (`return Get;`,
+`return Id.P_Referenced_Decl;`) is a call and may raise, like a `CallExpr`. A `CallStmt`'s
+bare call is already covered by the statement. A name whose callee does not resolve
+cannot be told apart from an object and gets no raise edge (Part 5). Before Task 9.6 no
+such name raised, so a handler protecting only such calls looked unreachable.
+
 **Calls to `No_Return` subprograms.** Test: [`ql/test/library/Cfg/no-return/`](../ql/test/library/Cfg/no-return/).
 A `CallStmt` or `CallExpr` whose callee is marked `No_Return` completes only with a raise,
 never normally. The mark can be the aspect (`procedure Fail (Msg : String) with
@@ -929,13 +936,13 @@ A statement with no dedicated tree, so `OpaqueStmtTree` makes it a leaf that com
 
 `AbortStmt`, `AcceptStmt`, `DelayStmt`, `ErrorStmt`, `RequeueStmt`, `SimpleDeclStmt`, `TerminateAlternative`
 
-### structural (19)
+### structural (20)
 
 Read by the CFG but never becoming a node: its owning construct's tree consumes it directly. Making these nodes would leak spurious reachable elements into the graph -- see Part 1.
 
-`CaseExprAlternative`, `CaseStmtAlternative`, `ConcatOperandList`, `DeclarativePart`, `ElsePart`, `ElsifExprPart`, `ElsifStmtPart`, `ExceptionHandler`, `ExprAlternativesList`, `ExtendedReturnStmtObjectDecl`, `ForLoopSpec`, `LabelDecl`, `NamedStmtDecl`, `ObjectDecl`, `OthersDesignator`, `RangeConstraint`, `SelectWhenPart`, `ThenAbortPart`, `WhileLoopSpec`
+`CaseExprAlternative`, `CaseStmtAlternative`, `ConcatOperandList`, `DeclarativePart`, `ElsePart`, `ElsifExprPart`, `ElsifStmtPart`, `ExceptionHandler`, `ExprAlternativesList`, `ExtendedReturnStmtObjectDecl`, `ForLoopSpec`, `LabelDecl`, `NamedStmtDecl`, `ObjectDecl`, `OthersDesignator`, `ParamSpec`, `RangeConstraint`, `SelectWhenPart`, `ThenAbortPart`, `WhileLoopSpec`
 
-### n/a (304)
+### n/a (303)
 
 Not control-relevant: nothing here is executed, so nothing is in the graph.
 
@@ -951,9 +958,9 @@ Not control-relevant: nothing here is executed, so nothing is in the graph.
 
 `AccessToSubpDef`, `AnonymousTypeAccessDef`, `AnonymousTypeDecl`, `ArrayTypeDef`, `ClasswideTypeDecl`, `ComponentDef`, `CompositeConstraint`, `ConcreteTypeDecl`, `DecimalFixedPointDef`, `DeltaConstraint`, `DerivedTypeDef`, `DigitsConstraint`, `DiscreteBaseSubtypeDecl`, `EnumTypeDef`, `FloatingPointDef`, `FormalDiscreteTypeDef`, `FormalTypeDecl`, `IncompleteFormalTypeDecl`, `IncompleteTaggedTypeDecl`, `IncompleteTypeDecl`, `InterfaceTypeDef`, `ModIntTypeDef`, `NullRecordDef`, `OrdinaryFixedPointDef`, `PrivateTypeDef`, `ProtectedDef`, `ProtectedTypeDecl`, `RecordDef`, `RecordTypeDef`, `SignedIntTypeDef`, `SingleTaskTypeDecl`, `SubtypeDecl`, `SynthAnonymousTypeDecl`, `TaskDef`, `TaskTypeDecl`, `TypeAccessDef`
 
-**declarations** (46) — Declarations other than the object declarations whose initialisers are elaborated in a `declare` block or a body. The declarative part of a nested *package* is still not elaborated -- see Blocks.
+**declarations** (45) — Declarations other than the object declarations whose initialisers are elaborated in a `declare` block or a body. The declarative part of a nested *package* is still not elaborated -- see Blocks.
 
-`AbstractFormalSubpDecl`, `AbstractStateDecl`, `AbstractSubpDecl`, `AcceptStmtBody`, `AnonymousExprDecl`, `AssertionLevelDecl`, `ComponentDecl`, `ConcreteFormalSubpDecl`, `DiscriminantSpec`, `EntryDecl`, `EntryIndexSpec`, `EnumLiteralDecl`, `ErrorDecl`, `ExceptionDecl`, `ForLoopVarDecl`, `GenericFormalObjDecl`, `GenericFormalPackage`, `GenericFormalSubpDecl`, `GenericFormalTypeDecl`, `GenericPackageDecl`, `GenericPackageInstantiation`, `GenericPackageInternal`, `GenericPackageRenamingDecl`, `GenericSubpDecl`, `GenericSubpInstantiation`, `GenericSubpInternal`, `GenericSubpRenamingDecl`, `NoTypeObjectRenamingDecl`, `NullSubpDecl`, `NumberDecl`, `PackageBodyStub`, `PackageDecl`, `PackageRenamingDecl`, `ParamSpec`, `ProtectedBody`, `ProtectedBodyStub`, `SingleProtectedDecl`, `SingleTaskDecl`, `SubpBodyStub`, `SubpDecl`, `SubpRenamingDecl`, `SyntheticCharEnumLit`, `SyntheticFormalParamDecl`, `SyntheticObjectDecl`, `SyntheticSubpDecl`, `TaskBodyStub`
+`AbstractFormalSubpDecl`, `AbstractStateDecl`, `AbstractSubpDecl`, `AcceptStmtBody`, `AnonymousExprDecl`, `AssertionLevelDecl`, `ComponentDecl`, `ConcreteFormalSubpDecl`, `DiscriminantSpec`, `EntryDecl`, `EntryIndexSpec`, `EnumLiteralDecl`, `ErrorDecl`, `ExceptionDecl`, `ForLoopVarDecl`, `GenericFormalObjDecl`, `GenericFormalPackage`, `GenericFormalSubpDecl`, `GenericFormalTypeDecl`, `GenericPackageDecl`, `GenericPackageInstantiation`, `GenericPackageInternal`, `GenericPackageRenamingDecl`, `GenericSubpDecl`, `GenericSubpInstantiation`, `GenericSubpInternal`, `GenericSubpRenamingDecl`, `NoTypeObjectRenamingDecl`, `NullSubpDecl`, `NumberDecl`, `PackageBodyStub`, `PackageDecl`, `PackageRenamingDecl`, `ProtectedBody`, `ProtectedBodyStub`, `SingleProtectedDecl`, `SingleTaskDecl`, `SubpBodyStub`, `SubpDecl`, `SubpRenamingDecl`, `SyntheticCharEnumLit`, `SyntheticFormalParamDecl`, `SyntheticObjectDecl`, `SyntheticSubpDecl`, `TaskBodyStub`
 
 **lists** (24) — List wrappers whose elements the owning construct reads directly. `StmtList` and `AssocList` are the exceptions and appear above.
 
@@ -984,10 +991,11 @@ Not control-relevant: nothing here is executed, so nothing is in the graph.
 - **Ada 2022 `QuantifiedExpr` and `DeclExpr`** are treated as opaque post-order
   expressions; their quantifier/declaration sub-structure is not modelled.
 - **Tasking is opaque** (D-013): no inter-task edges, no rendezvous modelling.
-- **Calls without parentheses do not raise.** Only a `CallExpr` or `CallStmt` gets a raise
-  edge. A parameterless call in an expression (`return Id.P_Referenced_Decl;`) is a name,
-  so a handler protecting only such calls looks unreachable. When the callee does not
-  resolve, the graph cannot tell such a name is a call at all (Task 9.6, limitation I).
+- **An unresolved call without parentheses does not raise.** A name like
+  `Id.P_Referenced_Decl` whose callee does not resolve cannot be told apart from an object,
+  so it gets no raise edge, and a handler protecting only such calls looks unreachable
+  (Task 9.6, limitation I; resolved calls without parentheses do raise, see
+  [Exceptions](#exceptions)).
 
 Limitations that manifest as *specific missing edges* are recorded as `MISSING:`
 annotations in the relevant conformance test, not here.

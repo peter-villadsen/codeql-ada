@@ -223,3 +223,22 @@ generic containers (documented limitations).
 
 Path labels now show operators and parentheses as `... / ...` and `(...)` instead of
 AST class names.
+
+## Follow-up: remaining open items (2026-10-03)
+
+- **Body rows, multi-name qualified names, separate bodies** (extractor; dbscheme change):
+  see `docs/dataflow-design.md`, "Closed (2026-10-03)". Calls to a project declaration
+  with no body row: alire 91 -> 4. No query count changed.
+- **I**: a resolved call without parentheses gets a raise edge (`Cfg/bare-call`).
+  unreachable-statement gpr2 13 -> 12, the `raise;` handler.
+- **H**: "token" counts only alone (`Token`) or with an authentication qualifier
+  (`Auth_Token`, ...), and a lexer keyword token that spells its own name
+  (`Access_Token := "access"`) is excluded. hardcoded-credential gpr2 51 -> 0, alire
+  3 -> 0. Every removed result was a false positive: lexer token names, an environment
+  variable's *name* (`Env_GH_Token`), a regex, a URL token list.
+- **Protected operations, default parameter values, extended returns** (data flow):
+  pinned as `flow=31`/`flow=37`, `flow=27` (with `SPURIOUS: flow=36` for the
+  over-approximation) and `flow=30`. The consistency checks are empty on all five
+  projects.
+
+Corpus total now 2,314 (from 11,520 at the start of Task 9.6).

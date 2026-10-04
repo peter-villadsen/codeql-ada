@@ -383,8 +383,15 @@ private Raw::Name calleeName(Raw::Expr call) {
 predicate isPrefixedViewCall(Raw::Expr call) {
   exists(Raw::DottedName dn | dn = calleeName(call) |
     not isExpandedNamePrefix(dn.getPrefix()) and
-    exists(dn.getPrefix().(Expr).getType())
+    exists(dn.getPrefix().(Expr).getType()) and
+    // a protected operation's prefix is the protected object, never a formal
+    not isProtectedOperation(dn.getSuffix().(Name).getReferencedDecl())
   )
+}
+
+/** Holds if `d` is declared in a protected type or object (`protected Box is ...`). */
+private predicate isProtectedOperation(Raw::BasicDecl d) {
+  d.getParent+() instanceof Raw::ProtectedDef
 }
 
 /**
@@ -395,11 +402,11 @@ predicate isPrefixedViewCall(Raw::Expr call) {
  * neither do calls to generic instantiations, entries and access values
  * (docs/dataflow-design.md, D-023). A subprogram renaming is a result -- it is a
  * `BaseSubpBody` with a `SubpSpec` of its own, whose formals bind the actuals --
- * and `resolveSubpRenaming` takes it on to the subprogram it renames. Two call
- * shapes are also left out because their actuals cannot be matched to formals by
- * position: a protected operation (`PO.Op`, whose prefix is the protected object,
- * not a formal), and a dotted callee that is neither an expanded name nor a
- * recognisable prefixed view.
+ * and `resolveSubpRenaming` takes it on to the subprogram it renames. A protected
+ * operation (`PO.Op (X)`) is a call whose prefix is the protected object, not a
+ * formal, so its actuals bind as written. A dotted callee that is neither an
+ * expanded name, a recognisable prefixed view nor a protected operation is left out,
+ * since its actuals cannot be matched to formals.
  *
  * An operator application (`UnOp`, `BinOp`) is a call when its operator resolves to a
  * user-written subprogram (`function "+" (L, R : T) return T`, or a renaming of one).
@@ -411,21 +418,22 @@ Raw::BasicDecl getCallTarget(Raw::Expr call) {
   exists(Raw::Name callee | callee = calleeName(call) |
     result = callee.(Name).getReferencedDecl() and
     exists(getSubpSpecOf(result)) and
-    not result.getParent+() instanceof Raw::ProtectedDef and
     (
       not callee instanceof Raw::DottedName
       or
       isExpandedNamePrefix(callee.(Raw::DottedName).getPrefix())
       or
       isPrefixedViewCall(call)
+      or
+      // `PO.Op (X)`: the prefix is the protected object, the actuals bind as written
+      isProtectedOperation(result)
     )
   )
   or
   // only where the operator is evaluated (has a CFG node), as for named calls
   cfgPos(call, _, _) and
   result = operatorOf(call).(Name).getReferencedDecl() and
-  exists(getSubpSpecOf(result)) and
-  not result.getParent+() instanceof Raw::ProtectedDef
+  exists(getSubpSpecOf(result))
 }
 
 /** Gets the operator node of operator application `call`. */
@@ -529,6 +537,19 @@ private predicate outOrInOutParamExitRead(SsaCfg::BasicBlock bb, int i, SsaSourc
 }
 
 /**
+ * Holds if `v` is the return object of extended return statement `return R : T do ...
+ * end return` and `(bb, i)` is the statement's own node, where the function returns
+ * `R`. A synthetic read there keeps `R`'s last write alive and gives Task 9.4 a
+ * return node for it, as `outOrInOutParamExitRead` does for `out` formals.
+ */
+private predicate extendedReturnRead(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+  exists(Raw::ExtendedReturnStmt s |
+    v = s.getDecl().(BasicDecl).getADefiningName() and
+    cfgPos(s, bb, i)
+  )
+}
+
+/**
  * An uncertain write (D-022) to an actual passed as an `out`/`in out` formal
  * of a resolved call: the callee may or may not actually update it, which is
  * exactly what the shared SSA framework's `certain` flag exists to express.
@@ -588,6 +609,8 @@ private module SsaInput implements SsaLib::InputSig<Raw::Location, SsaCfg::Basic
       )
       or
       outOrInOutParamExitRead(bb, i, v)
+      or
+      extendedReturnRead(bb, i, v)
     ) and
     certain = true
   }
@@ -638,12 +661,14 @@ Raw::Expr getWrittenValue(SsaImpl::WriteDefinition def) {
 
 private newtype TDfExpr =
   TAstExpr(Raw::Expr e) { cfgPos(e, _, _) } or
-  TParamExitRead(SsaSourceVariable v) { outOrInOutParamExitRead(_, _, v) }
+  TParamExitRead(SsaSourceVariable v) { outOrInOutParamExitRead(_, _, v) } or
+  TExtendedReturnRead(SsaSourceVariable v) { extendedReturnRead(_, _, v) }
 
 /**
  * An expression as `DataFlowIntegration` sees it: an Ada expression with a CFG node,
- * or the synthetic read of an `out`/`in out` formal at its scope's normal exit
- * (`outOrInOutParamExitRead`). `DataFlowIntegration` only creates data-flow nodes
+ * the synthetic read of an `out`/`in out` formal at its scope's normal exit
+ * (`outOrInOutParamExitRead`), or the synthetic read of an extended return's object
+ * (`extendedReturnRead`). `DataFlowIntegration` only creates data-flow nodes
  * for reads that are expressions, and that read is the value the caller gets back
  * (D-022), so Task 9.4 needs a node for it: its return node. It is one per formal,
  * not one per exit node, so that two formals written back by one scope stay apart.
@@ -655,11 +680,16 @@ class DfExpr extends TDfExpr {
   /** Gets the `out`/`in out` formal this is the exit read of, if it is one. */
   SsaSourceVariable asParamExitRead() { this = TParamExitRead(result) }
 
+  /** Gets the return object this is the read of, at its extended return statement. */
+  SsaSourceVariable asExtendedReturnRead() { this = TExtendedReturnRead(result) }
+
   /** Gets a textual representation of this expression. */
   string toString() {
     result = this.asExpr().toString()
     or
     result = "[exit] " + this.asParamExitRead().toString()
+    or
+    result = "[return] " + this.asExtendedReturnRead().toString()
   }
 
   /** Holds if the `i`th node of basic block `bb` evaluates this expression. */
@@ -667,6 +697,8 @@ class DfExpr extends TDfExpr {
     cfgPos(this.asExpr(), bb, i)
     or
     outOrInOutParamExitRead(bb, i, this.asParamExitRead())
+    or
+    extendedReturnRead(bb, i, this.asExtendedReturnRead())
   }
 }
 

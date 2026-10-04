@@ -100,8 +100,11 @@ argument positions:
 | anything else (unresolved, or no type) | undecidable | not a call (unresolved) |
 
 Prefixed views are common in modern Ada: 5,374 of gpr2's call sites and 947 of alire's
-use them, so they had to be handled. A protected operation (`PO.Op`) looks like a prefixed
-view, but its prefix is not a formal, so it is left out (see the limitations below).
+use them, so they had to be handled. A protected operation (`PO.Op (X)`) looks like a
+prefixed view, but its prefix is the protected object, not a formal, so its actuals bind
+as written, with no shift. That also holds for an object of a protected type
+(`Obj.Op (X)`), which the prefixed-view rule would otherwise claim (Task 9.6; `flow=31`,
+`flow=37`).
 
 `viableCallable` starts from the target and follows any subprogram renamings
 (`resolveSubpRenaming`). It then takes the `ada_body_part` completion, or keeps the target
@@ -138,7 +141,7 @@ because it receives nothing. An `ArgumentNode` is the actual's expression node.
 
 | `ReturnKind` | `ReturnNode` (callee) | `OutNode` (caller) |
 | --- | --- | --- |
-| `return` | a `return` statement's expression, or an expression function's body | the call expression |
+| `return` | a `return` statement's expression, or an expression function's body, or the read of an extended return's object at the statement (Task 9.6) | the call expression |
 | `out i`, one per formal position | the exit read of the `i`th formal, which is `out` or `in out` | the source of the call's uncertain write-back to the `i`th actual |
 
 The exit read is Task 9.2's synthetic read of an `out`/`in out` formal at its scope's
@@ -146,7 +149,9 @@ normal exit (`outOrInOutParamExitRead`), which keeps the formal's last write ali
 not an expression, and `DataFlowIntegration` creates nodes only for reads that are. So
 `SsaDataFlowInput::Expr` is a union type (`DfExpr`): either an Ada expression or the exit
 read of one formal. There is one exit read per formal, not one per exit node, so that the
-formals stay separate.
+formals stay separate. An extended return statement gets the same treatment: a synthetic read
+of its object at the statement's node (`extendedReturnRead`), which is a `return`-kind
+return node.
 
 The union type alone did not keep them separate. All of a scope's exit reads sit at the
 same CFG node, and `DataFlowIntegration` matches a read node to a variable by position
@@ -187,9 +192,7 @@ happen):
 | **Access-to-subprogram calls** (`Fn (X)`, `Fn.all (X)`). | Unresolved. | `MISSING: flow=21` |
 | **Calls to a generic subprogram instance** (`function Inst is new G`). | Unresolved, because the instance has no body row. Calls inside a generic body to its generic formal subprograms are also unresolved. A subprogram of a generic *package* instance is different: the call resolves to its declaration in the generic, so flow enters the generic's single body, shared by all instances, and each return still goes back to its own call site (corrected in Task 9.6). | `MISSING: flow=20`; package instance `flow=32` |
 | **Task entry calls.** | Unresolved: an entry has no `SubpSpec` target. | `MISSING: flow=24` |
-| **Protected operations** (`PO.Op`). | Left out, because the prefix is not a formal. | `MISSING: flow=31` |
-| **Default parameter values.** They are not evaluated in any CFG. | A formal left to its default receives nothing. | `MISSING: flow=27` |
-| **Extended return statements** (`return R : T do ... end return`). | Not a return node. | `MISSING: flow=30` |
+| **Default parameter values are evaluated in the callee** (Task 9.6). Ada evaluates a default at each call that omits the actual; the CFG evaluates it once at the callee's entry. | The default's value reaches the formal on every call, including those that pass an actual. | `flow=27`; `SPURIOUS: flow=36` |
 | **Uncertain write-back.** | The actual's old value survives every `out`/`in out` call. | `SPURIOUS: flow=12`, `flow=15` |
 | **Renamings of prefixed views or attributes** (`renames Obj.Op`, `renames T'Image`). | Unresolved. | none |
 | **No content, no package-level variables, no call-context pruning.** | See "Minimal in v1". | none |

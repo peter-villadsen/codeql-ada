@@ -73,8 +73,8 @@ module AdaDataFlowInput implements DF::InputSig<Raw::Location> {
   /**
    * A value leaving a callable: a function's `return` expression or expression-function
    * body (`TNormalReturnKind`), or the exit read of an `out`/`in out` formal
-   * (`TOutReturnKind`, one per formal position, D-022). Extended return statements
-   * (`return R : T do ... end return`) are not modelled (docs/dataflow-design.md).
+   * (`TOutReturnKind`, one per formal position, D-022). An extended return statement
+   * (`return R : T do ... end return`) returns its object `R`, read at the statement.
    */
   class ReturnNode extends Node {
     private ReturnKind kind;
@@ -85,6 +85,9 @@ module AdaDataFlowInput implements DF::InputSig<Raw::Location> {
         this.asExpr() = any(Raw::ReturnStmt r).getReturnExpr()
         or
         this.asExpr() = any(Raw::ExprFunction f).getExpr()
+        or
+        // the object of an extended return statement, read where the statement returns it
+        exists(this.asSsaNode().(SsaFlow::ExprNode).getExpr().asExtendedReturnRead())
       )
       or
       exists(SsaSourceVariable v, int idx |

@@ -611,6 +611,11 @@ private Raw::HandledStmts bodyStmts(Raw::AdaNode b) {
  * first statement when there is nothing to elaborate) and `scopeLast` picks up
  * both the statements' normal completion and, through `propagatesAbnormal`,
  * every `return`/`raise` escaping either part.
+ *
+ * A subprogram body first evaluates the default values of its formals, so that data
+ * flow can carry a default into the formal (Task 9.6). Ada evaluates a default at
+ * each call that omits the actual; evaluating it once at entry is the callee-side
+ * approximation, and its value then reaches the formal on every call.
  */
 class BodyTree extends StandardTree instanceof Raw::AdaNode {
   BodyTree() {
@@ -621,6 +626,9 @@ class BodyTree extends StandardTree instanceof Raw::AdaNode {
   }
 
   override Raw::AdaNode getChildNode(int i) {
+    // a subprogram body first evaluates its formals' default values (see `formalDefault`)
+    result = formalDefault(this, i + 1000)
+    or
     i = -1 and result = this.(Raw::EntryBody).getBarrier()
     or
     result = elaboratedInitializer(bodyDecls(this), i)
@@ -856,4 +864,19 @@ Raw::BaseLoopStmt exitTargetLoop(Raw::ExitStmt e) {
 Raw::Label gotoTargetLabel(Raw::GotoStmt g) {
   nameText(result.getDecl().getName().getName()) = nameText(g.getLabelName()) and
   getEnclosingCfgScope(result) = getEnclosingCfgScope(g)
+}
+
+/**
+ * Gets the default value of the `k`th formal (0-based, across `ParamSpec` groups by
+ * group) of subprogram body `body` that has one, or none. Ada requires a body to
+ * repeat its spec's defaults (full conformance), so the body's own formals carry them.
+ */
+Raw::Expr formalDefault(Raw::SubpBody body, int k) {
+  result =
+    rank[k + 1](Raw::ParamSpec ps, Raw::Expr d |
+      ps = body.getSubpSpec().getSubpParams().getParams().getChild(_) and
+      d = ps.getDefaultExpr()
+    |
+      d order by ps.getParentIndex()
+    )
 }

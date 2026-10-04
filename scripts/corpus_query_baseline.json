@@ -40,7 +40,7 @@
    "ada/float-equality": 0,
    "ada/function-missing-return": 14,
    "ada/goto-statement": 9,
-   "ada/hardcoded-credential": 3,
+   "ada/hardcoded-credential": 0,
    "ada/identical-operands": 0,
    "ada/open-without-close": 0,
    "ada/pragma-suppress": 0,
@@ -57,7 +57,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 4
   },
-  "total": 209
+  "total": 206
  },
  "gpr2": {
   "results": {
@@ -70,7 +70,7 @@
    "ada/float-equality": 0,
    "ada/function-missing-return": 1,
    "ada/goto-statement": 566,
-   "ada/hardcoded-credential": 51,
+   "ada/hardcoded-credential": 0,
    "ada/identical-operands": 0,
    "ada/open-without-close": 6,
    "ada/pragma-suppress": 3,
@@ -80,14 +80,14 @@
    "ada/todo-comment": 58,
    "ada/unchecked-conversion": 74,
    "ada/unchecked-deallocation": 72,
-   "ada/unreachable-statement": 13,
+   "ada/unreachable-statement": 12,
    "ada/unused-local": 45,
    "ada/unused-parameter": 29,
    "ada/unused-with-clause": 342,
    "ada/useless-if": 4,
    "ada/warnings-off": 36
   },
-  "total": 1490
+  "total": 1438
  },
  "libadalang-tools": {
   "results": {

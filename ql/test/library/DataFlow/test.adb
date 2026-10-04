@@ -144,13 +144,19 @@ procedure Test is
    procedure Leaf_Rab (C : Integer);
    procedure Leaf_Rab (C : Integer) renames Leaf;
 
-   --  A default parameter value is never evaluated in any CFG.
+   --  A default parameter value flows into the formal: it is evaluated at the callee's entry.
    procedure Dflt (X : Integer := Source (27)) is
    begin
-      Sink (X);  -- $ MISSING: flow=27
+      Sink (X);  -- $ flow=27
    end Dflt;
 
-   --  An extended return statement's object is not a return node.
+   --  ... also when every call passes an actual (the callee-side over-approximation).
+   procedure Dflt2 (X : Integer := Source (36)) is
+   begin
+      Sink (X);  -- $ SPURIOUS: flow=36
+   end Dflt2;
+
+   --  An extended return statement returns its object.
    function Ext return Integer is
    begin
       return R : constant Integer := Source (30) do
@@ -158,8 +164,7 @@ procedure Test is
       end return;
    end Ext;
 
-   --  Protected operations are unresolved: the prefix is the protected object, not
-   --  a formal.
+   --  A protected operation is a call; the prefix is the protected object, not a formal.
    protected Box is
       procedure Put (X : Integer);
    end Box;
@@ -167,9 +172,23 @@ procedure Test is
    protected body Box is
       procedure Put (X : Integer) is
       begin
-         Sink (X);  -- $ MISSING: flow=31
+         Sink (X);  -- $ flow=31
       end Put;
    end Box;
+
+   --  An object of a protected type: the actuals are not shifted as for a prefixed view.
+   protected type Cell is
+      procedure Put (X : Integer; Y : Integer);
+   end Cell;
+
+   protected body Cell is
+      procedure Put (X : Integer; Y : Integer) is
+      begin
+         Sink (Y);  -- $ flow=37
+      end Put;
+   end Cell;
+
+   Obj : Cell;
 
    V1, V2, V3, V4, V6, V7, V8, V9, V10, V11, V12 : Integer;
    Sq : Shapes.Square;
@@ -236,7 +255,9 @@ begin
    Leaf_Alias (C => Source (26));
    Leaf_Rab (Source (29));
    Dflt;
-   Sink (Ext);  -- $ MISSING: flow=30
+   Sink (Ext);  -- $ flow=30
+   Dflt2 (0);
+   Obj.Put (0, Source (37));
    Box.Put (Source (31));
    Sink (Inst_A.Pass (Source (32)));  -- $ flow=32
    Sink (Inst_B.Pass (0));

@@ -41,7 +41,11 @@ limitations found" lists, in order of payoff:
   get no raise edge) recorded, not fixed.
 - ~~F~~ **done**: user-defined operators are data-flow calls. No shipped query count
   changes; alire's first two exploratory paths appear (`$GIT_DIR` to `Delete_Tree`).
-- H: a narrower credential heuristic.
+- ~~H~~ **done**: "token" counts only alone or with an authentication qualifier, and a
+  lexer keyword token (`Access_Token := "access"`) is excluded. hardcoded-credential
+  gpr2 51 -> 0, alire 3 -> 0, all checked to be false positives.
+- ~~I~~ **done**: a resolved call without parentheses may raise; an unresolved one still
+  cannot be recognised as a call.
 
 **Open items, deliberately not started** (details in `docs/dataflow-design.md`,
 "Named v1 limitations"):
@@ -51,8 +55,10 @@ limitations found" lists, in order of payoff:
 - ~~Multi-name declarations have no qualified name~~ **fixed 2026-10-03**: one
   `ada_qualified_name` row per defining name (dbscheme change: `decl` is no longer unique).
 - ~~Separate bodies~~ **fixed 2026-10-03**: stub-to-body rows (`flow=25` now passes).
-- **Small limitations (hours each):** protected operations, default parameter values,
-  extended `return` statements.
+- ~~Small limitations~~ **fixed 2026-10-03**: protected operations are calls (`flow=31`,
+  `flow=37`); default parameter values flow into the formal, evaluated at the callee's
+  entry (`flow=27`; over-approximates: `SPURIOUS: flow=36`); an extended return returns
+  its object (`flow=30`).
 - **Large limitations (each a project of its own):** dispatching calls,
   access-to-subprogram calls, calls into generic instances.
 - **Kept on purpose:** an `out`/`in out` write-back is uncertain, so the caller's old

@@ -162,6 +162,14 @@ predicate localFlowStep(Node nodeFrom, Node nodeTo) {
     isParameterEntryDef(w.getDefinition(), nodeFrom.asParameter()) and
     nodeTo = fromSsa(w)
   )
+  or
+  // a formal's default value, evaluated at the callee's entry, may be its value
+  // (an over-approximation: also on calls that pass an actual; Task 9.6)
+  exists(SsaFlow::WriteDefSourceNode w, Raw::ParamSpec ps |
+    nodeFrom.asExpr() = ps.getDefaultExpr() and
+    isParameterEntryDef(w.getDefinition(), ps.(BasicDecl).getADefiningName()) and
+    nodeTo = fromSsa(w)
+  )
 }
 
 /** Holds if the value of `source` may reach `sink` through zero or more local steps. */

@@ -188,7 +188,35 @@ predicate mayRaise(Raw::AdaNode n) {
   n instanceof Raw::RaiseStmt or
   n instanceof Raw::RaiseExpr or
   n instanceof Raw::CallStmt or
-  n instanceof Raw::CallExpr
+  n instanceof Raw::CallExpr or
+  isParenthesislessCall(n)
+}
+
+/**
+ * Holds if `n` is a call written without parentheses inside an expression
+ * (`return Id.P_Referenced_Decl;`, `X := Get;`): a name that resolves to a
+ * subprogram and is the whole callee, not part of a larger name. Like any call it
+ * may raise. A `CallStmt`'s bare call is already covered by the statement. A name
+ * that does not resolve cannot be told apart from an object and is left out
+ * (Task 9.6, limitation I).
+ */
+private predicate isParenthesislessCall(Raw::AdaNode n) {
+  (n instanceof Raw::Identifier or n instanceof Raw::DottedName) and
+  exists(Raw::BasicDecl d | ada_xref(n, d) |
+    d instanceof Raw::ClassicSubpDecl or
+    d instanceof Raw::BaseSubpBody or
+    d instanceof Raw::SubpBodyStub
+  ) and
+  not n = any(Raw::CallExpr c).getName() and
+  not n = any(Raw::CallStmt s).getCall() and
+  not n = any(Raw::DottedName dn).getSuffix() and
+  not n = any(Raw::AttributeRef a).getPrefix() and
+  not n.getParent+() instanceof Raw::EndName and
+  not n.getParent() instanceof Raw::DefiningName and
+  // the prefix of an expanded name naming an enclosing subprogram (`Outer.X`)
+  not exists(Raw::DottedName dn, Raw::BasicDecl d |
+    n = dn.getPrefix() and ada_xref(n, d) and n.getParent+() = d
+  )
 }
 
 /**
