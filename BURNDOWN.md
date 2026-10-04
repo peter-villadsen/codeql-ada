@@ -5,69 +5,66 @@ QL standard library, and an initial query suite — usable via `codeql database 
 
 ---
 
-## Resume here (2026-10-03) — Phase 9 status
+## Resume here (2026-10-03) — Phase 9 complete, Task 9.6 follow-ups done
 
-**Done:** 9.1 call graph, 9.2 SSA, 9.3 local dataflow, 9.4 cross-procedure dataflow,
-9.5 the first taint query, and burndown 8.12a–c (the GNAT runtime resolves semantically,
-D-026). Cross-procedure flow works across two or more call frames in both directions:
-down through parameters, up through function results and through `out` parameters.
-`ada/command-line-injection` (`ql/src/queries/CommandLineInjection.ql`) is a
-`path-problem` query from `Ada.Command_Line.Argument` to the `Program_Name`/`Args` of
-every `Spawn` and `Non_Blocking_Spawn` overload (and more, below), built on the public
-`codeql.ada.dataflow.DataFlow` / `TaintTracking` modules. The design, the taint steps, the
-named v1 limitations and the corpus measurements are in
-[docs/dataflow-design.md](docs/dataflow-design.md), and the step-by-step plan is
-[docs/phase9.2-plan.md](docs/phase9.2-plan.md). Full suite green (54/54). Task 9.5 found
-and fixed two CFG gaps: `&` operands after the first, and membership alternatives
-(`X in A | B`), had no node (97d1c5e, bbdbdeb). Sinks now also cover `GNAT.Expect` and
-imported C `system` / `popen` / `exec*`, as extensible classes in
-`codeql/ada/security/CommandInjection.qll`; `docs/query-writing.md` shows how to write
-one's own source, sink and barrier. For query authors: `docs/ast-reference.md` (Ada source to AST, built
-from pinned test output), a refreshed `docs/query-writing.md` with a "start here" path, and
-AST printing (VS Code "View AST" via `ql/lib/ide-contextual-queries/printAst.ql`, text via
-`ql/lib/tools/PrintAst.ql`). View AST has not been tried in VS Code itself yet.
+**State.** Phase 9 is done: call graph, SSA, local and cross-procedure data flow, taint
+tracking, the first taint query, and the corpus validation (Task 9.6) with all its
+follow-up fixes. Full suite green (60/60), corpus regression green, dataflow consistency
+checks empty on all five corpus projects. Corpus results: 11,520 at the start of 9.6, now
+2,314; per-query counts are in `scripts/corpus_query_baseline.json`.
 
-**Task 9.6 done (2026-10-03):** [docs/phase9.6-corpus-triage.md](docs/phase9.6-corpus-triage.md).
-About 70% of the 11,520 corpus results trace to four causes. The dataflow engine produced
-no false positive in the 23 exploratory paths. Per-query counts are now recorded
-(`scripts/corpus_queries.py`, `scripts/corpus_query_baseline.json`).
+**Where to read:**
+- [docs/phase9.6-corpus-triage.md](docs/phase9.6-corpus-triage.md): the triage, every
+  defect found (A–I) and its fix, with before/after counts.
+- [docs/dataflow-design.md](docs/dataflow-design.md): the data-flow model, taint steps,
+  the remaining named v1 limitations (each pinned in `ql/test/library/DataFlow`).
+- [docs/cfg-design.md](docs/cfg-design.md): the CFG, construct by construct; Part 5
+  lists its limitations.
+- [docs/query-writing.md](docs/query-writing.md) and
+  [docs/ast-reference.md](docs/ast-reference.md): for query authors (AST shapes are
+  copied from the pinned `ql/test/library/PrintAst` output).
 
-**Next: the fix list in that report, awaiting a decision.** Its section "Defects and
-limitations found" lists, in order of payoff:
-- ~~C, E~~ **done**: unused-local 3,733 -> 199, unused-parameter 3,559 -> 73,
-  dead-local-subprogram 777 -> 41 (corpus total 11,520 -> 3,764).
-- ~~A, B, D~~ **done**: unreachable-statement 1,393 -> 34, function-missing-return 53 -> 17
-  (corpus total 3,764 -> 2,369). New limitation I (parameterless calls without parentheses
-  get no raise edge) recorded, not fixed.
-- ~~F~~ **done**: user-defined operators are data-flow calls. No shipped query count
-  changes; alire's first two exploratory paths appear (`$GIT_DIR` to `Delete_Tree`).
-- ~~H~~ **done**: "token" counts only alone or with an authentication qualifier, and a
-  lexer keyword token (`Access_Token := "access"`) is excluded. hardcoded-credential
-  gpr2 51 -> 0, alire 3 -> 0, all checked to be false positives.
-- ~~I~~ **done**: a resolved call without parentheses may raise; an unresolved one still
-  cannot be recognised as a call.
+**What exists for queries.** `codeql.ada.dataflow.DataFlow` / `TaintTracking`
+(helpers `isCallTo`, `getAnArgument`, `isArgumentFor`, `isArgumentAt`,
+`isParameterOf`); `codeql.ada.security.CommandInjection` (extensible `Source` / `Sink` /
+`Barrier`); `ada/command-line-injection` (sinks: `OS_Lib.Spawn` / `Non_Blocking_Spawn`,
+`GNAT.Expect`, imported C `system` / `popen` / `exec*`). AST printing:
+`ql/lib/ide-contextual-queries/printAst.ql` (VS Code "View AST"; not yet tried in VS Code
+itself) and `ql/lib/tools/PrintAst.ql` (text). `ql/debug/ExploratoryTaint.ql` is a
+developer-only wide taint configuration for corpus experiments.
 
-**Open items, deliberately not started** (details in `docs/dataflow-design.md`,
-"Named v1 limitations"):
+**Database format.** The last extractor change (e7850f2) changed the dbscheme
+(`ada_qualified_name.decl` is no longer unique). Databases built before it must be
+re-created (D-011). The corpus databases under `/root/.cache/codeql-ada-corpus/` are
+current.
 
-- ~~Missing `ada_body_part` rows~~ **fixed 2026-10-03**: syntactic pairing when Libadalang's
-  fails (alire 91 -> 4 unresolved calls; the rest are imported subprograms).
-- ~~Multi-name declarations have no qualified name~~ **fixed 2026-10-03**: one
-  `ada_qualified_name` row per defining name (dbscheme change: `decl` is no longer unique).
-- ~~Separate bodies~~ **fixed 2026-10-03**: stub-to-body rows (`flow=25` now passes).
-- ~~Small limitations~~ **fixed 2026-10-03**: protected operations are calls (`flow=31`,
-  `flow=37`); default parameter values flow into the formal, evaluated at the callee's
-  entry (`flow=27`; over-approximates: `SPURIOUS: flow=36`); an extended return returns
-  its object (`flow=30`).
-- **Large limitations (each a project of its own):** dispatching calls,
-  access-to-subprogram calls, calls into generic instances.
-- **Kept on purpose:** an `out`/`in out` write-back is uncertain, so the caller's old
-  value survives the call (D-022).
+**Open, deliberately not started (each a project of its own; ask before starting):**
+- **Content flow** (record components, array elements): building a value element-wise
+  (`Arg_List (I) := new String'(...)`) loses taint. Together with generic containers
+  this is what still hides alire's environment-to-`Spawn` flows; the one with most payoff.
+- **Generic instances:** calls to a generic *subprogram* instance, and generic containers
+  (`AAA.Strings.Vector`), are unresolved. (Subprograms of generic *package* instances do
+  resolve.)
+- **Dispatching calls** bind to the static target only.
+- **Access-to-subprogram calls** are unresolved.
+- Smaller known limits: an unresolved call written without parentheses cannot raise
+  (CFG Part 5); default parameter values over-approximate (`SPURIOUS: flow=36`); the
+  `out` write-back is uncertain on purpose (D-022); `open-without-close` is
+  path-insensitive.
 
-**Environment notes:** see `docs/phase9.2-plan.md` §1. Corpus databases are in
-`/root/.cache/codeql-ada-corpus/*-db`, and `ql/debug/DataFlowConsistency.ql` checks the
-dataflow model against any database. If you edit files with Windows tools, check for
-CRLF line endings (`grep -c $'\r'`).
+**How to work here:**
+- Builds, extraction and query runs happen in WSL Debian; see `docs/phase9.2-plan.md` §1
+  for the command prelude. Windows Python (`python`) runs `scripts/annotate_cfg_test.py`
+  and `scripts/check_cfg_coverage.py`.
+- After any CFG change: run `python scripts/check_cfg_coverage.py --write` (CI fails on
+  drift), and the plan asks for approval before changing `ControlFlowGraphImpl.qll`.
+- After a dbscheme change: `python3 generator/gen.py`, regenerate
+  `ql/lib/ada.dbscheme.stats` (CONTRIBUTING.md), rebuild corpus databases with
+  `python3 scripts/corpus_regression.py --out <existing dir>/regression.json`.
+- Measuring query changes: `python3 scripts/corpus_queries.py` diffs per-query counts
+  against the baseline; refresh it (`--update-baseline`) when a change is accepted.
+- New fixture cases should be checked to fail against the old code before accepting.
+- If you edit files with Windows tools, check for CRLF line endings (`grep -c $'\r'`).
 
 ---
 
