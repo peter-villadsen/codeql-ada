@@ -10,34 +10,34 @@
   },
   "alire": {
     "diags": 81,
-    "extractor_seconds": 49.8,
+    "extractor_seconds": 56.4,
     "files": 479,
-    "nameres_errors": 69617,
+    "nameres_errors": 69480,
     "nodes": 443171,
     "types": 37793,
     "xref": 64169
   },
   "gpr2": {
     "diags": 106,
-    "extractor_seconds": 61.3,
+    "extractor_seconds": 72.8,
     "files": 1718,
-    "nameres_errors": 93105,
+    "nameres_errors": 93028,
     "nodes": 1140493,
-    "types": 147083,
-    "xref": 256290
+    "types": 146992,
+    "xref": 256192
   },
   "libadalang-tools": {
     "diags": 55,
-    "extractor_seconds": 30.6,
+    "extractor_seconds": 35.5,
     "files": 524,
-    "nameres_errors": 53997,
+    "nameres_errors": 53924,
     "nodes": 527807,
     "types": 60441,
     "xref": 83789
   },
   "libkeccak": {
     "diags": 0,
-    "extractor_seconds": 13.5,
+    "extractor_seconds": 15.9,
     "files": 159,
     "nameres_errors": 3017,
     "nodes": 153125,
