@@ -1,5 +1,11 @@
 # Phase 12 work plan — a semantic library layer
 
+> **Done 2026-10-08.** What was built differs from this plan in a few places, recorded
+> in BURNDOWN.md (Phase 12) and D-027: the type class is `Type`, not `TypeDecl` (a
+> generated name); `Component` was added; generic subprograms are `Subprogram`s;
+> `BasicDecl.getBody()` became `getCompletion()`; call resolution is shared with data
+> flow through a parameterised module rather than wrapped from it.
+
 **The goal of this phase is that writing an Ada query feels like writing a Java one.**
 The benchmark is GitHub's Java library, where the parameters of a method are
 

@@ -8,8 +8,13 @@ output from `ql/lib/tools/PrintAst.ql`, copied from the test
 extractor changes a shape, that test fails and this page must change with it.
 
 For anything not covered here, look at the tree yourself: **CodeQL: View AST** in
-VS Code, or `tools/PrintAst.ql` on a scratch database (see query-writing.md,
-"Seeing the tree").
+VS Code, `tools/PrintAst.ql` on a scratch database, or `scripts/print_ast.py` for
+text, JSON or XML (see query-writing.md, "Seeing the tree").
+
+Many questions need no tree walking at all: subprograms, parameters, calls, types,
+variables and packages have their own classes (`Subprogram`, `Parameter`, `Call`,
+`Type`, `Variable`, `Package`; query-writing.md, "The library"). Use this page for
+the shape of the code those classes do not cover.
 
 ## Reading a tree
 
@@ -43,22 +48,22 @@ So this tree:
 is matched by
 
 ```ql
-exists(Raw::CallStmt s, Raw::CallExpr c, Raw::ParamAssoc a |
+exists(CallStmt s, CallExpr c, ParamAssoc a |
   c = s.getCall() and
   c.getName().(Name).getText() = "Log" and
-  a = c.getSuffix().(Raw::AssocList).getChild(0) and
-  a.getRExpr().(Raw::StringLiteral).getValue() = "\"hello\""
+  a = c.getSuffix().(AssocList).getChild(0) and
+  a.getRExpr().(StringLiteral).getValue() = "\"hello\""
 )
 ```
 
 ### General rules
 
 - **Classes and accessors come from Libadalang.** A kind `CallExpr` is
-  `Raw::CallExpr`; a field `f_suffix` is `getSuffix()`. Libadalang's own
+  `CallExpr`; a field `f_suffix` is `getSuffix()`. Libadalang's own
   documentation of a node kind applies.
 - **Many accessors return a general type.** `CallExpr.getSuffix()` returns
   `AdaNode`, because it can be an `AssocList` (arguments) or a `BinOp` (a slice
-  range). Cast to what you expect: `.getSuffix().(Raw::AssocList)`.
+  range). Cast to what you expect: `.getSuffix().(AssocList)`.
 - **Lists are nodes.** `AssocList`, `StmtList`, `AdaNodeList`, `DefiningNameList`
   and the like sit between a parent and its elements. `getChild(i)` on the list
   gives the `i`th element; `getParentIndex()` on an element gives `i`.
@@ -67,7 +72,7 @@ exists(Raw::CallStmt s, Raw::CallExpr c, Raw::ParamAssoc a |
 - **Optional keywords are marker nodes.** `constant` is `getHasConstant:
   ConstantPresent` and its absence `ConstantAbsent`; likewise `aliased`, `not null`,
   `all`, `tagged`, `limited`, `private`, `abstract`. Test them with
-  `instanceof Raw::ConstantPresent`. The trees below omit the `…Absent` markers,
+  `instanceof ConstantPresent`. The trees below omit the `…Absent` markers,
   `…Unspecified` (overriding indicators) and `ModeDefault` (no parameter mode
   written).
 - **`StringLiteral.getValue()` includes the quotes**: `"abc"` is the six characters
@@ -230,7 +235,7 @@ type Shape is tagged record ...
 ```
 
 A derived type (`type Count is new Integer`) has `getTypeDef: DerivedTypeDef` with a
-`getSubtypeIndication`. `Raw::BaseTypeDecl` covers every type and subtype
+`getSubtypeIndication`. `BaseTypeDecl` covers every type and subtype
 declaration; `Expr.getType()` returns one.
 
 ### Subprograms
@@ -296,8 +301,8 @@ ExprFunction
   written (which means `in`).
 - **The `end Move` name is a node** (`EndName`), and it resolves. Exclude it when
   counting references to a declaration.
-- `Raw::BaseSubpBody` covers `SubpBody` and `ExprFunction` (and other body forms);
-  `Raw::ClassicSubpDecl` covers `SubpDecl` and its relatives.
+- `BaseSubpBody` covers `SubpBody` and `ExprFunction` (and other body forms);
+  `ClassicSubpDecl` covers `SubpDecl` and its relatives.
 
 ### Packages
 
@@ -581,7 +586,7 @@ getExpr: CallExpr -> Standard.Integer
 | --- | --- |
 | a subprogram (`SubpDecl`, `SubpBody`, `ExprFunction`, a renaming, ...) | a call |
 | an object or formal (`ObjectDecl`, `ParamSpec`, `ComponentDecl`) | indexing, or slicing if the suffix is a range (`BinOp` with `OpDoubleDot`) |
-| a type (`Raw::BaseTypeDecl`), *and the name is an `Identifier` or `DottedName`* | a type conversion |
+| a type (`BaseTypeDecl`), *and the name is an `Identifier` or `DottedName`* | a type conversion |
 | nothing | an unresolved call: an access-to-subprogram call, or a name the extractor could not resolve |
 
 The hand-written way to ask "is this a call, and to what?" is
@@ -714,8 +719,8 @@ getExpr: BinOp
 ```
 
 - Arithmetic and logical operators are `BinOp`; comparisons are `RelationOp`, a
-  subclass of `BinOp`. The operator is a node (`getOp()`, e.g. `Raw::OpAndThen`,
-  `Raw::OpPlus`), not a string.
+  subclass of `BinOp`. The operator is a node (`getOp()`, e.g. `OpAndThen`,
+  `OpPlus`), not a string.
 - **Short-circuit forms** (`and then`, `or else`) are `BinOp`s with `OpAndThen` /
   `OpOrElse`. The control-flow graph treats them specially (cfg-design.md).
 - **Predefined operators do not resolve**: `A + 1` has no declaration of `"+"` to
@@ -771,7 +776,7 @@ getExpr: ParenExpr
 ```
 
 **Parentheses are nodes** (`ParenExpr`), including the ones an `if` or `case`
-expression must have. Look through them (`.(Raw::ParenExpr).getExpr()`) when matching
+expression must have. Look through them (`.(ParenExpr).getExpr()`) when matching
 an expression's shape. A `case` expression is a `CaseExpr` with
 `CaseExprAlternative`s.
 

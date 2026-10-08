@@ -40,10 +40,13 @@ developer-only wide taint configuration for corpus experiments.
 re-created (D-011). The corpus databases under `/root/.cache/codeql-ada-corpus/` are
 current.
 
-**In progress (started 2026-10-08): Phase 12, a semantic library layer** —
-[docs/phase12-plan.md](docs/phase12-plan.md). Goal: Ada queries as easy to write as
-Java ones (`from Subprogram s, Parameter p where p = s.getAParameter()`). Status per
-task in the Phase 12 section below.
+**Phase 12 done (2026-10-08): a semantic library layer** —
+[docs/phase12-plan.md](docs/phase12-plan.md), D-027. Queries read like Java ones:
+`from Subprogram s, Parameter p where p = s.getAParameter()`, `from Call c`, `from IfStmt
+s` (no `Raw::` prefix), and results show `Free_All`, `... = ...` instead of class names.
+Classes: `Subprogram`, `Parameter`, `Call`, `Type`, `Component`, `Variable`, `Package`
+(`codeql/ada/Subprograms.qll`, `Calls.qll`, `Declarations.qll`). Suite green (63/63).
+Details and the corpus triage in the Phase 12 section below.
 
 **Open, deliberately not started (each a project of its own; ask before starting):**
 - **Content flow** (record components, array elements): building a value element-wise
@@ -946,8 +949,30 @@ specified in `docs/ssa-design.md` and conformance-tested. Next: Task 9.3, local 
         has 2,708 more on the corpus, real calls the CFG does not model (package-level
         initialisers, contracts, `pragma Assert` in declarative parts, expression functions,
         `raise ... with` messages, quantified-expression iterators).
-- [ ] 12.4 Port the shipped queries (corpus counts triaged)
-- [ ] 12.5 Documentation
+- [x] 12.4 Port the shipped queries. *Done 2026-10-08.* All 25: `Raw::` prefixes (89) and
+      the casts the two-class split forced (49) removed. `direct-recursion` now uses `Call`;
+      `dead-local-subprogram` uses `Subprogram.getADeclaration()` instead of pairing spec
+      and body by name text. `function-missing-return`, `unused-parameter`, `unused-local`
+      keep their logic (per-body or per-group semantics a port would change). Corpus,
+      every change checked: `direct-recursion` +8, all true positives (recursive
+      expression functions, `return Foo + 1`, `This.Initialize`); `dead-local-subprogram`
+      -16, all false positives of the old pairing (instantiated generics, protected
+      operations called through their specs, a prefixed-view call). Baseline refreshed.
+      - **Generic subprograms became `Subprogram`s** (`isGeneric()`), and a call inside a
+        generic to itself a `Call`: without it the port lost four true positives on gpr2
+        (an uninstantiated generic, a recursive generic). Data flow is unchanged: the
+        callable-spec choice is a second parameter of `CallResolution::Make`. Instances
+        of generics are still not `Subprogram`s. A generic declaration now introduces
+        its name (`getADefiningName`), so D-026's unresolved-namesake rule covers it.
+      - **Found, not fixed:** the CFG has no node for a `raise ... with` message or a
+        quantified expression's iterator (`for all C in X.Iterate =>`), so data flow
+        misses calls there (`ql/debug/CallConsistency.ql`).
+      - `scripts/corpus_queries.py --update-baseline --project P` rewrites the whole file
+        with P alone; run it without `--project`, or edit the file.
+- [x] 12.5 Documentation. *Done 2026-10-08.* `docs/query-writing.md`: "Start here" opens
+      with the Java-style query and a Java-to-Ada class table; "The library" replaces "The
+      two API layers". `docs/ast-reference.md` points to the semantic classes first; code
+      samples in both lose the `Raw::` prefix.
 
 ---
 

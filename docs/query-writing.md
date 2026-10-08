@@ -7,8 +7,30 @@ does not assume prior QL experience.
 
 ## Start here
 
-QL is the same language for every CodeQL language; only the class library
-differs. A path that works:
+If you have written CodeQL queries for Java, an Ada query reads the same way.
+The parameters of a subprogram:
+
+```ql
+import ada
+
+from Subprogram s, Parameter p
+where s.hasQualifiedName("AdaSAT.Formulas.Free_All") and p = s.getAParameter()
+select p, p.getName(), p.getMode(), p.getType()
+```
+
+Results: `F`, `F`, `in out`, `Formula`. The classes, against Java's:
+
+| Java | Ada | Notes |
+|---|---|---|
+| `Callable`, `Method` | `Subprogram` | A procedure or function. One per subprogram, although Ada declares most of them twice (spec and body): see [The library](#the-library) |
+| `Parameter` | `Parameter` | Each name of `A, B : in T` is one; `getMode()` is `"in"`, `"out"` or `"in out"` |
+| `Call`, `MethodCall` | `Call` | With or without parentheses, operators, prefixed views (`Obj.Op (X)`), through renamings |
+| `RefType`, `Class` | `Type`, `Package` | A package is the unit of declarations; a type does not contain subprograms |
+| `Field` | `Component` | A record component |
+| `LocalVariableDecl`, `Variable` | `Variable` | Objects, constants, object renamings, loop variables |
+| `IfStmt`, `AddExpr`, ... | `IfStmt`, `BinOp`, ... | One class per Libadalang node kind (see [ast-reference.md](ast-reference.md)) |
+
+Then, a path that works:
 
 1. **Learn the language from GitHub's documentation.** The
    [QL tutorials](https://codeql.github.com/docs/writing-codeql-queries/ql-tutorials/)
@@ -22,6 +44,7 @@ differs. A path that works:
    (see [Seeing the tree](#seeing-the-tree) below).
 3. **Read this guide**, then read shipped queries in order of difficulty:
    - `GotoStatement.ql`: one node kind.
+   - `DirectRecursion.ql`: calls (`Call`).
    - `UnusedVariable.ql`: resolved declarations.
    - `UnreachableStatement.ql`: sibling positions.
    - `OpenWithoutClose.ql`: the control-flow graph.
@@ -47,51 +70,80 @@ There's a third pack, `ql/test` (`ada-tests`), holding every query's test
 fixtures. It's never published — it exists purely for `codeql test run`
 (see [Testing a query](#testing-a-query) below).
 
-## The two API layers
+## The library
 
-Every query starts with `import ada`, which pulls in `ql/lib/ada.qll`. That
-file re-exports two layers, and knowing which one you're using matters:
+Every query starts with `import ada`, which pulls in `ql/lib/ada.qll`. It gives
+two kinds of class, both without a prefix.
 
-**The generated layer, `Raw::`** (`ql/lib/codeql/ada/ast/internal/Raw.qll`,
-~2,300 lines) mirrors Libadalang's node hierarchy one class per
-node kind — `Raw::CallExpr`, `Raw::PragmaNode`,
-`Raw::GenericSubpInstantiation`, and so on, all the way down. Each field of a
-node is an accessor named after Libadalang's field (`f_suffix` becomes
-`getSuffix()`); list nodes have `getChild(i)`; token nodes (identifiers,
-literals, operators) have `getValue()`. It's generated from Libadalang's own
-introspection data (`generator/gen.py`, see [CONTRIBUTING.md](../CONTRIBUTING.md)
-if you need to regenerate it) and you should never edit it by hand. The
-class name is the CamelCase Libadalang kind name;
+**Semantic classes** (`codeql/ada/Subprograms.qll`, `Calls.qll`,
+`Declarations.qll`) answer the usual questions directly:
+
+| Class | Main predicates |
+|---|---|
+| `Subprogram` | `getName`, `hasName`, `hasQualifiedName`, `isGeneric`, `getAParameter`, `getParameter(i)`, `getNumberOfParameters`, `isFunction`, `isProcedure`, `getReturnType`, `getBody`, `getADeclaration`, `getACall` |
+| `Parameter` | `getName`, `getMode`, `isIn`, `isOut`, `getType`, `getTypeExpr`, `getDefaultExpr`, `getIndex`, `getSubprogram`, `getAnAccess` |
+| `Call` | `getTarget`, `getArgument(i)`, `getArgumentFor(Parameter)`, `getArgumentByName`, `getAnArgument`, `getCaller`, `isStatement` |
+| `Type` | `getName`, `isRecord`, `isTagged`, `isEnumeration`, `isArray`, `isAccess`, `isPrivate`, `isSubtype`, `getParentType`, `getAComponent`, `getAnEnumerationLiteral` |
+| `Component` | `getName`, `getType`, `getDeclaringType`, `getDefaultExpr`, `getAnAccess` |
+| `Variable` | `getName`, `getType`, `getInitializer`, `isConstant`, `isRenaming`, `isLoopVariable`, `isLocal`, `getDeclaringSubprogram`, `getAnAccess` |
+| `Package` | `getName`, `getBody`, `getAMember`, `getAPublicMember`, `getASubprogram`, `getAType`, `getAVariable`, `isGeneric`, `isGenericInstance`, `getGeneric` |
+
+Two things differ from Java because Ada differs:
+
+- **Declared twice, counted once.** A subprogram with a spec in the `.ads` and a
+  body in the `.adb` is two AST nodes. `Subprogram` is the first of them (the
+  spec when there is one), so `hasQualifiedName` finds one subprogram, not two.
+  `getBody()` and `getADeclaration()` reach the others. Its parameters are the
+  spec's; `Parameter.getAnAccess()` finds the uses in the body, which resolve to
+  the body's copy.
+- **What v1 does not cover.** A generic subprogram is a `Subprogram`
+  (`isGeneric()`), but an instance of one (`procedure P is new G (...)`) is not,
+  and calls to instances are not `Call`s. Dispatching calls bind to the static
+  target, and calls through access-to-subprogram values do not resolve
+  (`docs/dataflow-design.md`). A private type and its full declaration are two
+  `Type`s.
+
+**AST classes**, one per Libadalang node kind (`CallExpr`, `PragmaNode`,
+`GenericSubpInstantiation`, ...), mirror the parse tree. They are generated from
+Libadalang's own introspection data (`ql/lib/codeql/ada/ast/internal/Raw.qll`,
+`generator/gen.py`; never edit it by hand), and also go by `Raw::X`, after the
+module they are generated in. Each field of a node is an accessor named after
+Libadalang's field (`f_suffix` becomes `getSuffix()`); list nodes have
+`getChild(i)`; token nodes (identifiers, literals, operators) have `getValue()`.
 [docs/dbscheme-conventions.md](dbscheme-conventions.md) documents the naming
 rules. **Don't guess the shape from the names.** Several Ada constructs parse
 differently from what you'd expect (a type conversion is a `CallExpr`, for
 example). Read [ast-reference.md](ast-reference.md) and look at the tree.
 
-**The hand-written layer** (`ql/lib/ada.qll`, unqualified class names) adds
-what a generated 1:1 mirror can't provide on its own:
+Hand-written predicates on the AST classes (`codeql/ada/ast/internal/Extensions.qll`,
+D-027) add what a 1:1 mirror can't:
 
 | Class / member | What it gives you |
 |---|---|
 | `AdaNode.fromSource()`, `Comment.fromSource()` | Holds outside the predefined pseudo-sources (package `Standard`, the runtime specs). **Every query restricts what it reports with this** (D-026). |
 | `Name.getText()` | Reconstructed source text of a name (handles simple identifiers, string/char literals used as names, and dotted names like `A.B.C` recursively) |
-| `Name.getReferencedDecl()` | The declaration a name resolves to, if extraction resolved it (backed by the `ada_xref` relation — see the user guide's note on name-resolution quality) |
+| `Name.getReferencedDecl()` | The declaration a name resolves to, if extraction resolved it (backed by the `ada_xref` relation; see the user guide's note on name-resolution quality) |
 | `Name.denotesSameEntityAs(other)` | Two names denote the same entity, compared structurally (both prefix and selector of a dotted name) |
-| `Expr.getType()` | The expression's type declaration, if extraction resolved it (`ada_expr_type`) |
+| `Expr.getType()` | The expression's `Type`, if extraction resolved it (`ada_expr_type`) |
 | `BasicDecl.getQualifiedName()` / `hasQualifiedName("Ada.Text_IO.Open")` | Libadalang's fully qualified name; `has…` ignores case. The way to identify a runtime entity. |
 | `BasicDecl.getUltimateDecl()` | Follows subprogram, object, exception and package renamings to what is renamed |
 | `BasicDecl.getADefiningName()` / `getAName()` | The name(s) a declaration introduces, and their text |
 | `BasicDecl.getCompletion()`, `BaseSubpBody.getDeclaration()` | A declaration's completion and back (`ada_body_part`, D-021) |
-| `BasicDecl.isReferenced()` | Whether any resolved name anywhere points back at this declaration — the basis for `UnusedVariable.ql` |
+| `BasicDecl.isReferenced()` | Whether any resolved name anywhere points back at this declaration; the basis for `UnusedVariable.ql` |
 | `GenericInstantiation.getDesignatedGeneric()` | The generic an instantiation designates, through generic renamings |
 | `AdaNode.getEnclosingSubprogram()` / `getEnclosingUnit()` | Walk outward to an enclosing subprogram body / the containing compilation unit |
 | `File.isPredefined()` | The file is a predefined pseudo-source |
-| `Comment` (`Raw::Comment`) | Source comments — these are token trivia in Libadalang, not AST nodes, so they're a separate hand-written relation (`ada_comments`), not part of the `Raw::` node tree |
+| `Comment` | Source comments: token trivia in Libadalang, not AST nodes, so a separate hand-written relation (`ada_comments`), not part of the node tree |
 
-Reach for the hand-written layer first; drop to `Raw::` for anything it
-doesn't cover, which in practice is most of the actual query logic — the
-hand layer is deliberately small. Beyond these, `codeql.ada.controlflow.Cfg`
-gives the control-flow graph (see `MissingPairedCall` below), and
-`codeql.ada.dataflow.DataFlow` / `TaintTracking` give data flow (see
+Results show what a node is: a declaration by its name (`Free_All`), an
+expression by a short rendering (`F.Length`, `Append (...)`, `... = ...`), a
+statement by its leading keywords (`if ...`, `raise Constraint_Error`).
+`getAPrimaryQlClass()` gives the class.
+
+Reach for the semantic classes first, and the AST classes for the shape of the
+code. Beyond these, `codeql.ada.controlflow.Cfg` gives the control-flow graph
+(see `MissingPairedCall` below), and `codeql.ada.dataflow.DataFlow` /
+`TaintTracking` give data flow (see
 [Data flow and taint tracking](#data-flow-and-taint-tracking)).
 
 ## Seeing the tree
@@ -158,7 +210,7 @@ getCall: CallExpr -> Test.Sink
       getRExpr: QualExpr -> Test.List
 ```
 
-Read that as `call.(Raw::CallStmt).getCall().(Raw::CallExpr).getSuffix()...`.
+Read that as `call.(CallStmt).getCall().(CallExpr).getSuffix()...`.
 The query prints every project file, so keep the scratch directory small.
 
 **As text, JSON or XML, for chosen files.** `scripts/print_ast.py` prints the
@@ -277,13 +329,13 @@ import ada
 import codeql.ada.controlflow.Cfg
 import codeql.ada.controlflow.PairedCalls
 
-private predicate isFoo(Raw::AdaNode call) { /* your match on `Foo` calls */ }
+private predicate isFoo(AdaNode call) { /* your match on `Foo` calls */ }
 
-private predicate isBar(Raw::AdaNode call) { /* your match on `Bar` calls */ }
+private predicate isBar(AdaNode call) { /* your match on `Bar` calls */ }
 
 module FooBar = MissingPairedCall<isFoo/1, isBar/1>;
 
-from Raw::AdaNode call
+from AdaNode call
 where FooBar::missingPairedCallNormalPathsOnly(call)
 select call, "This Foo is not invariably followed by a Bar."
 ```
@@ -357,7 +409,7 @@ module Config implements DataFlow::ConfigSig {
 
   // Every argument of every call to My_App.Db.Execute ...
   predicate isSink(DataFlow::Node n) {
-    exists(Raw::Expr call | DataFlow::isCallTo(call, "My_App.Db.Execute") |
+    exists(Expr call | DataFlow::isCallTo(call, "My_App.Db.Execute") |
       n.asExpr() = DataFlow::getAnArgument(call)
     )
   }
@@ -366,7 +418,7 @@ module Config implements DataFlow::ConfigSig {
 
   // Values that passed a validator are clean.
   predicate isBarrier(DataFlow::Node n) {
-    exists(Raw::Expr call | DataFlow::isCallTo(call, "My_App.Validate.Sanitize") |
+    exists(Expr call | DataFlow::isCallTo(call, "My_App.Validate.Sanitize") |
       n.asExpr() = call
     )
   }
@@ -395,7 +447,7 @@ queries that import it.
 ```ql
 class MyShellSink extends CommandInjection::Sink {
   MyShellSink() {
-    exists(Raw::Expr call |
+    exists(Expr call |
       DataFlow::isCallTo(call, "My_App.Shell.Run") and
       DataFlow::isArgumentFor(call, this.asExpr(), "Command")
     )
