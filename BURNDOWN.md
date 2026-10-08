@@ -40,6 +40,11 @@ developer-only wide taint configuration for corpus experiments.
 re-created (D-011). The corpus databases under `/root/.cache/codeql-ada-corpus/` are
 current.
 
+**In progress (started 2026-10-08): Phase 12, a semantic library layer** —
+[docs/phase12-plan.md](docs/phase12-plan.md). Goal: Ada queries as easy to write as
+Java ones (`from Subprogram s, Parameter p where p = s.getAParameter()`). Status per
+task in the Phase 12 section below.
+
 **Open, deliberately not started (each a project of its own; ask before starting):**
 - **Content flow** (record components, array elements): building a value element-wise
   (`Arg_List (I) := new String'(...)`) loses taint. Together with generic containers
@@ -892,6 +897,22 @@ specified in `docs/ssa-design.md` and conformance-tested. Next: Task 9.3, local 
       `variableRead`, alongside the existing `isAssignTarget` one. Full suite green (45/45,
       confirming the fix changes no existing conformance edge). Full write-up in
       `docs/ssa-design.md`, "Renamed-source rendering".
+
+---
+
+## Phase 12 — Semantic library layer (planned 2026-10-08)
+
+> Plan: [docs/phase12-plan.md](docs/phase12-plan.md). Wraps existing logic (call graph,
+> argument binding, spec/body pairing) in Java-style classes; no extractor or dbscheme
+> change. Open questions settled on the plan's recommendations: Ada nouns with Java
+> verbs, no `UnresolvedCall` class this phase, predefined subprograms included.
+
+- [ ] 12.0 No prefix for generated classes; readable `toString` (D-027)
+- [ ] 12.1 `Subprogram` and `Parameter`
+- [ ] 12.2 `Call`
+- [ ] 12.3 `Package`, `TypeDecl`, `Variable`
+- [ ] 12.4 Port the shipped queries (corpus counts triaged)
+- [ ] 12.5 Documentation
 
 ---
 
