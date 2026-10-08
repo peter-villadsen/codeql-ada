@@ -24,7 +24,6 @@ private import codeql.ada.ast.internal.Raw
 private import codeql.ada.controlflow.internal.ControlFlowGraphImpl as Impl
 private import codeql.ada.dataflow.internal.SsaImpl
 private import ada
-private import codeql.ada.ast.internal.RawMeta
 
 /** Holds if `e` has a node in the control-flow graph, i.e. is evaluated. */
 private predicate hasCfgNode(Raw::Expr e) {
@@ -54,7 +53,7 @@ class Node extends TNode {
 
   /** Gets a textual representation of this node. */
   string toString() {
-    result = exprLabel(this.asExpr())
+    result = this.asExpr().toString()
     or
     result = "[param] " + this.asParameter().toString()
     or
@@ -69,42 +68,6 @@ class Node extends TNode {
     or
     result = this.asSsaNode().getLocation()
   }
-}
-
-/**
- * Gets a short label for `e`, close to its source text, as a path explanation shows
- * it: a name's text (`Cmd`, `Ada.Command_Line.Argument`), a call's callee with its
- * arguments elided (`Argument (...)`), an operator with its operands elided
- * (`... / ...`), and so on; any other expression shows its AST class.
- */
-private string exprLabel(Raw::Expr e) {
-  if exists(e.(Name).getText())
-  then result = e.(Name).getText()
-  else
-    if e instanceof Raw::CallExpr
-    then result = exprLabel(e.(Raw::CallExpr).getName()) + " (...)"
-    else
-      if e instanceof Raw::ExplicitDeref
-      then result = exprLabel(e.(Raw::ExplicitDeref).getPrefix()) + ".all"
-      else
-        if e instanceof Raw::QualExpr
-        then result = exprLabel(e.(Raw::QualExpr).getPrefix()) + "'(...)"
-        else
-          if e instanceof Raw::Allocator
-          then result = "new ..."
-          else
-            if e instanceof Raw::ConcatOp or e.(Raw::BinOp).getOp() instanceof Raw::OpConcat
-            then result = "... & ..."
-            else
-              if e instanceof Raw::Aggregate or e instanceof Raw::ParenExpr
-              then result = "(...)"
-              else
-                if exists(tokenText(e.(Raw::BinOp).getOp()))
-                then result = "... " + tokenText(e.(Raw::BinOp).getOp()) + " ..."
-                else
-                  if exists(tokenText(e.(Raw::UnOp).getOp()))
-                  then result = tokenText(e.(Raw::UnOp).getOp()) + " ..."
-                  else result = e.toString()
 }
 
 /** Gets the node for SSA data-flow node `n`: reads are represented by their expression. */

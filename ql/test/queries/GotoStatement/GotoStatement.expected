@@ -1,1 +1,1 @@
-| test.adb:5:4:5:14 | GotoStmt | Use of goto statement. |
+| test.adb:5:4:5:14 | goto Done | Use of goto statement. |

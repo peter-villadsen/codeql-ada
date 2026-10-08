@@ -1,1 +1,1 @@
-| test.adb:4:4:6:11 | IfStmt | This if statement does nothing and can be removed. |
+| test.adb:4:4:6:11 | if ... | This if statement does nothing and can be removed. |

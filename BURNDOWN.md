@@ -907,7 +907,9 @@ specified in `docs/ssa-design.md` and conformance-tested. Next: Task 9.3, local 
 > change. Open questions settled on the plan's recommendations: Ada nouns with Java
 > verbs, no `UnresolvedCall` class this phase, predefined subprograms included.
 
-- [ ] 12.0 No prefix for generated classes; readable `toString` (D-027)
+- [x] 12.0 No prefix for generated classes; readable `toString` (D-027). *Done 2026-10-08.*
+      Hand-written predicates are mixins of the generated classes; `from IfStmt s` works and
+      results read `Free_All`, `... = ...`. Suite green, corpus counts identical.
 - [ ] 12.1 `Subprogram` and `Parameter`
 - [ ] 12.2 `Call`
 - [ ] 12.3 `Package`, `TypeDecl`, `Variable`

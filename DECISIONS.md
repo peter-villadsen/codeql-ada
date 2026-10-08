@@ -287,3 +287,30 @@ never extracted: it costs +300–1,700% nodes against +26–37% for direct targe
   `boolean-literal-comparison`, `open-without-close`) now match semantically and fall
   back to text only for names that do not resolve at all, so a database built without a
   runtime behaves as before.
+
+## D-027 (2026-10-08) — One class per AST kind, usable without a prefix; results show source text
+Phase 12, Task 12.0 (`docs/phase12-plan.md`). The goal is that Ada queries read like Java
+ones: `from IfStmt s`, not `from Raw::IfStmt s`.
+
+- **Mixins, not subclasses.** The hand-written predicates (`getType`, `getText`,
+  `getReferencedDecl`, `getQualifiedName`, `fromSource`, ...) used to live on subclasses
+  of the generated classes (`class Expr extends Raw::Expr`), so there were two `Expr`s
+  and a generated accessor returned the one without them. They now live in
+  `codeql/ada/ast/internal/Extensions.qll` as mixin classes (`ExprExt`, ...), which
+  `generator/gen.py` adds as supertypes of the generated class of the same name
+  (`MIXINS`). There is one class per Libadalang kind, with both.
+- **No prefix.** `ada.qll` re-exports the `Raw` module's contents
+  (`import codeql.ada.ast.internal.Raw::Raw`). `Raw::X` still names the same class, so
+  existing code needed no change. The module keeps its name: GitHub's Swift and Rust
+  libraries call their generated module `Raw` too, and with the prefix gone a rename
+  (to `Syntax`, the best candidate) would touch ~870 lines for no gain.
+- **Readable `toString`.** A node renders as what it is (`Extensions.qll`,
+  `nodeToString`): a declaration by its names (`Free_All`, `A, B`), an expression by a
+  short rendering (`F.Length`, `Append (...)`, `... = ...`), a statement by its leading
+  keywords (`if ...`, `raise Constraint_Error`, `Open (...);`); anything else by its
+  class. Data-flow path nodes use the same rendering. `getAPrimaryQlClass()` still gives
+  the class, and View AST, the AST printers and the CFG/SSA annotation keys
+  (`CfgAnnotations.nodeKey`) keep using it, so those fixtures did not change.
+- **Verification.** Full suite green; the 26 `.expected` files that print nodes changed in
+  their rendered column only (rows, locations and messages identical); corpus per-query
+  counts identical on all five projects.

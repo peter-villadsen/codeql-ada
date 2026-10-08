@@ -16,15 +16,34 @@ import codeql.ada.controlflow.Cfg
  * Gets the annotation key for `n`: its kind followed by its position, as
  * `<kind>@<line>:<column>`.
  *
- * The kind is the framework's rendering with spaces squeezed out, because an
- * annotation value may not contain whitespace: an AST node renders as its
- * primary QL class (`AssignStmt@25:7`), a scope entry as `enterSubpBody@1:1`,
- * and an annotated scope exit as `exitSubpBody(normal)@1:1`.
+ * The kind is the framework's rendering, with AST nodes named by their primary QL
+ * class rather than their `toString` (which shows source text, D-027) and spaces
+ * squeezed out, because an annotation value may not contain whitespace: an AST
+ * node renders as `AssignStmt@25:7`, a scope entry as `enterSubpBody@1:1`, and an
+ * annotated scope exit as `exitSubpBody(normal)@1:1`.
  */
 string nodeKey(CfgNode n) {
   exists(int l, int c |
     n.getLocation().hasLocationInfo(_, l, c, _, _) and
-    result = n.toString().replaceAll(" ", "") + "@" + l + ":" + c
+    result = nodeKind(n).replaceAll(" ", "") + "@" + l + ":" + c
+  )
+}
+
+/** Gets the kind of `n`, as `CfgNode.toString` shows it but with classes for AST nodes. */
+private string nodeKind(CfgNode n) {
+  result = "enter " + n.(EntryNode).getScope().getAPrimaryQlClass()
+  or
+  exists(AnnotatedExitNode e, string s | e = n |
+    (if e.isNormal() then s = "normal" else s = "abnormal") and
+    result = "exit " + e.getScope().getAPrimaryQlClass() + " (" + s + ")"
+  )
+  or
+  result = "exit " + n.(ExitNode).getScope().getAPrimaryQlClass()
+  or
+  exists(AstCfgNode a, string cls | a = n and cls = a.getAstNode().getAPrimaryQlClass() |
+    result = "[" + a.getSplitsString() + "] " + cls
+    or
+    not exists(a.getSplitsString()) and result = cls
   )
 }
 

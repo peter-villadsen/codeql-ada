@@ -1,4 +1,4 @@
-| test.adb:9:7:9:18 | RelationOp | Comparison with boolean literal True is redundant. |
-| test.adb:12:7:12:20 | RelationOp | Comparison with boolean literal False is redundant. |
-| test.adb:21:7:21:27 | RelationOp | Comparison with boolean literal Standard.True is redundant. |
-| test.adb:27:7:27:16 | RelationOp | Comparison with boolean literal False is redundant. |
+| test.adb:9:7:9:18 | ... = ... | Comparison with boolean literal True is redundant. |
+| test.adb:12:7:12:20 | ... /= ... | Comparison with boolean literal False is redundant. |
+| test.adb:21:7:21:27 | ... = ... | Comparison with boolean literal Standard.True is redundant. |
+| test.adb:27:7:27:16 | ... = ... | Comparison with boolean literal False is redundant. |

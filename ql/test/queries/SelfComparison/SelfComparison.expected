@@ -1,4 +1,4 @@
-| test.adb:10:12:10:17 | RelationOp | This comparison always yields the same result, since both sides are X. |
-| test.adb:11:12:11:18 | RelationOp | This comparison always yields the same result, since both sides are X. |
-| test.adb:15:12:15:27 | RelationOp | This comparison always yields the same result, since both sides are L.Size. |
-| test.adb:17:12:17:17 | RelationOp | This comparison always yields the same result, since both sides are A. |
+| test.adb:10:12:10:17 | ... = ... | This comparison always yields the same result, since both sides are X. |
+| test.adb:11:12:11:18 | ... <= ... | This comparison always yields the same result, since both sides are X. |
+| test.adb:15:12:15:27 | ... = ... | This comparison always yields the same result, since both sides are L.Size. |
+| test.adb:17:12:17:17 | ... = ... | This comparison always yields the same result, since both sides are A. |

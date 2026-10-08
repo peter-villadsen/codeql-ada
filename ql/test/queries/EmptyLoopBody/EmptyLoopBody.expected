@@ -1,2 +1,2 @@
-| test.adb:5:4:7:13 | WhileLoopStmt | This loop's body does nothing. |
-| test.adb:9:4:11:13 | ForLoopStmt | This loop's body does nothing. |
+| test.adb:5:4:7:13 | while ... loop | This loop's body does nothing. |
+| test.adb:9:4:11:13 | for ... loop | This loop's body does nothing. |

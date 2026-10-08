@@ -1,4 +1,4 @@
-| test.adb:12:7:12:14 | BinOp | Both operands of this expression are A. |
-| test.adb:15:7:15:18 | BinOp | Both operands of this expression are A. |
-| test.adb:18:7:18:14 | BinOp | Both operands of this expression are A. |
-| test.adb:36:7:36:25 | BinOp | Both operands of this expression are L.Added. |
+| test.adb:12:7:12:14 | ... and ... | Both operands of this expression are A. |
+| test.adb:15:7:15:18 | ... or else ... | Both operands of this expression are A. |
+| test.adb:18:7:18:14 | ... xor ... | Both operands of this expression are A. |
+| test.adb:36:7:36:25 | ... or ... | Both operands of this expression are L.Added. |
