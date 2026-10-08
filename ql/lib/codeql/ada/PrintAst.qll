@@ -52,6 +52,15 @@ private predicate endsWithName(string q, string last) {
   )
 }
 
+/** Gets the token text of `n`: an identifier's name, a literal's value, an operator's symbol. */
+string nodeText(Raw::AdaNode n) { result = tokenText(n) }
+
+/**
+ * Gets a declaration name `n` resolves to, as `nodeLabel` shows it after `->`. Usually
+ * one; a name whose declaration has several qualified names may have more.
+ */
+string nodeTarget(Raw::AdaNode n) { result = declLabel(n, _) }
+
 /** Gets the label of `n`: its class, then its token text and resolution, if any. */
 string nodeLabel(Raw::AdaNode n) {
   exists(string text, string target |

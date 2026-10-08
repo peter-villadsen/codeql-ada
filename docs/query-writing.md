@@ -107,7 +107,33 @@ its class, its token text, and what a name resolves to
 accessor that reaches the child (`getSuffix`), or `[i]` for a list element.
 GitHub's page on
 [exploring the structure of your source code](https://codeql.github.com/docs/codeql-for-visual-studio-code/exploring-the-structure-of-your-source-code/)
-describes the viewer.
+describes the viewer. Step by step, on Windows with the toolchain in WSL:
+
+1. Connect VS Code to the WSL distro that has the CodeQL CLI and the
+   databases (**WSL: Connect to WSL using Distro...**). Extensions and
+   remote settings are per distro.
+2. Open this repository as the workspace folder (Windows drives are under
+   `/mnt/c/...`); the extension finds `ada-all` among the workspace folders.
+3. Install the CodeQL extension in that distro, and set
+   `codeQL.cli.executablePath` (Remote settings tab) to the pinned CLI, so
+   that the extension does not download a newer one.
+4. **CodeQL: Choose Database from Folder** → the database directory.
+5. In the Databases view, right-click the database → **Add Database Source
+   to Workspace**, and open a file from the `[<db> source archive]` folder.
+   This turns the window into an untitled multi-root workspace and reloads
+   it, and the extension keeps its database list per workspace: if View AST
+   then says "Can't infer database from the provided source", add the
+   database again (and save the workspace to keep it).
+6. Run **CodeQL: View AST** with that file active. The tree appears in the
+   **AST Viewer** section of the CodeQL sidebar, usually collapsed at the
+   bottom.
+
+Known side effect: running View AST deletes `ql/lib/codeql-pack.lock.yml`
+(the extension's log says "Deleting temporary package lock file"). Restore it
+with `git checkout -- ql/lib/codeql-pack.lock.yml` before committing. While
+VS Code has a database open, its query server locks it, and a command-line
+query on the same database fails with "the cache directory is already
+locked".
 
 **From the command line.** Put the Ada you want to look at in a scratch
 directory, build a small database from it, and print every project file's
@@ -134,6 +160,28 @@ getCall: CallExpr -> Test.Sink
 
 Read that as `call.(Raw::CallStmt).getCall().(Raw::CallExpr).getSuffix()...`.
 The query prints every project file, so keep the scratch directory small.
+
+**As text, JSON or XML, for chosen files.** `scripts/print_ast.py` prints the
+same tree for any database, restricted to the files you name (by path
+suffix), with each node's position:
+
+```sh
+python3 scripts/print_ast.py <db> --file adasat-formulas.adb             # indented text
+python3 scripts/print_ast.py <db> --file adasat-formulas.adb --format json --out ast.json
+python3 scripts/print_ast.py <db> --format xml --out ast.xml             # every file
+```
+
+In JSON each node is `{"edge", "class", "text", "resolvesTo", "start", "end",
+"children"}`, leaving out the empty ones. In XML each node is an element named
+by its class, with the rest as attributes:
+
+```xml
+<CallExpr edge="getCall" resolvesTo="Ada.Strings.Unbounded.Append" start="21:10" end="21:41">
+  <Identifier edge="getName" text="Append" resolvesTo="Ada.Strings.Unbounded.Append" start="21:10" end="21:16" />
+```
+
+It runs `ql/lib/tools/PrintAstRows.ql` and rebuilds the tree from its rows.
+`--copy-db` runs on a temporary copy, for a database VS Code has open.
 
 ## Query metadata and `@kind`
 

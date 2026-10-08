@@ -29,8 +29,10 @@ checks empty on all five corpus projects. Corpus results: 11,520 at the start of
 `isParameterOf`); `codeql.ada.security.CommandInjection` (extensible `Source` / `Sink` /
 `Barrier`); `ada/command-line-injection` (sinks: `OS_Lib.Spawn` / `Non_Blocking_Spawn`,
 `GNAT.Expect`, imported C `system` / `popen` / `exec*`). AST printing:
-`ql/lib/ide-contextual-queries/printAst.ql` (VS Code "View AST"; not yet tried in VS Code
-itself) and `ql/lib/tools/PrintAst.ql` (text). `ql/debug/ExploratoryTaint.ql` is a
+`ql/lib/ide-contextual-queries/printAst.ql` (VS Code "View AST"; tried 2026-10-08, works;
+it deletes `ql/lib/codeql-pack.lock.yml` on each run, see query-writing.md),
+`ql/lib/tools/PrintAst.ql` (text) and `scripts/print_ast.py` (text, JSON or XML, per
+file, via `ql/lib/tools/PrintAstRows.ql`). `ql/debug/ExploratoryTaint.ql` is a
 developer-only wide taint configuration for corpus experiments.
 
 **Database format.** The last extractor change (e7850f2) changed the dbscheme
