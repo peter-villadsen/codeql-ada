@@ -11,21 +11,21 @@
 
 import ada
 
-from Raw::BinOp op, Name left, Name right
+from BinOp op, Name left, Name right
 where
   (
-    op.getOp() instanceof Raw::OpAnd or
-    op.getOp() instanceof Raw::OpOr or
-    op.getOp() instanceof Raw::OpAndThen or
-    op.getOp() instanceof Raw::OpOrElse or
-    op.getOp() instanceof Raw::OpXor
+    op.getOp() instanceof OpAnd or
+    op.getOp() instanceof OpOr or
+    op.getOp() instanceof OpAndThen or
+    op.getOp() instanceof OpOrElse or
+    op.getOp() instanceof OpXor
   ) and
   left = op.getLeft() and
   right = op.getRight() and
   left.denotesSameEntityAs(right) and
   not left.getAPrimaryQlClass() = "CallExpr" and
   not right.getAPrimaryQlClass() = "CallExpr" and
-  not exists(Raw::AdaNode c | c.getParent+() = left and c.getAPrimaryQlClass() = "CallExpr") and
-  not exists(Raw::AdaNode c | c.getParent+() = right and c.getAPrimaryQlClass() = "CallExpr") and
-  op.(AdaNode).fromSource()
+  not exists(AdaNode c | c.getParent+() = left and c.getAPrimaryQlClass() = "CallExpr") and
+  not exists(AdaNode c | c.getParent+() = right and c.getAPrimaryQlClass() = "CallExpr") and
+  op.fromSource()
 select op, "Both operands of this expression are " + left.getText() + "."

@@ -34,9 +34,9 @@ import codeql.ada.controlflow.PairedCalls
  * extraction) is its dotted text matched instead.
  */
 bindingset[op]
-private predicate isTextIoOp(Raw::AdaNode call, string op) {
-  exists(Name callee | callee = call.(Raw::CallStmt).getCall().(Raw::CallExpr).getName() |
-    callee.getReferencedDecl().(BasicDecl).getUltimateDecl().(BasicDecl).hasQualifiedName("Ada.Text_IO." + op)
+private predicate isTextIoOp(AdaNode call, string op) {
+  exists(Name callee | callee = call.(CallStmt).getCall().(CallExpr).getName() |
+    callee.getReferencedDecl().getUltimateDecl().hasQualifiedName("Ada.Text_IO." + op)
     or
     not exists(callee.getReferencedDecl()) and
     exists(string full | full = callee.getText().toLowerCase() |
@@ -45,18 +45,18 @@ private predicate isTextIoOp(Raw::AdaNode call, string op) {
   )
 }
 
-private predicate isOpenOrCreate(Raw::AdaNode call) {
+private predicate isOpenOrCreate(AdaNode call) {
   isTextIoOp(call, "open") or isTextIoOp(call, "create")
 }
 
-private predicate isCloseOrDelete(Raw::AdaNode call) {
+private predicate isCloseOrDelete(AdaNode call) {
   isTextIoOp(call, "close") or isTextIoOp(call, "delete")
 }
 
 module OpenClose = MissingPairedCall<isOpenOrCreate/1, isCloseOrDelete/1>;
 
-from Raw::AdaNode call
+from AdaNode call
 where OpenClose::missingPairedCallNormalPathsOnly(call) and
-  call.(AdaNode).fromSource()
+  call.fromSource()
 select call,
   "This file may not be closed on every path: no call to Ada.Text_IO.Close/Delete follows on all non-exceptional paths from here."

@@ -24,7 +24,7 @@ private string predefinedException() {
  * runtime at extraction) is its text used.
  */
 private predicate isPredefinedException(Name n) {
-  n.getReferencedDecl().(BasicDecl).getUltimateDecl().(BasicDecl).getQualifiedName().toLowerCase() =
+  n.getReferencedDecl().getUltimateDecl().getQualifiedName().toLowerCase() =
     "standard." + predefinedException()
   or
   not exists(n.getReferencedDecl()) and
@@ -40,9 +40,9 @@ private string renamingNote(Name n) {
   not exists(n.getReferencedDecl()) and result = ""
 }
 
-from Raw::RaiseStmt r, Name n
+from RaiseStmt r, Name n
 where
   n = r.getExceptionName() and
   isPredefinedException(n) and
-  r.(AdaNode).fromSource()
+  r.fromSource()
 select r, "Explicit raise of predefined exception " + n.getText() + renamingNote(n) + "."

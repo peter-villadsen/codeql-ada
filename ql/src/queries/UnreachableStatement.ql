@@ -13,7 +13,7 @@ import ada
 import codeql.ada.controlflow.Cfg
 
 /** Holds if `n` is part of the analyzed control flow, i.e. has a CFG node. */
-private predicate hasCfgNode(Raw::AdaNode n) { exists(AstCfgNode cfn | cfn.getAstNode() = n) }
+private predicate hasCfgNode(AdaNode n) { exists(AstCfgNode cfn | cfn.getAstNode() = n) }
 
 /**
  * Holds if `stmt` is ever executed: its control-flow entry point (which, for
@@ -23,12 +23,12 @@ private predicate hasCfgNode(Raw::AdaNode n) { exists(AstCfgNode cfn | cfn.getAs
  * (e.g. an `if`/`else` that both `return`) never reaches its own
  * normal-completion join node, even though it plainly executes.
  */
-private predicate isReachable(Raw::AdaNode stmt) { hasCfgNode(getAControlFlowEntryNode(stmt)) }
+private predicate isReachable(AdaNode stmt) { hasCfgNode(getAControlFlowEntryNode(stmt)) }
 
-from Raw::StmtList list, int i, Raw::AdaNode stmt
+from StmtList list, int i, AdaNode stmt
 where
   stmt = list.getChild(i) and
   not isReachable(stmt) and
   (i = 0 or isReachable(list.getChild(i - 1))) and
-  stmt.(AdaNode).fromSource()
+  stmt.fromSource()
 select stmt, "This statement is unreachable."

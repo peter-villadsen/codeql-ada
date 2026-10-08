@@ -24,17 +24,17 @@ private string credentialName() {
       "|token"
 }
 
-from Raw::ObjectDecl d, Raw::StringLiteral lit
+from ObjectDecl d, StringLiteral lit
 where
   d.getDefaultExpr() = lit and
   lit.getValue().length() > 2 and
-  d.(BasicDecl)
+  d
       .getAName()
       .toLowerCase()
       .regexpMatch(credentialName()) and
   // a lexer's keyword token, `Access_Token := "access"`, spells its own name
   not lit.getValue().toLowerCase() =
-    "\"" + d.(BasicDecl).getAName().toLowerCase().regexpCapture("(.*)_token", 1) + "\"" and
-  d.(AdaNode).fromSource()
+    "\"" + d.getAName().toLowerCase().regexpCapture("(.*)_token", 1) + "\"" and
+  d.fromSource()
 select d,
-  "Object " + d.(BasicDecl).getAName() + " is initialized with a hardcoded credential-like string."
+  "Object " + d.getAName() + " is initialized with a hardcoded credential-like string."

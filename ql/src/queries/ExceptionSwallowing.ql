@@ -10,9 +10,9 @@
 
 import ada
 
-from Raw::ExceptionHandler h
+from ExceptionHandler h
 where
-  h.getHandledExceptions().getChild(_) instanceof Raw::OthersDesignator and
-  forex(Raw::AdaNode s | s = h.getStmts().getChild(_) | s instanceof Raw::NullStmt) and
-  h.(AdaNode).fromSource()
+  h.getHandledExceptions().getChild(_) instanceof OthersDesignator and
+  forex(AdaNode s | s = h.getStmts().getChild(_) | s instanceof NullStmt) and
+  h.fromSource()
 select h, "Exception handler swallows all exceptions."

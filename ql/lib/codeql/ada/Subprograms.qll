@@ -39,15 +39,20 @@ private predicate laterDeclaration(Raw::BasicDecl first, Raw::BasicDecl d) {
  */
 class Subprogram extends Raw::BasicDecl {
   Subprogram() {
-    exists(subpSpecOf(this)) and
+    exists(callableSpecOf(this)) and
+    // a generic subprogram is its `GenericSubpDecl`, not the declaration inside it
+    not this instanceof Raw::GenericSubpInternal and
     not laterDeclaration(_, this)
   }
 
   /** Gets the `SubpSpec` of this declaration. */
-  private Raw::SubpSpec getSpecNode() { result = subpSpecOf(this) }
+  private Raw::SubpSpec getSpecNode() { result = callableSpecOf(this) }
 
   /** Gets the name of this subprogram, e.g. `Free_All`, or `"+"` for an operator. */
-  string getName() { result = this.getAName() }
+  string getName() { result = this.getSpecNode().getSubpName().getName().getText() }
+
+  /** Holds if this is a generic subprogram (`generic ... procedure G (...)`). */
+  predicate isGeneric() { this instanceof Raw::GenericSubpDecl }
 
   /** Holds if this subprogram's simple name is `name`, ignoring case as Ada does. */
   bindingset[name]
@@ -75,7 +80,9 @@ class Subprogram extends Raw::BasicDecl {
   Type getReturnType() { result = namedType(this.getReturnTypeExpr()) }
 
   /** Gets the separate declaration (spec) of this subprogram, if it has one. */
-  Raw::ClassicSubpDecl getSpec() { result = this }
+  Raw::BasicDecl getSpec() {
+    result = this and (this instanceof Raw::ClassicSubpDecl or this.isGeneric())
+  }
 
   /**
    * Gets the body of this subprogram: this declaration itself when it is the body,
@@ -92,7 +99,11 @@ class Subprogram extends Raw::BasicDecl {
   Call getACall() { result.getTarget() = this }
 
   /** Gets a declaration of this subprogram: the spec, a body stub, or the body. */
-  Raw::BasicDecl getADeclaration() { result = this or laterDeclaration(this, result) }
+  Raw::BasicDecl getADeclaration() {
+    result = this or
+    laterDeclaration(this, result) or
+    result = this.(Raw::GenericSubpDecl).getSubpDecl()
+  }
 }
 
 /**
@@ -107,7 +118,7 @@ class Parameter extends Raw::Name {
   Subprogram subp;
   int index;
 
-  Parameter() { this = formalAt(subpSpecOf(subp), index) }
+  Parameter() { this = formalAt(callableSpecOf(subp), index) }
 
   /** Gets the subprogram this is a parameter of. */
   Subprogram getSubprogram() { result = subp }
@@ -159,7 +170,7 @@ class Parameter extends Raw::Name {
     result = this
     or
     exists(Raw::BasicDecl other | other = subp.getADeclaration() and other != subp |
-      result = formalAt(subpSpecOf(other), index)
+      result = formalAt(callableSpecOf(other), index)
     )
   }
 

@@ -14,16 +14,16 @@
 
 import ada
 
-from Raw::ObjectDecl d, Raw::BaseSubpBody b
+from ObjectDecl d, BaseSubpBody b
 where
-  b = d.(AdaNode).getEnclosingSubprogram() and
-  not d.(BasicDecl).isReferenced() and
+  b = d.getEnclosingSubprogram() and
+  not d.isReferenced() and
   // A same-named name that did not resolve may be a use (missing dependencies, D-026).
   // Checking every enclosing body amounts to checking the innermost one.
-  not d.(BasicDecl).hasUnresolvedNamesakeIn(b) and
-  not d.(BasicDecl).isMarkedUnreferenced() and
+  not d.hasUnresolvedNamesakeIn(b) and
+  not d.isMarkedUnreferenced() and
   not exists(d.getRenamingClause()) and
   // An extended-return object is the returned value; "unused" is meaningless.
-  not d instanceof Raw::ExtendedReturnStmtObjectDecl and
-  d.(AdaNode).fromSource()
-select d, "Local object " + d.(BasicDecl).getAName() + " is never referenced."
+  not d instanceof ExtendedReturnStmtObjectDecl and
+  d.fromSource()
+select d, "Local object " + d.getAName() + " is never referenced."

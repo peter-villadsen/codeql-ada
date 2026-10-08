@@ -11,12 +11,12 @@
 
 import ada
 
-from Raw::PragmaNode p, Raw::BaseAssocList args, Raw::PragmaArgumentAssoc first
+from PragmaNode p, BaseAssocList args, PragmaArgumentAssoc first
 where
   p.getId().getValue().toLowerCase() = "warnings" and
   args = p.getArgs() and
   first = args.getChild(0) and
-  first.getExpr().(Raw::Identifier).getValue().toLowerCase() = "off" and
+  first.getExpr().(Identifier).getValue().toLowerCase() = "off" and
   not exists(args.getChild(1)) and
-  p.(AdaNode).fromSource()
+  p.fromSource()
 select p, "pragma Warnings (Off) disables all warnings without restriction."

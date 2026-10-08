@@ -13,17 +13,17 @@ import ada
 import codeql.ada.controlflow.Cfg
 
 /** Holds if some statement in `body` falls through (not via `return`) to the scope exit. */
-private predicate fallsOffEnd(Raw::SubpBody body) {
+private predicate fallsOffEnd(SubpBody body) {
   exists(AstCfgNode last, AnnotatedExitNode exit, DirectSuccessor t |
     last.getASuccessor(t) = exit and
     exit.getScope() = body
   )
 }
 
-from Raw::SubpBody body
+from SubpBody body
 where
-  body.getSubpSpec().getSubpKind() instanceof Raw::SubpKindFunction and
+  body.getSubpSpec().getSubpKind() instanceof SubpKindFunction and
   fallsOffEnd(body) and
-  body.(AdaNode).fromSource()
+  body.fromSource()
 select body,
   "This function may run off the end without executing a return statement, which raises Program_Error at run time."

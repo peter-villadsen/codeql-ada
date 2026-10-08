@@ -11,11 +11,11 @@
 
 import ada
 
-from Raw::RelationOp cmp, Name left, Name right
+from RelationOp cmp, Name left, Name right
 where
   left = cmp.getLeft() and
   right = cmp.getRight() and
   left.denotesSameEntityAs(right) and
-  cmp.(AdaNode).fromSource()
+  cmp.fromSource()
 select cmp,
   "This comparison always yields the same result, since both sides are " + left.getText() + "."

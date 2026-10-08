@@ -14,10 +14,10 @@ import ada
 // Predefined types (`Float`, `Long_Float`, ...) resolve into package `Standard`, which is
 // extracted as a pseudo-source (D-026). Limitation: only direct type declarations are
 // matched; subtypes and derived-type chains to a floating-point base are not followed.
-from Raw::RelationOp cmp, Expr operand
+from RelationOp cmp, Expr operand
 where
-  (cmp.getOp() instanceof Raw::OpEq or cmp.getOp() instanceof Raw::OpNeq) and
+  (cmp.getOp() instanceof OpEq or cmp.getOp() instanceof OpNeq) and
   operand = [cmp.getLeft(), cmp.getRight()] and
-  operand.getType().(Raw::TypeDecl).getTypeDef() instanceof Raw::FloatingPointDef and
-  cmp.(AdaNode).fromSource()
+  operand.getType().(TypeDecl).getTypeDef() instanceof FloatingPointDef and
+  cmp.fromSource()
 select cmp, "This comparison uses floating-point equality."

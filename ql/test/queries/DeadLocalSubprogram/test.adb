@@ -38,3 +38,42 @@ begin
    P := Taken'Access;
    Helper (Missing_Pkg.Value);
 end Outer;
+
+--  Shapes the name-text pairing got wrong (Phase 12, Task 12.4).
+procedure Outer2 is
+   generic
+      with function Transform (V : Integer) return Integer;
+   procedure Never_Instantiated (V : Integer);  --  generic, no instance: BAD
+
+   generic
+      with function Transform (V : Integer) return Integer;
+   procedure Instantiated (V : Integer);        --  generic with an instance: fine
+
+   procedure Never_Instantiated (V : Integer) is
+   begin
+      null;
+   end Never_Instantiated;
+
+   procedure Instantiated (V : Integer) is
+   begin
+      null;
+   end Instantiated;
+
+   function Twice (V : Integer) return Integer is (2 * V);
+
+   procedure Inst is new Instantiated (Twice);
+
+   protected Obj is
+      procedure Set (V : Integer);
+   end Obj;
+
+   protected body Obj is
+      procedure Set (V : Integer) is              --  called through its spec: fine
+      begin
+         null;
+      end Set;
+   end Obj;
+begin
+   Inst (1);
+   Obj.Set (2);
+end Outer2;

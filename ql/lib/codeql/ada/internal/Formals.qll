@@ -21,6 +21,20 @@ Raw::SubpSpec subpSpecOf(Raw::BasicDecl d) {
 }
 
 /**
+ * Gets the `SubpSpec` of a callable declaration as the library's `Subprogram` sees
+ * it: `subpSpecOf`, and also a generic subprogram (`generic ... procedure G (...)`)
+ * and its inner declaration. Data flow uses `subpSpecOf` only: it does not follow
+ * calls into generics (D-023).
+ */
+Raw::SubpSpec callableSpecOf(Raw::BasicDecl d) {
+  result = subpSpecOf(d)
+  or
+  result = d.(Raw::GenericSubpDecl).getSubpDecl().getSubpSpec()
+  or
+  result = d.(Raw::GenericSubpInternal).getSubpSpec()
+}
+
+/**
  * Gets any formal parameter's defining name, from any `ParamSpec` group, of
  * `spec` -- flattened across groups, since Ada allows one group to declare
  * several names sharing a mode and type (`A, B : in out Integer`), and

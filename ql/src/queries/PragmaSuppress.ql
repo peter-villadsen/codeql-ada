@@ -11,7 +11,7 @@
 
 import ada
 
-from Raw::PragmaNode p
+from PragmaNode p
 where p.getId().getValue().toLowerCase() = "suppress" and
-  p.(AdaNode).fromSource()
+  p.fromSource()
 select p, "pragma Suppress disables runtime checks."

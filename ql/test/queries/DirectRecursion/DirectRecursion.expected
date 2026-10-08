@@ -1,3 +1,7 @@
 | pkg.adb:5:10:5:22 | Down (...) | This call is a direct recursive call. |
 | test.adb:4:7:4:19 | Rec1 (...) | This call is a direct recursive call. |
 | test.adb:12:7:12:19 | Rec2 (...) | This call is a direct recursive call. |
+| test.adb:47:10:47:14 | Tick | This call is a direct recursive call. |
+| test.adb:52:32:52:44 | Fact (...) | This call is a direct recursive call. |
+| test.adb:59:10:59:23 | Again (...) | This call is a direct recursive call. |
+| test.adb:83:7:83:25 | Gen_Rec (...) | This call is a direct recursive call. |

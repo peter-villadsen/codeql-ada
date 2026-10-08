@@ -33,8 +33,8 @@
   "results": {
    "ada/boolean-literal-comparison": 3,
    "ada/command-line-injection": 0,
-   "ada/dead-local-subprogram": 2,
-   "ada/direct-recursion": 13,
+   "ada/dead-local-subprogram": 1,
+   "ada/direct-recursion": 17,
    "ada/empty-loop-body": 0,
    "ada/exception-swallowing": 2,
    "ada/float-equality": 0,
@@ -57,14 +57,14 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 4
   },
-  "total": 206
+  "total": 209
  },
  "gpr2": {
   "results": {
    "ada/boolean-literal-comparison": 1,
    "ada/command-line-injection": 0,
-   "ada/dead-local-subprogram": 17,
-   "ada/direct-recursion": 77,
+   "ada/dead-local-subprogram": 14,
+   "ada/direct-recursion": 78,
    "ada/empty-loop-body": 1,
    "ada/exception-swallowing": 3,
    "ada/float-equality": 0,
@@ -87,14 +87,14 @@
    "ada/useless-if": 4,
    "ada/warnings-off": 36
   },
-  "total": 1438
+  "total": 1436
  },
  "libadalang-tools": {
   "results": {
    "ada/boolean-literal-comparison": 0,
    "ada/command-line-injection": 0,
-   "ada/dead-local-subprogram": 14,
-   "ada/direct-recursion": 15,
+   "ada/dead-local-subprogram": 9,
+   "ada/direct-recursion": 18,
    "ada/empty-loop-body": 49,
    "ada/exception-swallowing": 0,
    "ada/float-equality": 2,
@@ -117,13 +117,13 @@
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 623
+  "total": 621
  },
  "libkeccak": {
   "results": {
    "ada/boolean-literal-comparison": 0,
    "ada/command-line-injection": 0,
-   "ada/dead-local-subprogram": 7,
+   "ada/dead-local-subprogram": 0,
    "ada/direct-recursion": 0,
    "ada/empty-loop-body": 0,
    "ada/exception-swallowing": 0,
@@ -147,6 +147,6 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 0
   },
-  "total": 35
+  "total": 28
  }
 }

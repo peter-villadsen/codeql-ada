@@ -12,10 +12,10 @@
 
 import ada
 
-from Raw::PragmaNode p, Raw::Identifier arg
+from PragmaNode p, Identifier arg
 where
   p.getId().getValue().toLowerCase() = "spark_mode" and
   arg.getParent+() = p and
   arg.getValue().toLowerCase() = "off" and
-  p.(AdaNode).fromSource()
+  p.fromSource()
 select p, "pragma SPARK_Mode (Off) disables SPARK formal verification for this scope."

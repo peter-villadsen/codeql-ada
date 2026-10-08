@@ -289,7 +289,7 @@ private Raw::Mode formalMode(Raw::SubpSpec spec, int i) {
 /** Holds if `n` has a CFG node: data flow counts a call only where the CFG evaluates it. */
 private predicate hasCfgNode(Raw::AdaNode n) { cfgPos(n, _, _) }
 
-private module Resolution = CallResolution::Make<hasCfgNode/1>;
+private module Resolution = CallResolution::Make<hasCfgNode/1, Formals::subpSpecOf/1>;
 
 /**
  * Gets the declaration `call` invokes (`CallResolution::Make::getCallTarget`), for a

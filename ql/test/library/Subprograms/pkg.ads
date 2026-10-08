@@ -18,8 +18,8 @@ package Pkg is
    --  a renaming is a subprogram of its own
    procedure Renamed (Q : String) renames Separate_Body;
 
-   --  generic subprograms and their instances are not Subprograms in v1
-   --  (docs/phase12-plan.md): neither Gen nor Inst (pkg.adb) appears
+   --  a generic subprogram is a Subprogram; its instance Inst (pkg.adb) is not
+   --  in v1 (docs/phase12-plan.md)
    generic
       type T is private;
    procedure Gen (V : T);

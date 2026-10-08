@@ -112,12 +112,20 @@ class ExprExt extends Raw::AdaNode, @ada_expr {
 
 /** Predicates of `BasicDecl`: names, references, completion, renaming. */
 class BasicDeclExt extends Raw::AdaNode, @ada_basic_decl {
-  /** Gets a name this declaration introduces (not names of nested declarations). */
+  /**
+   * Gets a name this declaration introduces (not names of nested declarations). A
+   * generic's name is in the declaration it wraps (`GenericSubpInternal`,
+   * `GenericPackageInternal`), so that one's names count as the generic's.
+   */
   Raw::DefiningName getADefiningName() {
     result.getParent+() = this and
     not exists(Raw::BasicDecl mid |
       mid != this and result.getParent+() = mid and mid.getParent+() = this
     )
+    or
+    result = this.(Raw::GenericSubpDecl).getSubpDecl().getADefiningName()
+    or
+    result = this.(Raw::GenericPackageDecl).getPackageDecl().getADefiningName()
   }
 
   /** Gets the text of a name this declaration introduces. */
@@ -306,11 +314,6 @@ private string exprString(Raw::Expr e) {
 /** Gets the names a declaration introduces, as shown in results, if it has any. */
 private string declString(Raw::BasicDecl d) {
   result = strictconcat(string name | name = d.getAName() | name, ", ")
-  or
-  // a generic's name is in its inner declaration, which `getAName` does not look into
-  result = declString(d.(Raw::GenericPackageDecl).getPackageDecl())
-  or
-  result = declString(d.(Raw::GenericSubpDecl).getSubpDecl())
 }
 
 /** Gets the leading keywords of statement (or pragma or clause) `s`, if they say something. */

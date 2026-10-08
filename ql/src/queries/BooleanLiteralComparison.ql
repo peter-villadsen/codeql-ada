@@ -18,16 +18,16 @@ import ada
  */
 private predicate isBooleanLiteral(Name lit) {
   lit.getReferencedDecl()
-      .(BasicDecl)
+      
       .hasQualifiedName(["Standard.Boolean.True", "Standard.Boolean.False"])
   or
   not exists(lit.getReferencedDecl()) and lit.getText().toLowerCase() = ["true", "false"]
 }
 
-from Raw::RelationOp cmp, Name lit
+from RelationOp cmp, Name lit
 where
-  (cmp.getOp() instanceof Raw::OpEq or cmp.getOp() instanceof Raw::OpNeq) and
+  (cmp.getOp() instanceof OpEq or cmp.getOp() instanceof OpNeq) and
   lit = [cmp.getLeft(), cmp.getRight()] and
   isBooleanLiteral(lit) and
-  cmp.(AdaNode).fromSource()
+  cmp.fromSource()
 select cmp, "Comparison with boolean literal " + lit.getText() + " is redundant."

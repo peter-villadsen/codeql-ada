@@ -16,19 +16,19 @@ import ada
 // generic does not resolve -- no GNAT runtime at extraction -- is the name's text used.
 from GenericInstantiation gi
 where
-  gi instanceof Raw::GenericSubpInstantiation and
+  gi instanceof GenericSubpInstantiation and
   (
     gi.getDesignatedGeneric()
-        .(BasicDecl)
+        
         .hasQualifiedName(["Ada.Unchecked_Conversion", "Unchecked_Conversion"])
     or
     not exists(gi.getDesignatedGeneric()) and
-    gi.(Raw::GenericSubpInstantiation)
+    gi.(GenericSubpInstantiation)
         .getGenericSubpName()
         .(Name)
         .getText()
         .toLowerCase()
         .matches("%unchecked_conversion")
   ) and
-  gi.(AdaNode).fromSource()
+  gi.fromSource()
 select gi, "Instantiation of Unchecked_Conversion bypasses type safety."

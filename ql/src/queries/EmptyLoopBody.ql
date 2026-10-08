@@ -11,10 +11,10 @@
 
 import ada
 
-from Raw::BaseLoopStmt s, Raw::StmtList stmts
+from BaseLoopStmt s, StmtList stmts
 where
   stmts = s.getStmts() and
-  stmts.getChild(0) instanceof Raw::NullStmt and
+  stmts.getChild(0) instanceof NullStmt and
   not exists(stmts.getChild(1)) and
-  s.(AdaNode).fromSource()
+  s.fromSource()
 select s, "This loop's body does nothing."

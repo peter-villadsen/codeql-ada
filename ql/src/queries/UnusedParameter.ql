@@ -17,11 +17,11 @@ import ada
 /**
  * Gets the `i`th formal parameter declared by `spec`.
  */
-private Raw::ParamSpec getParam(Raw::SubpSpec spec, int i) {
+private ParamSpec getParam(SubpSpec spec, int i) {
   result = spec.getSubpParams().getParams().getChild(i)
 }
 
-from Raw::SubpBody body, Raw::SubpSpec spec, Raw::ParamSpec param, int i
+from SubpBody body, SubpSpec spec, ParamSpec param, int i
 where
   spec = body.getSubpSpec() and
   param = getParam(spec, i) and
@@ -30,11 +30,11 @@ where
   // `ada_xref` on a spec+body test case) - so no decl/body pairing is needed here, unlike
   // `ada/dead-local-subprogram` and `ada/direct-recursion`, where *calls* do resolve to the
   // separate declaration when present.
-  not param.(BasicDecl).isReferenced() and
+  not param.isReferenced() and
   // `pragma Unreferenced (X)` or `X : T with Unreferenced`.
-  not param.(BasicDecl).isMarkedUnreferenced() and
+  not param.isMarkedUnreferenced() and
   // A same-named name that did not resolve may be a use (missing dependencies, D-026).
-  not param.(BasicDecl).hasUnresolvedNamesakeIn(body) and
-  not body.getOverriding() instanceof Raw::OverridingOverriding and
-  param.(AdaNode).fromSource()
+  not param.hasUnresolvedNamesakeIn(body) and
+  not body.getOverriding() instanceof OverridingOverriding and
+  param.fromSource()
 select param, "This parameter is never used in this body."

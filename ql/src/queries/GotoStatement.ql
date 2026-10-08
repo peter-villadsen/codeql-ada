@@ -10,6 +10,6 @@
 
 import ada
 
-from Raw::GotoStmt g
-where g.(AdaNode).fromSource()
+from GotoStmt g
+where g.fromSource()
 select g, "Use of goto statement."

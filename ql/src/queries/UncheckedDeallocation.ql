@@ -17,19 +17,19 @@ import ada
 // extraction -- is the name's text used.
 from GenericInstantiation gi
 where
-  gi instanceof Raw::GenericSubpInstantiation and
+  gi instanceof GenericSubpInstantiation and
   (
     gi.getDesignatedGeneric()
-        .(BasicDecl)
+        
         .hasQualifiedName(["Ada.Unchecked_Deallocation", "Unchecked_Deallocation"])
     or
     not exists(gi.getDesignatedGeneric()) and
-    gi.(Raw::GenericSubpInstantiation)
+    gi.(GenericSubpInstantiation)
         .getGenericSubpName()
         .(Name)
         .getText()
         .toLowerCase()
         .matches("%unchecked_deallocation")
   ) and
-  gi.(AdaNode).fromSource()
+  gi.fromSource()
 select gi, "Instantiation of Unchecked_Deallocation risks dangling pointers or double-free."

@@ -1,9 +1,10 @@
 /**
  * Call resolution: which declaration a call invokes, and which actual it passes for
  * each formal. Shared by `codeql.ada.Calls` (the `Call` class) and the data-flow
- * library, which differ only in where they count a call as evaluated: data flow
- * where the CFG has a node for it, `Call` by a syntactic rule, so that the AST
- * library does not depend on the CFG (`Make`).
+ * library, which differ in where they count a call as evaluated (data flow where
+ * the CFG has a node for it, `Call` by a syntactic rule, so that the AST library
+ * does not depend on the CFG) and in what a call can target (`Call` also a generic
+ * subprogram, from inside its own body): the two parameters of `Make`.
  */
 
 private import codeql.ada.ast.internal.Raw
@@ -75,8 +76,14 @@ Raw::BasicDecl resolveSubpRenaming(Raw::BasicDecl d) {
 /** Holds if `n` is evaluated where it stands, so that, if it names a subprogram, it is a call. */
 signature predicate isEvaluatedSig(Raw::AdaNode n);
 
-/** Call resolution for calls evaluated where `isEvaluated` says. */
-module Make<isEvaluatedSig/1 isEvaluated> {
+/** Gets the `SubpSpec` of `d`, if it is a declaration a call can target. */
+signature Raw::SubpSpec specOfSig(Raw::BasicDecl d);
+
+/**
+ * Call resolution for calls evaluated where `isEvaluated` says, to declarations
+ * `specOf` gives a spec for.
+ */
+module Make<isEvaluatedSig/1 isEvaluated, specOfSig/1 specOf> {
   /**
    * Gets the name that `call` invokes its subprogram through: a `CallExpr`'s name,
    * or `call` itself for a call written without parentheses (`X := Get;`,
@@ -134,7 +141,7 @@ module Make<isEvaluatedSig/1 isEvaluated> {
   Raw::BasicDecl getCallTarget(Raw::Expr call) {
     exists(Raw::Name callee | callee = calleeName(call) |
       result = callee.(Raw::Name).getReferencedDecl() and
-      exists(subpSpecOf(result)) and
+      exists(specOf(result)) and
       (
         not callee instanceof Raw::DottedName
         or
@@ -150,11 +157,11 @@ module Make<isEvaluatedSig/1 isEvaluated> {
     // only where the operator is evaluated, as for named calls
     isEvaluated(call) and
     result = operatorOf(call).(Raw::Name).getReferencedDecl() and
-    exists(subpSpecOf(result))
+    exists(specOf(result))
   }
 
   /** Gets the `SubpSpec` of the subprogram `call` invokes (see `getCallTarget`). */
-  Raw::SubpSpec getCalleeSpec(Raw::Expr call) { result = subpSpecOf(getCallTarget(call)) }
+  Raw::SubpSpec getCalleeSpec(Raw::Expr call) { result = specOf(getCallTarget(call)) }
 
   /**
    * Holds if `actual` is the actual that `call` passes for its callee's `idx`th formal

@@ -5,7 +5,8 @@
  * written with or without parentheses, as a statement or in an expression, in
  * prefixed-view notation (`Obj.Op (X)`), to a protected operation, to a user-defined
  * operator (`A - B`), or through a renaming. Indexing, slicing and type conversions, which Ada writes like
- * calls, are not calls, and neither is a call that does not resolve. Calls through
+ * calls, are not calls, and neither is a call that does not resolve. A call inside a
+ * generic subprogram to the generic itself is a call. Calls through
  * access-to-subprogram values, dispatching calls (bound to their static target),
  * entry calls and calls to generic instances are the named v1 limitations of
  * `docs/dataflow-design.md`.
@@ -14,6 +15,7 @@
 private import codeql.ada.ast.internal.Raw
 private import codeql.ada.Subprograms
 private import codeql.ada.internal.CallResolution as CallResolution
+private import codeql.ada.internal.Formals as Formals
 
 /** Gets the name of the pragma or aspect `n` is an argument of, lower-cased. */
 private string pragmaOrAspectName(Raw::AdaNode n) {
@@ -60,7 +62,7 @@ private predicate isEvaluatedSyntactically(Raw::AdaNode n) {
   )
 }
 
-private module Resolution = CallResolution::Make<isEvaluatedSyntactically/1>;
+private module Resolution = CallResolution::Make<isEvaluatedSyntactically/1, Formals::callableSpecOf/1>;
 
 /** A call to a subprogram that resolves. */
 class Call extends Raw::Expr {

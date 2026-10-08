@@ -10,12 +10,12 @@
 
 import ada
 
-from Raw::IfStmt s, Raw::StmtList thenStmts
+from IfStmt s, StmtList thenStmts
 where
   thenStmts = s.getThenStmts() and
-  thenStmts.getChild(0) instanceof Raw::NullStmt and
+  thenStmts.getChild(0) instanceof NullStmt and
   not exists(thenStmts.getChild(1)) and
   not exists(s.getAlternatives().getChild(0)) and
   not exists(s.getElsePart()) and
-  s.(AdaNode).fromSource()
+  s.fromSource()
 select s, "This if statement does nothing and can be removed."

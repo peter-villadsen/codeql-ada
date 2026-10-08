@@ -7,6 +7,7 @@ subprograms
 | pkg.ads:13:4:13:46 | Null_Proc | NullSubpDecl | procedure | 1 | NullSubpDecl@13 | NullSubpDecl@13 |
 | pkg.ads:15:4:15:37 | Imported | SubpDecl | procedure | 1 | none | SubpDecl@15 |
 | pkg.ads:19:4:19:57 | Renamed | SubpRenamingDecl | procedure | 1 | SubpRenamingDecl@19 | SubpRenamingDecl@19 |
+| pkg.ads:23:4:25:26 | Gen | GenericSubpDecl | procedure | 1 | SubpBody@21 | SubpBody@21, GenericSubpDecl@23, GenericSubpInternal@25 |
 | pkg.ads:32:4:32:41 | "+" | SubpDecl | function | 2 | ExprFunction@26 | ExprFunction@26, SubpDecl@32 |
 parameters
 | pkg.adb:13:4:13:50 | Stub_Only | 0 | pkg.adb:13:25:13:26 | W | in | Standard.Integer | - | 2 |
@@ -20,6 +21,7 @@ parameters
 | pkg.ads:13:4:13:46 | Null_Proc | 0 | pkg.ads:13:25:13:26 | N | in | Standard.Integer | - | 1 |
 | pkg.ads:15:4:15:37 | Imported | 0 | pkg.ads:15:24:15:25 | I | in | Standard.Integer | - | 1 |
 | pkg.ads:19:4:19:57 | Renamed | 0 | pkg.ads:19:23:19:24 | Q | in | Standard.String | - | 1 |
+| pkg.ads:23:4:25:26 | Gen | 0 | pkg.ads:25:19:25:20 | V | in | Pkg.Gen.T | - | 2 |
 | pkg.ads:32:4:32:41 | "+" | 0 | pkg.ads:32:18:32:19 | L | in | Pkg.Rec | - | 2 |
 | pkg.ads:32:4:32:41 | "+" | 1 | pkg.ads:32:21:32:22 | R | in | Pkg.Rec | - | 2 |
 accesses
