@@ -286,7 +286,7 @@ ExprFunction
       getRight: Identifier V -> Reference.Twice.V
 ```
 
-- **A declaration and its body are different nodes.** `BasicDecl.getBody()` goes
+- **A declaration and its body are different nodes.** `BasicDecl.getCompletion()` goes
   from the declaration to the body; `BaseSubpBody.getDeclaration()` goes back
   (`ada_body_part`, D-021). A body with no separate declaration has neither.
 - **Formals are grouped as written.** `(A, B : Integer; C : Float)` is two

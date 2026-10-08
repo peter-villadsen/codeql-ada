@@ -926,7 +926,26 @@ specified in `docs/ssa-design.md` and conformance-tested. Next: Task 9.3, local 
       construction. The `DataFlow` helpers (`isCallTo`, ...) are left as they are rather
       than rewritten as aliases: same predicates underneath, no gain. Through a renaming,
       `getArgumentByName` uses the renamed subprogram's parameter names.
-- [ ] 12.3 `Package`, `TypeDecl`, `Variable`
+- [x] 12.3 `Package`, `Type`, `Variable`, `Component`. *Done 2026-10-08.*
+      `codeql/ada/Declarations.qll`. `TypeDecl` is a generated class name, so the class is
+      `Type` (Java's name); `Expr.getType()`, `Parameter.getType()` and
+      `Subprogram.getReturnType()` return it. `Component` added for record components.
+      A private type and its full view are two `Type`s in v1. `BasicDecl.getBody()` is
+      renamed `getCompletion()`: `Subprogram.getBody()` overrode it with another meaning,
+      and QL's dispatch changed `PrintBodyPart` and `DataFlowImpl.bodyOf` silently.
+      - **Performance, found while verifying:** the corpus ran 1.6-2.8x slower. Two causes,
+        both fixed. (1) The mixins had no database type, so `getADefiningName` was
+        evaluated over every node (20M-row join on libkeccak); each mixin now extends its
+        kind's `@ada_...` type. (2) `Call` used the data-flow call graph, so `import ada`
+        compiled the CFG, SSA and data-flow libraries into every query. Call resolution is
+        now `codeql/ada/internal/CallResolution.qll`, a module parameterised by "where is a
+        call evaluated": data flow passes the CFG check (unchanged behaviour), `Call` a
+        syntactic rule. Left: about 0.4 s more compilation per query (2.5 s against 1.9 s
+        cached) from the larger library; gpr2 211 s against 198 s before Phase 12.
+      - `ql/debug/CallConsistency.ql`: no call data flow has is missing from `Call`; `Call`
+        has 2,708 more on the corpus, real calls the CFG does not model (package-level
+        initialisers, contracts, `pragma Assert` in declarative parts, expression functions,
+        `raise ... with` messages, quantified-expression iterators).
 - [ ] 12.4 Port the shipped queries (corpus counts triaged)
 - [ ] 12.5 Documentation
 

@@ -7,13 +7,16 @@
  * `ifStmt.getCondition().getType()` then compiles, which it could not while these
  * were subclasses of the generated ones.
  *
- * A mixin covers every AST node (it has no characteristic predicate of its own); the
- * generated class it is mixed into supplies the node kind. So `this` is cast to the
- * generated class wherever one of its accessors is needed.
+ * A mixin extends the database type of its node kind as well as `AdaNode`, so that
+ * its predicates range over the right nodes when evaluated in bulk: without it,
+ * `BasicDeclExt.getADefiningName` was computed for every node, a 20-million-row join
+ * on a small database. `this` is cast to the generated class wherever one of its
+ * accessors is needed.
  */
 
 private import codeql.ada.ast.internal.Raw
 private import codeql.ada.ast.internal.RawMeta
+private import codeql.ada.Declarations as Declarations
 
 /** Holds if `loc` lies in a predefined pseudo-source file (D-026). */
 private predicate inPredefinedFile(Raw::Location loc) {
@@ -62,7 +65,7 @@ class AdaNodeExt extends @ada_ast_node {
 }
 
 /** Predicates of `Name`: source text and name resolution. */
-class NameExt extends Raw::AdaNode {
+class NameExt extends Raw::AdaNode, @ada_name {
   /** Gets the source text of this name, if it is a simple or dotted name. */
   string getText() {
     result = this.(Raw::Identifier).getValue()
@@ -102,13 +105,13 @@ class NameExt extends Raw::AdaNode {
 }
 
 /** Predicates of `Expr`: stored type information. */
-class ExprExt extends Raw::AdaNode {
+class ExprExt extends Raw::AdaNode, @ada_expr {
   /** Gets the declaration of this expression's type, if extracted. */
-  Raw::BaseTypeDecl getType() { ada_expr_type(this, result) }
+  Declarations::Type getType() { ada_expr_type(this, result) }
 }
 
 /** Predicates of `BasicDecl`: names, references, completion, renaming. */
-class BasicDeclExt extends Raw::AdaNode {
+class BasicDeclExt extends Raw::AdaNode, @ada_basic_decl {
   /** Gets a name this declaration introduces (not names of nested declarations). */
   Raw::DefiningName getADefiningName() {
     result.getParent+() = this and
@@ -165,11 +168,12 @@ class BasicDeclExt extends Raw::AdaNode {
   }
 
   /**
-   * Gets the completion (body) of this declaration, if extracted. Extracted
-   * from Libadalang's `p_body_part`, never inferred from name text, since
-   * overloading makes textual pairing unsound (D-021).
+   * Gets the completion of this declaration: the body of a subprogram or package
+   * spec, the subunit of a body stub. Extracted from Libadalang's `p_body_part`,
+   * never inferred from name text, since overloading makes textual pairing unsound
+   * (D-021). `Subprogram.getBody()` and `Package.getBody()` are the usual way in.
    */
-  Raw::BasicDecl getBody() { ada_body_part(this, result) }
+  Raw::BasicDecl getCompletion() { ada_body_part(this, result) }
 
   /**
    * Gets the fully qualified name of this declaration, as Libadalang computes it:
@@ -223,7 +227,7 @@ private Raw::RenamingClause renamingClause(BasicDeclExt d) {
 }
 
 /** Predicates of `GenericInstantiation`. */
-class GenericInstantiationExt extends Raw::AdaNode {
+class GenericInstantiationExt extends Raw::AdaNode, @ada_generic_instantiation {
   /**
    * Gets the generic declaration this instantiates, resolved through generic
    * renamings. No result if it does not resolve (e.g. no GNAT runtime was found).
@@ -232,7 +236,7 @@ class GenericInstantiationExt extends Raw::AdaNode {
 }
 
 /** Predicates of `BaseSubpBody`: a subprogram body or expression-function completion. */
-class BaseSubpBodyExt extends Raw::AdaNode {
+class BaseSubpBodyExt extends Raw::AdaNode, @ada_base_subp_body {
   /** Gets the declaration this body completes, if extracted (D-021). */
   Raw::BasicDecl getDeclaration() { ada_body_part(result, this) }
 }
@@ -302,6 +306,11 @@ private string exprString(Raw::Expr e) {
 /** Gets the names a declaration introduces, as shown in results, if it has any. */
 private string declString(Raw::BasicDecl d) {
   result = strictconcat(string name | name = d.getAName() | name, ", ")
+  or
+  // a generic's name is in its inner declaration, which `getAName` does not look into
+  result = declString(d.(Raw::GenericPackageDecl).getPackageDecl())
+  or
+  result = declString(d.(Raw::GenericSubpDecl).getSubpDecl())
 }
 
 /** Gets the leading keywords of statement (or pragma or clause) `s`, if they say something. */

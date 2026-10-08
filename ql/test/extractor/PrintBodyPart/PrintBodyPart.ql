@@ -13,6 +13,6 @@
 import ada
 
 from BasicDecl decl
-where exists(decl.getBody())
-select decl, decl.getAPrimaryQlClass(), decl.getAName(), decl.getBody(),
-  decl.getBody().getAPrimaryQlClass()
+where exists(decl.getCompletion())
+select decl, decl.getAPrimaryQlClass(), decl.getAName(), decl.getCompletion(),
+  decl.getCompletion().getAPrimaryQlClass()

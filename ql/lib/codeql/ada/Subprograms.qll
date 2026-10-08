@@ -10,6 +10,7 @@
 private import codeql.ada.ast.internal.Raw
 private import codeql.ada.internal.Formals
 private import codeql.ada.Calls
+private import codeql.ada.Declarations
 
 /**
  * Holds if `d` is a further declaration of the subprogram first declared by `first`:
@@ -71,9 +72,7 @@ class Subprogram extends Raw::BasicDecl {
   Raw::TypeExpr getReturnTypeExpr() { result = this.getSpecNode().getSubpReturns() }
 
   /** Gets the declaration of this function's result type, if it resolves. */
-  Raw::BaseTypeDecl getReturnType() {
-    result = this.getReturnTypeExpr().(Raw::SubtypeIndication).getName().getReferencedDecl()
-  }
+  Type getReturnType() { result = namedType(this.getReturnTypeExpr()) }
 
   /** Gets the separate declaration (spec) of this subprogram, if it has one. */
   Raw::ClassicSubpDecl getSpec() { result = this }
@@ -83,7 +82,7 @@ class Subprogram extends Raw::BasicDecl {
    * else its completion, through a body stub when the body is separate. No result
    * for an abstract or imported subprogram, or when the body was not extracted.
    */
-  override Raw::BasicDecl getBody() {
+  Raw::BasicDecl getBody() {
     result = this.(Raw::BaseSubpBody)
     or
     laterDeclaration(this, result) and result instanceof Raw::BaseSubpBody
@@ -147,9 +146,7 @@ class Parameter extends Raw::Name {
   Raw::TypeExpr getTypeExpr() { result = this.getParamSpec().getTypeExpr() }
 
   /** Gets the declaration of this parameter's type, if it is a named type that resolves. */
-  override Raw::BaseTypeDecl getType() {
-    result = this.getTypeExpr().(Raw::SubtypeIndication).getName().getReferencedDecl()
-  }
+  override Type getType() { result = namedType(this.getTypeExpr()) }
 
   /** Gets the default value of this parameter, if it has one (`X : Integer := 0`). */
   Raw::Expr getDefaultExpr() { result = this.getParamSpec().getDefaultExpr() }

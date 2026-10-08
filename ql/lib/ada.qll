@@ -10,3 +10,4 @@ import codeql.ada.ast.internal.Raw
 import codeql.ada.ast.internal.Raw::Raw
 import codeql.ada.Subprograms
 import codeql.ada.Calls
+import codeql.ada.Declarations

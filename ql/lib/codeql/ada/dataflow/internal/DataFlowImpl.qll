@@ -49,7 +49,7 @@ private class Void extends TVoid {
 }
 
 /** Gets `d`'s completion, or `d` itself; only a result that is a CFG scope survives. */
-private Impl::Scopes::CfgScope bodyOf(Raw::BasicDecl d) { result = [d.(BasicDecl).getBody(), d] }
+private Impl::Scopes::CfgScope bodyOf(Raw::BasicDecl d) { result = [d.(BasicDecl).getCompletion(), d] }
 
 /** A 0-based formal position (see `formalOf` and `callActual`). */
 private class Position extends int {
@@ -188,7 +188,7 @@ module AdaDataFlowInput implements DF::InputSig<Raw::Location> {
    */
   DataFlowCallable viableCallable(DataFlowCall c) {
     exists(Raw::BasicDecl d | d = resolveSubpRenaming(getCallTarget(c)) |
-      result = bodyOf(d) or result = bodyOf(resolveSubpRenaming(d.(BasicDecl).getBody()))
+      result = bodyOf(d) or result = bodyOf(resolveSubpRenaming(d.(BasicDecl).getCompletion()))
     )
   }
 

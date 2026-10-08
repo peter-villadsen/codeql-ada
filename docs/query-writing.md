@@ -80,7 +80,7 @@ what a generated 1:1 mirror can't provide on its own:
 | `BasicDecl.getQualifiedName()` / `hasQualifiedName("Ada.Text_IO.Open")` | Libadalang's fully qualified name; `has…` ignores case. The way to identify a runtime entity. |
 | `BasicDecl.getUltimateDecl()` | Follows subprogram, object, exception and package renamings to what is renamed |
 | `BasicDecl.getADefiningName()` / `getAName()` | The name(s) a declaration introduces, and their text |
-| `BasicDecl.getBody()`, `BaseSubpBody.getDeclaration()` | A declaration's completion and back (`ada_body_part`, D-021) |
+| `BasicDecl.getCompletion()`, `BaseSubpBody.getDeclaration()` | A declaration's completion and back (`ada_body_part`, D-021) |
 | `BasicDecl.isReferenced()` | Whether any resolved name anywhere points back at this declaration — the basis for `UnusedVariable.ql` |
 | `GenericInstantiation.getDesignatedGeneric()` | The generic an instantiation designates, through generic renamings |
 | `AdaNode.getEnclosingSubprogram()` / `getEnclosingUnit()` | Walk outward to an enclosing subprogram body / the containing compilation unit |

@@ -1,0 +1,82 @@
+types
+| generics.ads:2:4:2:28 | Element | Element | private | - |
+| shapes.ads:3:4:3:37 | Color | Color | enumeration | - |
+| shapes.ads:4:4:6:15 | Point | Point | record | - |
+| shapes.ads:7:4:9:15 | Shape | Shape | record,tagged | - |
+| shapes.ads:10:4:12:15 | Circle | Circle | record,tagged | Shapes.Shape |
+| shapes.ads:13:4:13:45 | Vector | Vector | array | - |
+| shapes.ads:14:4:14:38 | Point_Access | Point_Access | access | - |
+| shapes.ads:15:4:15:42 | Small | Small | subtype | Standard.Integer |
+| shapes.ads:16:4:16:27 | Handle | Handle | private | - |
+| shapes.ads:23:4:23:31 | Handle | Handle |  | Standard.Integer |
+literals
+| shapes.ads:3:4:3:37 | Color | shapes.ads:3:19:3:22 | Red |
+| shapes.ads:3:4:3:37 | Color | shapes.ads:3:24:3:29 | Green |
+| shapes.ads:3:4:3:37 | Color | shapes.ads:3:31:3:35 | Blue |
+components
+| shapes.ads:5:7:5:8 | X | X | Point | Standard.Integer | 0 |
+| shapes.ads:5:10:5:11 | Y | Y | Point | Standard.Integer | 0 |
+| shapes.ads:8:7:8:13 | Origin | Origin | Shape | Shapes.Point | - |
+| shapes.ads:11:7:11:13 | Radius | Radius | Circle | Standard.Natural | - |
+componentAccesses
+| shapes.ads:5:7:5:8 | X | shapes.adb:12:24:12:25 | X |
+| shapes.ads:8:7:8:13 | Origin | shapes.adb:6:27:6:33 | Origin |
+| shapes.ads:11:7:11:13 | Radius | shapes.adb:5:33:5:39 | Radius |
+variables
+| shapes.adb:2:4:2:9 | Calls | Calls | Standard.Natural |  | - |
+| shapes.adb:5:7:5:8 | R | R | Standard.Integer | constant,local | Area |
+| shapes.adb:6:7:6:8 | P | P | Shapes.Point | local,renaming | Area |
+| shapes.adb:9:11:9:12 | I | I | Standard.Integer | local,loop | Area |
+| shapes.ads:18:4:18:17 | Default_Color | Default_Color | Shapes.Color | constant | - |
+| shapes.ads:19:4:19:9 | Count | Count | Standard.Integer |  | - |
+variableAccesses
+| shapes.adb:2:4:2:9 | Calls | shapes.adb:8:7:8:12 | Calls |
+| shapes.adb:2:4:2:9 | Calls | shapes.adb:8:16:8:21 | Calls |
+| shapes.adb:5:7:5:8 | R | shapes.adb:12:14:12:15 | R |
+| shapes.adb:5:7:5:8 | R | shapes.adb:12:18:12:19 | R |
+| shapes.adb:6:7:6:8 | P | shapes.adb:12:22:12:23 | P |
+| shapes.adb:9:11:9:12 | I | shapes.adb:10:27:10:28 | I |
+| shapes.ads:19:4:19:9 | Count | shapes.adb:10:10:10:15 | Count |
+| shapes.ads:19:4:19:9 | Count | shapes.adb:10:19:10:24 | Count |
+packages
+| generics.ads:1:1:5:14 | Generics | Generics | generic | generics.adb:1 | - |
+| shapes.ads:2:1:24:12 | Shapes | Shapes | package | shapes.adb:1 | - |
+| use_generics.ads:2:1:4:18 | Use_Generics | Use_Generics | package | - | - |
+| use_generics.ads:3:4:3:51 | Int_Generics | Int_Generics | instance | - | Generics |
+members
+| generics.ads:1:1:5:14 | Generics | Put (NullSubpDecl) | private or body |
+| generics.ads:1:1:5:14 | Generics | Put (SubpDecl) | public |
+| shapes.ads:2:1:24:12 | Shapes | Area (SubpBody) | private or body |
+| shapes.ads:2:1:24:12 | Shapes | Area (SubpDecl) | public |
+| shapes.ads:2:1:24:12 | Shapes | Calls (ObjectDecl) | private or body |
+| shapes.ads:2:1:24:12 | Shapes | Circle (ConcreteTypeDecl) | public |
+| shapes.ads:2:1:24:12 | Shapes | Color (ConcreteTypeDecl) | public |
+| shapes.ads:2:1:24:12 | Shapes | Count (ObjectDecl) | public |
+| shapes.ads:2:1:24:12 | Shapes | Default_Color (ObjectDecl) | public |
+| shapes.ads:2:1:24:12 | Shapes | Handle (ConcreteTypeDecl) | private or body |
+| shapes.ads:2:1:24:12 | Shapes | Handle (ConcreteTypeDecl) | public |
+| shapes.ads:2:1:24:12 | Shapes | Point (ConcreteTypeDecl) | public |
+| shapes.ads:2:1:24:12 | Shapes | Point_Access (ConcreteTypeDecl) | public |
+| shapes.ads:2:1:24:12 | Shapes | Shape (ConcreteTypeDecl) | public |
+| shapes.ads:2:1:24:12 | Shapes | Small (SubtypeDecl) | public |
+| shapes.ads:2:1:24:12 | Shapes | Vector (ConcreteTypeDecl) | public |
+| use_generics.ads:2:1:4:18 | Use_Generics | Int_Generics (GenericPackageInstantiation) | public |
+packageContents
+| generics.ads:1:1:5:14 | Generics | Put |  |  |
+| shapes.ads:2:1:24:12 | Shapes | Area | Circle,Color,Handle,Point,Point_Access,Shape,Small,Vector | Calls,Count,Default_Color |
+| use_generics.ads:2:1:4:18 | Use_Generics |  |  |  |
+| use_generics.ads:3:4:3:51 | Int_Generics |  |  |  |
+exprTypes
+| shapes.adb:5:31:5:32 | C | Shapes.Circle |
+| shapes.adb:5:33:5:39 | Radius | Standard.Natural |
+| shapes.adb:6:25:6:26 | C | Shapes.Circle |
+| shapes.adb:6:27:6:33 | Origin | Shapes.Point |
+| shapes.adb:8:7:8:12 | Calls | Standard.Natural |
+| shapes.adb:8:16:8:21 | Calls | Standard.Natural |
+| shapes.adb:10:10:10:15 | Count | Standard.Integer |
+| shapes.adb:10:19:10:24 | Count | Standard.Integer |
+| shapes.adb:10:27:10:28 | I | Standard.Integer |
+| shapes.adb:12:14:12:15 | R | Standard.Integer |
+| shapes.adb:12:18:12:19 | R | Standard.Integer |
+| shapes.adb:12:22:12:23 | P | Shapes.Point |
+| shapes.adb:12:24:12:25 | X | Standard.Integer |

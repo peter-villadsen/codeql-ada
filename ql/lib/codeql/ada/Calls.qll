@@ -1,10 +1,10 @@
 /**
  * Calls to subprograms (Phase 12, `docs/phase12-plan.md`).
  *
- * A `Call` is a call the call graph resolves (D-021): written with or without
- * parentheses, as a statement or in an expression, in prefixed-view notation
- * (`Obj.Op (X)`), to a protected operation, to a user-defined operator (`A - B`), or
- * through a renaming. Indexing, slicing and type conversions, which Ada writes like
+ * A `Call` is a call that resolves (D-021, `codeql.ada.internal.CallResolution`):
+ * written with or without parentheses, as a statement or in an expression, in
+ * prefixed-view notation (`Obj.Op (X)`), to a protected operation, to a user-defined
+ * operator (`A - B`), or through a renaming. Indexing, slicing and type conversions, which Ada writes like
  * calls, are not calls, and neither is a call that does not resolve. Calls through
  * access-to-subprogram values, dispatching calls (bound to their static target),
  * entry calls and calls to generic instances are the named v1 limitations of
@@ -13,14 +13,61 @@
 
 private import codeql.ada.ast.internal.Raw
 private import codeql.ada.Subprograms
-private import codeql.ada.dataflow.internal.SsaImpl as SsaImpl
+private import codeql.ada.internal.CallResolution as CallResolution
+
+/** Gets the name of the pragma or aspect `n` is an argument of, lower-cased. */
+private string pragmaOrAspectName(Raw::AdaNode n) {
+  exists(Raw::PragmaNode p | n.getParent+() = p | result = p.getId().getValue().toLowerCase())
+  or
+  exists(Raw::AspectAssoc a | n.getParent+() = a.getExpr() or n = a.getExpr() |
+    result = a.getId().(Raw::Name).getText().toLowerCase()
+  )
+}
+
+/**
+ * Holds if `n` is evaluated where it stands, judged from the syntax alone: this is
+ * what makes a name that resolves to a subprogram a call. Not evaluated: an `end`
+ * name, a name in a `with` or `use` clause, the name a renaming renames, a subprogram passed as a generic actual or
+ * given as a formal subprogram's default, and the arguments of pragmas and aspects
+ * that name an entity rather than state a condition (`pragma Inline (Foo)`,
+ * `Constant_Indexing => Element`). Unlike data flow, which counts a call only where
+ * the CFG has a node for it, this includes calls evaluated during elaboration, such
+ * as one in a range constraint (`range 1 .. F (X)`).
+ */
+private predicate isEvaluatedSyntactically(Raw::AdaNode n) {
+  not n.getParent*() instanceof Raw::EndName and
+  // the operator of `A - B` resolves to `"-"`, but the call is the whole `BinOp`
+  not n instanceof Raw::Op and
+  // `with Ada.Strings.Unbounded.Hash;` names a library-level function
+  not n.getParent+() instanceof Raw::WithClause and
+  not n.getParent+() instanceof Raw::UseClause and
+  not n = any(Raw::RenamingClause r).getRenamedObject() and
+  not n = any(Raw::FormalSubpDecl f).getDefaultExpr() and
+  not (
+    not n instanceof Raw::CallExpr and
+    n = any(Raw::GenericInstantiation g).getChild(_).(Raw::AssocList).getChild(_).(Raw::ParamAssoc).getRExpr()
+  ) and
+  not exists(string name | name = pragmaOrAspectName(n) |
+    not name =
+      [
+        "assert", "assume", "check", "debug", "loop_invariant", "loop_variant", "assert_and_cut",
+        "precondition", "postcondition", "pre", "post", "pre'class", "post'class",
+        "predicate", "static_predicate", "dynamic_predicate", "type_invariant",
+        "type_invariant'class", "invariant", "contract_cases", "default_initial_condition",
+        "initial_condition", "address", "size", "alignment", "storage_size", "priority",
+        "interrupt_priority", "cpu", "default_value", "default_component_value"
+      ]
+  )
+}
+
+private module Resolution = CallResolution::Make<isEvaluatedSyntactically/1>;
 
 /** A call to a subprogram that resolves. */
 class Call extends Raw::Expr {
-  Call() { exists(SsaImpl::getCallTarget(this)) }
+  Call() { exists(Resolution::getCallTarget(this)) }
 
   /** Gets the declaration this call names, before renamings are followed. */
-  private Raw::BasicDecl getNamedDecl() { result = SsaImpl::getCallTarget(this) }
+  private Raw::BasicDecl getNamedDecl() { result = Resolution::getCallTarget(this) }
 
   /**
    * Gets the subprogram this call invokes. Renamings are followed to the subprogram
@@ -29,9 +76,9 @@ class Call extends Raw::Expr {
    */
   Subprogram getTarget() {
     exists(Raw::BasicDecl d |
-      d = SsaImpl::resolveSubpRenaming(this.getNamedDecl())
+      d = CallResolution::resolveSubpRenaming(this.getNamedDecl())
       or
-      not exists(SsaImpl::resolveSubpRenaming(this.getNamedDecl())) and d = this.getNamedDecl()
+      not exists(CallResolution::resolveSubpRenaming(this.getNamedDecl())) and d = this.getNamedDecl()
     |
       result.getADeclaration() = d
     )
@@ -43,7 +90,7 @@ class Call extends Raw::Expr {
    * prefixed-view notation (`Obj.Op (X)`), `Obj` is argument 0. A parameter left to
    * its default has no argument.
    */
-  Raw::Expr getArgument(int i) { SsaImpl::callActual(this, result, i) }
+  Raw::Expr getArgument(int i) { Resolution::callActual(this, result, i) }
 
   /** Gets an argument of this call. */
   Raw::Expr getAnArgument() { result = this.getArgument(_) }
