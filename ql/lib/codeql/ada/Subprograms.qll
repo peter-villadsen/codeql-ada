@@ -9,6 +9,7 @@
 
 private import codeql.ada.ast.internal.Raw
 private import codeql.ada.internal.Formals
+private import codeql.ada.Calls
 
 /**
  * Holds if `d` is a further declaration of the subprogram first declared by `first`:
@@ -87,6 +88,9 @@ class Subprogram extends Raw::BasicDecl {
     or
     laterDeclaration(this, result) and result instanceof Raw::BaseSubpBody
   }
+
+  /** Gets a call to this subprogram (see `Call`). */
+  Call getACall() { result.getTarget() = this }
 
   /** Gets a declaration of this subprogram: the spec, a body stub, or the body. */
   Raw::BasicDecl getADeclaration() { result = this or laterDeclaration(this, result) }

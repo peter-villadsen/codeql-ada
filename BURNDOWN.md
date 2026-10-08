@@ -919,7 +919,13 @@ specified in `docs/ssa-design.md` and conformance-tested. Next: Task 9.3, local 
       subprograms and instances are not `Subprogram`s (pinned in the fixture).
       `ql/debug/SubprogramConsistency.ql`: empty on four corpus projects, 4 known rows on
       gpr2.
-- [ ] 12.2 `Call`
+- [x] 12.2 `Call`. *Done 2026-10-08.* `codeql/ada/Calls.qll`: `getTarget` (renamings
+      followed), `getArgument(i)`, `getArgumentFor(Parameter)`, `getArgumentByName`,
+      `getCaller` (Java's name; the innermost enclosing subprogram), `isStatement`;
+      `Subprogram.getACall()`. Defined by the data-flow call graph, so the two agree by
+      construction. The `DataFlow` helpers (`isCallTo`, ...) are left as they are rather
+      than rewritten as aliases: same predicates underneath, no gain. Through a renaming,
+      `getArgumentByName` uses the renamed subprogram's parameter names.
 - [ ] 12.3 `Package`, `TypeDecl`, `Variable`
 - [ ] 12.4 Port the shipped queries (corpus counts triaged)
 - [ ] 12.5 Documentation

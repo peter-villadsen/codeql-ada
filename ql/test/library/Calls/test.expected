@@ -1,0 +1,49 @@
+calls
+| calls.adb:24:10:24:11 | Q | Calls.Q | Inner | statement |
+| calls.adb:27:7:27:15 | P (...) | Calls.P | Main | statement |
+| calls.adb:28:7:28:25 | P (...) | Calls.P | Main | statement |
+| calls.adb:29:7:29:12 | P (...) | Calls.P | Main | statement |
+| calls.adb:30:12:30:17 | F (...) | Calls.F | Main | expression |
+| calls.adb:30:15:30:16 | G | Calls.G | Main | expression |
+| calls.adb:31:7:31:8 | Q | Calls.Q | Main | statement |
+| calls.adb:32:7:32:19 | Obj.Prim (...) | Calls.Prim | Main | statement |
+| calls.adb:33:14:33:23 | ... - ... | Calls."-" | Main | expression |
+| calls.adb:34:7:34:12 | R (...) | Calls.P | Main | statement |
+| calls.adb:35:7:35:16 | PO.Op (...) | Calls.PO.Op | Main | statement |
+| calls.adb:39:7:39:12 | Inner | Calls.Main.Inner | Main | statement |
+arguments
+| calls.adb:27:7:27:15 | P (...) | 0 | calls.adb:27:10:27:11 | 1 | A |
+| calls.adb:27:7:27:15 | P (...) | 1 | calls.adb:27:13:27:14 | 2 | B |
+| calls.adb:28:7:28:25 | P (...) | 0 | calls.adb:28:23:28:24 | 1 | A |
+| calls.adb:28:7:28:25 | P (...) | 1 | calls.adb:28:15:28:16 | 2 | B |
+| calls.adb:29:7:29:12 | P (...) | 0 | calls.adb:29:10:29:11 | 1 | A |
+| calls.adb:30:12:30:17 | F (...) | 0 | calls.adb:30:15:30:16 | G | X |
+| calls.adb:32:7:32:19 | Obj.Prim (...) | 0 | calls.adb:32:7:32:10 | Obj | Self |
+| calls.adb:32:7:32:19 | Obj.Prim (...) | 1 | calls.adb:32:17:32:18 | 3 | V |
+| calls.adb:33:14:33:23 | ... - ... | 0 | calls.adb:33:14:33:17 | Obj | L |
+| calls.adb:33:14:33:23 | ... - ... | 1 | calls.adb:33:20:33:23 | Obj | R |
+| calls.adb:34:7:34:12 | R (...) | 0 | calls.adb:34:10:34:11 | 4 | A |
+| calls.adb:35:7:35:16 | PO.Op (...) | 0 | calls.adb:35:14:35:15 | 5 | V |
+byName
+| calls.adb:27:7:27:15 | P (...) | B | calls.adb:27:13:27:14 | 2 |
+| calls.adb:27:7:27:15 | P (...) | a | calls.adb:27:10:27:11 | 1 |
+| calls.adb:28:7:28:25 | P (...) | B | calls.adb:28:15:28:16 | 2 |
+| calls.adb:28:7:28:25 | P (...) | a | calls.adb:28:23:28:24 | 1 |
+| calls.adb:29:7:29:12 | P (...) | a | calls.adb:29:10:29:11 | 1 |
+| calls.adb:32:7:32:19 | Obj.Prim (...) | V | calls.adb:32:17:32:18 | 3 |
+| calls.adb:32:7:32:19 | Obj.Prim (...) | self | calls.adb:32:7:32:10 | Obj |
+| calls.adb:34:7:34:12 | R (...) | a | calls.adb:34:10:34:11 | 4 |
+| calls.adb:35:7:35:16 | PO.Op (...) | V | calls.adb:35:14:35:15 | 5 |
+callsOf
+| calls.adb:22:7:25:17 | Inner | 1 |
+| calls.ads:3:4:3:48 | P | 4 |
+| calls.ads:4:4:4:44 | F | 1 |
+| calls.ads:5:4:5:30 | G | 1 |
+| calls.ads:6:4:6:16 | Q | 2 |
+| calls.ads:9:4:9:43 | Prim | 1 |
+| calls.ads:10:4:10:37 | "-" | 1 |
+| calls.ads:16:7:16:34 | Op | 1 |
+notCalls
+| calls.adb:36:12:36:17 | A (...) |
+| calls.adb:37:12:37:23 | Integer (...) |
+| calls.adb:38:7:38:18 | Unknown (...) |
