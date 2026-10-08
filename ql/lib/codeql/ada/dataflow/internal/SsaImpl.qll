@@ -23,6 +23,7 @@ private import codeql.controlflow.BasicBlock as BB
 private import codeql.ada.ast.internal.Raw
 private import codeql.ada.controlflow.internal.ControlFlowGraphImpl as Impl
 private import ada
+private import codeql.ada.internal.Formals as Formals
 
 /** The `CfgSig` adapter: renames `CfgImpl`'s node type into the shape `codeql/ssa` wants. */
 private module SsaCfg implements BB::CfgSig<Raw::Location> {
@@ -193,20 +194,8 @@ private predicate forLoopVarWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariabl
   )
 }
 
-/**
- * Gets the `SubpSpec` of a callable declaration -- the shapes Task 9.2.3
- * resolves calls to (functions and procedures only; entries, protected
- * operations and generic instantiations are unresolved in v1, D-023).
- */
-private Raw::SubpSpec getSubpSpecOf(Raw::BasicDecl d) {
-  result = d.(Raw::ClassicSubpDecl).getSubpSpec()
-  or
-  result = d.(Raw::BaseSubpBody).getSubpSpec()
-  or
-  // a separate body's stub (`procedure P is separate;`), the declaration when there
-  // is no other; `ada_body_part` pairs it with the subunit's body
-  result = d.(Raw::SubpBodyStub).getSubpSpec()
-}
+/** Gets the `SubpSpec` of a callable declaration (`Formals::subpSpecOf`, D-023). */
+private Raw::SubpSpec getSubpSpecOf(Raw::BasicDecl d) { result = Formals::subpSpecOf(d) }
 
 /**
  * Gets the `CfgScope` that formal parameter `ps` belongs to, if it is part of
@@ -263,50 +252,13 @@ private predicate paramEntryWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariabl
   )
 }
 
-/**
- * Gets any formal parameter's defining name, from any `ParamSpec` group, of
- * `spec` -- flattened across groups, since Ada allows one group to declare
- * several names sharing a mode and type (`A, B : in out Integer`), and
- * positional argument matching counts each name, not each group.
- */
-private Raw::DefiningName anyFormalName(Raw::SubpSpec spec) {
-  result = spec.getSubpParams().getParams().getChild(_).(Raw::ParamSpec).getIds().getChild(_)
-}
-
-/**
- * Gets a sort key placing `dn` -- one of `spec`'s formals, see `anyFormalName`
- * -- in formal-parameter order: group index, then id-within-group index, each
- * read off `dn`'s own position among its siblings (`getParentIndex()`) rather
- * than by inverting `getChild` (which needs its index argument already
- * bound).
- */
-private int formalKey(Raw::SubpSpec spec, Raw::DefiningName dn) {
-  exists(Raw::ParamSpec ps |
-    dn = anyFormalName(spec) and
-    dn = ps.getIds().getChild(_) and
-    ps = spec.getSubpParams().getParams().getChild(_) and
-    result = ps.getParentIndex() * 1000 + dn.getParentIndex()
-  )
-}
-
-/**
- * Gets the 0-based flattened formal index of `dn` among `spec`'s formals (see
- * `formalKey`). `count`, not `strictcount`: the first formal has nothing
- * preceding it, an empty range, and `strictcount` -- unlike `count` -- has no
- * result at all over an empty range, which silently dropped the first formal
- * of every `SubpSpec` (confirmed empirically: only the second of two formals
- * ever showed up, see `docs/phase9.2-plan.md` Task 9.2.3).
- */
+/** Gets the 0-based flattened formal index of `dn` among `spec`'s formals (`Formals::formalIndex`). */
 private int formalIndex(Raw::SubpSpec spec, Raw::DefiningName dn) {
-  dn = anyFormalName(spec) and
-  result =
-    count(Raw::DefiningName other |
-      other = anyFormalName(spec) and formalKey(spec, other) < formalKey(spec, dn)
-    )
+  result = Formals::formalIndex(spec, dn)
 }
 
-/** Gets the `i`th formal (0-based, flattened across `ParamSpec` groups -- see `anyFormalName`) of `spec`. */
-private Raw::DefiningName formalAt(Raw::SubpSpec spec, int i) { i = formalIndex(spec, result) }
+/** Gets the `i`th formal (0-based, flattened across `ParamSpec` groups) of `spec` (`Formals::formalAt`). */
+private Raw::DefiningName formalAt(Raw::SubpSpec spec, int i) { result = Formals::formalAt(spec, i) }
 
 /**
  * Gets the name, lower-cased, of the `i`th formal (see `formalAt`) of subprogram

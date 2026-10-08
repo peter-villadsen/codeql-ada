@@ -8,3 +8,4 @@
 
 import codeql.ada.ast.internal.Raw
 import codeql.ada.ast.internal.Raw::Raw
+import codeql.ada.Subprograms

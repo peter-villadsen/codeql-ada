@@ -910,7 +910,15 @@ specified in `docs/ssa-design.md` and conformance-tested. Next: Task 9.3, local 
 - [x] 12.0 No prefix for generated classes; readable `toString` (D-027). *Done 2026-10-08.*
       Hand-written predicates are mixins of the generated classes; `from IfStmt s` works and
       results read `Free_All`, `... = ...`. Suite green, corpus counts identical.
-- [ ] 12.1 `Subprogram` and `Parameter`
+- [x] 12.1 `Subprogram` and `Parameter`. *Done 2026-10-08.* `codeql/ada/Subprograms.qll`;
+      the formals flattening moved to `codeql/ada/internal/Formals.qll`, shared with data
+      flow. A stub is subordinate only to a spec (two stubs sharing a body, as with
+      gpr2's duplicate unit names, stay two subprograms). Deviations from the plan:
+      `Parameter.getAnAccess()` instead of `Name.getReferencedParameter()` (Java's idiom);
+      `Parameter` extends `Name`, not `DefiningName`, so `getName()` is a string; generic
+      subprograms and instances are not `Subprogram`s (pinned in the fixture).
+      `ql/debug/SubprogramConsistency.ql`: empty on four corpus projects, 4 known rows on
+      gpr2.
 - [ ] 12.2 `Call`
 - [ ] 12.3 `Package`, `TypeDecl`, `Variable`
 - [ ] 12.4 Port the shipped queries (corpus counts triaged)

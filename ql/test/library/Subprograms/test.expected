@@ -1,0 +1,38 @@
+subprograms
+| pkg.adb:13:4:13:50 | Stub_Only | SubpBodyStub | procedure | 1 | SubpBody@2 | SubpBody@2, SubpBodyStub@13 |
+| pkg.adb:16:4:19:18 | Body_Only | SubpBody | procedure | 1 | SubpBody@16 | SubpBody@16 |
+| pkg.ads:4:4:4:85 | Spec_And_Body | SubpDecl | procedure | 4 | SubpBody@2 | SubpBody@2, SubpDecl@4 |
+| pkg.ads:7:4:7:50 | Fn | SubpDecl | function | 1 | ExprFunction@8 | ExprFunction@8, SubpDecl@7 |
+| pkg.ads:10:4:10:41 | Separate_Body | SubpDecl | procedure | 1 | SubpBody@2 | SubpBody@2, SubpBodyStub@10, SubpDecl@10 |
+| pkg.ads:13:4:13:46 | Null_Proc | NullSubpDecl | procedure | 1 | NullSubpDecl@13 | NullSubpDecl@13 |
+| pkg.ads:15:4:15:37 | Imported | SubpDecl | procedure | 1 | none | SubpDecl@15 |
+| pkg.ads:19:4:19:57 | Renamed | SubpRenamingDecl | procedure | 1 | SubpRenamingDecl@19 | SubpRenamingDecl@19 |
+| pkg.ads:32:4:32:41 | "+" | SubpDecl | function | 2 | ExprFunction@26 | ExprFunction@26, SubpDecl@32 |
+parameters
+| pkg.adb:13:4:13:50 | Stub_Only | 0 | pkg.adb:13:25:13:26 | W | in | Standard.Integer | - | 2 |
+| pkg.adb:16:4:19:18 | Body_Only | 0 | pkg.adb:16:25:16:26 | K | in | Standard.Integer | - | 1 |
+| pkg.ads:4:4:4:85 | Spec_And_Body | 0 | pkg.ads:4:29:4:30 | A | in | Standard.Integer | - | 2 |
+| pkg.ads:4:4:4:85 | Spec_And_Body | 1 | pkg.ads:4:32:4:33 | B | in | Standard.Integer | - | 2 |
+| pkg.ads:4:4:4:85 | Spec_And_Body | 2 | pkg.ads:4:48:4:49 | C | out | Standard.Integer | - | 2 |
+| pkg.ads:4:4:4:85 | Spec_And_Body | 3 | pkg.ads:4:65:4:66 | D | in out | Standard.Integer | - | 2 |
+| pkg.ads:7:4:7:50 | Fn | 0 | pkg.ads:7:17:7:18 | X | in | Standard.Integer | 0 | 2 |
+| pkg.ads:10:4:10:41 | Separate_Body | 0 | pkg.ads:10:29:10:30 | S | in | Standard.String | - | 3 |
+| pkg.ads:13:4:13:46 | Null_Proc | 0 | pkg.ads:13:25:13:26 | N | in | Standard.Integer | - | 1 |
+| pkg.ads:15:4:15:37 | Imported | 0 | pkg.ads:15:24:15:25 | I | in | Standard.Integer | - | 1 |
+| pkg.ads:19:4:19:57 | Renamed | 0 | pkg.ads:19:23:19:24 | Q | in | Standard.String | - | 1 |
+| pkg.ads:32:4:32:41 | "+" | 0 | pkg.ads:32:18:32:19 | L | in | Pkg.Rec | - | 2 |
+| pkg.ads:32:4:32:41 | "+" | 1 | pkg.ads:32:21:32:22 | R | in | Pkg.Rec | - | 2 |
+accesses
+| pkg.adb:13:25:13:26 | W | pkg-stub_only.adb:4:7:4:8 | W |
+| pkg.ads:4:29:4:30 | A | pkg.adb:4:12:4:13 | A |
+| pkg.ads:4:32:4:33 | B | pkg.adb:4:16:4:17 | B |
+| pkg.ads:4:48:4:49 | C | pkg.adb:4:7:4:8 | C |
+| pkg.ads:4:65:4:66 | D | pkg.adb:5:7:5:8 | D |
+| pkg.ads:4:65:4:66 | D | pkg.adb:5:12:5:13 | D |
+| pkg.ads:7:17:7:18 | X | pkg.adb:8:54:8:55 | X |
+| pkg.ads:10:29:10:30 | S | pkg-separate_body.adb:4:7:4:8 | S |
+| pkg.ads:32:18:32:19 | L | pkg.adb:26:51:26:52 | L |
+| pkg.ads:32:21:32:22 | R | pkg.adb:26:57:26:58 | R |
+returnTypes
+| pkg.ads:7:4:7:50 | Fn | Standard.Integer |
+| pkg.ads:32:4:32:41 | "+" | Pkg.Rec |
