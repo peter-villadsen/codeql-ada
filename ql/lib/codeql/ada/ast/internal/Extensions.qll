@@ -135,6 +135,34 @@ class BasicDeclExt extends Raw::AdaNode, @ada_basic_decl {
   predicate isReferenced() { ada_xref(_, this) }
 
   /**
+   * Holds if a name this declaration introduces marks it as deliberately unused, by
+   * GNAT's rule: it contains `discard`, `dummy`, `ignore`, `junk` or `unused`
+   * (ignoring case), as in `Dummy`, `Ignore_Result`, `Unused_Stop`. GNAT gives no
+   * "never referenced" warning for such names, and the queries follow it.
+   */
+  predicate hasJunkName() {
+    this.getAName().toLowerCase().matches(["%discard%", "%dummy%", "%ignore%", "%junk%", "%unused%"])
+  }
+
+  /**
+   * Holds if this declaration carries a `No_Return` aspect (`with No_Return`), or is
+   * named by a `pragma No_Return`: a subprogram that never returns normally.
+   */
+  predicate hasNoReturnMark() {
+    exists(Raw::AspectAssoc a |
+      a = this.(Raw::BasicDecl).getAspects().getAspectAssocs().getChild(_)
+    |
+      a.getId().(Raw::Identifier).getValue().toLowerCase() = "no_return" and
+      not a.getExpr().(Raw::Identifier).getValue().toLowerCase() = "false"
+    )
+    or
+    exists(Raw::PragmaNode p |
+      p.getId().getValue().toLowerCase() = "no_return" and
+      ada_xref(p.getArgs().getChild(_).(Raw::PragmaArgumentAssoc).getExpr(), this)
+    )
+  }
+
+  /**
    * Holds if, inside subprogram body `body`, an identifier that did not resolve at all
    * is spelled like one of this declaration's names (ignoring case), so it may be a
    * reference that extraction could not resolve, typically because the project's

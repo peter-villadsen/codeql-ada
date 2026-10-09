@@ -55,9 +55,31 @@ private predicate isCloseOrDelete(AdaNode call) {
 
 module OpenClose = MissingPairedCall<isOpenOrCreate/1, isCloseOrDelete/1>;
 
+/** Gets the subprogram body that most closely encloses `n`. */
+private BaseSubpBody innermostBody(AdaNode n) {
+  result = n.getParent+() and
+  not exists(BaseSubpBody inner | inner = n.getParent+() and inner.getParent+() = result)
+}
+
+/**
+ * Holds if the file `call` opens is held by a parameter (`File : out File_Type`) or
+ * by an object declared outside the subprogram the call is in. The file is then
+ * opened for someone else, who is responsible for closing it.
+ */
+private predicate opensNonLocalFile(AdaNode call) {
+  exists(Name file, BasicDecl d |
+    file =
+      call.(CallStmt).getCall().(CallExpr).getSuffix().(AssocList).getChild(0).(ParamAssoc).getRExpr() and
+    d = file.getReferencedDecl()
+  |
+    d instanceof ParamSpec or not d.getParent+() = innermostBody(call)
+  )
+}
+
 from AdaNode call
 where
   OpenClose::missingPairedCallNormalPathsOnly(call) and
+  not opensNonLocalFile(call) and
   call.fromSource()
 select call,
   "This file may not be closed on every path: no call to Ada.Text_IO.Close/Delete follows on all non-exceptional paths from here."

@@ -30,5 +30,10 @@ where
   stmt = list.getChild(i) and
   not isReachable(stmt) and
   (i = 0 or isReachable(list.getChild(i - 1))) and
+  // a pragma is not executed; `pragma Annotate (Xcov, Exempt_Off)` after a `raise`
+  // is the usual way to close a coverage exemption
+  not stmt instanceof PragmaNode and
+  // the CFG does not model GNAT's `finally` extension yet
+  not stmt.getParent+() instanceof FinallyPart and
   stmt.fromSource()
 select stmt, "This statement is unreachable."

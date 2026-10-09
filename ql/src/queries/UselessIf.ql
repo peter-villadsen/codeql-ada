@@ -17,5 +17,9 @@ where
   not exists(thenStmts.getChild(1)) and
   not exists(s.getAlternatives().getChild(0)) and
   not exists(s.getElsePart()) and
+  // `if Load (X) then null; end if;` calls Load for its effect: it cannot be removed
+  not exists(Expr e | e.getParent*() = s.getCondExpr() |
+    e instanceof Call or e instanceof CallExpr and not exists(e.(CallExpr).getName().getReferencedDecl())
+  ) and
   s.fromSource()
 select s, "This if statement does nothing and can be removed."

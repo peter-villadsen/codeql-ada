@@ -22,10 +22,23 @@ private predicate isBooleanLiteral(Name lit) {
   not exists(lit.getReferencedDecl()) and lit.getText().toLowerCase() = ["true", "false"]
 }
 
-from RelationOp cmp, Name lit
+/**
+ * Holds if `e` is known to be of a boolean type: `Standard.Boolean` or a type derived
+ * from it. A comparison with `True` is redundant only then; `X = True` where `X` is of
+ * some other type with a literal `True` converts it, and an operand whose type did
+ * not resolve (a missing dependency) cannot be judged.
+ */
+private predicate isOfBooleanType(Expr e) {
+  e.getType().getParentType*().hasQualifiedName("Standard.Boolean")
+}
+
+from RelationOp cmp, Name lit, Expr other
 where
   (cmp.getOp() instanceof OpEq or cmp.getOp() instanceof OpNeq) and
   lit = [cmp.getLeft(), cmp.getRight()] and
+  other = [cmp.getLeft(), cmp.getRight()] and
+  other != lit and
   isBooleanLiteral(lit) and
+  isOfBooleanType(other) and
   cmp.fromSource()
 select cmp, "Comparison with boolean literal " + lit.getText() + " is redundant."

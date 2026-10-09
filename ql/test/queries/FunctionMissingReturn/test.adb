@@ -51,3 +51,28 @@ procedure Test is
 begin
    null;
 end Test;
+
+--  A No_Return call that does not resolve, as with a missing dependency (v0.2.0
+--  precision check): the argument names a package that is not there.
+package Errors is
+   procedure Fail (Msg : String) with No_Return;
+end Errors;
+
+with Errors;
+function Checked (X : Integer) return Integer is   --  fine: Fail never returns
+begin
+   if X > 0 then
+      return X;
+   end if;
+   Errors.Fail (Missing_Pkg.Describe (X));
+end Checked;
+
+with Errors;
+function Checked_Else (X : Integer) return Integer is   --  fine: the else branch fails
+begin
+   if X > 0 then
+      return X;
+   else
+      Errors.Fail (Missing_Pkg.Describe (X));
+   end if;
+end Checked_Else;

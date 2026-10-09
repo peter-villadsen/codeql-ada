@@ -22,6 +22,8 @@ where
   // Checking every enclosing body amounts to checking the innermost one.
   not d.hasUnresolvedNamesakeIn(b) and
   not d.isMarkedUnreferenced() and
+  // GNAT's rule: `Dummy`, `Ignore`, `Unused_...` are unused on purpose
+  not d.hasJunkName() and
   not exists(d.getRenamingClause()) and
   // An extended-return object is the returned value; "unused" is meaningless.
   not d instanceof ExtendedReturnStmtObjectDecl and

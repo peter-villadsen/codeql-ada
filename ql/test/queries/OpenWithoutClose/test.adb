@@ -60,3 +60,23 @@ begin
    LeaksViaRenaming;
    ClosesViaSubpRenaming;
 end Test;
+
+--  Files opened for someone else (v0.2.0 precision check): fine.
+with Ada.Text_IO;
+package Logs is
+   Log : Ada.Text_IO.File_Type;
+   procedure Open_For_Caller (File : out Ada.Text_IO.File_Type);
+   procedure Open_Shared;
+end Logs;
+
+package body Logs is
+   procedure Open_For_Caller (File : out Ada.Text_IO.File_Type) is
+   begin
+      Ada.Text_IO.Create (File, Ada.Text_IO.Out_File, "caller.log");
+   end Open_For_Caller;
+
+   procedure Open_Shared is
+   begin
+      Ada.Text_IO.Create (Log, Ada.Text_IO.Out_File, "shared.log");
+   end Open_Shared;
+end Logs;

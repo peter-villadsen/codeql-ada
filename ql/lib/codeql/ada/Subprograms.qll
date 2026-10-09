@@ -51,6 +51,31 @@ class Subprogram extends Raw::BasicDecl {
   /** Gets the name of this subprogram, e.g. `Free_All`, or `"+"` for an operator. */
   string getName() { result = this.getSpecNode().getSubpName().getName().getText() }
 
+  /**
+   * Holds if this subprogram never returns normally: a declaration of it carries
+   * `with No_Return` or is named by `pragma No_Return`.
+   */
+  predicate isNoReturn() { this.getADeclaration().hasNoReturnMark() }
+
+  /**
+   * Holds if this subprogram's parameter profile is fixed by something other than
+   * its own needs: its `'Access` is taken (it is a callback of an access-to-subprogram
+   * type) or it is passed as a generic actual. Its parameters cannot be removed even
+   * when it does not use them.
+   */
+  predicate hasImposedProfile() {
+    exists(Raw::AttributeRef a, string attr |
+      attr = a.getAttribute().getValue().toLowerCase() and
+      attr = ["access", "unchecked_access", "unrestricted_access"] and
+      a.getPrefix().getReferencedDecl() = this.getADeclaration()
+    )
+    or
+    exists(Raw::ParamAssoc actual |
+      actual = any(Raw::GenericInstantiation g).getChild(_).(Raw::AssocList).getChild(_) and
+      actual.getRExpr().(Raw::Name).getReferencedDecl() = this.getADeclaration()
+    )
+  }
+
   /** Holds if this is a generic subprogram (`generic ... procedure G (...)`). */
   predicate isGeneric() { this instanceof Raw::GenericSubpDecl }
 

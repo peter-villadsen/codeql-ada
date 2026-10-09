@@ -57,3 +57,13 @@ begin
       P5 (1, V);
    end;
 end Test;
+
+--  Not statements that run (v0.2.0 precision check): fine.
+procedure Not_Run (X : Integer) is
+begin
+   if X < 0 then
+      pragma Annotate (Xcov, Exempt_On, "defensive code");
+      raise Program_Error;
+      pragma Annotate (Xcov, Exempt_Off);
+   end if;
+end Not_Run;

@@ -26,6 +26,33 @@ private predicate isReferenced(Subprogram s) {
   )
 }
 
+/** Holds if `s` is declared `overriding`: it is called by dispatching, never by name. */
+private predicate isOverriding(Subprogram s) {
+  s.getADeclaration().(ClassicSubpDecl).getOverriding() instanceof OverridingOverriding or
+  s.getADeclaration().(BaseSubpBody).getOverriding() instanceof OverridingOverriding
+}
+
+/**
+ * Holds if an instantiation in `enclosing` may use `s` without naming it: as the
+ * default of a generic formal subprogram of the same name (`with function Compare
+ * (...) is <>`), or as an actual that did not resolve (`"=" => "="`).
+ */
+private predicate mayBeUsedByInstantiation(Subprogram s, BaseSubpBody enclosing) {
+  exists(GenericInstantiation inst | inst.getParent+() = enclosing |
+    exists(FormalSubpDecl f |
+      f.getDefaultExpr() instanceof BoxExpr and
+      f.getSubpSpec().getSubpName().getName().getText().toLowerCase() = s.getName().toLowerCase() and
+      f.getParent+() = inst.getDesignatedGeneric()
+    )
+    or
+    exists(Name actual |
+      actual = inst.getChild(_).(AssocList).getChild(_).(ParamAssoc).getRExpr() and
+      not exists(actual.getReferencedDecl()) and
+      actual.getText().toLowerCase() = s.getName().toLowerCase()
+    )
+  )
+}
+
 from Subprogram s, SubpBody body, BaseSubpBody enclosing
 where
   body = s.getBody() and
@@ -35,5 +62,7 @@ where
   // A same-named call that did not resolve may be a call (missing dependencies, D-026).
   // Checking every enclosing body amounts to checking the innermost one.
   not s.hasUnresolvedNamesakeIn(enclosing) and
+  not isOverriding(s) and
+  not mayBeUsedByInstantiation(s, enclosing) and
   s.fromSource()
 select body, "This nested subprogram is never called."

@@ -77,3 +77,49 @@ begin
    Inst (1);
    Obj.Set (2);
 end Outer2;
+
+--  Used without being named (v0.2.0 precision check): fine.
+procedure Outer3 is
+   type Base is abstract tagged null record;
+   procedure Visit (B : Base) is abstract;
+   procedure Run (B : Base'Class) is
+   begin
+      Visit (B);
+   end Run;
+
+   type Leaf is new Base with null record;
+   overriding procedure Visit (L : Leaf) is       --  called by dispatching
+   begin
+      null;
+   end Visit;
+
+   generic
+      type T is private;
+      with function Compare (L, R : T) return Boolean is <>;
+   function Max (L, R : T) return T;
+   function Max (L, R : T) return T is (if Compare (L, R) then L else R);
+
+   function Compare (L, R : Integer) return Boolean is            --  box default
+   begin
+      return L > R;
+   end Compare;
+
+   function Int_Max is new Max (Integer);
+
+   type Pair is record
+      A, B : Integer;
+   end record;
+
+   function "=" (L, R : Pair) return Boolean is                   --  generic actual
+   begin
+      return L.A = R.A;
+   end "=";
+
+   --  the generic is missing, so the actual "=" does not resolve
+   package Pair_Sets is new Missing_Pkg.Sets (Pair, "=" => "=");
+begin
+   Run (Leaf'(null record));
+   if Int_Max (1, 2) = 2 then
+      null;
+   end if;
+end Outer3;

@@ -60,3 +60,27 @@ procedure P7 (X : Integer with Unreferenced) is  --  marked by aspect: fine
 begin
    null;
 end P7;
+
+--  Parameters that cannot be removed (v0.2.0 precision check): fine.
+procedure Imposed_Profiles is
+   type Visitor is access procedure (Item : Integer; Stop : in out Boolean);
+
+   procedure Walk (Action : Visitor) is
+      Stop : Boolean := False;
+   begin
+      Action (1, Stop);
+   end Walk;
+
+   procedure Print (Item : Integer; Stop : in out Boolean) is  --  a callback
+   begin
+      null;
+   end Print;
+
+   procedure Count (Unused_Item : Integer) is                   --  a junk name
+   begin
+      null;
+   end Count;
+begin
+   Walk (Print'Access);
+   Count (1);
+end Imposed_Profiles;

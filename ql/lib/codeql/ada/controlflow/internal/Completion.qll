@@ -138,17 +138,7 @@ predicate diverges(Raw::AdaNode n) {
 }
 
 /** Holds if `d` carries a `No_Return` aspect, or is named by a `pragma No_Return`. */
-private predicate hasNoReturnMark(Raw::BasicDecl d) {
-  exists(Raw::AspectAssoc a | a = d.getAspects().getAspectAssocs().getChild(_) |
-    a.getId().(Raw::Identifier).getValue().toLowerCase() = "no_return" and
-    not a.getExpr().(Raw::Identifier).getValue().toLowerCase() = "false"
-  )
-  or
-  exists(Raw::PragmaNode p |
-    p.getId().getValue().toLowerCase() = "no_return" and
-    ada_xref(p.getArgs().getChild(_).(Raw::PragmaArgumentAssoc).getExpr(), d)
-  )
-}
+private predicate hasNoReturnMark(Raw::BasicDecl d) { d.hasNoReturnMark() }
 
 /**
  * Holds if `d` is a `No_Return` subprogram. The mark is usually on the spec, while a

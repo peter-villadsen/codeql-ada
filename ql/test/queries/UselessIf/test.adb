@@ -18,3 +18,17 @@ begin
       X := X + 1;
    end if;
 end Test;
+
+--  A condition evaluated for its effect (v0.2.0 precision check): fine.
+procedure Effect is
+   Loaded : Natural := 0;
+   function Load return Boolean is
+   begin
+      Loaded := Loaded + 1;
+      return True;
+   end Load;
+begin
+   if Load then
+      null;
+   end if;
+end Effect;

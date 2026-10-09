@@ -28,3 +28,12 @@ begin
       null;
    end if;
 end Test;
+
+--  An operand whose type is unknown, as with a missing dependency (v0.2.0
+--  precision check): fine, it may not be a Boolean.
+procedure Unknown_Type is
+begin
+   if Missing_Pkg.Value ("x") = True then
+      null;
+   end if;
+end Unknown_Type;

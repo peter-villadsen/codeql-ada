@@ -48,6 +48,14 @@ Classes: `Subprogram`, `Parameter`, `Call`, `Type`, `Component`, `Variable`, `Pa
 (`codeql/ada/Subprograms.qll`, `Calls.qll`, `Declarations.qll`). Suite green (63/63).
 Details and the corpus triage in the Phase 12 section below.
 
+**v0.2.0 precision check (2026-10-09)** —
+[docs/v0.2.0-precision-check.md](docs/v0.2.0-precision-check.md). Every query sampled
+against the source; eight false-positive patterns fixed (junk names, callbacks,
+unresolved `No_Return` calls, dispatching and implicit uses, files opened for the caller,
+coverage pragmas and `finally` parts, side-effecting conditions, unknown operand types),
+each pinned by a fixture case the old query fails. Corpus 2,306 to 2,172 results.
+**Found, not fixed:** the CFG does not model GNAT's `finally` parts.
+
 **Open, deliberately not started (each a project of its own; ask before starting):**
 - **Content flow** (record components, array elements): building a value element-wise
   (`Arg_List (I) := new String'(...)`) loses taint. Together with generic containers

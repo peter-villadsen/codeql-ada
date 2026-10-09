@@ -33,6 +33,10 @@ where
   not param.isReferenced() and
   // `pragma Unreferenced (X)` or `X : T with Unreferenced`.
   not param.isMarkedUnreferenced() and
+  // GNAT's rule: `Dummy`, `Ignore`, `Unused_...` are unused on purpose
+  not param.hasJunkName() and
+  // a callback (`'Access`) or generic actual cannot choose its own parameters
+  not exists(Subprogram s | s.getBody() = body and s.hasImposedProfile()) and
   // A same-named name that did not resolve may be a use (missing dependencies, D-026).
   not param.hasUnresolvedNamesakeIn(body) and
   not body.getOverriding() instanceof OverridingOverriding and
