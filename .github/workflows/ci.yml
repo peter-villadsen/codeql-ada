@@ -7,6 +7,10 @@ name: CI
 # below, so a change to it must still run CI. Do not collapse this to a glob.
 on:
   push:
+    # Branches only: a `v*` tag push is covered by release.yml, which runs the test
+    # suite itself, and the tagged commit has already been through CI on its branch.
+    # Without this filter a tag push runs CI as well, a duplicate of the branch run.
+    branches: ['**']
     paths-ignore: &docs-only
       - 'README.md'
       - 'CONTRIBUTING.md'
