@@ -280,9 +280,8 @@ The full set of metadata properties is in GitHub's
    (`getReferencedDecl()`) rather than matching on node kind alone;
    `UnreachableStatement.ql` shows sibling-position reasoning within a
    statement list (`getChild(i)`/`getChild(i + 1)`) without needing a CFG.
-   Whatever you report, add `x.(AdaNode).fromSource()` (or
-   `c.(Comment).fromSource()`) so nothing is reported inside a predefined
-   pseudo-source (D-026).
+   Whatever you report, add `x.fromSource()` (on any AST node or comment)
+   so nothing is reported inside a predefined pseudo-source (D-026).
 2. Add a test: create `ql/test/queries/YourQuery/` containing
    `YourQuery.qlref` (one line: `queries/YourQuery.ql`) and one or more Ada
    source snippets exercising both a case that should be flagged and one
@@ -329,9 +328,14 @@ import ada
 import codeql.ada.controlflow.Cfg
 import codeql.ada.controlflow.PairedCalls
 
-private predicate isFoo(AdaNode call) { /* your match on `Foo` calls */ }
+// The module works on call statements (`Foo (X);`), as `OpenWithoutClose.ql` does.
+private predicate isFoo(AdaNode call) {
+  call.(CallStmt).getCall().(Call).getTarget().hasQualifiedName("My_App.Foo")
+}
 
-private predicate isBar(AdaNode call) { /* your match on `Bar` calls */ }
+private predicate isBar(AdaNode call) {
+  call.(CallStmt).getCall().(Call).getTarget().hasQualifiedName("My_App.Bar")
+}
 
 module FooBar = MissingPairedCall<isFoo/1, isBar/1>;
 
@@ -357,14 +361,15 @@ A few things worth knowing before you instantiate it:
   ones that only escape via an unhandled exception.
 - **Resolving what a call "is" is the hard part, not the CFG part.** Package
   `Standard` and the runtime units a project refers to directly are extracted
-  as predefined pseudo-sources (D-026), so `getReferencedDecl()` on a call to
-  `Ada.Text_IO.Open` gives its `SubpDecl` in `a-textio.ads`, whether it was
-  spelled in full or through a `use` clause or package renaming. Identify it
-  with `BasicDecl.hasQualifiedName("Ada.Text_IO.Open")` (case-insensitive;
-  Libadalang's fully qualified name, extracted for every declaration), and
-  call `getUltimateDecl()` first to see through subprogram, object, exception
-  and package renamings (`GenericInstantiation.getDesignatedGeneric()` already
-  sees through generic renamings). Runtime units resolve only if a GNAT
+  as predefined pseudo-sources (D-026), so `Call.getTarget()` on a call to
+  `Ada.Text_IO.Open` is its declaration in `a-textio.ads`, whether it was
+  spelled in full or through a `use` clause or package renaming, and through
+  subprogram renamings. Identify it with
+  `hasQualifiedName("Ada.Text_IO.Open")` (case-insensitive; Libadalang's fully
+  qualified name, extracted for every declaration). For something that is not
+  a call, `Name.getReferencedDecl()` and `BasicDecl.getUltimateDecl()` do the
+  same (`GenericInstantiation.getDesignatedGeneric()` already sees through
+  generic renamings). Runtime units resolve only if a GNAT
   runtime was found at extraction (see the user guide); `Standard` always
   does. The pattern the shipped queries use (`isTextIoOp` in
   `OpenWithoutClose.ql`, `UncheckedConversion.ql`, ...) is: match
@@ -381,14 +386,27 @@ To ask "can this value reach that call?", import `codeql.ada.dataflow.DataFlow` 
 `codeql.ada.dataflow.TaintTracking`. Then write a module implementing
 `DataFlow::ConfigSig` (`isSource`, `isSink`, and optionally `isBarrier`) and instantiate
 `TaintTracking::Global<Config>`. Use `DataFlow::Global<Config>` instead when only an
-unchanged value counts. Flow crosses subprogram boundaries.
+unchanged value counts. Flow crosses subprogram boundaries: into a subprogram through
+its parameters, and back out through function results and `out` parameters.
 
-**"No tainted value may reach this subprogram."** Make every argument of a call to it a
-sink:
+A data-flow node is an expression (`n.asExpr()`) or a parameter as it receives the
+caller's value (`n.asParameter()`, the parameter's name in the body, so
+`n.asParameter() = p.getADeclaration()` for a `Parameter p`).
+
+The examples below are complete queries. Each is also a test, in
+`ql/test/examples/<name>/`, run against the Ada shown with it, so they are known to
+work as written. Copy one, change the names, and keep the fixture next to it.
+
+### Untrusted data reaches a subprogram
+
+Make every argument of a call to the subprogram a sink, the values that should not
+reach it the sources, and the values a validator returns barriers:
 
 ```ql
 /**
  * @name Untrusted data reaches My_App.Db.Execute
+ * @description A value from the command line or from a request reaches the query
+ *              that My_App.Db.Execute runs without passing My_App.Validate.Sanitize.
  * @kind path-problem
  * @id my-app/untrusted-to-execute
  * @problem.severity error
@@ -400,26 +418,104 @@ import codeql.ada.dataflow.TaintTracking
 import codeql.ada.security.CommandInjection
 
 module Config implements DataFlow::ConfigSig {
-  // What counts as tainted: here the command line (the built-in source), and the
-  // inputs of a request handler.
+  // What counts as untrusted: the command line (the library's built-in source) and
+  // the parameters of the request handler.
   predicate isSource(DataFlow::Node n) {
-    n instanceof CommandInjection::Source or
-    DataFlow::isParameterOf(n, "My_App.Server.Handle_Request")
-  }
-
-  // Every argument of every call to My_App.Db.Execute ...
-  predicate isSink(DataFlow::Node n) {
-    exists(Expr call | DataFlow::isCallTo(call, "My_App.Db.Execute") |
-      n.asExpr() = DataFlow::getAnArgument(call)
+    n instanceof CommandInjection::Source
+    or
+    exists(Parameter p | p.getSubprogram().hasQualifiedName("My_App.Server.Handle_Request") |
+      n.asParameter() = p.getADeclaration()
     )
   }
-  // ... or only one formal of it:
-  //   DataFlow::isArgumentFor(call, n.asExpr(), "Query")
 
-  // Values that passed a validator are clean.
+  // Every argument of every call to My_App.Db.Execute.
+  predicate isSink(DataFlow::Node n) {
+    exists(Call c | c.getTarget().hasQualifiedName("My_App.Db.Execute") |
+      n.asExpr() = c.getAnArgument()
+    )
+  }
+
+  // What Sanitize returns is clean.
   predicate isBarrier(DataFlow::Node n) {
-    exists(Expr call | DataFlow::isCallTo(call, "My_App.Validate.Sanitize") |
-      n.asExpr() = call
+    exists(Call c | c.getTarget().hasQualifiedName("My_App.Validate.Sanitize") | n.asExpr() = c)
+  }
+}
+
+module Flow = TaintTracking::Global<Config>;
+
+import Flow::PathGraph
+
+from Flow::PathNode source, Flow::PathNode sink
+where Flow::flowPath(source, sink) and sink.getNode().asExpr().fromSource()
+select sink.getNode(), source, sink, "This query depends on $@.", source.getNode(), "untrusted data"
+```
+
+On this code:
+
+```ada
+   --  a helper the value passes through on its way to Execute
+   procedure Run_Query (Q : String) is
+   begin
+      Db.Execute (Q);                                --  BAD: from the command line, via Main
+   end Run_Query;
+
+   package body Server is
+      procedure Handle_Request (Body_Text : String) is
+      begin
+         Db.Execute ("SELECT " & Body_Text);         --  BAD: request input
+         Db.Execute (Validate.Sanitize (Body_Text)); --  fine: sanitized
+      end Handle_Request;
+   end Server;
+
+   procedure Main is
+   begin
+      Run_Query (Ada.Command_Line.Argument (1));
+      Db.Execute ("SELECT 1");                       --  fine: a constant
+   end Main;
+```
+
+it reports `Db.Execute (Q)`, with the path from `Ada.Command_Line.Argument (1)` in
+`Main` through `Run_Query`'s parameter, and `Db.Execute ("SELECT " & Body_Text)`; not
+the sanitized call or the constant one. To make one parameter the sink rather than
+every argument, use `n.asExpr() = c.getArgumentByName("Query")`.
+
+### An environment variable names a file to delete
+
+Sources and sinks in the GNAT runtime are written the same way: the runtime units a
+project uses are extracted (D-026), so `Ada.Environment_Variables.Value` and
+`Ada.Directories.Delete_File` resolve like the project's own subprograms.
+
+```ql
+/**
+ * @name Environment variable decides which file is deleted
+ * @description The value of an environment variable reaches the name of a file or
+ *              directory that is deleted. Whoever sets the environment chooses what
+ *              is removed.
+ * @kind path-problem
+ * @id my-app/environment-to-file-deletion
+ * @problem.severity warning
+ */
+
+import ada
+import codeql.ada.dataflow.DataFlow
+import codeql.ada.dataflow.TaintTracking
+
+module Config implements DataFlow::ConfigSig {
+  predicate isSource(DataFlow::Node n) {
+    exists(Call c | c.getTarget().hasQualifiedName("Ada.Environment_Variables.Value") |
+      n.asExpr() = c
+    )
+  }
+
+  predicate isSink(DataFlow::Node n) {
+    exists(Call c |
+      c.getTarget()
+          .hasQualifiedName([
+              "Ada.Directories.Delete_File", "Ada.Directories.Delete_Directory",
+              "Ada.Directories.Delete_Tree"
+            ])
+    |
+      n.asExpr() = c.getArgument(0)
     )
   }
 }
@@ -429,37 +525,291 @@ module Flow = TaintTracking::Global<Config>;
 import Flow::PathGraph
 
 from Flow::PathNode source, Flow::PathNode sink
-where Flow::flowPath(source, sink) and sink.getNode().asExpr().(AdaNode).fromSource()
-select sink.getNode(), source, sink, "This argument depends on $@.", source.getNode(),
-  "untrusted data"
+where Flow::flowPath(source, sink) and sink.getNode().asExpr().fromSource()
+select sink.getNode(), source, sink, "The file deleted here is named by $@.", source.getNode(),
+  "an environment variable"
 ```
 
-The helpers resolve by meaning, not text, so `use` clauses and renamings are covered and
-every overload of the name matches. Names are the fully qualified ones Libadalang computes:
-a subprogram nested in another is `Outer.Inner`. The full list is in
-[dataflow-design.md](dataflow-design.md), "Taint tracking".
+```ada
+with Ada.Directories;
+with Ada.Environment_Variables;
 
-**Adding to the built-in command-injection query instead.** If the subprogram runs a
-command, extend `CommandInjection::Sink` in a `.qll` file. Then write a copy of
-`CommandLineInjection.ql` that imports that file as well. A subclass takes effect only in
-queries that import it.
+procedure Cleanup is
+   function Work_Dir return String is (Ada.Environment_Variables.Value ("WORK_DIR"));
+
+   procedure Remove (Path : String) is
+   begin
+      Ada.Directories.Delete_File (Path);  --  BAD: from WORK_DIR, via Work_Dir and Remove
+   end Remove;
+
+   Lock_File : constant String := "/tmp/cleanup.lock";
+begin
+   Remove (Work_Dir & "/cache.dat");
+   Remove (Lock_File);                     --  fine on its own: a constant
+   Ada.Directories.Delete_Tree (Ada.Environment_Variables.Value ("TMP_TREE"));  --  BAD
+end Cleanup;
+```
+
+Both deletions are reported. The first path runs from `Value` through the expression
+function `Work_Dir`, the concatenation `Work_Dir & "/cache.dat"`, and `Remove`'s
+parameter to `Delete_File (Path)`. `Remove (Lock_File)` adds no result: the same sink,
+but no source reaches it from there.
+
+### A public parameter names a file
+
+The semantic classes combine with data flow. The sources here are the parameters of
+every subprogram in a package's visible part:
+
+```ql
+/**
+ * @name Public parameter names a file
+ * @description A parameter of a subprogram in a package's visible part reaches the
+ *              name of a file that is opened or created, so every caller of the
+ *              package decides which file it touches.
+ * @kind path-problem
+ * @id my-app/parameter-to-file-name
+ * @problem.severity recommendation
+ */
+
+import ada
+import codeql.ada.dataflow.DataFlow
+import codeql.ada.dataflow.TaintTracking
+
+module Config implements DataFlow::ConfigSig {
+  // The parameters of every subprogram declared in the visible part of a package.
+  predicate isSource(DataFlow::Node n) {
+    exists(Package pkg, Parameter p |
+      pkg.fromSource() and
+      p.getSubprogram() = pkg.getAPublicMember() and
+      n.asParameter() = p.getADeclaration()
+    )
+  }
+
+  // The `Name` argument of Ada.Text_IO.Open and Create, positional or named.
+  predicate isSink(DataFlow::Node n) {
+    exists(Call c |
+      c.getTarget().hasQualifiedName(["Ada.Text_IO.Open", "Ada.Text_IO.Create"]) and
+      n.asExpr() = c.getArgumentByName("Name")
+    )
+  }
+}
+
+module Flow = TaintTracking::Global<Config>;
+
+import Flow::PathGraph
+
+from Flow::PathNode source, Flow::PathNode sink
+where Flow::flowPath(source, sink) and sink.getNode().asExpr().fromSource()
+select sink.getNode(), source, sink, "This file name comes from $@.", source.getNode(),
+  "a public parameter"
+```
+
+```ada
+package Logs is
+   procedure Open_Log (File_Name : String);  --  public: its caller picks the file
+   procedure Rotate;
+private
+   procedure Reopen (Name : String);         --  private: not part of the interface
+end Logs;
+```
+
+```ada
+   procedure Open_Log (File_Name : String) is
+   begin
+      Ada.Text_IO.Open (Log, Ada.Text_IO.Append_File, File_Name);  --  BAD
+   end Open_Log;
+
+   procedure Reopen (Name : String) is
+   begin
+      Ada.Text_IO.Open (Log, Ada.Text_IO.Append_File, Name);       --  fine: private
+   end Reopen;
+```
+
+`Open_Log`'s `File_Name` is reported; `Reopen`'s `Name` is not, since `Reopen` is
+declared in the private part. `getArgumentByName("Name")` finds the third argument of
+`Open` although it is written positionally.
+
+### Storage that is not provably deallocated
+
+Data flow can also show that something does *not* happen. This query lists every
+allocation (`new`) whose access value never provably reaches a deallocation, a call
+`Free (X)` of an instance of `Ada.Unchecked_Deallocation`. It uses `DataFlow::Global`,
+not taint tracking: the access value itself must arrive, not something computed from
+it.
+
+```ql
+/**
+ * @name Allocation not provably deallocated
+ * @description Storage allocated with `new` whose access value cannot be shown to
+ *              reach a deallocation (`Free (X)`, an instance of
+ *              Ada.Unchecked_Deallocation). Either the storage is never released, or
+ *              it is released in a way the data-flow library does not follow: kept in
+ *              a record component, an array or a variable of an enclosing subprogram,
+ *              or in a container.
+ * @kind problem
+ * @id my-app/allocation-not-provably-deallocated
+ * @problem.severity recommendation
+ */
+
+import ada
+import codeql.ada.dataflow.DataFlow
+
+/** Holds if `free` calls an instance of Ada.Unchecked_Deallocation: `Free (X)`. */
+predicate isDeallocation(CallExpr free) {
+  free.getName()
+      .getReferencedDecl()
+      .(GenericInstantiation)
+      .getDesignatedGeneric()
+      .hasQualifiedName("Ada.Unchecked_Deallocation")
+}
+
+module Config implements DataFlow::ConfigSig {
+  predicate isSource(DataFlow::Node n) { n.asExpr() instanceof Allocator }
+
+  // The access value handed to a deallocation.
+  predicate isSink(DataFlow::Node n) {
+    exists(CallExpr free | isDeallocation(free) |
+      n.asExpr() = free.getSuffix().(AssocList).getChild(0).(ParamAssoc).getRExpr()
+    )
+  }
+}
+
+module Flow = DataFlow::Global<Config>;
+
+from Allocator alloc, DataFlow::Node n
+where
+  n.asExpr() = alloc and
+  not Flow::flow(n, _) and
+  alloc.fromSource()
+select alloc, "This storage is not provably deallocated."
+```
+
+```ada
+with Ada.Unchecked_Deallocation;
+
+procedure Storage is
+   type Node;
+   type Node_Access is access Node;
+   type Node is record
+      Value : Integer;
+      Next  : Node_Access;
+   end record;
+
+   procedure Free is new Ada.Unchecked_Deallocation (Node, Node_Access);
+
+   Shared : Node_Access;
+
+   procedure Freed_Here is
+      P : Node_Access := new Node'(1, null);       --  fine: freed below
+   begin
+      Free (P);
+   end Freed_Here;
+
+   procedure Release (P : in out Node_Access) is
+   begin
+      Free (P);
+   end Release;
+
+   procedure Freed_By_Helper is
+      P : Node_Access := new Node'(2, null);       --  fine: freed in Release
+   begin
+      Release (P);
+   end Freed_By_Helper;
+
+   function Make return Node_Access is
+   begin
+      return new Node'(3, null);                   --  fine: the caller frees it
+   end Make;
+
+   procedure Freed_By_Caller is
+      P : Node_Access := Make;
+   begin
+      Free (P);
+   end Freed_By_Caller;
+
+   procedure Never_Freed is
+      P : Node_Access := new Node'(4, null);       --  BAD: never freed
+   begin
+      P.Value := 5;
+   end Never_Freed;
+
+   procedure Kept_In_Shared is
+   begin
+      Shared := new Node'(5, null);                --  reported: freed, but by another subprogram
+   end Kept_In_Shared;
+
+   procedure Linked is
+      Head : Node_Access := new Node'(6, null);    --  fine: freed below
+   begin
+      Head.Next := new Node'(7, null);             --  reported: kept in a record component
+      Free (Head.Next);
+      Free (Head);
+   end Linked;
+begin
+   Freed_Here;
+   Freed_By_Helper;
+   Freed_By_Caller;
+   Never_Freed;
+   Kept_In_Shared;
+   Linked;
+   Free (Shared);
+end Storage;
+```
+
+What it can prove, and so does not report: freeing in the same subprogram
+(`Freed_Here`), through a helper's `in out` parameter (`Freed_By_Helper`, freed in
+`Release`), and by the caller of a function that returns the allocation
+(`Freed_By_Caller`, through `Make`). What it reports:
+
+- **`Never_Freed`**: the storage is never released. A real leak.
+- **`Kept_In_Shared`**: the storage *is* released, by `Free (Shared)` at the end, but
+  through `Shared`, a variable of the enclosing procedure that a nested subprogram
+  writes. Data flow follows a subprogram's own variables, not those of enclosing
+  subprograms or packages.
+- **`Head.Next := new ...`**: released by `Free (Head.Next)`, but the value is stored in
+  a record component, and v1 data flow does not follow values through components,
+  array elements or containers (`docs/dataflow-design.md`, "Named v1 limitations").
+
+So a result means "not proven", not "leaked": read it as a list of allocations whose
+release a reviewer has to check by hand. Storage released by other means is not
+recognised either: a controlled type's `Finalize`, a storage pool, or an access type
+with a `Storage_Size` (whose storage is reclaimed when the type goes out of scope).
+
+`Free (X)` is matched as a `CallExpr` rather than a `Call`, because a call to an
+instance of a generic does not resolve in v1. `UncheckedDeallocation.ql` shows the
+fuller match, including the Ada 83 name `Unchecked_Deallocation` and a fallback for
+databases built without the GNAT runtime.
+
+### Adding to the built-in command-injection query
+
+If the subprogram runs a command, extend `CommandInjection::Sink` in a `.qll` file
+instead. Then write a copy of `CommandLineInjection.ql` that imports that file as well.
+A subclass takes effect only in queries that import it.
 
 ```ql
 class MyShellSink extends CommandInjection::Sink {
   MyShellSink() {
-    exists(Expr call |
-      DataFlow::isCallTo(call, "My_App.Shell.Run") and
-      DataFlow::isArgumentFor(call, this.asExpr(), "Command")
+    exists(Call c | c.getTarget().hasQualifiedName("My_App.Shell.Run") |
+      this.asExpr() = c.getArgumentByName("Command")
     )
   }
 }
 ```
 
 `CommandInjection::Source` and `CommandInjection::Barrier` extend the same way.
-`ql/test/library/TaintTracking` is a small working example of the first pattern. Its
-test should route the value through at least one other subprogram, so it fails if
-cross-procedure flow breaks. What is and is not followed is listed in
+
+### What is followed
+
+Calls resolve by meaning, not text, so `use` clauses and renamings are covered, and
+`hasQualifiedName` matches every overload of a name. Names are the fully qualified
+ones Libadalang computes: a subprogram nested in another is `Outer.Inner`. The
+`DataFlow` module also has string-based helpers that predate the semantic classes
+(`DataFlow::isCallTo`, `getAnArgument`, `isArgumentFor`, `isParameterOf`); they give the
+same answers. What is and is not followed (dispatching calls, access-to-subprogram
+values, generic instances, components and containers) is listed in
 [dataflow-design.md](dataflow-design.md), "Named v1 limitations" and "Taint tracking".
+A test of your own query should route the value through at least one other
+subprogram, so it fails if cross-procedure flow breaks.
 
 ## Testing a query
 
@@ -472,7 +822,8 @@ used for golden-output checks on the extractor itself (e.g. `PrintAst.ql`
 dumps every node's kind/parent/index to guard the extraction pipeline
 independent of any specific query). You won't need this pattern for a normal
 query addition — it's for changes to the extractor or generator.
-`ql/test/library/` uses a third kind: inline expectations, where the
+`ql/test/examples/` holds the example queries of this guide, each next to
+the Ada it is shown with. `ql/test/library/` uses a third kind: inline expectations, where the
 expected result is a `-- $ tag=value` comment on the line it belongs to
 (`codeql.ada.test.InlineExpectationsTest`; `ql/test/library/TaintTracking`
 is a short example). It suits library predicates that report many small

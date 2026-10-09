@@ -18,9 +18,7 @@ from GenericInstantiation gi
 where
   gi instanceof GenericSubpInstantiation and
   (
-    gi.getDesignatedGeneric()
-        
-        .hasQualifiedName(["Ada.Unchecked_Conversion", "Unchecked_Conversion"])
+    gi.getDesignatedGeneric().hasQualifiedName(["Ada.Unchecked_Conversion", "Unchecked_Conversion"])
     or
     not exists(gi.getDesignatedGeneric()) and
     gi.(GenericSubpInstantiation)

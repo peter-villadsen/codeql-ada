@@ -133,7 +133,7 @@ longevity, this policy is revisited.
   processes (see [Parallelism](#parallelism)), but it means two distinct AST
   nodes of the *same kind* at the *exact same source span* would collapse
   into one row. This is a pathological, rare case in practice; it hasn't
-  been observed to affect any of the 11 shipped queries or the 5-project test
+  been observed to affect any of the shipped queries or the 5-project test
   corpus, but a query relying on such nodes being distinct could see merged
   results.
 - **Generic instantiation bodies** aren't modeled as separate instantiated
@@ -141,8 +141,16 @@ longevity, this policy is revisited.
   instantiation to the *generic* declaration it instantiates, not to a
   synthesized instance body. Queries that need to reason about what a
   specific instantiation's body actually does (as opposed to the generic
-  template) aren't supported yet.
-- **No control flow graph or dataflow** in v1 (decision D-005) — the 8
-  shipped queries are all syntax/xref/type-based. CFG and a dataflow library
-  are future work (see [BURNDOWN.md](../BURNDOWN.md) Phase 4.3/4.4), not
-  something you can partially work around today.
+  template) aren't supported yet, and a call to an instance
+  (`procedure P is new G (...)`, then `P (X)`) does not resolve to a target.
+- **What data flow does not follow (v1).** There is a control-flow graph
+  and a data-flow and taint-tracking library that follows values across
+  subprograms (see [query-writing.md](query-writing.md), "Data flow and taint
+  tracking"). It does not follow: dispatching calls (bound to their static
+  target), calls through access-to-subprogram values, calls to generic
+  instances, values stored in record components, array elements or
+  containers, and variables of enclosing subprograms or packages written by a
+  nested subprogram. A query built on it misses flows through these, and a
+  query that needs to *prove* something (that storage is freed, say) reports
+  them as unproven. The full list is in
+  [dataflow-design.md](dataflow-design.md), "Named v1 limitations".

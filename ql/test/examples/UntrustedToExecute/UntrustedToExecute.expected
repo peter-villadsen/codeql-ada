@@ -1,0 +1,14 @@
+edges
+| my_app.adb:13:25:13:26 | [param] Q | my_app.adb:15:19:15:20 | Q | provenance |  |
+| my_app.adb:19:33:19:42 | [param] Body_Text | my_app.adb:21:22:21:43 | ... & ... | provenance |  |
+| my_app.adb:28:18:28:47 | Ada.Command_Line.Argument (...) | my_app.adb:13:25:13:26 | [param] Q | provenance |  |
+nodes
+| my_app.adb:13:25:13:26 | [param] Q | semmle.label | [param] Q |
+| my_app.adb:15:19:15:20 | Q | semmle.label | Q |
+| my_app.adb:19:33:19:42 | [param] Body_Text | semmle.label | [param] Body_Text |
+| my_app.adb:21:22:21:43 | ... & ... | semmle.label | ... & ... |
+| my_app.adb:28:18:28:47 | Ada.Command_Line.Argument (...) | semmle.label | Ada.Command_Line.Argument (...) |
+subpaths
+#select
+| my_app.adb:15:19:15:20 | Q | my_app.adb:28:18:28:47 | Ada.Command_Line.Argument (...) | my_app.adb:15:19:15:20 | Q | This query depends on $@. | my_app.adb:28:18:28:47 | Ada.Command_Line.Argument (...) | untrusted data |
+| my_app.adb:21:22:21:43 | ... & ... | my_app.adb:19:33:19:42 | [param] Body_Text | my_app.adb:21:22:21:43 | ... & ... | This query depends on $@. | my_app.adb:19:33:19:42 | [param] Body_Text | untrusted data |

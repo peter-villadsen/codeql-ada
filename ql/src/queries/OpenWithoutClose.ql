@@ -56,7 +56,8 @@ private predicate isCloseOrDelete(AdaNode call) {
 module OpenClose = MissingPairedCall<isOpenOrCreate/1, isCloseOrDelete/1>;
 
 from AdaNode call
-where OpenClose::missingPairedCallNormalPathsOnly(call) and
+where
+  OpenClose::missingPairedCallNormalPathsOnly(call) and
   call.fromSource()
 select call,
   "This file may not be closed on every path: no call to Ada.Text_IO.Close/Delete follows on all non-exceptional paths from here."

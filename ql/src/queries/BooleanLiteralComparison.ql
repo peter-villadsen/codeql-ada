@@ -17,9 +17,7 @@ import ada
  * not resolve (no GNAT runtime at extraction) is its text used.
  */
 private predicate isBooleanLiteral(Name lit) {
-  lit.getReferencedDecl()
-      
-      .hasQualifiedName(["Standard.Boolean.True", "Standard.Boolean.False"])
+  lit.getReferencedDecl().hasQualifiedName(["Standard.Boolean.True", "Standard.Boolean.False"])
   or
   not exists(lit.getReferencedDecl()) and lit.getText().toLowerCase() = ["true", "false"]
 }

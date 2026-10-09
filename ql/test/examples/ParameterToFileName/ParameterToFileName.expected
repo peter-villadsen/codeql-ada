@@ -1,0 +1,8 @@
+edges
+| logs.adb:6:24:6:33 | [param] File_Name | logs.adb:8:55:8:64 | File_Name | provenance |  |
+nodes
+| logs.adb:6:24:6:33 | [param] File_Name | semmle.label | [param] File_Name |
+| logs.adb:8:55:8:64 | File_Name | semmle.label | File_Name |
+subpaths
+#select
+| logs.adb:8:55:8:64 | File_Name | logs.adb:6:24:6:33 | [param] File_Name | logs.adb:8:55:8:64 | File_Name | This file name comes from $@. | logs.adb:6:24:6:33 | [param] File_Name | a public parameter |

@@ -28,13 +28,9 @@ from ObjectDecl d, StringLiteral lit
 where
   d.getDefaultExpr() = lit and
   lit.getValue().length() > 2 and
-  d
-      .getAName()
-      .toLowerCase()
-      .regexpMatch(credentialName()) and
+  d.getAName().toLowerCase().regexpMatch(credentialName()) and
   // a lexer's keyword token, `Access_Token := "access"`, spells its own name
   not lit.getValue().toLowerCase() =
     "\"" + d.getAName().toLowerCase().regexpCapture("(.*)_token", 1) + "\"" and
   d.fromSource()
-select d,
-  "Object " + d.getAName() + " is initialized with a hardcoded credential-like string."
+select d, "Object " + d.getAName() + " is initialized with a hardcoded credential-like string."

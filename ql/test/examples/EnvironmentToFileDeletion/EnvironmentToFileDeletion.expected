@@ -1,0 +1,18 @@
+edges
+| cleanup.adb:5:39:5:85 | (...) | cleanup.adb:14:12:14:20 | Work_Dir | provenance |  |
+| cleanup.adb:5:40:5:84 | Ada.Environment_Variables.Value (...) | cleanup.adb:5:39:5:85 | (...) | provenance |  |
+| cleanup.adb:7:22:7:26 | [param] Path | cleanup.adb:9:36:9:40 | Path | provenance |  |
+| cleanup.adb:14:12:14:20 | Work_Dir | cleanup.adb:14:12:14:35 | ... & ... | provenance |  |
+| cleanup.adb:14:12:14:35 | ... & ... | cleanup.adb:7:22:7:26 | [param] Path | provenance |  |
+nodes
+| cleanup.adb:5:39:5:85 | (...) | semmle.label | (...) |
+| cleanup.adb:5:40:5:84 | Ada.Environment_Variables.Value (...) | semmle.label | Ada.Environment_Variables.Value (...) |
+| cleanup.adb:7:22:7:26 | [param] Path | semmle.label | [param] Path |
+| cleanup.adb:9:36:9:40 | Path | semmle.label | Path |
+| cleanup.adb:14:12:14:20 | Work_Dir | semmle.label | Work_Dir |
+| cleanup.adb:14:12:14:35 | ... & ... | semmle.label | ... & ... |
+| cleanup.adb:16:33:16:77 | Ada.Environment_Variables.Value (...) | semmle.label | Ada.Environment_Variables.Value (...) |
+subpaths
+#select
+| cleanup.adb:9:36:9:40 | Path | cleanup.adb:5:40:5:84 | Ada.Environment_Variables.Value (...) | cleanup.adb:9:36:9:40 | Path | The file deleted here is named by $@. | cleanup.adb:5:40:5:84 | Ada.Environment_Variables.Value (...) | an environment variable |
+| cleanup.adb:16:33:16:77 | Ada.Environment_Variables.Value (...) | cleanup.adb:16:33:16:77 | Ada.Environment_Variables.Value (...) | cleanup.adb:16:33:16:77 | Ada.Environment_Variables.Value (...) | The file deleted here is named by $@. | cleanup.adb:16:33:16:77 | Ada.Environment_Variables.Value (...) | an environment variable |

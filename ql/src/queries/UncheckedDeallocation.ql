@@ -20,7 +20,6 @@ where
   gi instanceof GenericSubpInstantiation and
   (
     gi.getDesignatedGeneric()
-        
         .hasQualifiedName(["Ada.Unchecked_Deallocation", "Unchecked_Deallocation"])
     or
     not exists(gi.getDesignatedGeneric()) and

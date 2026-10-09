@@ -50,9 +50,21 @@ is matched by
 ```ql
 exists(CallStmt s, CallExpr c, ParamAssoc a |
   c = s.getCall() and
-  c.getName().(Name).getText() = "Log" and
+  c.getName().getText() = "Log" and
   a = c.getSuffix().(AssocList).getChild(0) and
   a.getRExpr().(StringLiteral).getValue() = "\"hello\""
+)
+```
+
+For calls in particular, the semantic `Call` class does that walk for you, and matches
+the subprogram by what the name resolves to rather than by its spelling. In the
+fixture, `Log` is declared as `procedure Log (Msg : String) renames Put_Line;`, and
+`getTarget()` follows renamings to the subprogram that actually runs:
+
+```ql
+exists(Call c |
+  c.getTarget().hasQualifiedName("Ada.Text_IO.Put_Line") and
+  c.getArgument(0).(StringLiteral).getValue() = "\"hello\""
 )
 ```
 
@@ -68,7 +80,7 @@ exists(CallStmt s, CallExpr c, ParamAssoc a |
   and the like sit between a parent and its elements. `getChild(i)` on the list
   gives the `i`th element; `getParentIndex()` on an element gives `i`.
 - **A declared name is a `DefiningName` wrapping an `Identifier`.**
-  `BasicDecl.getAName()` (hand-written layer) gives its text directly.
+  `BasicDecl.getAName()` gives its text directly.
 - **Optional keywords are marker nodes.** `constant` is `getHasConstant:
   ConstantPresent` and its absence `ConstantAbsent`; likewise `aliased`, `not null`,
   `all`, `tagged`, `limited`, `private`, `abstract`. Test them with

@@ -103,6 +103,23 @@ To run this on every push and get the findings into GitHub code scanning, see
 add `ada` to the CodeQL Action's language list, and the guide explains what to
 do instead.
 
+Your own queries read like CodeQL queries for other languages. The parameters of
+a subprogram:
+
+```ql
+import ada
+
+from Subprogram s, Parameter p
+where s.hasQualifiedName("My_App.Logs.Open_Log") and p = s.getAParameter()
+select p, p.getName(), p.getMode(), p.getType()
+```
+
+and data flow and taint tracking follow values across subprograms, from a source
+such as `Ada.Environment_Variables.Value` to a sink such as
+`Ada.Directories.Delete_File`. [docs/query-writing.md](docs/query-writing.md) has
+complete, tested examples, including one that lists allocations not provably
+deallocated.
+
 For everything past this point — the 25 queries, environment variables that
 control project discovery and parallelism, how to write your own queries,
 and known limitations — see [docs/user-guide.md](docs/user-guide.md),
