@@ -585,6 +585,12 @@ assignment of every initialised local, which it could not have before.
         Libadalang environment is still open if a fully-local pre-tag check is wanted again.
 - [ ] 10.4 Cross-implementation validation — **blocked on tool acquisition**, see the
       note under Phase 9 below.
+- [x] **10.5 Cut v0.2.0.** *Tagged 2026-10-09.* After the precision check
+      ([docs/v0.2.0-precision-check.md](docs/v0.2.0-precision-check.md)). Local pre-tag
+      checklist run in full this time (WSL Debian): suite green (67/67), tarball built
+      (82 MB) and isolation-tested on adasat with `PYTHONPATH`/`LD_LIBRARY_PATH` cleared
+      (25 rules in the SARIF). What changed for results: [CHANGELOG.md](CHANGELOG.md).
+      Databases built with 0.1.0 must be rebuilt.
 
 ## Phase 8 — Wave A queries (planned 2026-07-03; independent of Phase 7)
 

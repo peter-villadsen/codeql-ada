@@ -83,7 +83,7 @@ jobs:
     env:
       # Pin both. See "Reproducibility" below for why this matters more than usual.
       CODEQL_CLI_VERSION: 2.25.6
-      ADA_EXTRACTOR_VERSION: v0.1.0
+      ADA_EXTRACTOR_VERSION: v0.2.0
       ADA_QUERY_PACK: peter-villadsen/ada-queries
 
     steps:
@@ -341,7 +341,7 @@ pool:
 
 variables:
   CODEQL_CLI_VERSION: 2.25.6
-  ADA_EXTRACTOR_VERSION: v0.1.0
+  ADA_EXTRACTOR_VERSION: v0.2.0
   ADA_QUERY_PACK: peter-villadsen/ada-queries
   TOOLS_DIR: $(Pipeline.Workspace)/ada-tools
 

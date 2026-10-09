@@ -1,5 +1,5 @@
 name: peter-villadsen/ada-debug
-version: 0.1.0
+version: 0.2.0
 extractor: ada
 # Developer tools, not shipped to users and not run by `codeql test run`
 # (every .ql under ql/test is treated as a test needing an .expected file).
