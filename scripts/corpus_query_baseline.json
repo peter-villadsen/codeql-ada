@@ -12,6 +12,7 @@
    "ada/goto-statement": 0,
    "ada/hardcoded-credential": 0,
    "ada/identical-operands": 0,
+   "ada/indirect-recursion": 0,
    "ada/open-without-close": 0,
    "ada/pragma-suppress": 0,
    "ada/raise-predefined-exception": 0,
@@ -42,6 +43,7 @@
    "ada/goto-statement": 9,
    "ada/hardcoded-credential": 0,
    "ada/identical-operands": 0,
+   "ada/indirect-recursion": 10,
    "ada/open-without-close": 0,
    "ada/pragma-suppress": 0,
    "ada/raise-predefined-exception": 71,
@@ -57,7 +59,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 4
   },
-  "total": 174
+  "total": 184
  },
  "gpr2": {
   "results": {
@@ -72,6 +74,7 @@
    "ada/goto-statement": 566,
    "ada/hardcoded-credential": 0,
    "ada/identical-operands": 0,
+   "ada/indirect-recursion": 148,
    "ada/open-without-close": 4,
    "ada/pragma-suppress": 3,
    "ada/raise-predefined-exception": 91,
@@ -87,7 +90,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 36
   },
-  "total": 1398
+  "total": 1546
  },
  "libadalang-tools": {
   "results": {
@@ -102,6 +105,7 @@
    "ada/goto-statement": 36,
    "ada/hardcoded-credential": 0,
    "ada/identical-operands": 0,
+   "ada/indirect-recursion": 4,
    "ada/open-without-close": 28,
    "ada/pragma-suppress": 8,
    "ada/raise-predefined-exception": 161,
@@ -117,7 +121,7 @@
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 560
+  "total": 564
  },
  "libkeccak": {
   "results": {
@@ -132,6 +136,7 @@
    "ada/goto-statement": 0,
    "ada/hardcoded-credential": 0,
    "ada/identical-operands": 0,
+   "ada/indirect-recursion": 0,
    "ada/open-without-close": 0,
    "ada/pragma-suppress": 0,
    "ada/raise-predefined-exception": 2,

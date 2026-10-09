@@ -120,7 +120,7 @@ such as `Ada.Environment_Variables.Value` to a sink such as
 complete, tested examples, including one that lists allocations not provably
 deallocated.
 
-For everything past this point — the 25 queries, environment variables that
+For everything past this point — the 26 queries, environment variables that
 control project discovery and parallelism, how to write your own queries,
 and known limitations — see [docs/user-guide.md](docs/user-guide.md),
 [docs/query-writing.md](docs/query-writing.md), and, for what tree each Ada

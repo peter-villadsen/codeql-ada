@@ -1,0 +1,4 @@
+| cycles.adb:2:4:2:30 | P | This subprogram is recursive: it calls $@, which leads back to it. | cycles.adb:3:4:3:30 | Q | Q |
+| cycles.adb:3:4:3:30 | Q | This subprogram is recursive: it calls $@, which leads back to it. | cycles.adb:4:4:4:30 | R | R |
+| cycles.adb:4:4:4:30 | R | This subprogram is recursive: it calls $@, which leads back to it. | cycles.adb:2:4:2:30 | P | P |
+| cycles.adb:23:4:24:46 | Fact | This subprogram is recursive: it calls $@, which leads back to it. | cycles.adb:23:4:24:46 | Fact | Fact |

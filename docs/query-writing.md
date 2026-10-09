@@ -45,6 +45,7 @@ Then, a path that works:
 3. **Read this guide**, then read shipped queries in order of difficulty:
    - `GotoStatement.ql`: one node kind.
    - `DirectRecursion.ql`: calls (`Call`).
+   - `IndirectRecursion.ql`: the call graph and transitive closure.
    - `UnusedVariable.ql`: resolved declarations.
    - `UnreachableStatement.ql`: sibling positions.
    - `OpenWithoutClose.ql`: the control-flow graph.
@@ -62,7 +63,7 @@ language's package registry entry, just for QL:
   queries: `ide-contextual-queries/printAst.ql` (VS Code's "View AST") and
   `tools/PrintAst.ql` (the same tree as text). They live here rather than in
   `ql/src` so that `codeql database analyze ql/src` never picks them up.
-- **`ql/src`, published as `peter-villadsen/ada-queries`** — the 25 shipped
+- **`ql/src`, published as `peter-villadsen/ada-queries`** — the 26 shipped
   queries, each a standalone `.ql` file under `ql/src/queries/`. This pack
   depends on `ada-all`.
 
@@ -380,6 +381,93 @@ A few things worth knowing before you instantiate it:
 - **Report only project code.** Every query restricts its reported element
   with `fromSource()` (on `AdaNode` and `Comment`), so nothing is reported
   inside a predefined file (D-026).
+
+## Example: recursion at any depth
+
+The call graph is a relation like any other, so QL's transitive closure finds cycles
+of any length: `calls+(a, b)` is "a reaches b in one or more calls", `calls*` in zero
+or more. This query lists every subprogram that can call itself, directly or through
+other subprograms (P -> Q -> R -> P):
+
+```ql
+/**
+ * @name Recursive subprogram
+ * @description A subprogram that can call itself, directly or through other
+ *              subprograms (P -> Q -> R -> P). Recursion uses stack space that grows
+ *              with its depth, a concern where the stack size is fixed.
+ * @kind problem
+ * @id my-app/recursive-subprogram
+ * @problem.severity recommendation
+ */
+
+import ada
+
+/** Holds if `caller` contains a call to `callee`. */
+predicate calls(Subprogram caller, Subprogram callee) {
+  exists(Call c | c.getCaller() = caller and c.getTarget() = callee)
+}
+
+from Subprogram s, Subprogram next
+where
+  s.fromSource() and
+  // `next` is the first subprogram on a cycle back to `s` (`s` itself if it calls
+  // itself directly); if there are several, the one declared first
+  next =
+    min(Subprogram n |
+      calls(s, n) and calls*(n, s)
+    |
+      n order by n.getLocation().getStartLine(), n.getLocation().getStartColumn()
+    )
+select s, "This subprogram is recursive: it calls $@, which leads back to it.", next, next.getName()
+```
+
+```ada
+procedure Cycles is
+   procedure P (N : Natural);
+   procedure Q (N : Natural);
+   procedure R (N : Natural);
+
+   procedure P (N : Natural) is          --  P -> Q -> R -> P
+   begin
+      if N > 0 then
+         Q (N - 1);
+      end if;
+   end P;
+
+   procedure Q (N : Natural) is
+   begin
+      R (N);
+   end Q;
+
+   procedure R (N : Natural) is
+   begin
+      P (N);
+   end R;
+
+   function Fact (N : Natural) return Natural is   --  direct recursion
+     (if N = 0 then 1 else N * Fact (N - 1));
+
+   procedure Leaf is null;                 --  not recursive
+   procedure Calls_Cycle is                --  calls into the cycle, not part of it
+   begin
+      P (3);
+      Leaf;
+   end Calls_Cycle;
+begin
+   Calls_Cycle;
+   if Fact (3) = 6 then
+      null;
+   end if;
+end Cycles;
+```
+
+It reports P, Q and R, each with the next subprogram on the cycle, and `Fact`, which
+calls itself; not `Leaf`, and not `Calls_Cycle`, which calls into the cycle without
+being part of it. The shipped queries split the two cases: `ada/direct-recursion` for
+a subprogram that calls itself, `ada/indirect-recursion` for one that comes back to
+itself through others. Like every `Call`-based query, it sees only calls that resolve:
+not dispatching calls (bound to their static target), calls through
+access-to-subprogram values, or calls to generic instances.
 
 ## Data flow and taint tracking
 

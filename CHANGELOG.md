@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- **New query `ada/indirect-recursion`**: a subprogram that calls itself through other
+  subprograms (P -> Q -> R -> P), next to `ada/direct-recursion`. 162 results on the
+  test corpus, most in gpr2's generated recursive-descent parser.
+- `ql/lib/codeql-pack.lock.yml` is no longer committed: VS Code's "View AST" deleted
+  it on every run. `codeql pack install ql/lib` regenerates it.
+
 ## 0.2.0 (2026-10-09)
 
 The first release meant for people other than its author. Databases built with 0.1.0

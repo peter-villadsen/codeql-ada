@@ -1,0 +1,7 @@
+| test.adb:2:4:2:30 | P | This subprogram is recursive through other subprograms: it calls $@, which leads back to it. | test.adb:3:4:3:30 | Q | Q |
+| test.adb:3:4:3:30 | Q | This subprogram is recursive through other subprograms: it calls $@, which leads back to it. | test.adb:4:4:4:30 | R | R |
+| test.adb:4:4:4:30 | R | This subprogram is recursive through other subprograms: it calls $@, which leads back to it. | test.adb:2:4:2:30 | P | P |
+| test.adb:26:4:26:47 | Even | This subprogram is recursive through other subprograms: it calls $@, which leads back to it. | test.adb:27:4:28:37 | Odd | Odd |
+| test.adb:27:4:28:37 | Odd | This subprogram is recursive through other subprograms: it calls $@, which leads back to it. | test.adb:26:4:26:47 | Even | Even |
+| test.adb:32:4:32:33 | Both | This subprogram is recursive through other subprograms: it calls $@, which leads back to it. | test.adb:33:4:33:35 | Helper | Helper |
+| test.adb:33:4:33:35 | Helper | This subprogram is recursive through other subprograms: it calls $@, which leads back to it. | test.adb:32:4:32:33 | Both | Both |
