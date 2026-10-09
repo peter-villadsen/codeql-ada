@@ -47,7 +47,7 @@ Three pieces make this work for a new language:
 
 ## Requirements
 
-| | |
+| Requirement | Details |
 |---|---|
 | OS | Linux x86_64 (glibc as new as Debian 13's or newer); Windows via WSL |
 | Python | ≥ 3.11, already on `PATH` (system Python is fine — no install needed, see below) |

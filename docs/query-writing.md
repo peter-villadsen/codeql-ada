@@ -8,7 +8,7 @@ does not assume prior QL experience.
 ## Start here
 
 If you have written CodeQL queries for Java, an Ada query reads the same way.
-The parameters of a subprogram:
+The parameters of a subprogram called Free_All in AdaSAT.Formulas:
 
 ```ql
 import ada
