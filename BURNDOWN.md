@@ -5,84 +5,85 @@ QL standard library, and an initial query suite — usable via `codeql database 
 
 ---
 
-## Resume here (2026-10-03) — Phase 9 complete, Task 9.6 follow-ups done
+## Resume here (2026-10-09) — v0.2.0 released; external testing is next
 
-**State.** Phase 9 is done: call graph, SSA, local and cross-procedure data flow, taint
-tracking, the first taint query, and the corpus validation (Task 9.6) with all its
-follow-up fixes. Full suite green (60/60), corpus regression green, dataflow consistency
-checks empty on all five corpus projects. Corpus results: 11,520 at the start of 9.6, now
-2,314; per-query counts are in `scripts/corpus_query_baseline.json`.
+**State.** v0.2.0 is tagged and released (2026-10-09): GitHub Release with the extractor
+tarball, packs `peter-villadsen/ada-all` and `ada-queries` 0.2.0 published to GHCR.
+`master` is ahead of the tag by four commits: the CI trigger fix, the lock-file fix and
+`ada/indirect-recursion` (see CHANGELOG.md, "Unreleased"). Local suite green (69/69);
+CI on `master` was green at `579e66d`; the run for `f7f0a71` (37878120653) was started
+at the end of the session and not checked. 26 queries. Corpus: 2,334 results
+(`scripts/corpus_query_baseline.json`).
+
+**Pending, needs the owner (not something to do unasked):**
+- **The GHCR packages are private** (GitHub's default for a new package), so an
+  anonymous `codeql pack download peter-villadsen/ada-queries@0.2.0` fails with 401: an
+  external tester cannot install them. Fix: package settings -> Change visibility ->
+  Public, for both packs; this cannot be undone. The local `gh` token has no
+  `read:packages` scope (`gh auth refresh -h github.com -s read:packages` to check
+  visibility from the CLI). After the switch, verify with an anonymous download into
+  an empty cache: `codeql pack download --common-caches=/tmp/fresh-packs
+  peter-villadsen/ada-queries@0.2.0`.
+- **Tester setup** (from the 2026-10-08 plan): a known-limitations page for testers
+  (user-guide "Known limitations" is the basis), an issue template, a statement that the
+  database format may still change.
+
+**Next work, in order of payoff (ask before starting; each is a project):**
+- **Content flow** (record components, array elements, containers): the largest gap.
+  It hides real taint flows (alire's environment-to-`Spawn`) and is why the
+  "not provably deallocated" example reports storage kept in components.
+- **Calls to generic instances** (`Free (X)` on an `Unchecked_Deallocation` instance,
+  `AAA.Strings.Vector` operations) do not resolve; generic subprograms themselves are
+  `Subprogram`s since Phase 12.
+- **Dispatching calls** (static target only), **access-to-subprogram calls**, and
+  variables of enclosing scopes written by nested subprograms.
+- CFG gaps found by `ql/debug/CallConsistency.ql`: `raise ... with` messages,
+  quantified-expression iterators; and GNAT `finally` parts (precision check).
+- Phase 11, more sources and sinks beyond command injection (now a few lines each
+  with `Call`/`Parameter`).
 
 **Where to read:**
-- [docs/phase9.6-corpus-triage.md](docs/phase9.6-corpus-triage.md): the triage, every
-  defect found (A–I) and its fix, with before/after counts.
-- [docs/dataflow-design.md](docs/dataflow-design.md): the data-flow model, taint steps,
-  the remaining named v1 limitations (each pinned in `ql/test/library/DataFlow`).
-- [docs/cfg-design.md](docs/cfg-design.md): the CFG, construct by construct; Part 5
-  lists its limitations.
-- [docs/query-writing.md](docs/query-writing.md) and
-  [docs/ast-reference.md](docs/ast-reference.md): for query authors (AST shapes are
-  copied from the pinned `ql/test/library/PrintAst` output).
-
-**What exists for queries.** `codeql.ada.dataflow.DataFlow` / `TaintTracking`
-(helpers `isCallTo`, `getAnArgument`, `isArgumentFor`, `isArgumentAt`,
-`isParameterOf`); `codeql.ada.security.CommandInjection` (extensible `Source` / `Sink` /
-`Barrier`); `ada/command-line-injection` (sinks: `OS_Lib.Spawn` / `Non_Blocking_Spawn`,
-`GNAT.Expect`, imported C `system` / `popen` / `exec*`). AST printing:
-`ql/lib/ide-contextual-queries/printAst.ql` (VS Code "View AST"; tried 2026-10-08, works;
-it deletes `ql/lib/codeql-pack.lock.yml` on each run, which is therefore no longer
-committed (2026-10-09, `.gitignore`),
-`ql/lib/tools/PrintAst.ql` (text) and `scripts/print_ast.py` (text, JSON or XML, per
-file, via `ql/lib/tools/PrintAstRows.ql`). `ql/debug/ExploratoryTaint.ql` is a
-developer-only wide taint configuration for corpus experiments.
-
-**Database format.** The last extractor change (e7850f2) changed the dbscheme
-(`ada_qualified_name.decl` is no longer unique). Databases built before it must be
-re-created (D-011). The corpus databases under `/root/.cache/codeql-ada-corpus/` are
-current.
-
-**Phase 12 done (2026-10-08): a semantic library layer** —
-[docs/phase12-plan.md](docs/phase12-plan.md), D-027. Queries read like Java ones:
-`from Subprogram s, Parameter p where p = s.getAParameter()`, `from Call c`, `from IfStmt
-s` (no `Raw::` prefix), and results show `Free_All`, `... = ...` instead of class names.
-Classes: `Subprogram`, `Parameter`, `Call`, `Type`, `Component`, `Variable`, `Package`
-(`codeql/ada/Subprograms.qll`, `Calls.qll`, `Declarations.qll`). Suite green (63/63).
-Details and the corpus triage in the Phase 12 section below.
-
-**v0.2.0 precision check (2026-10-09)** —
-[docs/v0.2.0-precision-check.md](docs/v0.2.0-precision-check.md). Every query sampled
-against the source; eight false-positive patterns fixed (junk names, callbacks,
-unresolved `No_Return` calls, dispatching and implicit uses, files opened for the caller,
-coverage pragmas and `finally` parts, side-effecting conditions, unknown operand types),
-each pinned by a fixture case the old query fails. Corpus 2,306 to 2,172 results.
-**Found, not fixed:** the CFG does not model GNAT's `finally` parts.
-
-**Open, deliberately not started (each a project of its own; ask before starting):**
-- **Content flow** (record components, array elements): building a value element-wise
-  (`Arg_List (I) := new String'(...)`) loses taint. Together with generic containers
-  this is what still hides alire's environment-to-`Spawn` flows; the one with most payoff.
-- **Generic instances:** calls to a generic *subprogram* instance, and generic containers
-  (`AAA.Strings.Vector`), are unresolved. (Subprograms of generic *package* instances do
-  resolve.)
-- **Dispatching calls** bind to the static target only.
-- **Access-to-subprogram calls** are unresolved.
-- Smaller known limits: an unresolved call written without parentheses cannot raise
-  (CFG Part 5); default parameter values over-approximate (`SPURIOUS: flow=36`); the
-  `out` write-back is uncertain on purpose (D-022); `open-without-close` is
-  path-insensitive.
+- [CHANGELOG.md](CHANGELOG.md): what each release changes for results and for query
+  writers.
+- [docs/v0.2.0-precision-check.md](docs/v0.2.0-precision-check.md): the last precision
+  check, per query, with the false-positive patterns fixed and those left.
+- [docs/query-writing.md](docs/query-writing.md): the semantic classes, tested examples
+  (`ql/test/examples/`: three taint queries, storage not provably deallocated,
+  recursion at any depth). [docs/ast-reference.md](docs/ast-reference.md) for AST shapes.
+- [docs/phase12-plan.md](docs/phase12-plan.md) and D-027: the semantic layer
+  (`codeql/ada/Subprograms.qll`, `Calls.qll`, `Declarations.qll`, mixins in
+  `ast/internal/Extensions.qll`, call resolution in `internal/CallResolution.qll`).
+- [docs/dataflow-design.md](docs/dataflow-design.md), [docs/cfg-design.md](docs/cfg-design.md):
+  data flow and CFG, with their named limitations.
+- [docs/releasing.md](docs/releasing.md): the release procedure (worked as written for
+  0.2.0, including the local tarball and isolation checks).
 
 **How to work here:**
-- Builds, extraction and query runs happen in WSL Debian; see `docs/phase9.2-plan.md` §1
-  for the command prelude. Windows Python (`python`) runs `scripts/annotate_cfg_test.py`
-  and `scripts/check_cfg_coverage.py`.
+- Builds, extraction and query runs happen in the **WSL distro `Debian`** (default user
+  root; CodeQL CLI 2.25.6 at `/root/tools/codeql`, Libadalang at `/root/adacore`, corpus
+  databases in `/root/.cache/codeql-ada-corpus/`). The default WSL distro is Ubuntu,
+  which has none of it. See `docs/phase9.2-plan.md` §1 for the command prelude. Windows
+  Python (`python`) runs `scripts/annotate_cfg_test.py` and `scripts/check_cfg_coverage.py`.
+- Run WSL commands from a script file (`wsl -d Debian -- bash script.sh`): `wsl.exe`
+  expands `$` in an inline `bash -c` argument before bash sees it.
+- A database open in VS Code is locked by the extension's query server; run on a copy
+  (`scripts/print_ast.py --copy-db`), or close it there. adasat-db is the one used for
+  View AST.
 - After any CFG change: run `python scripts/check_cfg_coverage.py --write` (CI fails on
   drift), and the plan asks for approval before changing `ControlFlowGraphImpl.qll`.
 - After a dbscheme change: `python3 generator/gen.py`, regenerate
   `ql/lib/ada.dbscheme.stats` (CONTRIBUTING.md), rebuild corpus databases with
   `python3 scripts/corpus_regression.py --out <existing dir>/regression.json`.
 - Measuring query changes: `python3 scripts/corpus_queries.py` diffs per-query counts
-  against the baseline; refresh it (`--update-baseline`) when a change is accepted.
-- New fixture cases should be checked to fail against the old code before accepting.
+  against the baseline. To refresh it, run without `--project` (with `--project P` it
+  rewrites the whole file with P alone), or edit the file.
+- Before accepting a corpus change, diff the SARIF in `~/corpus-sarif` against a copy
+  taken before, and read the removed and added results against the source.
+- New fixture cases should be checked to fail against the old code before accepting
+  (a `git worktree` of the old commit works; remove it from WSL, Windows hits path
+  limits on the `.testproj` directories).
+- Watch QL performance after library changes: compare whole-corpus run times against
+  the previous commit. Phase 12 found two slowdowns this way (D-027, 12.3).
 - If you edit files with Windows tools, check for CRLF line endings (`grep -c $'\r'`).
 
 ---
