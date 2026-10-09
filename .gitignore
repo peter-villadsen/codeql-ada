@@ -34,3 +34,11 @@ obj/
 # Editors
 .vscode/
 .idea/
+
+# ql/lib's lock file is generated, not committed. The VS Code extension's "View AST"
+# treats a library pack's lock file as its own temporary file (`codeql pack packlist`
+# never lists lock files) and deletes it after every run, which used to delete the
+# committed one. qlpack.yml pins every dependency exactly, and `codeql pack install
+# ql/lib` regenerates the same lock file, even from an empty cache (checked 2026-10-09);
+# CI and release.yml run it before anything compiles.
+/ql/lib/codeql-pack.lock.yml

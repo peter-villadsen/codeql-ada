@@ -180,9 +180,10 @@ describes the viewer. Step by step, on Windows with the toolchain in WSL:
    **AST Viewer** section of the CodeQL sidebar, usually collapsed at the
    bottom.
 
-Known side effect: running View AST deletes `ql/lib/codeql-pack.lock.yml`
-(the extension's log says "Deleting temporary package lock file"). Restore it
-with `git checkout -- ql/lib/codeql-pack.lock.yml` before committing. While
+The extension creates `ql/lib/codeql-pack.lock.yml` for each View AST run and
+deletes it afterwards (its log says "Deleting temporary package lock file"). That
+file is not committed (`.gitignore`), so this is harmless; `codeql pack install
+ql/lib` recreates it when the command line needs it. While
 VS Code has a database open, its query server locks it, and a command-line
 query on the same database fails with "the cache directory is already
 locked".
