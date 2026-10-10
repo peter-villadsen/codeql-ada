@@ -314,3 +314,9 @@ ones: `from IfStmt s`, not `from Raw::IfStmt s`.
 - **Verification.** Full suite green; the 26 `.expected` files that print nodes changed in
   their rendered column only (rows, locations and messages identical); corpus per-query
   counts identical on all five projects.
+
+## D-028 (2026-10-10) — Public open-source project; no commercial offering
+D-001 chose MIT and left room for paid services around the tool. Uptake has been too low
+to make setting up a paid offering worth it, so there won't be one. The license stays MIT;
+the repository and its GHCR packs are made public, so anyone can install the tool and
+contribute to it. The 0.1 analysis in BURNDOWN.md is kept as history.

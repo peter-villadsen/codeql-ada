@@ -15,6 +15,10 @@ CI on `master` was green at `579e66d`; the run for `f7f0a71` (37878120653) was s
 at the end of the session and not checked. 26 queries. Corpus: 2,334 results
 (`scripts/corpus_query_baseline.json`).
 
+**Decided 2026-10-10 (D-028):** public open source under MIT, no commercial offering.
+GHCR packages keep their own visibility when the repository goes public, so the first
+item below still applies.
+
 **Pending, needs the owner (not something to do unasked):**
 - **The GHCR packages are private** (GitHub's default for a new package), so an
   anonymous `codeql pack download peter-villadsen/ada-queries@0.2.0` fails with 401: an
