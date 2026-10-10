@@ -1,0 +1,34 @@
+name: Extractor or tool bug
+description: A crash, an error, or behavior that doesn't match the documentation.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you ran, what you expected, and what happened instead. Paste error output as text.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: A small Ada project or snippet and the commands you ran, if you can share them.
+      render: shell
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: codeql-ada release (or commit), CodeQL CLI version, and OS/WSL distribution.
+      placeholder: "codeql-ada 0.2.0, CodeQL 2.25.6, WSL Debian 13"
+    validations:
+      required: true
+  - type: dropdown
+    id: gpr
+    attributes:
+      label: Project discovery
+      description: How did the extractor find your sources?
+      options:
+        - A GNAT project file (.gpr)
+        - No project file (all .ads/.adb files)
+        - Not sure

@@ -1,0 +1,46 @@
+name: Wrong or missing query result
+description: A false positive (a wrong result) or a false negative (a missed result).
+labels: [query-result]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Please check [Known limitations](https://github.com/peter-villadsen/codeql-ada/blob/master/docs/known-limitations.md)
+        first: many missed data-flow results come from a listed limitation.
+  - type: input
+    id: query
+    attributes:
+      label: Query
+      description: The query ID, as shown in the results.
+      placeholder: ada/unused-local
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - False positive (the result is wrong)
+        - False negative (an expected result is missing)
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: Ada code
+      description: The smallest snippet that shows the problem.
+      render: ada
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why the result is wrong
+      description: What the query reported or missed, and why.
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      placeholder: "codeql-ada 0.2.0, CodeQL 2.25.6"

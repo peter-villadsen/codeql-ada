@@ -17,7 +17,9 @@ at the end of the session and not checked. 26 queries. Corpus: 2,334 results
 
 **Decided 2026-10-10 (D-028):** public open source under MIT, no commercial offering.
 GHCR packages keep their own visibility when the repository goes public, so the first
-item below still applies.
+item below still applies. Done the same day: the repository is public; tester setup is in
+place (`docs/known-limitations.md`, issue templates under `.github/ISSUE_TEMPLATE/`,
+README status block stating the database format may still change).
 
 **Pending, needs the owner (not something to do unasked):**
 - **The GHCR packages are private** (GitHub's default for a new package), so an
@@ -28,9 +30,6 @@ item below still applies.
   visibility from the CLI). After the switch, verify with an anonymous download into
   an empty cache: `codeql pack download --common-caches=/tmp/fresh-packs
   peter-villadsen/ada-queries@0.2.0`.
-- **Tester setup** (from the 2026-10-08 plan): a known-limitations page for testers
-  (user-guide "Known limitations" is the basis), an issue template, a statement that the
-  database format may still change.
 
 **Next work, in order of payoff (ask before starting; each is a project):**
 - **Content flow** (record components, array elements, containers): the largest gap.

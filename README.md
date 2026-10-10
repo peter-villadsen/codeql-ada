@@ -6,10 +6,13 @@ libraries, and a query suite — enabling `codeql database create --language=ada
 and, from there, the same static-analysis workflow CodeQL already offers for
 C++, Java, Python, and a dozen other languages.
 
-> **Status:** working extractor, 11 security/reliability queries, tested on a
-> 5-project real-world corpus (see [BURNDOWN.md](BURNDOWN.md) Phase 5).
-> Releases are pending — see [Installing](#installing) for how to build one
-> yourself in the meantime.
+> **Status:** pre-1.0, released as [v0.2.0](CHANGELOG.md): an extractor, a QL
+> library with control flow, data flow and taint tracking, and 25 queries
+> (26 on `master`), tested on a 5-project real-world corpus. The database format
+> may still change between releases, so expect to rebuild databases when you
+> upgrade. [docs/known-limitations.md](docs/known-limitations.md) lists what
+> doesn't work yet. Bug reports, false positives and missed results are welcome as
+> [issues](https://github.com/peter-villadsen/codeql-ada/issues).
 
 If you already know CodeQL from another language, most of what follows will
 be familiar; the parts specific to Ada (project discovery, name-resolution
@@ -38,7 +41,7 @@ Three pieces make this work for a new language:
 - **QL packs** — versioned bundles of QL code, the same way a language has
   package registries for libraries. This project ships two: `ada-all` (the
   library — reusable classes like `Name` and `Expr` that queries build on)
-  and `ada-queries` (11 ready-to-run queries built on that library).
+  and `ada-queries` (ready-to-run queries built on that library).
 - **The CodeQL CLI** — GitHub's command-line tool that drives extraction and
   query evaluation. It's free to run against open-source queries but is
   proprietary software with its own license (see [License](#license)) and
@@ -58,22 +61,20 @@ path for Windows users, and works identically to native Linux.
 
 ## Installing
 
-Until the first tagged release is published, build the release tarball
-yourself in WSL/Debian 13 (see [CONTRIBUTING.md](CONTRIBUTING.md) for the dev
-environment setup):
-
-```sh
-scripts/build-libadalang.sh          # ~45 min the first time; builds Libadalang from source
-scripts/create-extractor-pack.sh     # bundles it into codeql-extractor-ada-linux64.tar.gz
-```
-
-Once a release exists, the equivalent is a plain download — no Libadalang
-build required, since the tarball bundles the Libadalang runtime it needs
-(D-010):
+Download the extractor from the latest release. No Libadalang build is
+needed, because the tarball bundles the Libadalang runtime it needs (D-010):
 
 ```sh
 curl -sSLO https://github.com/peter-villadsen/codeql-ada/releases/latest/download/codeql-extractor-ada-linux64.tar.gz
 tar xzf codeql-extractor-ada-linux64.tar.gz
+```
+
+To build the tarball yourself instead, in WSL/Debian 13 (see
+[CONTRIBUTING.md](CONTRIBUTING.md) for the dev environment setup):
+
+```sh
+scripts/build-libadalang.sh          # ~45 min the first time; builds Libadalang from source
+scripts/create-extractor-pack.sh     # bundles it into codeql-extractor-ada-linux64.tar.gz
 ```
 
 Either way, extraction leaves an `ada/` directory — that's the extractor
@@ -120,7 +121,7 @@ such as `Ada.Environment_Variables.Value` to a sink such as
 complete, tested examples, including one that lists allocations not provably
 deallocated.
 
-For everything past this point — the 26 queries, environment variables that
+For everything past this point — the queries, environment variables that
 control project discovery and parallelism, how to write your own queries,
 and known limitations — see [docs/user-guide.md](docs/user-guide.md),
 [docs/query-writing.md](docs/query-writing.md), and, for what tree each Ada
