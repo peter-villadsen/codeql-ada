@@ -52,7 +52,7 @@ Three pieces make this work for a new language:
 
 | Requirement | Details |
 |---|---|
-| OS | Linux x86_64 (glibc as new as Debian 13's or newer); Windows via WSL |
+| OS | Linux x86_64 with glibc 2.38 or newer (Ubuntu 24.04, Debian 13); Windows via WSL |
 | Python | ≥ 3.11, already on `PATH` (system Python is fine — no install needed, see below) |
 | CodeQL CLI | 2.25.6 tested; [download separately](https://github.com/github/codeql-cli-binaries) under GitHub's own terms |
 
@@ -121,11 +121,12 @@ such as `Ada.Environment_Variables.Value` to a sink such as
 complete, tested examples, including one that lists allocations not provably
 deallocated.
 
-For everything past this point — the queries, environment variables that
-control project discovery and parallelism, how to write your own queries,
-and known limitations — see [docs/user-guide.md](docs/user-guide.md),
-[docs/query-writing.md](docs/query-writing.md), and, for what tree each Ada
-construct becomes, [docs/ast-reference.md](docs/ast-reference.md).
+**[docs/user-guide.md](docs/user-guide.md) is the complete manual**: setting up
+(including the CodeQL CLI), analyzing a project, writing ad-hoc queries with worked
+examples (recursion, statement counts, cyclomatic complexity, SQL injection), running
+in GitHub Actions and Azure DevOps, and troubleshooting. Beyond it,
+[docs/query-writing.md](docs/query-writing.md) covers the QL library in depth and
+[docs/ast-reference.md](docs/ast-reference.md) the tree each Ada construct becomes.
 
 ## Why
 

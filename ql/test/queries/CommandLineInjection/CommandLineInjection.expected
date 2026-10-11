@@ -1,7 +1,10 @@
 edges
 | test.adb:14:19:14:22 | [param] Cmd | test.adb:18:14:18:17 | Cmd | provenance |  |
 | test.adb:23:14:23:43 | Ada.Command_Line.Argument (...) | test.adb:106:21:106:32 | Get_Arg (...) | provenance |  |
+| test.adb:27:28:27:32 | [param] Word | test.adb:28:37:28:54 | new ... | provenance |  |
 | test.adb:27:28:27:32 | [param] Word | test.adb:31:49:31:53 | Args | provenance |  |
+| test.adb:28:31:28:55 | (...) [element] | test.adb:31:49:31:53 | Args | provenance |  |
+| test.adb:28:37:28:54 | new ... | test.adb:28:31:28:55 | (...) [element] | provenance |  |
 | test.adb:35:25:35:29 | [param] Line | test.adb:39:18:39:52 | Argument_String_To_List (...).all | provenance |  |
 | test.adb:43:25:43:28 | [param] Cmd | test.adb:47:34:47:37 | Cmd | provenance |  |
 | test.adb:68:26:68:29 | [param] Cmd | test.adb:73:43:73:46 | Cmd | provenance |  |
@@ -21,6 +24,8 @@ nodes
 | test.adb:18:14:18:17 | Cmd | semmle.label | Cmd |
 | test.adb:23:14:23:43 | Ada.Command_Line.Argument (...) | semmle.label | Ada.Command_Line.Argument (...) |
 | test.adb:27:28:27:32 | [param] Word | semmle.label | [param] Word |
+| test.adb:28:31:28:55 | (...) [element] | semmle.label | (...) [element] |
+| test.adb:28:37:28:54 | new ... | semmle.label | new ... |
 | test.adb:31:49:31:53 | Args | semmle.label | Args |
 | test.adb:35:25:35:29 | [param] Line | semmle.label | [param] Line |
 | test.adb:39:18:39:52 | Argument_String_To_List (...).all | semmle.label | Argument_String_To_List (...).all |

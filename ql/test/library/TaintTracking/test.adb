@@ -23,6 +23,27 @@ procedure Test is
    function Ignore (S : String) return String is ("constant");
    function Sanitize (S : String) return String is (S);
 
+   --  A string built element by element keeps the taint of its elements.
+   function Copy_Elements (S : String) return String is
+      R : String (1 .. S'Length);
+   begin
+      for I in S'Range loop
+         R (I - S'First + 1) := S (I);
+      end loop;
+      return R;
+   end Copy_Elements;
+
+   function Copy_Of (S : String) return String is
+      R    : String (1 .. S'Length) := (others => ' ');
+      Last : Natural := 0;
+   begin
+      for C of S loop
+         Last := Last + 1;
+         R (Last) := C;
+      end loop;
+      return R;
+   end Copy_Of;
+
    S : constant String := Source (1);
 begin
    Sink ("a" & S);                                   -- $ taint=1
@@ -41,4 +62,17 @@ begin
    Sink (Character'Val (Character'Pos (S (S'First)))'Image);  -- $ taint=1
    Sink (Ada.Directories.Compose ("/tmp", S));        -- $ taint=1
    Handle ("literal");
+   declare
+      L     : String (1 .. 10) := (others => ' ');
+      Clean : String (1 .. 10) := (others => ' ');
+   begin
+      L (1) := S (S'First);
+      Sink (L);                                         -- $ taint=1
+      Sink (L (1 .. 2));                                -- $ taint=1
+      Sink ("a" & L);                                   -- $ taint=1
+      Clean (1) := 'x';
+      Sink (Clean);
+   end;
+   Sink (Copy_Elements (S));                         -- $ taint=1
+   Sink (Copy_Of (S));                               -- $ taint=1
 end Test;

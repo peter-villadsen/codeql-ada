@@ -213,7 +213,7 @@ private Raw::SubpSpec getSubpSpecOf(Raw::BasicDecl d) { result = Formals::callab
  * Gets the `CfgScope` that formal parameter `ps` belongs to, if it is part of
  * a body's own parameter list (not a separate spec's -- that copy is never
  * entered, so it gets no entry write). Precise even for a nested subprogram's
- * parameter, unlike `AdaNode.getEnclosingSubprogram()` (`ada.qll`), which
+ * parameter, unlike `AdaNode.getAnEnclosingBody()` (`ada.qll`), which
  * would also match an *outer* enclosing subprogram and so cannot be reused
  * here: `ps` is tied directly to the one `SubpSpec` it is part of, and from
  * there to the one scope whose own `getSubpSpec()` is that same node.

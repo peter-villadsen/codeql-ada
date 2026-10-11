@@ -17,6 +17,16 @@
 private import codeql.ada.ast.internal.Raw
 private import codeql.ada.ast.internal.RawMeta
 private import codeql.ada.Declarations as Declarations
+private import codeql.ada.Subprograms as Subprograms
+
+/** Gets the subprogram body that most closely encloses `n` (not `n` itself). */
+private Raw::BaseSubpBody innermostSubpBody(Raw::AdaNode n) {
+  exists(Raw::AdaNode p | p = n.getParent() |
+    result = p
+    or
+    not p instanceof Raw::BaseSubpBody and result = innermostSubpBody(p)
+  )
+}
 
 /** Holds if `loc` lies in a predefined pseudo-source file (D-026). */
 private predicate inPredefinedFile(Raw::Location loc) {
@@ -49,16 +59,28 @@ class CommentExt extends @ada_comment {
 class AdaNodeExt extends @ada_ast_node {
   /**
    * Holds if this node is in the project's own sources, not in a predefined
-   * pseudo-source such as package `Standard` (D-026). Every query restricts its
-   * reported element to this.
+   * pseudo-source (D-026): package `Standard` and the runtime specs the project
+   * refers to, which are extracted only so that names resolve into them. Like Java's
+   * `Element.fromSource()`, which leaves out classes read from library `.jar` files.
+   * Every query restricts the element it reports to this.
    */
   predicate fromSource() { not inPredefinedFile(this.(Raw::AdaNode).getLocation()) }
 
   /** Gets the compilation unit containing this node. */
   Raw::CompilationUnit getEnclosingUnit() { result = this.(Raw::AdaNode).getParent*() }
 
-  /** Gets a subprogram body containing this node, innermost first. */
-  Raw::BaseSubpBody getEnclosingSubprogram() { result = this.(Raw::AdaNode).getParent+() }
+  /**
+   * Gets the subprogram whose body most closely encloses this node: for a statement
+   * in a subprogram nested in another, the nested one. Like Java's
+   * `getEnclosingCallable()`. No result at library level, in a package's
+   * initialisation or a declaration outside any subprogram.
+   */
+  Subprograms::Subprogram getEnclosingSubprogram() {
+    result.getBody() = innermostSubpBody(this)
+  }
+
+  /** Gets a subprogram body containing this node, at any depth of nesting. */
+  Raw::BaseSubpBody getAnEnclosingBody() { result = this.(Raw::AdaNode).getParent+() }
 
   /** Gets a textual representation of this node; overridden by `AdaNode`. */
   string toString() { none() }
@@ -173,7 +195,7 @@ class BasicDeclExt extends Raw::AdaNode, @ada_basic_decl {
   predicate hasUnresolvedNamesakeIn(Raw::BaseSubpBody body) {
     exists(Raw::Identifier i |
       unresolvedIdentifier(i, this.getAName().toLowerCase()) and
-      i.getEnclosingSubprogram() = body
+      i.getAnEnclosingBody() = body
     )
   }
 
@@ -199,7 +221,7 @@ class BasicDeclExt extends Raw::AdaNode, @ada_basic_decl {
       or
       not exists(arg.getReferencedDecl()) and
       arg.getText().toLowerCase() = this.getAName().toLowerCase() and
-      p.getEnclosingSubprogram() = this.getEnclosingSubprogram()
+      p.getAnEnclosingBody() = this.getAnEnclosingBody()
     )
   }
 

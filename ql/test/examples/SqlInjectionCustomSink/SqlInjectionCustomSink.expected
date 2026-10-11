@@ -1,0 +1,12 @@
+edges
+| server.adb:7:27:7:31 | [param] Name | server.adb:9:15:9:62 | ... & ... | provenance |  |
+| server.adb:17:30:17:58 | String'Input (...) | server.adb:19:17:19:21 | Name | provenance |  |
+| server.adb:19:17:19:21 | Name | server.adb:7:27:7:31 | [param] Name | provenance |  |
+nodes
+| server.adb:7:27:7:31 | [param] Name | semmle.label | [param] Name |
+| server.adb:9:15:9:62 | ... & ... | semmle.label | ... & ... |
+| server.adb:17:30:17:58 | String'Input (...) | semmle.label | String'Input (...) |
+| server.adb:19:17:19:21 | Name | semmle.label | Name |
+subpaths
+#select
+| server.adb:9:15:9:62 | ... & ... | server.adb:17:30:17:58 | String'Input (...) | server.adb:9:15:9:62 | ... & ... | This SQL statement depends on $@. | server.adb:17:30:17:58 | String'Input (...) | network data |

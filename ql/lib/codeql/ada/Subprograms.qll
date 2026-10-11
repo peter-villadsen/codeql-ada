@@ -11,6 +11,7 @@ private import codeql.ada.ast.internal.Raw
 private import codeql.ada.internal.Formals
 private import codeql.ada.Calls
 private import codeql.ada.Declarations
+private import codeql.ada.metrics.MetricSubprogram
 
 /**
  * Holds if `d` is a further declaration of the subprogram first declared by `first`:
@@ -86,6 +87,12 @@ class Subprogram extends Raw::BasicDecl {
       actual.getRExpr().(Raw::Name).getReferencedDecl() = this.getADeclaration()
     )
   }
+
+  /**
+   * Gets this subprogram's metrics: statement count, cyclomatic complexity. Like
+   * Java's `Callable.getMetrics()`.
+   */
+  MetricSubprogram getMetrics() { result = this }
 
   /** Holds if this is a generic subprogram (`generic ... procedure G (...)`). */
   predicate isGeneric() { this instanceof Raw::GenericSubpDecl }

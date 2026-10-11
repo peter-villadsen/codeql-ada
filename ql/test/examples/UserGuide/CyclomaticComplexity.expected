@@ -1,0 +1,5 @@
+| metrics.adb:25:4:40:14 | Score | 7 |
+| metrics.adb:2:4:9:13 | Fact | 2 |
+| metrics.adb:13:4:18:13 | Pong | 2 |
+| metrics.adb:1:1:43:13 | Metrics | 1 |
+| metrics.adb:11:4:11:33 | Ping | 1 |

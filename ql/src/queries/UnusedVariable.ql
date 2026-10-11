@@ -16,7 +16,7 @@ import ada
 
 from ObjectDecl d, BaseSubpBody b
 where
-  b = d.getEnclosingSubprogram() and
+  b = d.getAnEnclosingBody() and
   not d.isReferenced() and
   // A same-named name that did not resolve may be a use (missing dependencies, D-026).
   // Checking every enclosing body amounts to checking the innermost one.

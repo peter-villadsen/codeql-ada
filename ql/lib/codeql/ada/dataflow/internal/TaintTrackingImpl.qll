@@ -9,6 +9,11 @@
  * - aggregates (`(1 => X)`, `(X, Y)`), allocators (`new String'(X)`) and
  *   dereferences (`P.all`) -- standing in for the content flow v1 lacks (D-023),
  *   so that building a `GNAT.OS_Lib.Argument_List` keeps the taint of its elements;
+ * - a value stored as an element of an array or container (`S (I) := C`,
+ *   `Append (V, X)`) taints the whole array or container, so that a string built
+ *   character by character keeps the taint of its characters, and an element read
+ *   from a tainted array or container (`for C of S`) is tainted. At a sink, an element
+ *   of the value is also read, so an array whose elements are tainted is too;
  * - type conversions (`String (X)`), conversion attributes (`X'Image`,
  *   `T'Value (S)`, `Character'Val (N)`), and indexing and slicing (`S (1 .. 3)`);
  * - a few runtime subprograms that only reshape a string or build a path from its
@@ -121,11 +126,19 @@ module AdaTaintTrackingInput implements TT::InputSig<Raw::Location, AdaDataFlowI
     AdaDataFlowInput::Node src, AdaDataFlowInput::Node sink, string model
   ) {
     exprTaintStep(src.asExpr(), sink.asExpr()) and model = ""
+    or
+    // a stored element taints the array or container it is stored in, and an element
+    // read from a tainted array or container (`for E of V`, `Element (V, I)`) is tainted
+    exists(AdaDataFlowInput::ContentSet c | c.isElement() and model = "" |
+      AdaDataFlowInput::storeStep(src, c, sink)
+      or
+      AdaDataFlowInput::readStep(src, c, sink)
+    )
   }
 
   bindingset[node]
   predicate defaultImplicitTaintRead(AdaDataFlowInput::Node node, AdaDataFlowInput::ContentSet c) {
-    none()
+    exists(node) and c.isElement()
   }
 
   predicate speculativeTaintStep(AdaDataFlowInput::Node src, AdaDataFlowInput::Node sink) { none() }

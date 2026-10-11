@@ -1,0 +1,3 @@
+| metrics.adb:2:4:9:13 | Fact | This subprogram calls itself directly. |
+| metrics.adb:11:4:11:33 | Ping | This subprogram calls itself through other subprograms. |
+| metrics.adb:13:4:18:13 | Pong | This subprogram calls itself through other subprograms. |

@@ -7,7 +7,7 @@ own code, and what is worth reporting. The details are in the
 
 ## Platform
 
-- **Linux x86_64 only** (glibc as new as Debian 13's or newer). On Windows, use WSL.
+- **Linux x86_64 only**, with glibc 2.38 or newer (Ubuntu 24.04, Debian 13). On Windows, use WSL.
   Native macOS and Windows are not supported yet (D-010).
 - The CodeQL CLI is not bundled. Install it yourself; 2.25.6 is the tested version.
 

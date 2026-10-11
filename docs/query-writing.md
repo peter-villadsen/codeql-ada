@@ -88,6 +88,7 @@ two kinds of class, both without a prefix.
 | `Component` | `getName`, `getType`, `getDeclaringType`, `getDefaultExpr`, `getAnAccess` |
 | `Variable` | `getName`, `getType`, `getInitializer`, `isConstant`, `isRenaming`, `isLoopVariable`, `isLocal`, `getDeclaringSubprogram`, `getAnAccess` |
 | `Package` | `getName`, `getBody`, `getAMember`, `getAPublicMember`, `getASubprogram`, `getAType`, `getAVariable`, `isGeneric`, `isGenericInstance`, `getGeneric` |
+| `MetricSubprogram` (`Subprogram.getMetrics()`) | `getNumberOfStatements`, `getCyclomaticComplexity`, like Java's `MetricCallable` |
 
 Two things differ from Java because Ada differs:
 
@@ -136,7 +137,8 @@ D-027) add what a 1:1 mirror can't:
 | `BasicDecl.getCompletion()`, `BaseSubpBody.getDeclaration()` | A declaration's completion and back (`ada_body_part`, D-021) |
 | `BasicDecl.isReferenced()` | Whether any resolved name anywhere points back at this declaration; the basis for `UnusedVariable.ql` |
 | `GenericInstantiation.getDesignatedGeneric()` | The generic an instantiation designates, through generic renamings |
-| `AdaNode.getEnclosingSubprogram()` / `getEnclosingUnit()` | Walk outward to an enclosing subprogram body / the containing compilation unit |
+| `AdaNode.getEnclosingSubprogram()` | The `Subprogram` whose body most closely encloses the node, like Java's `getEnclosingCallable()` |
+| `AdaNode.getAnEnclosingBody()` / `getEnclosingUnit()` | Any subprogram body around the node, at any depth / the containing compilation unit |
 | `File.isPredefined()` | The file is a predefined pseudo-source |
 | `Comment` | Source comments: token trivia in Libadalang, not AST nodes, so a separate hand-written relation (`ada_comments`), not part of the node tree |
 

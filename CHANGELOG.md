@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Breaking change
+
+- **`AdaNode.getEnclosingSubprogram()`** now gives the `Subprogram` whose body most
+  closely encloses the node, like Java's `getEnclosingCallable()`. It used to give any
+  enclosing subprogram body, at any depth, as an AST node; that is now
+  `getAnEnclosingBody()`.
+
 ### Data flow follows much more
 
 - **Record components, array elements and standard containers.** A value stored in
@@ -45,6 +52,19 @@
 
 ### Other changes
 
+- **Subprogram metrics**: `Subprogram.getMetrics()` gives `getNumberOfStatements()` and
+  `getCyclomaticComplexity()`, like Java's `MetricCallable`.
+- **Taint through array elements**: a value stored in one element of an array or
+  container (`S (I) := C`, `Append (V, X)`) taints the whole array or container, and an
+  element read from a tainted one (`for C of S`) is tainted. A string built or copied
+  character by character keeps its taint; before, such flows were missed.
+- **The user guide is the complete manual**: setup including the CodeQL CLI, ad-hoc
+  queries with worked examples (recursion, statement counts, cyclomatic complexity, SQL
+  injection with sources, sinks and barriers), GitHub Actions and Azure DevOps, and
+  troubleshooting. Its examples are tests (`ql/test/examples/UserGuide`,
+  `ql/test/examples/SqlInjectionCustomSink`).
+- The extractor needs glibc 2.38 or newer (Ubuntu 24.04, Debian 13), the oldest its
+  bundled libraries require; the docs said Debian 13.
 - Taint tracking follows conversion attributes (`X'Image`, `T'Value (S)`, ...) and the
   `Ada.Directories` path builders (`Compose`, `Full_Name`, ...).
 - **New query `ada/indirect-recursion`**: a subprogram that calls itself through other

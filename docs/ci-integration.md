@@ -37,18 +37,11 @@ Code scanning list, the same PR annotations, the same dismissal workflow.
 
 | Requirement | Value | Why |
 |---|---|---|
-| Runner OS | Linux x86-64 (`ubuntu-24.04`) | The extractor ships as `codeql-extractor-ada-linux64.tar.gz`. There is no Windows or macOS build, and no arm64 build. |
+| Runner OS | Linux x86-64 with glibc 2.38 or newer (`ubuntu-24.04`) | The extractor ships as `codeql-extractor-ada-linux64.tar.gz`, whose bundled libraries need glibc 2.38. There is no Windows or macOS build, and no arm64 build. |
 | Python on the runner | ≥ 3.11 | The extractor is Python; the Libadalang runtime it needs is bundled in the tarball, so nothing else has to be installed. GitHub's Ubuntu images already satisfy this. |
 | CodeQL CLI | **exactly 2.25.6** | Pinned by decision D-012. The dbscheme and the shared QL packs are matched to this version; a newer CLI is not guaranteed to load the database. |
 | Code scanning | public repo, or GitHub Advanced Security on a private one | `upload-sarif` needs code scanning enabled. Without it the analysis still runs — see [Without code scanning](#without-code-scanning). |
 | Repository permission | `security-events: write` | Required to upload results. Set it in the workflow, as below. |
-
-> **Availability note.** At the time of writing this repository has **no tagged release
-> and no published query pack**, so the download URLs below have nothing to serve yet.
-> Cutting a release produces both (the tag-driven `release.yml` builds the extractor
-> tarball and publishes `ada-all`/`ada-queries` to GHCR). Until then, use the
-> [vendored-extractor path](#vendoring-the-extractor) instead, which works today and is
-> also what air-gapped environments will want.
 
 ---
 
@@ -240,8 +233,8 @@ whose closure covers the most source — or run the job once per `.gpr` with a d
 ## Performance
 
 Extraction dominates the run; query evaluation is comparatively cheap. Measured on this
-project's corpus, a 1,700-file codebase extracts in a few minutes and evaluates all 25
-queries in seconds.
+project's corpus, a 1,700-file codebase extracts in a few minutes and evaluates the
+syntactic queries in seconds; the data-flow queries take longer on a large codebase.
 
 - **`CODEQL_EXTRACTOR_ADA_JOBS`** controls parallelism (default: CPU count). Each worker
   loads its own Libadalang context and re-parses the dependency closure it needs, so
@@ -290,7 +283,7 @@ recording them, add:
 ```
 
 Gate on severity or on a specific rule id rather than on the total, unless you are
-starting from a clean codebase — 24 quality rules over an existing Ada project will find
+starting from a clean codebase — the quality rules over an existing Ada project will find
 things on day one.
 
 ---
@@ -416,7 +409,7 @@ build:
     displayName: Report findings
 ```
 
-Start with `SucceededWithIssues`, not a hard failure. Twenty-four quality rules over an
+Start with `SucceededWithIssues`, not a hard failure. The quality rules over an
 existing Ada codebase will find things on day one, and a pipeline that goes red
 immediately gets disabled rather than fixed. Tighten to `result=Failed`, or to a specific
 rule id or severity, once the baseline is clean.
@@ -458,7 +451,7 @@ order of surprise:
    registry.
 
    This path is verified: with `~/.codeql/packages` removed entirely, the command above
-   resolves every dependency and produces SARIF listing all 25 rules.
+   resolves every dependency and produces SARIF listing every rule.
 
 If your agents can reach an internal proxy but not GHCR, the alternative is a private
 CodeQL package registry, which the CLI supports through `--registries-auth-stdin` and a
