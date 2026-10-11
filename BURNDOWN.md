@@ -16,20 +16,11 @@ at the end of the session and not checked. 26 queries. Corpus: 2,334 results
 (`scripts/corpus_query_baseline.json`).
 
 **Decided 2026-10-10 (D-028):** public open source under MIT, no commercial offering.
-GHCR packages keep their own visibility when the repository goes public, so the first
-item below still applies. Done the same day: the repository is public; tester setup is in
-place (`docs/known-limitations.md`, issue templates under `.github/ISSUE_TEMPLATE/`,
-README status block stating the database format may still change).
-
-**Pending, needs the owner (not something to do unasked):**
-- **The GHCR packages are private** (GitHub's default for a new package), so an
-  anonymous `codeql pack download peter-villadsen/ada-queries@0.2.0` fails with 401: an
-  external tester cannot install them. Fix: package settings -> Change visibility ->
-  Public, for both packs; this cannot be undone. The local `gh` token has no
-  `read:packages` scope (`gh auth refresh -h github.com -s read:packages` to check
-  visibility from the CLI). After the switch, verify with an anonymous download into
-  an empty cache: `codeql pack download --common-caches=/tmp/fresh-packs
-  peter-villadsen/ada-queries@0.2.0`.
+Done the same day: the repository and both GHCR packs are public (an anonymous
+`codeql pack download peter-villadsen/ada-queries@0.2.0` into an empty cache works), and
+tester setup is in place (`docs/known-limitations.md`, issue templates under
+`.github/ISSUE_TEMPLATE/`, a README status block saying the database format may still
+change).
 
 **Next work, in order of payoff (ask before starting; each is a project):**
 - **Content flow** (record components, array elements, containers): the largest gap.
