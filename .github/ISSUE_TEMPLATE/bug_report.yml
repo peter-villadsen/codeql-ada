@@ -20,7 +20,7 @@ body:
     attributes:
       label: Versions
       description: codeql-ada release (or commit), CodeQL CLI version, and OS/WSL distribution.
-      placeholder: "codeql-ada 0.2.0, CodeQL 2.25.6, WSL Debian 13"
+      placeholder: "codeql-ada 0.3.0, CodeQL 2.25.6, WSL Debian 13"
     validations:
       required: true
   - type: dropdown

@@ -1,6 +1,13 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 (2026-10-11)
+
+Data flow follows much more (components, arrays, containers, shared variables,
+dispatching and access-to-subprogram calls, entries), two security queries are new, GNAT
+`finally` parts are modelled, and the user guide is now a complete manual. The database
+format and the extractor are unchanged since 0.2.0: databases built with 0.2.0 can be
+analyzed with 0.3.0's packs without rebuilding. On the five-project test corpus the
+result count is unchanged (2,334).
 
 ### Breaking change
 

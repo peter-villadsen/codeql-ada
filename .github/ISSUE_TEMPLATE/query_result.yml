@@ -43,4 +43,4 @@ body:
     id: versions
     attributes:
       label: Versions
-      placeholder: "codeql-ada 0.2.0, CodeQL 2.25.6"
+      placeholder: "codeql-ada 0.3.0, CodeQL 2.25.6"

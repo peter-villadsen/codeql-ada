@@ -292,7 +292,7 @@ codeql database analyze mydb peter-villadsen/ada-queries \
 | Parameter | Meaning |
 |---|---|
 | `mydb` | The database. |
-| `peter-villadsen/ada-queries` | What to run: a pack name (all its queries), a pack name with a version (`peter-villadsen/ada-queries@0.2.0`), a directory, or a single `.ql` file. |
+| `peter-villadsen/ada-queries` | What to run: a pack name (all its queries), a pack name with a version (`peter-villadsen/ada-queries@0.3.0`), a directory, or a single `.ql` file. |
 | `--format` | `sarif-latest` for tools (GitHub code scanning, editors), `csv` for a quick look. |
 | `--output` | Where to write the results. |
 | `--threads`, `--ram` | Optional: evaluation threads (`0` means one per core) and memory in MB. |
@@ -1022,8 +1022,8 @@ jobs:
     timeout-minutes: 60
     env:
       CODEQL_CLI_VERSION: 2.25.6
-      ADA_EXTRACTOR_VERSION: v0.2.0
-      ADA_QUERY_PACK: peter-villadsen/ada-queries@0.2.0
+      ADA_EXTRACTOR_VERSION: v0.3.0
+      ADA_QUERY_PACK: peter-villadsen/ada-queries@0.3.0
 
     steps:
       - uses: actions/checkout@v4
@@ -1114,8 +1114,8 @@ pool:
 
 variables:
   CODEQL_CLI_VERSION: 2.25.6
-  ADA_EXTRACTOR_VERSION: v0.2.0
-  ADA_QUERY_PACK: peter-villadsen/ada-queries@0.2.0
+  ADA_EXTRACTOR_VERSION: v0.3.0
+  ADA_QUERY_PACK: peter-villadsen/ada-queries@0.3.0
   TOOLS_DIR: $(Pipeline.Workspace)/ada-tools
 
 steps:

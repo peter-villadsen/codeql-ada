@@ -5,38 +5,46 @@ QL standard library, and an initial query suite — usable via `codeql database 
 
 ---
 
-## Resume here (2026-10-10) — data-flow gaps closed, two new security queries
+## Resume here (2026-10-11) — 0.3.0 prepared, waiting for the tag
 
-**State.** v0.2.0 is tagged and released (2026-10-09); `master` is ahead of it (see
-CHANGELOG.md, "Unreleased"). The repository and both GHCR packs are public (D-028), with
-tester setup in place (`docs/known-limitations.md`, issue templates). 28 queries. Local
-suite green (76/76). Corpus: 2,334 results, unchanged by the data-flow work
-(`scripts/corpus_query_baseline.json`; the two new queries find nothing there, since no
-corpus project uses sockets, AWS or GNATCOLL.SQL).
+**State.** v0.2.0 is tagged and released (2026-10-09). `master` carries 0.3.0: versions
+bumped, CHANGELOG dated, docs pinned to `v0.3.0`; **the tag has not been pushed** (it is
+the owner's call: it publishes the Release and the GHCR packs, see
+`docs/releasing.md`). The repository and both GHCR packs are public (D-028). 28 queries.
+Local suite green (85/85). Corpus: 2,334 results, unchanged
+(`scripts/corpus_query_baseline.json`; the two injection queries find nothing there, since
+no corpus project uses sockets, AWS or GNATCOLL.SQL).
 
-**Done 2026-10-10** (the whole "next work" list of the previous note):
-- **Content flow**: record components, array elements, aggregates, `Ada.Containers`
-  (`Content.qll`), with post-update nodes and value-less entry writes.
-- **Shared variables**: package variables and variables shared with nested subprograms,
-  by `jumpStep`; calls are uncertain writes of them (`callMayWrite`). Qualified
-  references (`Pkg.V`) resolve.
-- **Calls**: generic subprogram instances (target the generic), dispatching calls
-  (`Subprogram.overrides`), access-to-subprogram calls (lambda flow), task and protected
-  entry calls (jump to `accept` / entry body).
-- **CFG**: `raise ... with` messages, quantified expressions, GNAT `finally` parts
-  (normal completion only), `accept ... do` has its own node.
-- **Phase 11**: `FlowSources.qll` (`RemoteFlowSource`, `LocalUserInput`),
-  `ada/path-injection`, `ada/sql-injection`; taint through conversion attributes and
-  `Ada.Directories` path builders.
+**Done 2026-10-11:**
+- **User guide is the complete manual** (`docs/user-guide.md`): setup including the
+  CodeQL CLI, analysis, ad-hoc queries with worked examples (recursion, statement counts,
+  cyclomatic complexity, SQL injection with custom sinks and barriers), GitHub Actions and
+  Azure DevOps, troubleshooting, and the CodeQL CLI licensing note (non-open-source code
+  needs a GitHub license). Every example is a test (`ql/test/examples/UserGuide`,
+  `SqlInjectionCustomSink`).
+- **Taint through array elements**: element stores and reads are taint steps, and element
+  content is read implicitly at sinks (strings built character by character kept no
+  taint before).
+- **Java-parity API**: `getEnclosingSubprogram()` returns the innermost `Subprogram`
+  (breaking; the old walk is `getAnEnclosingBody()`); `Subprogram.getMetrics()` with
+  statement count and cyclomatic complexity (`codeql/ada/metrics/MetricSubprogram.qll`).
+- **GNAT `finally` parts** run on `return`, `exit` and exceptions too, by CFG splitting
+  (`FinallySplitting`, after Ruby's `ensure`); `goto` is the documented gap.
+  `ExitCompletion` records its loop. `Cfg/finally-abnormal` also runs the shared
+  library's consistency checks.
+- The extractor's glibc floor is 2.38 (Ubuntu 24.04), measured from the bundled
+  libraries' symbol versions.
 
 **Next work (ask before starting):**
+- Tag `v0.3.0`, then the "After" steps of `docs/releasing.md` (check
+  `codeql pack download` from a clean cache).
+- A corpus with network code, to measure `ada/path-injection` and `ada/sql-injection`
+  on real code; a precision check like `docs/v0.2.0-precision-check.md` for them.
 - What remains approximate is listed in `docs/known-limitations.md`: entry `out`
   formals, generic formal subprograms, interfaces in overriding, element/key precision,
-  `finally` on abnormal completion.
+  `goto` out of a `finally` sequence.
 - More sources and sinks: `LocalUserInput`-based queries for setuid-style programs,
   cleartext storage, more web frameworks.
-- A corpus with network code, to measure the two new queries on real code.
-- Release 0.3.0 (databases from 0.2.0 still load: no dbscheme change).
 
 **Where to read:**
 - [CHANGELOG.md](CHANGELOG.md): what each release changes for results and for query
