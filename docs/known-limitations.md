@@ -66,8 +66,8 @@ The approximations:
 - **Generic formal subprograms.** A call inside a generic body to one of its formal
   subprograms (`with procedure Process (X : T);`) is not resolved.
 
-The control-flow graph runs a GNAT `finally` part only when the statements before it
-complete normally, not on a `return`, `exit` or exception, and evaluates a quantified
+The control-flow graph does not run a GNAT `finally` part when a `goto` leaves its
+sequence (it does for `return`, `exit` and exceptions), and evaluates a quantified
 expression's predicate once, standing for every iteration.
 
 ## Other modelling limits

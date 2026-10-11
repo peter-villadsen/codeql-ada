@@ -10,6 +10,10 @@ If you have never run this locally, do that first: the [README](../README.md#qui
 quickstart is the same three commands this workflow automates, and debugging them on your
 own machine is much faster than debugging them in a runner.
 
+**Licensing.** The CodeQL CLI's terms allow automated analysis in CI without charge only
+for open-source codebases; any other codebase needs a license from GitHub. See
+[License](user-guide.md#license) in the user guide.
+
 ---
 
 ## The one thing that surprises everyone

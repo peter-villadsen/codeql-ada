@@ -261,6 +261,29 @@ procedure Test is
       raise Program_Error with Message (V);
    end Fail;
 
+   --  A `finally` part runs when its sequence is left by `return` or `exit` too.
+   procedure Return_Through_Finally is
+   begin
+      begin
+         return;
+      finally
+         Sink (Source (51));  -- $ flow=51
+      end;
+   end Return_Through_Finally;
+
+   procedure Exit_Through_Finally is
+      V : Integer := 0;
+   begin
+      loop
+         begin
+            exit;
+         finally
+            V := Source (52);
+         end;
+      end loop;
+      Sink (V);  -- $ flow=52
+   end Exit_Through_Finally;
+
    type Int_Array is array (1 .. 3) of Integer;
    Values : Int_Array := (others => 0);
    All_Positive : Boolean;
@@ -366,6 +389,8 @@ begin
    finally
       Sink (Source (50));  -- $ flow=50
    end;
+   Return_Through_Finally;
+   Exit_Through_Finally;
 
    --  A package-level variable: written in one subprogram, read in another.
    Store.Set (Source (40));

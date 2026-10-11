@@ -43,10 +43,10 @@ Three pieces make this work for a new language:
   library — reusable classes like `Name` and `Expr` that queries build on)
   and `ada-queries` (ready-to-run queries built on that library).
 - **The CodeQL CLI** — GitHub's command-line tool that drives extraction and
-  query evaluation. It's free to run against open-source queries but is
-  proprietary software with its own license (see [License](#license)) and
-  isn't bundled here — you install it yourself, once, and point it at
-  whichever language's extractor and packs you need.
+  query evaluation. It is proprietary software with its own license, which allows
+  analyzing open-source code without charge and requires a GitHub license for other
+  code (see [License](#license)). It isn't bundled here — you install it yourself,
+  once, and point it at whichever language's extractor and packs you need.
 
 ## Requirements
 
@@ -145,6 +145,16 @@ for the project's history and current state.
 queries). The CodeQL CLI itself is proprietary and licensed separately by
 GitHub; you obtain it under the
 [GitHub CodeQL Terms](https://github.com/github/codeql-cli-binaries/blob/main/LICENSE.md).
+
+**Which code you may analyze is set by the CodeQL CLI's license, not by this
+project's.** Under the
+[GitHub CodeQL Terms](https://github.com/github/codeql-cli-binaries/blob/main/LICENSE.md),
+the CLI may be used without charge to analyze open-source codebases (released under an
+OSI-approved license), for academic research, and to demonstrate CodeQL. Analyzing any
+other codebase, including your organization's proprietary code and including in CI,
+requires a license from GitHub (GitHub Advanced Security / GitHub Code Security). This
+applies to every CodeQL language, Ada included. The terms are GitHub's; read them, and
+ask GitHub, rather than relying on this summary.
 Libadalang is Apache-2.0. The release tarball bundles Libadalang's runtime
 and its own dependencies under their respective licenses (several are GPLv3
 with the GCC Runtime Library Exception, which is what permits bundling them

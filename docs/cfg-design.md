@@ -19,12 +19,12 @@ CFG is pure QL and does **not** change the dbscheme).
 
 ### The framework instantiation
 
-The framework is instantiated via `Cfg::Make<Location, Input>` — the **no-splitting**
-variant (`shared/controlflow/codeql/controlflow/Cfg.qll` line ~1575). Conditional
-completions are therefore *unsplit*: an `if x and then y` produces both true/false edges
-out of every boolean-context sub-expression without pruning impossible combinations. This
-is sound (over-approximate) and sufficient for v1; splitting (`MakeWithSplitting`) is a
-future precision upgrade, tracked for post-Phase-9.
+The framework is instantiated via `Cfg::MakeWithSplitting`, with one kind of split: the
+way a GNAT `finally` part was entered (`FinallySplitting`, see
+[Finally parts](#finally-parts)). Conditional completions are not split
+(`NoConditionalCompletionSplittingInput`): an `if x and then y` produces both true/false
+edges out of every boolean-context sub-expression without pruning impossible
+combinations. This is sound (over-approximate) and sufficient for v1.
 
 `Cfg::InputSig` requires: `AstNode`, `Completion`, `CfgScope`, the three completion
 predicates (`completionIsNormal`, `completionIsSimple`, `completionIsValidFor`),
@@ -715,15 +715,35 @@ call whose callee does not resolve is still assumed to return. (Before Task 9.6
 
 ### Finally parts
 
-Test: [`ql/test/library/Cfg/finally/`](../ql/test/library/Cfg/finally/)
+Tests: [`ql/test/library/Cfg/finally/`](../ql/test/library/Cfg/finally/) (normal
+completion), [`ql/test/library/Cfg/finally-abnormal/`](../ql/test/library/Cfg/finally-abnormal/)
+(`return`, `exit`, raise, nesting, `goto`; with the framework's consistency checks).
 
 **Rule.** GNAT's `finally` part (`begin … exception … finally … end`, an extension) runs
-when the protected statements or a handler complete **normally**; when it completes
-normally, the sequence completes normally. Its own abnormal completions escape, as a
-handler's do. In v1 a `return`, `exit`, `goto` or escaping raise leaves the sequence
-without running the `finally` part: modelling that would need the graph to remember, at
-the end of the `finally` part, which completion to resume (splitting), which v1 does not
-do.
+however the protected statements and handlers are left:
+
+- they complete **normally**: after the `finally` part, the sequence completes normally;
+- a **`return`**: after the `finally` part, the subprogram returns;
+- a **raise** that no handler of the sequence catches (there is no `when others`), or a
+  raise or `return` in a handler: after the `finally` part, the completion propagates
+  outward, to enclosing handlers and `finally` parts;
+- an **`exit`** from a loop outside the sequence: after the `finally` part, control goes
+  to the loop's node (after the loop), or first to the `finally` part of the next
+  enclosing sequence the jump leaves.
+
+The `finally` part's own abnormal completions (a raise or `return` inside it) escape, as
+a handler's do, whichever way it was entered. A **`goto`** out of the sequence does not
+run the `finally` part: v1 does not model it, as `goto` is rare.
+
+**Splitting.** The graph has one copy of the `finally` part's nodes for each way it can
+be entered (the `FinallySplitting` module, after Ruby's `ensure` splitting). Without
+copies, the end of the `finally` part would need an edge for every way in, and a path
+entering by `return` could leave as if the sequence had completed normally. The split of
+a node is shown in its name: `[finally: return] X := 3`, `[finally: exit@27] ...` (the
+`exit` from the loop on line 27). A copy entered normally has no prefix. A `finally` part
+inside another one's has a split of its own, a level deeper (`finally(1): ...`). An `exit` records its loop
+(`ExitCompletion.getLoop()`), so that `exit Outer` and `exit Inner` resume at the right
+loop.
 
 ```
 l1: begin
@@ -741,6 +761,31 @@ l2 P;          -> l3 (normal), l6 (exception)
 l3 X := 1      -> l8 X := 3
 l6 X := 2      -> l8 X := 3
 l8 X := 3      -> l10
+```
+
+With a `return` and an `exit`:
+
+```
+l1:  procedure Returns (B : Boolean) is      l10: Outer : loop
+l2:  begin                                   l11:    loop
+l3:     begin                                l12:       begin
+l4:        if B then return; end if;         l13:          exit Outer when C;
+l5:        X := 1;                           l14:          exit;
+l6:     finally                              l15:       finally
+l7:        X := 2;                           l16:          X := 4;
+l8:     end;                                 l17:       end;
+l9:     X := 3;                              l18:    end loop;
+                                             l19:    X := 5;
+                                             l20: end loop Outer;
+
+l4 return              -> [finally: return] l7 X := 2
+[finally: return] l7   -> exit (return)
+l5 X := 1              -> l7 X := 2
+l7 X := 2              -> l9 X := 3
+l13 exit Outer         -> [finally: exit@10] l16
+[finally: exit@10] l16 -> loop node of l10 (after Outer)
+l14 exit               -> [finally: exit@11] l16
+[finally: exit@11] l16 -> loop node of l11 (then l19)
 ```
 
 ### Quantified expressions and raise messages
@@ -852,9 +897,10 @@ l1 BinOp(inner) -> l1 ParenExpr  ; successor
 l1 ParenExpr -> l1 BinOp(outer)  ; successor
 ```
 
-Because the framework is instantiated **without splitting**, the operator node emits both
-`true` and `false` regardless of which path reached it. This is sound but imprecise: the
-graph admits `A` false followed by the `true` branch. See the note on `Make` in Part 1.
+Because conditional completions are not split, the operator node emits both `true` and
+`false` regardless of which path reached it. This is sound but imprecise: the graph
+admits `A` false followed by the `true` branch. See the note on the framework
+instantiation in Part 1.
 
 ### Conditional expressions
 
@@ -1040,7 +1086,8 @@ Not control-relevant: nothing here is executed, so nothing is in the graph.
 - **A quantified expression's predicate is evaluated once**, standing for every
   iteration, and its iterator filter (`when`) is not evaluated. Ada 2022 `DeclExpr` is an
   opaque post-order expression.
-- **A `finally` part runs on normal completion only** (see [Finally parts](#finally-parts)).
+- **A `goto` out of a sequence does not run its `finally` part** (see
+  [Finally parts](#finally-parts)). `return`, `exit` and raises do.
 - **Tasking is opaque** (D-013): no inter-task edges, no rendezvous modelling.
 - **An unresolved call without parentheses does not raise.** A name like
   `Id.P_Referenced_Decl` whose callee does not resolve cannot be told apart from an object,

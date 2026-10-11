@@ -105,7 +105,9 @@ private module CfgInput implements InputSig<Location> {
   int idOfCfgScope(CfgScope node) { result = idOfAstNode(node) }
 }
 
-module CfgImpl = Make<Location, CfgInput>;
+module CfgImpl =
+  MakeWithSplitting<Location, CfgInput, FinallySplitting::SplittingInput,
+    NoConditionalCompletionSplittingInput<Location, CfgInput, FinallySplitting::SplittingInput>>;
 
 import CfgImpl
 
@@ -133,10 +135,16 @@ class StmtListTree extends StandardTree instanceof Raw::StmtList {
  * A handled statement sequence (`… exception when … => …`). The protected
  * statements run; a `RaiseCompletion` anywhere in the region has an edge to the
  * start of every handler (v1 does not match exception identities). A raise
- * escapes the sequence only when there is no `when others` handler. A handler
- * body finishing normally continues after the sequence, through the GNAT `finally`
- * part when there is one. In v1 only normal ends run the `finally` part; a return,
- * exit, goto or escaping raise leaves without it.
+ * escapes the sequence only when there is no `when others` handler.
+ *
+ * A GNAT `finally` part runs however the protected statements and handlers are
+ * left: normally, by `return`, by an escaping raise, or by an `exit` from a loop
+ * outside the sequence. When it completes normally, control continues the way it
+ * was entered: after the sequence, out of the subprogram, to the enclosing
+ * handlers, or after the loop (through the next enclosing `finally` part first).
+ * The graph has one copy of the `finally` part for each way of entering it
+ * (`FinallySplitting`), so the copy entered by a `return` can only return. A `goto`
+ * out of the sequence does not run the `finally` part.
  */
 class HandledStmtsTree extends ControlFlowTree instanceof Raw::HandledStmts {
   private Raw::ExceptionHandler aHandler() { result = super.getExceptions().getChild(_) }
@@ -144,15 +152,19 @@ class HandledStmtsTree extends ControlFlowTree instanceof Raw::HandledStmts {
   override predicate first(Raw::AdaNode f) { first(super.getStmts(), f) }
 
   override predicate propagatesAbnormal(Raw::AdaNode child) {
-    // handler bodies and the `finally` part are not themselves protected: their
-    // abnormal completions escape
-    child = this.aHandler().getStmts()
+    // handler bodies are not themselves protected: their abnormal completions
+    // escape, through the `finally` part when there is one
+    child = this.aHandler().getStmts() and not this.hasFinally()
     or
-    child = this.finallyStmts()
+    // and neither is the `finally` part
+    child = this.getFinallyStmts()
   }
 
   /** Gets the statements of this sequence's GNAT `finally` part, if it has one. */
-  private Raw::StmtList finallyStmts() { result = super.getFinallyPart().getStmts() }
+  Raw::StmtList getFinallyStmts() { result = super.getFinallyPart().getStmts() }
+
+  /** Holds if this sequence has a GNAT `finally` part. */
+  predicate hasFinally() { exists(this.getFinallyStmts()) }
 
   /**
    * Holds if `l` finishing with `c` ends the protected region or a handler normally:
@@ -163,29 +175,116 @@ class HandledStmtsTree extends ControlFlowTree instanceof Raw::HandledStmts {
     completionIsNormal(c)
   }
 
+  /**
+   * Holds if `l` finishing with abnormal completion `c` leaves the protected region
+   * or a handler (other than by `exit` or `goto`, which jump): a `return`, or a raise
+   * that no handler here catches.
+   */
+  private predicate abnormalEnd(Raw::AdaNode l, Completion c) {
+    last(super.getStmts(), l, c) and
+    not completionIsNormal(c) and
+    (not c instanceof RaiseCompletion or not hasOthersHandler(this))
+    or
+    last(this.aHandler().getStmts(), l, c) and not completionIsNormal(c)
+  }
+
+  /**
+   * Holds if `l` finishing with `c` enters the `finally` part: a normal or abnormal
+   * end, or an `exit` (or an `exit` resumed after a nested `finally` part) leaving
+   * this sequence.
+   */
+  predicate entersFinally(Raw::AdaNode l, Completion c) {
+    this.hasFinally() and
+    (
+      this.normalEnd(l, c)
+      or
+      this.abnormalEnd(l, c)
+      or
+      exists(Raw::BaseLoopStmt loop | c.(ExitCompletion).getLoop() = loop |
+        l = any(Raw::ExitStmt e | exitTargetLoop(e) = loop and exitCrosses(e, loop, this))
+        or
+        exists(HandledStmtsTree inner |
+          exitEntersFinally(inner, loop) and
+          exitCrosses(inner, loop, this) and
+          last(inner.getFinallyStmts(), l, any(NormalCompletion nc))
+        )
+      )
+    )
+  }
+
   override predicate succ(Raw::AdaNode pred, Raw::AdaNode succ, Completion c) {
     last(super.getStmts(), pred, c) and
     c instanceof RaiseCompletion and
     first(this.aHandler().getStmts(), succ)
     or
-    // a normal end runs the `finally` part
-    this.normalEnd(pred, c) and first(this.finallyStmts(), succ)
+    this.entersFinally(pred, c) and first(this.getFinallyStmts(), succ)
+    or
+    // after the `finally` part, an `exit` resumes: to the loop, or to the next
+    // `finally` part it leaves (an edge of that sequence's `entersFinally`)
+    exists(Raw::BaseLoopStmt loop |
+      exitEntersFinally(this, loop) and
+      last(this.getFinallyStmts(), pred, any(NormalCompletion nc)) and
+      c.(ExitCompletion).getLoop() = loop and
+      not exitCrosses(this, loop, _) and
+      succ = loop
+    )
   }
 
   override predicate last(Raw::AdaNode l, Completion c) {
-    // protected region or handler completes normally, with no `finally` part
-    this.normalEnd(l, c) and not exists(this.finallyStmts())
+    // protected region or handler completes, with no `finally` part
+    not this.hasFinally() and
+    (this.normalEnd(l, c) or this.abnormalEnd(l, c))
     or
-    // the `finally` part completes normally (its abnormal completions propagate)
-    last(this.finallyStmts(), l, c) and completionIsNormal(c)
-    or
-    // protected region completes abnormally: return/exit/goto always escape; a
-    // raise escapes only when it is not caught by a `when others` handler. An
-    // abnormal completion does not pass through the `finally` part (v1).
-    last(super.getStmts(), l, c) and
-    not completionIsNormal(c) and
-    (not c instanceof RaiseCompletion or not hasOthersHandler(this))
+    // the `finally` part completes normally (its abnormal completions propagate):
+    // continue the way it was entered
+    exists(Completion entry |
+      last(this.getFinallyStmts(), l, any(NormalCompletion nc)) and
+      this.entersFinally(_, entry) and
+      not entry instanceof ExitCompletion
+    |
+      completionIsNormal(entry) and completionIsSimple(c)
+      or
+      not completionIsNormal(entry) and c = entry
+    )
   }
+}
+
+/**
+ * Holds if an `exit` from `loop` at `n` (an `exit` statement, or a handled sequence
+ * whose `finally` part the jump has just run) leaves the protected region or a
+ * handler of `h`, which has a `finally` part, and `h` is the innermost such
+ * sequence: the next `finally` part the jump runs.
+ */
+predicate exitCrosses(Raw::AdaNode n, Raw::BaseLoopStmt loop, HandledStmtsTree h) {
+  h = finallyLeft(n, loop) and
+  not exists(HandledStmtsTree closer |
+    closer = finallyLeft(n, loop) and closer.(Raw::AdaNode).getParent+() = h
+  )
+}
+
+/**
+ * Gets a sequence with a `finally` part that an `exit` from `loop` at `n` leaves: one
+ * inside `loop` with `n` in its protected region or a handler, not its `finally`
+ * part.
+ */
+private HandledStmtsTree finallyLeft(Raw::AdaNode n, Raw::BaseLoopStmt loop) {
+  (
+    loop = exitTargetLoop(n)
+    or
+    n instanceof HandledStmtsTree and loop = any(Raw::ExitStmt e).getParent+()
+  ) and
+  result.hasFinally() and
+  result.(Raw::AdaNode).getParent+() = loop and
+  n.getParent+() = result and
+  not n.getParent*() = result.getFinallyStmts() and
+  getEnclosingCfgScope(n) = getEnclosingCfgScope(result)
+}
+
+/** Holds if an `exit` from `loop` runs the `finally` part of `h`. */
+predicate exitEntersFinally(HandledStmtsTree h, Raw::BaseLoopStmt loop) {
+  exists(Raw::ExitStmt e | exitTargetLoop(e) = loop and exitCrosses(e, loop, h))
+  or
+  exists(HandledStmtsTree inner | exitEntersFinally(inner, loop) and exitCrosses(inner, loop, h))
 }
 
 /** Holds if `hs` has a `when others =>` exception handler. */
@@ -546,8 +645,12 @@ class ExitStmtTree extends ControlFlowTree instanceof Raw::ExitStmt {
     // condition true → reach the exit node
     last(super.getCondExpr(), pred, c) and c.(BooleanCompletion).getValue() = true and succ = this
     or
-    // exit taken → jump to the target loop node
-    pred = this and c instanceof ExitCompletion and succ = exitTargetLoop(this)
+    // exit taken → jump to the target loop node, unless the jump leaves a GNAT
+    // `finally` part's sequence on the way (`HandledStmtsTree` runs that first)
+    pred = this and
+    succ = exitTargetLoop(this) and
+    c.(ExitCompletion).getLoop() = succ and
+    not exitCrosses(this, succ, _)
   }
 }
 
@@ -920,4 +1023,194 @@ Raw::Expr formalDefault(Raw::SubpBody body, int k) {
     |
       d order by ps.getParentIndex()
     )
+}
+
+/**
+ * Splitting for GNAT `finally` parts, as CodeQL for Ruby splits `ensure` blocks and
+ * CodeQL for C# `finally` blocks.
+ *
+ * A `finally` part is entered in different ways (normally, by `return`, by a
+ * raise, by an `exit` from a given loop) and must continue, when it completes
+ * normally, the way it was entered. `HandledStmtsTree` gives the end of the
+ * `finally` part an edge for every way in; a split records, for each node of the
+ * `finally` part, the way it was entered, and keeps only the edge out that matches.
+ * Without splits, a path entering by `return` could leave as if the sequence had
+ * completed normally.
+ *
+ * A `finally` part nested in another one's has its own split kind, one per level of
+ * nesting (`getNestLevel`).
+ */
+module FinallySplitting {
+  /** A way of entering a `finally` part, and so of continuing after it. */
+  newtype TEntry =
+    TNormalEntry() or
+    TReturnEntry() or
+    TRaiseEntry() or
+    TExitEntry(Raw::BaseLoopStmt loop) { exitEntersFinally(_, loop) }
+
+  /** A way of entering a `finally` part, and so of continuing after it. */
+  class Entry extends TEntry {
+    /** Holds if a `finally` part entered with completion `c` is entered this way. */
+    predicate isEntryCompletion(Completion c) {
+      this = TNormalEntry() and completionIsNormal(c)
+      or
+      this = TReturnEntry() and c instanceof ReturnCompletion
+      or
+      this = TRaiseEntry() and c instanceof RaiseCompletion
+      or
+      this = TExitEntry(c.(ExitCompletion).getLoop())
+    }
+
+    /** Gets a textual representation of this way of entry. */
+    string toString() {
+      this = TNormalEntry() and result = "normal"
+      or
+      this = TReturnEntry() and result = "return"
+      or
+      this = TRaiseEntry() and result = "raise"
+      or
+      exists(Raw::BaseLoopStmt loop | this = TExitEntry(loop) |
+        result = "exit@" + loop.getLocation().getStartLine()
+      )
+    }
+  }
+
+  /**
+   * Holds if `inner`'s `finally` part is inside `outer`'s (in the same scope), so that
+   * its nodes may have a split of each.
+   */
+  private predicate nestedFinally(HandledStmtsTree outer, HandledStmtsTree inner) {
+    outer.hasFinally() and
+    inner.hasFinally() and
+    inner.(Raw::AdaNode).getParent+() = outer.getFinallyStmts() and
+    getEnclosingCfgScope(inner) = getEnclosingCfgScope(outer)
+  }
+
+  /** Gets the number of `finally` parts `h` is inside. */
+  int getNestLevel(HandledStmtsTree h) {
+    h.hasFinally() and result = count(HandledStmtsTree outer | nestedFinally(outer, h))
+  }
+
+  /** Holds if `n` is in `h`'s `finally` part (in the same scope). */
+  predicate inFinally(Raw::AdaNode n, HandledStmtsTree h) {
+    n.getParent*() = h.getFinallyStmts() and
+    getEnclosingCfgScope(n) = getEnclosingCfgScope(h)
+  }
+
+  newtype TSplitKind = TFinallySplitKind(int level) { level = getNestLevel(_) }
+
+  newtype TSplit = TFinallySplit(Entry entry, int level) { level = getNestLevel(_) }
+
+  /** A split of the nodes of a `finally` part: the way it was entered. */
+  class FinallySplit extends TSplit {
+    /** Gets the way the `finally` part was entered. */
+    Entry getEntry() { this = TFinallySplit(result, _) }
+
+    /** Gets the nesting level of the `finally` part (`getNestLevel`). */
+    int getLevel() { this = TFinallySplit(_, result) }
+
+    /** Gets a textual representation of this split. Empty for a normal entry. */
+    string toString() {
+      this.getEntry() = TNormalEntry() and result = ""
+      or
+      not this.getEntry() = TNormalEntry() and
+      if this.getLevel() = 0
+      then result = "finally: " + this.getEntry()
+      else result = "finally(" + this.getLevel() + "): " + this.getEntry()
+    }
+  }
+
+  /** The `codeql/controlflow` splitting input. */
+  module SplittingInput implements SplittingInputSig<Location, CfgInput> {
+    class SplitKindBase = TSplitKind;
+
+    class Split = FinallySplit;
+  }
+
+  private class FinallySplitKind extends SplitKind, TFinallySplitKind {
+    /** Gets the nesting level. */
+    int getLevel() { this = TFinallySplitKind(result) }
+
+    override int getListOrder() { result = this.getLevel() }
+
+    override string toString() { result = "finally (" + this.getLevel() + ")" }
+  }
+
+  private class FinallySplitImpl extends SplitImpl instanceof FinallySplit {
+    override FinallySplitKind getKind() { result.getLevel() = super.getLevel() }
+
+    /** Holds if `h` is the sequence of this split's level whose `finally` part `n` is in. */
+    private predicate blockOf(Raw::AdaNode n, HandledStmtsTree h) {
+      inFinally(n, h) and getNestLevel(h) = super.getLevel()
+    }
+
+    override predicate hasEntry(Raw::AdaNode pred, Raw::AdaNode succ, Completion c) {
+      exists(HandledStmtsTree h |
+        getNestLevel(h) = super.getLevel() and
+        h.entersFinally(pred, c) and
+        first(h.getFinallyStmts(), succ) and
+        super.getEntry().isEntryCompletion(c)
+      )
+    }
+
+    override predicate hasEntryScope(Scopes::CfgScope scope, Raw::AdaNode first) { none() }
+
+    /** Holds if this split applies to `pred`, which has a successor. */
+    private predicate appliesToPredecessor(Raw::AdaNode pred) {
+      this.appliesTo(pred) and
+      (succ(pred, _, _) or any(Scopes::CfgScope scope).scopeLast(pred, _))
+    }
+
+    /**
+     * Holds if control leaving this level's `finally` part at `pred` with completion
+     * `c` leaves this split. `inherited` says whether `c` is the way the part was
+     * entered, rather than how the `finally` part itself completed.
+     */
+    predicate exit(Raw::AdaNode pred, Completion c, boolean inherited) {
+      exists(HandledStmtsTree h | this.appliesToPredecessor(pred) and this.blockOf(pred, h) |
+        // the `finally` part itself completes abruptly: a raise, `return`, `exit` or
+        // `goto` inside it leaves whichever way it was entered
+        (
+          last(h.getFinallyStmts(), pred, c) and not completionIsNormal(c)
+          or
+          pred instanceof Raw::ExitStmt and c instanceof ExitCompletion
+          or
+          pred instanceof Raw::GotoStmt and c instanceof GotoCompletion
+        ) and
+        inherited = false
+        or
+        // it completes normally, and continues the way it was entered
+        last(h.getFinallyStmts(), pred, any(NormalCompletion nc)) and
+        super.getEntry().isEntryCompletion(c) and
+        inherited = true
+      )
+      or
+      // a `finally` part entered normally inside one entered otherwise: when both
+      // end together, the outer one's way out applies (Ruby's `EnsureSplitImpl`)
+      this.appliesToPredecessor(pred) and
+      super.getEntry() = TNormalEntry() and
+      inherited = true and
+      exists(FinallySplitImpl outer |
+        outer.(FinallySplit).getLevel() = super.getLevel() - 1 and
+        outer.exit(pred, c, true)
+      )
+    }
+
+    override predicate hasExit(Raw::AdaNode pred, Raw::AdaNode succ, Completion c) {
+      succ(pred, succ, c) and
+      this.exit(pred, c, _) and
+      not exists(HandledStmtsTree h | this.blockOf(pred, h) and inFinally(succ, h))
+    }
+
+    override predicate hasExitScope(Scopes::CfgScope scope, Raw::AdaNode last, Completion c) {
+      scope.scopeLast(last, c) and
+      this.exit(last, c, _)
+    }
+
+    override predicate hasSuccessor(Raw::AdaNode pred, Raw::AdaNode succ, Completion c) {
+      this.appliesToPredecessor(pred) and
+      succ(pred, succ, c) and
+      exists(HandledStmtsTree h | this.blockOf(pred, h) and inFinally(succ, h))
+    }
+  }
 }

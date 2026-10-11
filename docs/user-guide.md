@@ -72,6 +72,16 @@ false positives and missed results are welcome as
 [MIT](../LICENSE) for this project's own code (extractor, dbscheme, QL packs, queries).
 The CodeQL CLI is proprietary and licensed separately by GitHub, under the
 [GitHub CodeQL Terms](https://github.com/github/codeql-cli-binaries/blob/main/LICENSE.md).
+
+**Which code you may analyze is set by the CodeQL CLI's license, not by this
+project's.** Under the
+[GitHub CodeQL Terms](https://github.com/github/codeql-cli-binaries/blob/main/LICENSE.md),
+the CLI may be used without charge to analyze open-source codebases (released under an
+OSI-approved license), for academic research, and to demonstrate CodeQL. Analyzing any
+other codebase, including your organization's proprietary code and including in CI,
+requires a license from GitHub (GitHub Advanced Security / GitHub Code Security). This
+applies to every CodeQL language, Ada included. The terms are GitHub's; read them, and
+ask GitHub, rather than relying on this summary.
 Libadalang is Apache-2.0. The release tarball bundles Libadalang's runtime and its
 dependencies under their own licenses (several are GPLv3 with the GCC Runtime Library
 Exception, which permits bundling them with MIT code); see
@@ -283,7 +293,7 @@ codeql database analyze mydb peter-villadsen/ada-queries \
 |---|---|
 | `mydb` | The database. |
 | `peter-villadsen/ada-queries` | What to run: a pack name (all its queries), a pack name with a version (`peter-villadsen/ada-queries@0.2.0`), a directory, or a single `.ql` file. |
-| `--format` | `sarif-latest` for tools (GitHub code scanning, editors), `csv` for a quick look, `text` is not available for `analyze`. |
+| `--format` | `sarif-latest` for tools (GitHub code scanning, editors), `csv` for a quick look. |
 | `--output` | Where to write the results. |
 | `--threads`, `--ram` | Optional: evaluation threads (`0` means one per core) and memory in MB. |
 
@@ -383,10 +393,11 @@ warnOnImplicitThis: false
 name: my-org/my-ada-queries
 version: 0.0.1
 dependencies:
-  peter-villadsen/ada-all: ^0.2.0
+  peter-villadsen/ada-all: ^0.3.0
 ```
 
-Put your `.ql` files in this directory. (If you work from a clone of this repository
+with the latest version of the library. Use the same version as the extractor; the
+examples below need 0.3.0 or later. Put your `.ql` files in this directory. (If you work from a clone of this repository
 instead, you can skip the pack and pass `--additional-packs=<repo>/ql` to the commands
 below, so that the CLI finds `ada-all` in the clone.)
 
@@ -484,13 +495,17 @@ way to write a rule is: write a small example of the code you want to flag, buil
 database from it, print its tree, and read the classes and accessors your query needs
 off the tree.
 
-`tools/PrintAst.ql` in `ada-all` prints the tree of every file in a database. It is in
-the package cache after `codeql pack add` (or in a clone, at `ql/lib/tools/PrintAst.ql`):
+`tools/PrintAst.ql` in `ada-all` prints the tree of every file in a database. Copy it
+from the package cache into your query pack, and run it there (in a clone of this
+repository it is `ql/lib/tools/PrintAst.ql`):
 
 ```sh
-codeql query run --database=metrics-db \
-  ~/.codeql/packages/peter-villadsen/ada-all/0.2.0/tools/PrintAst.ql
+cp ~/.codeql/packages/peter-villadsen/ada-all/<version>/tools/PrintAst.ql .
+codeql query run --database=metrics-db PrintAst.ql
 ```
+
+(Running it in the package cache fails: a pack there has no lock file, so its
+dependencies don't resolve.)
 
 The output has a row per node. Here is the part for `Fact`'s `else` branch,
 `return N * Fact (N - 1);`:
@@ -961,8 +976,11 @@ install the tools and to do something with the results:
 4. **Publish** the results where developers see them, and optionally **gate**: fail or
    flag the build when there are findings.
 
-Steps 1 to 3 are the same on any CI system. Step 4 depends on the provider. Two things
+Steps 1 to 3 are the same on any CI system. Step 4 depends on the provider. Three things
 apply everywhere:
+
+- **Check the license.** Running the CodeQL CLI in CI on code that is not open source
+  requires a license from GitHub ([License](#license)), whichever CI system runs it.
 
 - **Pin both versions** and upgrade them together, deliberately. The CLI, the extractor
   and the packs are a matched set (D-012), and pinning means a change in findings comes
@@ -1192,7 +1210,7 @@ Notes:
   values, entry calls, record components, array elements, standard containers and
   shared variables, some of them coarsely: all elements of an array count as one, and
   shared variables ignore the order of calls. The control-flow graph runs a GNAT
-  `finally` part only when the statements before it complete normally.
+  `finally` part however its sequence is left, except by `goto`.
   [known-limitations.md](known-limitations.md) lists each approximation and what it
   means for a query's results.
 
@@ -1217,7 +1235,7 @@ Notes:
 | Many `ada/unused-parameter` or `ada/unused-local` results on names that are plainly used; a `no-runtime` warning | No `.gpr` file was used, and no GNAT runtime was found. Install GNAT (`apt install gnat`), set `CODEQL_EXTRACTOR_ADA_RUNTIME`, or better, point the extractor at your `.gpr` ([The GNAT runtime](#the-gnat-runtime-auto-provider-only)). |
 | Fewer results than expected; references don't resolve | The extractor fell back to the auto provider: no `.gpr`, or several. Set `CODEQL_EXTRACTOR_ADA_GPR`. Check the summary lines for `nameres_errors` and parse errors ([Parse errors and diagnostics](#parse-errors-and-diagnostics)). |
 | `parse-error` diagnostics | Libadalang could not parse part of a file; the rest of the file is still extracted. Check that the file compiles. Code that needs preprocessing (`gnatprep`) has to be preprocessed first. |
-| `Database already exists` | Add `--overwrite`, or remove the directory. |
+| `Please specify a different location, or use the --overwrite flag` | The database directory exists. Add `--overwrite`, or remove it. |
 | The database contains files you didn't mean to analyze | Everything under `--source-root` is extracted. Narrow the source root, or use a `.gpr` that lists your source directories. |
 
 ### Running queries
@@ -1230,7 +1248,8 @@ Notes:
 | `the cache directory is already locked` | VS Code has the database open, and its query server locks it. Close the database in VS Code, or run on a copy. |
 | `Query produced no results` | Check that the code is what you think it is: print the tree ([Seeing the tree](#seeing-the-tree)) and check names with `hasQualifiedName`, which wants the fully qualified name (`My_App.Db.Run`, not `Run`). A nested subprogram's name includes its parent's (`Outer.Inner`). |
 | A query reports results inside `Ada.*` or `Standard` | Add `x.fromSource()` for what you report. |
-| `database analyze` says the query has no `@kind`, or cannot interpret results | `analyze` needs `@kind problem` or `@kind path-problem` metadata. Run `@kind table` queries with `codeql query run`. |
+| `database analyze` fails to interpret a query's results | `analyze` needs a query whose metadata says `@kind problem` or `@kind path-problem`. Run `@kind table` queries with `codeql query run`. |
+| `Referenced pack ... was not found locally, and no lock file is present` | The query is in a pack whose dependencies were not installed, such as one in the package cache. Run `codeql pack install` in your pack, and run queries from there. |
 | Evaluation runs out of memory or is slow on a large database | Give it more memory with `--ram=<MB>` and threads with `--threads=0`. A data-flow query with very broad sources or sinks costs more than a syntactic one. |
 
 ### CI/CD

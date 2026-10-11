@@ -22,7 +22,7 @@ newtype TCompletion =
   TBooleanCompletion(Boolean b) or
   TReturnCompletion() or
   TRaiseCompletion() or
-  TExitCompletion() or
+  TExitCompletion(Raw::BaseLoopStmt loop) or
   TGotoCompletion()
 
 /** A completion of a statement or an expression. */
@@ -104,10 +104,14 @@ class RaiseCompletion extends Completion, TRaiseCompletion {
 /**
  * The completion of a loop `exit`: an intra-scope jump to the point after the
  * targeted loop. Realised as a direct successor edge from the `exit` node to
- * the loop node (see `ExitStmtTree`), so it is never produced via
- * `completionIsValidFor`.
+ * the loop node, or to the GNAT `finally` part the jump leaves first (see
+ * `ExitStmtTree`), so it is never produced via `completionIsValidFor`. It records
+ * the loop, so that the jump can resume after a `finally` part.
  */
 class ExitCompletion extends Completion, TExitCompletion {
+  /** Gets the loop this `exit` leaves. */
+  Raw::BaseLoopStmt getLoop() { this = TExitCompletion(result) }
+
   override string toString() { result = "exit" }
 
   override BreakSuccessor getAMatchingSuccessorType() { any() }

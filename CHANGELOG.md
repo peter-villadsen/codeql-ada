@@ -47,7 +47,13 @@
 
 - Calls in the message of `raise E with Msg` and in quantified expressions
   (`for all E of V => P (E)`) are evaluated, so data flow and `Call`-based queries see
-  them. A GNAT `finally` part runs after the statements before it complete normally.
+  them.
+- **GNAT `finally` parts** run however their sequence is left: normally, by `return`,
+  by an exception, or by an `exit` from an enclosing loop, and then continue the way
+  they were entered (the subprogram returns, the exception propagates, the loop is left).
+  The graph has a copy of the `finally` part for each way in, as CodeQL for C# and Ruby
+  do for `finally` and `ensure`, so no path enters by `return` and leaves normally. A
+  `goto` out of the sequence does not run it.
 - An `accept ... do` statement has its own node, where the rendezvous begins.
 
 ### Other changes
