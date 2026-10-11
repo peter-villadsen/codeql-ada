@@ -11,6 +11,8 @@ calls
 | calls.adb:34:7:34:12 | R (...) | Calls.P | Main | statement |
 | calls.adb:35:7:35:16 | PO.Op (...) | Calls.PO.Op | Main | statement |
 | calls.adb:39:7:39:12 | Inner | Calls.Main.Inner | Main | statement |
+| calls.adb:40:7:40:17 | Free (...) | Ada.Unchecked_Deallocation | Main | statement |
+| calls.adb:41:7:41:23 | Inst (...) | Calls.G_Proc | Main | statement |
 arguments
 | calls.adb:27:7:27:15 | P (...) | 0 | calls.adb:27:10:27:11 | 1 | A |
 | calls.adb:27:7:27:15 | P (...) | 1 | calls.adb:27:13:27:14 | 2 | B |
@@ -24,6 +26,8 @@ arguments
 | calls.adb:33:14:33:23 | ... - ... | 1 | calls.adb:33:20:33:23 | Obj | R |
 | calls.adb:34:7:34:12 | R (...) | 0 | calls.adb:34:10:34:11 | 4 | A |
 | calls.adb:35:7:35:16 | PO.Op (...) | 0 | calls.adb:35:14:35:15 | 5 | V |
+| calls.adb:40:7:40:17 | Free (...) | 0 | calls.adb:40:13:40:16 | Ptr | X |
+| calls.adb:41:7:41:23 | Inst (...) | 0 | calls.adb:41:21:41:22 | 6 | Item |
 byName
 | calls.adb:27:7:27:15 | P (...) | B | calls.adb:27:13:27:14 | 2 |
 | calls.adb:27:7:27:15 | P (...) | a | calls.adb:27:10:27:11 | 1 |
@@ -36,13 +40,14 @@ byName
 | calls.adb:35:7:35:16 | PO.Op (...) | V | calls.adb:35:14:35:15 | 5 |
 callsOf
 | calls.adb:22:7:25:17 | Inner | 1 |
-| calls.ads:3:4:3:48 | P | 4 |
-| calls.ads:4:4:4:44 | F | 1 |
-| calls.ads:5:4:5:30 | G | 1 |
-| calls.ads:6:4:6:16 | Q | 2 |
-| calls.ads:9:4:9:43 | Prim | 1 |
-| calls.ads:10:4:10:37 | "-" | 1 |
-| calls.ads:16:7:16:34 | Op | 1 |
+| calls.ads:5:4:5:48 | P | 4 |
+| calls.ads:6:4:6:44 | F | 1 |
+| calls.ads:7:4:7:30 | G | 1 |
+| calls.ads:8:4:8:16 | Q | 2 |
+| calls.ads:11:4:11:43 | Prim | 1 |
+| calls.ads:12:4:12:37 | "-" | 1 |
+| calls.ads:18:7:18:34 | Op | 1 |
+| calls.ads:27:4:28:38 | G_Proc | 1 |
 notCalls
 | calls.adb:36:12:36:17 | A (...) |
 | calls.adb:37:12:37:23 | Integer (...) |

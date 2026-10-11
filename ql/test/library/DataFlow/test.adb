@@ -1,4 +1,6 @@
+pragma Extensions_Allowed (All_Extensions);
 with Shapes;
+with Store;
 
 procedure Test is
    function Source (Id : Integer) return Integer is (Id);
@@ -89,13 +91,12 @@ procedure Test is
       B := T;
    end Swap;
 
-   --  v1 limitations (docs/dataflow-design.md), pinned as MISSING.
-
-   --  Calls to a generic *subprogram* instance are unresolved: the instance has no body.
+   --  A call to a generic *subprogram* instance enters the generic's body.
    generic
    function G_Id (P : Integer) return Integer;
    function G_Id (P : Integer) return Integer is (P);
    function Inst_Id is new G_Id;
+   function Inst_Id2 is new G_Id;
 
    --  A subprogram of a generic *package* instance resolves to its declaration in the
    --  generic, so flow enters the generic's one body (shared by all instances; each
@@ -118,11 +119,29 @@ procedure Test is
    function "not" (X : Integer) return Integer is (X);
    function "*" (L : Tag; R : Integer) return Integer is (0);
 
-   --  Access-to-subprogram calls are unresolved.
+   --  Calls through access-to-subprogram values run what the value designates.
    type Int_Fn is access function (P : Integer) return Integer;
    Fn : constant Int_Fn := Id'Access;
 
-   --  Task entry calls are unresolved.
+   procedure Show_It (V : Integer) is
+   begin
+      Sink (V);  -- $ flow=45 flow=46
+   end Show_It;
+
+   --  ... through an anonymous access parameter
+   procedure Apply (Op : access procedure (V : Integer); X : Integer) is
+   begin
+      Op (X);
+   end Apply;
+
+   --  ... and through a record component.
+   type Int_Proc is access procedure (V : Integer);
+   type Callbacks is record
+      Op : Int_Proc;
+   end record;
+   Cb : Callbacks;
+
+   --  A task entry call passes its actuals to the entry's `accept` statement.
    task Worker is
       entry Put (X : Integer);
    end Worker;
@@ -130,7 +149,7 @@ procedure Test is
    task body Worker is
    begin
       accept Put (X : Integer) do
-         Sink (X);  -- $ MISSING: flow=24
+         Sink (X);  -- $ flow=24
       end Put;
    end Worker;
 
@@ -167,6 +186,7 @@ procedure Test is
    --  A protected operation is a call; the prefix is the protected object, not a formal.
    protected Box is
       procedure Put (X : Integer);
+      entry Take (Y : Integer);
    end Box;
 
    protected body Box is
@@ -174,6 +194,12 @@ procedure Test is
       begin
          Sink (X);  -- $ flow=31
       end Put;
+
+      --  A protected entry call passes its actuals to the entry body.
+      entry Take (Y : Integer) when True is
+      begin
+         Sink (Y);  -- $ flow=47
+      end Take;
    end Box;
 
    --  An object of a protected type: the actuals are not shifted as for a prefixed view.
@@ -190,8 +216,58 @@ procedure Test is
 
    Obj : Cell;
 
+   --  Variables of an enclosing subprogram, written or read by a nested one.
+   Up, Down : Integer := 0;
+
+   procedure Set_Up is
+   begin
+      Up := Source (38);
+   end Set_Up;
+
+   procedure Read_Down is
+   begin
+      Sink (Down);  -- $ flow=39
+   end Read_Down;
+
+   --  A class-wide formal: calls on it dispatch.
+   procedure Draw_All (S : Shapes.Shape'Class) is
+   begin
+      Sink (S.Area);  -- $ flow=22
+   end Draw_All;
+
+   --  ... and so do calls through an access to a class-wide type.
+   procedure Draw_Ptr (P : access Shapes.Shape'Class) is
+   begin
+      Sink (P.Area);  -- $ flow=22
+      Sink (Shapes.Area (P.all));  -- $ flow=22
+   end Draw_Ptr;
+
+   --  Calls the control-flow graph evaluates in a `raise ... with` message, in a
+   --  quantified expression and in a GNAT `finally` part.
+   function Message (V : Integer) return String is
+   begin
+      Sink (V);  -- $ flow=48
+      return "";
+   end Message;
+
+   function Positive_Value (E : Integer) return Boolean is
+   begin
+      Sink (E);  -- $ flow=49
+      return E > 0;
+   end Positive_Value;
+
+   procedure Fail (V : Integer) is
+   begin
+      raise Program_Error with Message (V);
+   end Fail;
+
+   type Int_Array is array (1 .. 3) of Integer;
+   Values : Int_Array := (others => 0);
+   All_Positive : Boolean;
+
    V1, V2, V3, V4, V6, V7, V8, V9, V10, V11, V12 : Integer;
    Sq : Shapes.Square;
+   Sh : Shapes.Shape;
 begin
    Mid (Source (1));
    Two (y => Source (2), X => 0);   --  designators ignore case, as Ada does
@@ -238,13 +314,20 @@ begin
    Sink (V12);  -- $ flow=15
    Sink (V11);  -- $ SPURIOUS: flow=15
 
-   Sink (Inst_Id (Source (20)));  -- $ MISSING: flow=20
-   Sink (Fn (Source (21)));  -- $ MISSING: flow=21
+   Sink (Inst_Id (Source (20)));  -- $ flow=20
+   Sink (Inst_Id2 (0));
+   Sink (Fn (Source (21)));  -- $ flow=21
+   Sink (Fn.all (P => Source (44)));  -- $ flow=44
+   Apply (Show_It'Access, Source (45));
+   Cb.Op := Show_It'Access;
+   Cb.Op (Source (46));
 
    --  Static binding through a package-qualified name is resolved ...
    Sink (Shapes.Area (Sq));  -- $ flow=22
-   --  ... dispatching is not: the class-wide call binds to Shape's Area only.
-   Sink (Shapes.Area (Shapes.Shape'Class (Sq)));  -- $ MISSING: flow=22
+   --  ... and so is dispatching: a class-wide call may run any override.
+   Sink (Shapes.Area (Shapes.Shape'Class (Sq)));  -- $ flow=22
+   Draw_All (Sq);
+   Sink (Shapes.Area (Sh));
    --  ... and so is prefixed (dot) notation, where `Sq` is the first actual.
    Sink (Sq.Area);  -- $ flow=22
    Sq.Put (Source (23));
@@ -259,9 +342,38 @@ begin
    Dflt2 (0);
    Obj.Put (0, Source (37));
    Box.Put (Source (31));
+   Box.Take (Y => Source (47));
    Sink (Inst_A.Pass (Source (32)));  -- $ flow=32
    Sink (Inst_B.Pass (0));
    Sink (Source (33) + Tag'(0));  -- $ flow=33
    Sink (not Source (34));  -- $ flow=34
    Sink (Tag'(1) * Source (35));
+
+   Set_Up;
+   Sink (Up);  -- $ flow=38
+   Down := Source (39);
+   Read_Down;
+
+   begin
+      Fail (Source (48));
+   exception
+      when others => null;
+   end;
+   Values (1) := Source (49);
+   All_Positive := (for all E of Values => Positive_Value (E));
+   begin
+      null;
+   finally
+      Sink (Source (50));  -- $ flow=50
+   end;
+
+   --  A package-level variable: written in one subprogram, read in another.
+   Store.Set (Source (40));
+   Sink (Store.G);  -- $ flow=40 SPURIOUS: flow=43
+   Store.G := Source (41);
+   Store.Show;
+   --  ... and written and read in the same subprogram: the local write hides stores
+   --  made elsewhere.
+   Store.G := Source (42);
+   Sink (Store.G);  -- $ flow=42
 end Test;

@@ -137,7 +137,12 @@ Y := X;                       --  l17
 
 - `def(A)@l7` — the entry write for the `in out` formal, anchored at index 0 of the owning
   scope's `EntryBasicBlock` (`ParamSpec` itself has no CFG node) — reads l9's `A`.
-- **No entry write for `B`** (pure `out`): it receives nothing from the caller.
+- **No value for `B`** (pure `out`): it receives nothing from the caller. It gets a
+  value-less write at entry (`uninitializedWrite`, for content flow: see
+  `docs/dataflow-design.md`, "Content and shared variables"), but `B := 0` comes before
+  any read, so that write is dead and has no `Definition`. `Y`, declared without a value
+  in the enclosing procedure, gets the same kind of write, `def(Y)@l6`, which l16's `Y`
+  (the actual in `B => Y`) reads.
 - `def(A)@l9` (`A := A + 1;`) and `def(B)@l10` (`B := 0;`) both read
   `exitSubpBody(normal)@l7` — the synthetic exit read (Task 9.2.3 finding 1) that keeps an
   `out`/`in out` parameter's last write alive even though nothing *inside* `Modify` reads it
@@ -279,19 +284,24 @@ to chase.
 ## Recorded limitations (D-023)
 
 - **Record components, array elements, dereferences, `NumberDecl`s and renamings are not
-  tracked at all.** `SourceVariable` (D-024) is restricted to whole `ObjectDecl`/`ParamSpec`/
-  `ForLoopVarDecl` names. A write through `Rec.Field := ...` or `Arr (I) := ...` is invisible
-  to SSA — `getSourceVariable` has no result for the target, so `assignWrite` simply does
-  not fire (see `SsaImpl.qll`'s doc comment on `assignWrite`).
+  SSA variables.** `SourceVariable` (D-024) is restricted to whole `ObjectDecl`/`ParamSpec`/
+  `ForLoopVarDecl` names. A write through `Rec.Field := ...` or `Arr (I) := ...` is not a
+  write of `Rec` to SSA — `getSourceVariable` has no result for the target, so
+  `assignWrite` does not fire. Data flow follows such writes as content instead, through
+  the post-update node of `Rec`'s read (`docs/dataflow-design.md`).
+- **SSA is per subprogram.** A package variable or a variable shared with nested
+  subprograms is an SSA variable in each subprogram that refers to it; flow between
+  them is data flow's `jumpStep`. Within a subprogram, each resolved call is an uncertain
+  write of every such variable that another subprogram stores into (`callMayWrite`).
 - **Exceptions are not covered by a dedicated conformance-test family.** A handler that
   joins values from a partially-executed body is exactly the kind of construct this
   document's method (hand-derive, run, transcribe, verify a wrong annotation fails) should
   be applied to before it is trusted — deferred, not silently assumed correct, and named
   here so it is not mistaken for "checked."
-- **Call resolution is D-021/D-022's scope, not wider.** `calleeSpec` resolves functions and
-  procedures only (`ClassicSubpDecl`, `BaseSubpBody`); entries, protected operations,
-  dispatching calls, access-to-subprogram indirect calls and generic instantiations are all
-  unresolved, so an actual passed to an unresolved call's `out`/`in out` parameter is never
+- **Out actuals of entry calls are not written.** `getCalleeSpec` covers subprograms,
+  generic subprograms (the target of a call to an instance), protected operations and
+  calls through access-to-subprogram values (the access type's profile); an entry call
+  has no callee spec, so an actual passed to an entry's `out`/`in out` formal is never
   modelled as a write — a documented gap, not a silent one.
 - **A pure `out` actual's argument-evaluation reference is modelled as a read**, alongside
   its uncertain write, even though Ada does not actually read an `out` actual's prior value.

@@ -1,7 +1,7 @@
 --  SSA conformance: in/in out/out parameter entry writes, the exit-read that
 --  keeps an out/in-out parameter's last write alive, and out/in-out actuals
 --  at a call site (uncertain writes, resolved by name for a named
---  association).
+--  association); `Y`, declared without a value, gets a value-less entry write.
 --  See docs/ssa-design.md, "Parameters".
 procedure Test is
    procedure Modify (A : in out Integer; B : out Integer) is
@@ -15,4 +15,4 @@ begin
    X := 1;  -- $ ssa=def(X)@15:4|reads|Identifier@16:25
    Modify (B => Y, A => X);  -- $ ssa=def(X)@16:4|reads|Identifier@17:9
    Y := X;
-end Test;
+end Test;  -- $ ssa=def(Y)@6:1|reads|Identifier@16:17

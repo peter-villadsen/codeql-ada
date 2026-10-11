@@ -23,8 +23,9 @@ Raw::SubpSpec subpSpecOf(Raw::BasicDecl d) {
 /**
  * Gets the `SubpSpec` of a callable declaration as the library's `Subprogram` sees
  * it: `subpSpecOf`, and also a generic subprogram (`generic ... procedure G (...)`)
- * and its inner declaration. Data flow uses `subpSpecOf` only: it does not follow
- * calls into generics (D-023).
+ * and its inner declaration. A call to an instance of a generic subprogram targets
+ * the generic (`CallResolution::instanceGeneric`), so both `Call` and data flow use
+ * this one.
  */
 Raw::SubpSpec callableSpecOf(Raw::BasicDecl d) {
   result = subpSpecOf(d)
@@ -78,3 +79,21 @@ int formalIndex(Raw::SubpSpec spec, Raw::DefiningName dn) {
 
 /** Gets the `i`th formal (0-based, flattened across `ParamSpec` groups -- see `anyFormalName`) of `spec`. */
 Raw::DefiningName formalAt(Raw::SubpSpec spec, int i) { i = formalIndex(spec, result) }
+
+/**
+ * Gets the `i`th formal (0-based, flattened across `ParamSpec` groups) of the formal
+ * part `params`: an entry's (`EntrySpec`), or an `accept` statement's or entry body's.
+ */
+Raw::DefiningName paramsFormalAt(Raw::Params params, int i) {
+  exists(Raw::ParamSpec ps |
+    ps = params.getParams().getChild(_) and
+    result = ps.getIds().getChild(_) and
+    i =
+      count(Raw::DefiningName other, Raw::ParamSpec ops |
+        ops = params.getParams().getChild(_) and
+        other = ops.getIds().getChild(_) and
+        ops.getParentIndex() * 1000 + other.getParentIndex() <
+          ps.getParentIndex() * 1000 + result.getParentIndex()
+      )
+  )
+}

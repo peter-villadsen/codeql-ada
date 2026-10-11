@@ -1,0 +1,15 @@
+edges
+| test.adb:9:27:9:31 | [param] Name | test.adb:11:20:11:67 | ... & ... | provenance |  |
+| test.adb:15:30:15:58 | String'Input (...) | test.adb:17:17:17:21 | Name | provenance |  |
+| test.adb:15:30:15:58 | String'Input (...) | test.adb:18:29:18:78 | ... & ... | provenance |  |
+| test.adb:17:17:17:21 | Name | test.adb:9:27:9:31 | [param] Name | provenance |  |
+nodes
+| test.adb:9:27:9:31 | [param] Name | semmle.label | [param] Name |
+| test.adb:11:20:11:67 | ... & ... | semmle.label | ... & ... |
+| test.adb:15:30:15:58 | String'Input (...) | semmle.label | String'Input (...) |
+| test.adb:17:17:17:21 | Name | semmle.label | Name |
+| test.adb:18:29:18:78 | ... & ... | semmle.label | ... & ... |
+subpaths
+#select
+| test.adb:11:20:11:67 | ... & ... | test.adb:15:30:15:58 | String'Input (...) | test.adb:11:20:11:67 | ... & ... | This query depends on $@. | test.adb:15:30:15:58 | String'Input (...) | network data |
+| test.adb:18:29:18:78 | ... & ... | test.adb:15:30:15:58 | String'Input (...) | test.adb:18:29:18:78 | ... & ... | This query depends on $@. | test.adb:15:30:15:58 | String'Input (...) | network data |

@@ -31,6 +31,17 @@ private predicate laterDeclaration(Raw::BasicDecl first, Raw::BasicDecl d) {
   )
 }
 
+/** Gets the package (spec or body) whose declarations most closely enclose `d`. */
+private Raw::BasicDecl enclosingPackage(Raw::BasicDecl d) {
+  result = d.getParent+() and
+  (result instanceof Raw::BasePackageDecl or result instanceof Raw::PackageBody) and
+  not exists(Raw::BasicDecl inner |
+    inner = d.getParent+() and
+    (inner instanceof Raw::BasePackageDecl or inner instanceof Raw::PackageBody) and
+    inner.getParent+() = result
+  )
+}
+
 /**
  * A subprogram: a procedure or a function. One per subprogram, however many times
  * it is declared: the spec when there is one, else the body (or the body stub of a
@@ -122,6 +133,36 @@ class Subprogram extends Raw::BasicDecl {
 
   /** Gets a call to this subprogram (see `Call`). */
   Call getACall() { result.getTarget() = this }
+
+  /**
+   * Holds if this subprogram is a primitive operation of tagged type `t`, controlled by
+   * its `i`th parameter: it is declared in the same package as `t` and that parameter
+   * is of type `t`. A call whose actual for that parameter is class-wide dispatches on
+   * it.
+   */
+  predicate isPrimitiveOf(Type t, int i) {
+    t.isTagged() and
+    this.getParameter(i).getType() = t and
+    enclosingPackage(this) = enclosingPackage(t)
+  }
+
+  /**
+   * Holds if this subprogram overrides `other`: `other` is a primitive operation of a
+   * tagged type, and this one, with the same name and number of parameters, is the
+   * corresponding primitive operation of a type derived from it, directly or not.
+   */
+  predicate overrides(Subprogram other) {
+    exists(Type t, Type parent, int i |
+      this.isPrimitiveOf(t, i) and
+      other.isPrimitiveOf(parent, i) and
+      t.getParentType+() = parent and
+      this.getName().toLowerCase() = other.getName().toLowerCase() and
+      this.getNumberOfParameters() = other.getNumberOfParameters()
+    )
+  }
+
+  /** Gets a subprogram that overrides this one (see `overrides`). */
+  Subprogram getAnOverride() { result.overrides(this) }
 
   /** Gets a declaration of this subprogram: the spec, a body stub, or the body. */
   Raw::BasicDecl getADeclaration() {

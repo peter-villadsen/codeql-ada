@@ -26,20 +26,49 @@ missed by every query that depends on them. See
 [Project discovery](user-guide.md#project-discovery-and-name-resolution-quality).
 The build log's summary line tells you how many files had parse errors.
 
-## What data flow does not follow
+## What data flow follows, and where it is approximate
 
-Taint-tracking queries (such as `ada/command-line-injection`), and queries that need
-to *prove* something (that storage is freed, say), miss or mis-report flows through:
+Data flow follows a value from where it is produced to where it is used, across
+subprogram calls: ordinary calls, calls to generic instances, dispatching calls (into
+every override), calls through access-to-subprogram values, and task and protected entry
+calls. It follows values through record components, array elements, standard
+containers, package variables, and variables shared with nested subprograms.
 
-- dispatching calls (bound to their static target only),
-- calls through access-to-subprogram values,
-- calls to generic subprogram instances (`procedure P is new G (...)`, then `P (X)`),
-- task entry calls,
-- values stored in record components, array elements or containers,
-- variables of enclosing subprograms or packages written by a nested subprogram.
+Where it is approximate, the cost depends on the kind of query:
 
-The control-flow graph doesn't yet model GNAT `finally` parts, the message of
-`raise ... with`, or quantified-expression iterators.
+- **Queries that look for a flow** (taint queries such as `ada/command-line-injection`)
+  can **miss** a flow through a gap, or **report** one that an approximation allows but
+  the program never takes.
+- **Queries that must prove something happened** (a file is closed, storage is freed)
+  **report a false alarm** when the close or the free happens on the far side of a gap,
+  and can **miss** a real problem when an approximation counts a free that never
+  happens on that path.
+
+The approximations:
+
+- **Elements and keys.** All elements of an array or container count as one, so a value
+  stored at one index is seen at every index; map keys are not told apart.
+- **Aggregates.** A positional record aggregate (`(X, 0)` rather than `(A => X, B => 0)`)
+  does not record which component gets which value.
+- **Containers.** Only `Ada.Containers` (vectors, lists, maps, sets and their variants)
+  is modelled, for the common operations (`Append`, `Insert`, `Include`, `Element`,
+  cursors, `for ... of` loops). Other container libraries are not followed.
+- **Shared variables ignore call order.** A value stored in a package variable, or in a
+  variable of an enclosing subprogram, by any subprogram reaches reads of it in every
+  other subprogram, including reads that run before the store.
+- **Dispatching** goes to every override of the called operation, whatever the actual
+  object is. Overriding is worked out from names and parameter counts within a tagged
+  type hierarchy; interfaces are not covered.
+- **Access-to-subprogram values** held in a record component reach every call through
+  that component, whatever the object.
+- **Entries.** Values passed into an `accept` statement or entry body are followed;
+  values passed back through an entry's `out` formals are not.
+- **Generic formal subprograms.** A call inside a generic body to one of its formal
+  subprograms (`with procedure Process (X : T);`) is not resolved.
+
+The control-flow graph runs a GNAT `finally` part only when the statements before it
+complete normally, not on a `return`, `exit` or exception, and evaluates a quantified
+expression's predicate once, standing for every iteration.
 
 ## Other modelling limits
 

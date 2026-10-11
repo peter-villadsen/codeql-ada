@@ -2,6 +2,7 @@ with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Strings.Fixed;
 with Ada.Strings;
 with Interfaces.C;
+with Ada.Directories;
 
 procedure Test is
    type String_Access is access String;
@@ -36,5 +37,8 @@ begin
    Sink (Ignore (S));
    Sink (Sanitize (S));                              -- barrier
    Sink (Integer'Image (S'Length));
+   Sink (Integer'Image (Integer'Value (S)));          -- $ taint=1
+   Sink (Character'Val (Character'Pos (S (S'First)))'Image);  -- $ taint=1
+   Sink (Ada.Directories.Compose ("/tmp", S));        -- $ taint=1
    Handle ("literal");
 end Test;

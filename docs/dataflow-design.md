@@ -27,9 +27,10 @@ language:
 **Write kinds with no local source.** A parameter's entry write (its value comes from
 the caller) and an `out`/`in out` actual's uncertain write (its value comes from the
 callee) have no written-value step. Task 9.4 connects them (parameter nodes and
-`out`/`in out` write-back, below). A `for` loop variable gets
-none either, deliberately: its value is an element of the iterable, not the iterable,
-so at most a *taint* step belongs there, never a value step.
+`out`/`in out` write-back, below). A `for` loop variable has no
+written-value step either: `for C in V.Iterate` gets a value step from the iterable (a
+cursor stands for its container), `for E of V` a read of `V`'s element content (see
+"Content and shared variables").
 
 **Uncertain writes let the old value through.** `allowFlowIntoUncertainDef` holds for
 every uncertain write, because the callee may leave an `out`/`in out` actual unchanged
@@ -168,34 +169,74 @@ lets the old value through (Task 9.3's `allowFlowIntoUncertainDef`). So even a c
 that always overwrites its `in out` formal still passes on the caller's old value. This
 is a deliberate over-approximation, pinned as `SPURIOUS` in the test.
 
+### Content and shared variables
+
+**Files.** `ql/lib/codeql/ada/dataflow/internal/Content.qll` (the shapes),
+`DataFlowImpl.qll` (`readStep`, `storeStep`, `jumpStep`). Regression tests:
+`ql/test/library/ContentFlow`, and the cases from `flow=38` on in
+`ql/test/library/DataFlow`.
+
+**Content.** One content per record component (`Component`), and one for all the
+elements of an array or container: indices are not told apart.
+
+| Shape | Step |
+| --- | --- |
+| `R.F := X`, `V (I) := X` | store `X` into the post-update node of `R` / `V`; a nested target (`R.P.A := X`) stores that post-update node into its own prefix's in turn. `Ptr.all.F` is `Ptr.F`. |
+| `R.F`, `V (I)` | read from the prefix. `V (I)` is a call-shaped name with no subprogram target, not a type, whose actual is not a range (a slice is a whole array). User-defined indexing on a container (`Vec (1)`, `Map ("k")`) does not resolve to a call, so it is read the same way. |
+| `(F => X)`, `(1 => X)`, `(others => X)`, positional array aggregate | store `X` into the aggregate. A positional *record* aggregate stores nothing. |
+| `for E of V` | read an element of `V` into `E`'s definition. |
+| `Ada.Containers` `Append`, `Prepend`, `Insert`, `Include`, `Replace`, `Replace_Element` | store `New_Item` into the write-back of the `in out` `Container` actual. |
+| `Element`, `First_Element`, `Last_Element`, `Constant_Reference`, `Reference` | read from the `Container` or `Position` actual. |
+| `First`, `Last`, `Find`, `To_Cursor`, `Next`, `Previous`, `Floor`, `Ceiling`, `Iterate` | a value step: the cursor stands for its container. |
+
+The container bodies are not extracted (D-026), so these are models, matched by
+qualified name under `Ada.Containers.` and by formal name.
+
+**Post-update nodes.** `codeql/ssa` gives every variable read one; an updated prefix that
+is not a variable read (`R.P` in `R.P.A := X`) gets its own (`TPostUpdateNode`). For the
+post-update node of a variable to reach the next read, the variable needs a definition
+even before its first whole write, so an object declared without an initialiser and an
+`out` formal get a write with no value at their scope's entry (`uninitializedWrite`).
+
+**Shared variables.** SSA tracks a variable within one subprogram. A package variable, or
+a variable of an enclosing subprogram used by a nested one, also flows between
+subprograms by `jumpStep`: from each value stored into it (assignment, initialiser) to
+each read of it in a different subprogram, regardless of call order. Two refinements
+keep this from swamping local precision: a read reached by a certain write in its own
+subprogram is not a jump target, and each resolved call is an uncertain write of every
+variable that is read in the caller and stored into elsewhere (`callMayWrite`), so a
+write before a call does not hide what the callee stores. A qualified reference
+(`Store.G`) is the same variable as `G`.
+
 ### Minimal in v1
 
 | Member | v1 |
 | --- | --- |
 | `DataFlowType` | One type, so `compatibleTypes` always holds. `ada_expr_type` is available if type pruning is wanted later. |
-| `Content`, `ContentSet`, `ContentApprox`, `readStep`, `storeStep`, `clearsContent`, `expectsContent` | Empty: no field or element flow. |
-| `PostUpdateNode` | None: there are no stores, so a post-update node would never receive anything. For the same reason the `argHasPostUpdate` consistency check is excluded. |
-| `jumpStep` | None: package-level variables are not SSA variables. |
-| `LambdaCallKind` and the lambda predicates | None: no access-to-subprogram flow. |
+| `ContentSet` | A single content; `ContentApprox` is the content itself. `clearsContent` and `expectsContent` are empty: a store does not clear the other components, and a whole write of the variable is what replaces them. |
+| `jumpStep` | Shared variables only, order-insensitive (see "Content and shared variables"). |
+| `LambdaCallKind` | One kind. `lambdaCreation` is `P'Access` (also `'Unchecked_Access`, `'Unrestricted_Access`); `lambdaCall` is `Fn (X)` or `Fn.all (X)` where `Fn` is of an access-to-subprogram type, whose profile binds the actuals (`CallResolution::accessCallSpec`). `additionalLambdaFlowStep` carries an access value from a store into a record component to every read of that component. |
 | `isUnreachableInCall`, `NodeRegion`, `CastNode`, `localMustFlowStep`, `knownSourceModel`, `knownSinkModel`, `DataFlowSecondLevelScope` | Empty. |
 | `nodeIsHidden` | Hides the SSA layer's bookkeeping nodes, except an `out` write-back. That is where a value re-enters the caller, so a path should show it. |
 
 ### Named v1 limitations (D-023)
 
 Where a limitation can be expressed as a test, it is pinned in `ql/test/library/DataFlow`
-as `MISSING` (a real flow that is not reported) or `SPURIOUS` (a reported flow that cannot
+(or `ContentFlow`) as `MISSING` (a real flow that is not reported) or `SPURIOUS` (a reported flow that cannot
 happen):
 
 | Limitation | Effect | Pinned |
 | --- | --- | --- |
-| **Dispatching calls.** A call binds only to its static target. | A class-wide call misses every override. A call on a specific type is exact. | `MISSING: flow=22` |
-| **Access-to-subprogram calls** (`Fn (X)`, `Fn.all (X)`). | Unresolved. | `MISSING: flow=21` |
-| **Calls to a generic subprogram instance** (`function Inst is new G`). | Unresolved, because the instance has no body row. Calls inside a generic body to its generic formal subprograms are also unresolved. A subprogram of a generic *package* instance is different: the call resolves to its declaration in the generic, so flow enters the generic's single body, shared by all instances, and each return still goes back to its own call site (corrected in Task 9.6). | `MISSING: flow=20`; package instance `flow=32` |
-| **Task entry calls.** | Unresolved: an entry has no `SubpSpec` target. | `MISSING: flow=24` |
+| **Dispatching goes to every override.** A call dispatches when an actual for a controlling parameter is class-wide: a `T'Class` conversion, or an object, parameter or access value declared `T'Class`. Its callables are the static target and every override (`Subprogram.overrides`: same name and parameter count, primitive of a descendant type). Interfaces are not covered. | Flow into an override the actual object never has. A call on a specific type is exact. | `flow=22` (four shapes) |
+| **Access-to-subprogram values in components** reach every call through that component (`additionalLambdaFlowStep`), whatever the object. | A callback stored in one record reaches calls through another of the same type. | `flow=46` |
+| **Generics have one body for all instances.** A call to a generic subprogram instance (`function Inst is new G`) targets the generic `G` (`CallResolution::instanceGeneric`), and a subprogram of a generic *package* instance resolves to its declaration in the generic: either way flow enters the generic's single body, shared by all instances, and each return still goes back to its own call site. Calls inside a generic body to its generic formal subprograms are unresolved. | `flow=20`, second instance clean; package instance `flow=32` |
+| **Entries pass values in only.** An entry call's actuals jump to the formals of each `accept` statement for the entry (in the body of the task that declares it, matched by name) and of its entry body; an `accept` statement has its own CFG node, where its formals are written. | Values passed back through an entry's `out` formals are lost. | `flow=24`, `flow=47` |
 | **Default parameter values are evaluated in the callee** (Task 9.6). Ada evaluates a default at each call that omits the actual; the CFG evaluates it once at the callee's entry. | The default's value reaches the formal on every call, including those that pass an actual. | `flow=27`; `SPURIOUS: flow=36` |
 | **Uncertain write-back.** | The actual's old value survives every `out`/`in out` call. | `SPURIOUS: flow=12`, `flow=15` |
 | **Renamings of prefixed views or attributes** (`renames Obj.Op`, `renames T'Image`). | Unresolved. | none |
-| **No content, no package-level variables, no call-context pruning.** | See "Minimal in v1". | none |
+| **Shared variables ignore call order** (`jumpStep`). | A store into a package variable, or into a variable shared with nested subprograms, reaches every read of it in another subprogram, including reads that run before the store and stores in subprograms never called. | `SPURIOUS: flow=40`, `flow=42`, `flow=43` |
+| **Content is coarse.** Array and container elements share one content; map keys are not tracked; a positional record aggregate stores nothing; a container outside `Ada.Containers`, or an operation not in the model, is not followed. | `V (1) := X` reaches `V (2)`; `(Source, 0)` assigned to a record loses the value (taint tracking still marks the record). | `ContentFlow`: `MISSING: flow=11`; `flow=3` reaching `V1 (2)` |
+| **No call-context pruning.** | See "Minimal in v1". | none |
 
 ### Measured on the corpus (2026-09-25)
 
@@ -272,7 +313,8 @@ each is pinned in `ql/test/library/TaintTracking`):
 | `A & B` (both `BinOp` and `ConcatOp` chains) | Building a command line by concatenation. |
 | Aggregate element to aggregate, allocator operand to allocator, `P` to `P.all` | Stand-ins for the content flow v1 lacks: building an `Argument_List` as `(1 => new String'(X))` keeps `X`'s taint. Coarse: the whole aggregate is tainted, not one element. |
 | Type conversion `T (X)`; indexing and slicing `S (I)` | Derived values of the same data. Only a simple or dotted prefix makes a conversion: `T'(...) (I)` indexes, although Libadalang has the qualified expression reference `T`. |
-| `Ada.Strings.Unbounded.To_String` / `To_Unbounded_String`, `Ada.Strings.Fixed.Trim`, `Ada.Characters.Handling.To_Lower` / `To_Upper`, `System.OS_Lib.Argument_String_To_List`, `Interfaces.C.To_C`, `Interfaces.C.Strings.New_String` | Runtime functions have no bodies (D-026), so these are summarised "any argument to result". The list is deliberately short; it is the place to add models. |
+| Conversion attributes: `T'Image (X)`, `X'Image`, `X'Img`, `T'Value (S)`, `T'Val (N)`, `T'Pos (X)` (and the wide forms) | The same data as text, or text as a value. From the argument, or from an object prefix (`X'Image`). `T'Image (X)` parses as a call whose name is the attribute; both shapes are covered. |
+| `Ada.Strings.Unbounded.To_String` / `To_Unbounded_String`, `Ada.Strings.Fixed.Trim`, `Ada.Characters.Handling.To_Lower` / `To_Upper`, `System.OS_Lib.Argument_String_To_List`, `Interfaces.C.To_C`, `Interfaces.C.Strings.New_String`, and the `Ada.Directories` path builders `Compose`, `Full_Name`, `Containing_Directory`, `Simple_Name`, `Base_Name`, `Extension` | Runtime functions have no bodies (D-026), so these are summarised "any argument to result". The list is deliberately short; it is the place to add models. (`ada/path-injection` treats `Simple_Name` as a barrier.) |
 
 There are no default sanitizers.
 
@@ -295,7 +337,7 @@ importing the module extends by declaring subclasses, plus `CommandInjection::Co
   external name is the explicit `External_Name` / `Link_Name` (aspect, pragma third
   argument, or named) or else the Ada name lower-cased, GNAT's default for C.
 - **Not yet:** `posix_spawn`, `GNAT.Expect.TTY`, and commands assembled in a record
-  component or a package-level variable (no content flow, no jump steps).
+  component (no content flow).
 
 **`ada/command-line-injection`** (`ql/src/queries/CommandLineInjection.ql`, path-problem)
 is `CommandInjection::Flow` restricted to sinks in project code. Its test

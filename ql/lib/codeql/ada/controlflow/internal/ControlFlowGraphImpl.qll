@@ -134,7 +134,9 @@ class StmtListTree extends StandardTree instanceof Raw::StmtList {
  * statements run; a `RaiseCompletion` anywhere in the region has an edge to the
  * start of every handler (v1 does not match exception identities). A raise
  * escapes the sequence only when there is no `when others` handler. A handler
- * body finishing normally continues after the sequence.
+ * body finishing normally continues after the sequence, through the GNAT `finally`
+ * part when there is one. In v1 only normal ends run the `finally` part; a return,
+ * exit, goto or escaping raise leaves without it.
  */
 class HandledStmtsTree extends ControlFlowTree instanceof Raw::HandledStmts {
   private Raw::ExceptionHandler aHandler() { result = super.getExceptions().getChild(_) }
@@ -142,28 +144,47 @@ class HandledStmtsTree extends ControlFlowTree instanceof Raw::HandledStmts {
   override predicate first(Raw::AdaNode f) { first(super.getStmts(), f) }
 
   override predicate propagatesAbnormal(Raw::AdaNode child) {
-    // handler bodies are not themselves protected: their abnormal completions escape
+    // handler bodies and the `finally` part are not themselves protected: their
+    // abnormal completions escape
     child = this.aHandler().getStmts()
+    or
+    child = this.finallyStmts()
+  }
+
+  /** Gets the statements of this sequence's GNAT `finally` part, if it has one. */
+  private Raw::StmtList finallyStmts() { result = super.getFinallyPart().getStmts() }
+
+  /**
+   * Holds if `l` finishing with `c` ends the protected region or a handler normally:
+   * where the sequence completes normally, or enters its `finally` part.
+   */
+  private predicate normalEnd(Raw::AdaNode l, Completion c) {
+    (last(super.getStmts(), l, c) or last(this.aHandler().getStmts(), l, c)) and
+    completionIsNormal(c)
   }
 
   override predicate succ(Raw::AdaNode pred, Raw::AdaNode succ, Completion c) {
     last(super.getStmts(), pred, c) and
     c instanceof RaiseCompletion and
     first(this.aHandler().getStmts(), succ)
+    or
+    // a normal end runs the `finally` part
+    this.normalEnd(pred, c) and first(this.finallyStmts(), succ)
   }
 
   override predicate last(Raw::AdaNode l, Completion c) {
-    // protected region completes normally
-    last(super.getStmts(), l, c) and completionIsNormal(c)
+    // protected region or handler completes normally, with no `finally` part
+    this.normalEnd(l, c) and not exists(this.finallyStmts())
+    or
+    // the `finally` part completes normally (its abnormal completions propagate)
+    last(this.finallyStmts(), l, c) and completionIsNormal(c)
     or
     // protected region completes abnormally: return/exit/goto always escape; a
-    // raise escapes only when it is not caught by a `when others` handler
+    // raise escapes only when it is not caught by a `when others` handler. An
+    // abnormal completion does not pass through the `finally` part (v1).
     last(super.getStmts(), l, c) and
     not completionIsNormal(c) and
     (not c instanceof RaiseCompletion or not hasOthersHandler(this))
-    or
-    // a handler body finishing normally → continue after the sequence
-    last(this.aHandler().getStmts(), l, c) and completionIsNormal(c)
   }
 }
 
@@ -219,11 +240,30 @@ class ReturnStmtTree extends StandardPostOrderTree instanceof Raw::ReturnStmt {
 }
 
 /**
- * A `raise` statement: evaluate the (optional) exception name, then the
- * statement, which completes with `RaiseCompletion` (never normally).
+ * A `raise` statement: evaluate the (optional) exception name, then the (optional)
+ * message of `raise E with Msg`, then the statement, which completes with
+ * `RaiseCompletion` (never normally).
  */
 class RaiseStmtTree extends StandardPostOrderTree instanceof Raw::RaiseStmt {
-  override Raw::AdaNode getChildNode(int i) { i = 0 and result = super.getExceptionName() }
+  override Raw::AdaNode getChildNode(int i) {
+    i = 0 and result = super.getExceptionName()
+    or
+    i = 1 and result = super.getErrorMessage()
+  }
+}
+
+/**
+ * A quantified expression, `(for all E of V => P (E))`: evaluate what it iterates over,
+ * then the predicate, then the expression itself. One evaluation of the predicate stands
+ * for all of them; data flow defines the loop variable at the iterable, as for a `for`
+ * loop.
+ */
+class QuantifiedExprTree extends StandardPostOrderTree instanceof Raw::QuantifiedExpr {
+  override Raw::AdaNode getChildNode(int i) {
+    i = 0 and result = super.getLoopSpec().getIterExpr()
+    or
+    i = 1 and result = super.getExpr()
+  }
 }
 
 /**
@@ -237,6 +277,7 @@ class GenericPostOrderTree extends StandardPostOrderTree instanceof Raw::AdaNode
   GenericPostOrderTree() {
     exprLike(this) and
     not this instanceof Raw::CallExpr and
+    not this instanceof Raw::QuantifiedExpr and
     // conditional expressions and short-circuit operators have their own trees
     not this instanceof Raw::IfExpr and
     not this instanceof Raw::CaseExpr and
@@ -785,13 +826,13 @@ class ExtendedReturnStmtTree extends ControlFlowTree instanceof Raw::ExtendedRet
   }
 }
 
-/** An `accept … do … end` statement: transparent to its handled statements. */
-class AcceptStmtTree extends StandardTree instanceof Raw::AcceptStmtWithStmts {
+/**
+ * An `accept … do … end` statement: its own node, where the rendezvous begins and the
+ * entry's formals receive the caller's values (data flow defines them there), then its
+ * handled statements.
+ */
+class AcceptStmtTree extends StandardPreOrderTree instanceof Raw::AcceptStmtWithStmts {
   override Raw::AdaNode getChildNode(int i) { i = 0 and result = super.getStmts() }
-
-  override predicate first(Raw::AdaNode f) { first(super.getStmts(), f) }
-
-  override predicate last(Raw::AdaNode l, Completion c) { last(super.getStmts(), l, c) }
 }
 
 /**

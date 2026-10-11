@@ -8,7 +8,7 @@ C++, Java, Python, and a dozen other languages.
 
 > **Status:** pre-1.0, released as [v0.2.0](CHANGELOG.md): an extractor, a QL
 > library with control flow, data flow and taint tracking, and 25 queries
-> (26 on `master`), tested on a 5-project real-world corpus. The database format
+> (28 on `master`), tested on a 5-project real-world corpus. The database format
 > may still change between releases, so expect to rebuild databases when you
 > upgrade. [docs/known-limitations.md](docs/known-limitations.md) lists what
 > doesn't work yet. Bug reports, false positives and missed results are welcome as

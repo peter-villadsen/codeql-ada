@@ -9,9 +9,11 @@
  * - aggregates (`(1 => X)`, `(X, Y)`), allocators (`new String'(X)`) and
  *   dereferences (`P.all`) -- standing in for the content flow v1 lacks (D-023),
  *   so that building a `GNAT.OS_Lib.Argument_List` keeps the taint of its elements;
- * - type conversions (`String (X)`), and indexing and slicing (`S (1 .. 3)`);
- * - a few runtime subprograms that only reshape a string, summarised as "argument
- *   to result" because the runtime has no bodies to flow through (D-026).
+ * - type conversions (`String (X)`), conversion attributes (`X'Image`,
+ *   `T'Value (S)`, `Character'Val (N)`), and indexing and slicing (`S (1 .. 3)`);
+ * - a few runtime subprograms that only reshape a string or build a path from its
+ *   parts (`Ada.Directories.Compose`), summarised as "argument to result" because the
+ *   runtime has no bodies to flow through (D-026).
  *
  * No default sanitizers: a query adds its own barriers.
  */
@@ -35,7 +37,11 @@ private string taintPreservingRuntimeFunction() {
       "ada.strings.unbounded.to_string", "ada.strings.unbounded.to_unbounded_string",
       "ada.strings.fixed.trim", "ada.characters.handling.to_lower",
       "ada.characters.handling.to_upper", "system.os_lib.argument_string_to_list",
-      "interfaces.c.to_c", "interfaces.c.strings.new_string"
+      "interfaces.c.to_c", "interfaces.c.strings.new_string",
+      // paths built from a part
+      "ada.directories.compose", "ada.directories.full_name",
+      "ada.directories.containing_directory", "ada.directories.simple_name",
+      "ada.directories.base_name", "ada.directories.extension"
     ]
 }
 
@@ -49,8 +55,33 @@ private predicate denotesType(Raw::Name n) {
   n.(Name).getReferencedDecl().(BasicDecl).getUltimateDecl() instanceof Raw::BaseTypeDecl
 }
 
+/**
+ * Holds if `a` is an attribute that converts its argument to or from text, or between
+ * types: `T'Image (X)`, `X'Image`, `X'Img`, `T'Value (S)`, `T'Val (N)`, `T'Pos (X)`.
+ */
+private predicate isConversionAttribute(Raw::AttributeRef a) {
+  a.getAttribute().getValue().toLowerCase() =
+    [
+      "image", "img", "wide_image", "wide_wide_image", "value", "wide_value",
+      "wide_wide_value", "val", "pos"
+    ]
+}
+
 /** Holds if `e2`'s value is derived from `e1`'s (see the module comment). */
 private predicate exprTaintStep(Raw::Expr e1, Raw::Expr e2) {
+  // a conversion attribute: from its argument, or from its prefix when that is an
+  // object (`X'Image`) rather than a type
+  exists(Raw::AttributeRef a | isConversionAttribute(a) |
+    a = e2 and e1 = a.getArgs().getChild(_).(Raw::ParamAssoc).getRExpr()
+    or
+    // `T'Image (X)` parses as a call whose name is the attribute
+    exists(Raw::CallExpr c | c = e2 and c.getName() = a |
+      e1 = c.getSuffix().(Raw::AssocList).getChild(_).(Raw::ParamAssoc).getRExpr()
+    )
+    or
+    a = e2 and e1 = a.getPrefix() and not denotesType(a.getPrefix())
+  )
+  or
   isConcatOp(e2.(Raw::BinOp).getOp()) and
   e1 = [e2.(Raw::BinOp).getLeft(), e2.(Raw::BinOp).getRight()]
   or

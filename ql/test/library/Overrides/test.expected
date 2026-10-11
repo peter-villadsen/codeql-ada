@@ -1,0 +1,15 @@
+primitives
+| shapes.ads:4:4:4:45 | Area | Shape | 0 |
+| shapes.ads:5:4:5:53 | Scale | Shape | 0 |
+| shapes.ads:6:4:6:30 | Log | Shape | 0 |
+| shapes.ads:12:4:12:57 | Area | Square | 0 |
+| shapes.ads:14:4:14:61 | Scale | Square | 0 |
+| shapes.ads:17:4:17:55 | Area | Cube | 0 |
+| shapes.ads:18:4:18:40 | Log | Cube | 0 |
+| shapes.ads:21:4:21:57 | Area | Circle | 0 |
+overrides
+| shapes.ads:12:4:12:57 | Area | Square | shapes.ads:4:4:4:45 | Area | Shape |
+| shapes.ads:17:4:17:55 | Area | Cube | shapes.ads:4:4:4:45 | Area | Shape |
+| shapes.ads:17:4:17:55 | Area | Cube | shapes.ads:12:4:12:57 | Area | Square |
+| shapes.ads:18:4:18:40 | Log | Cube | shapes.ads:6:4:6:30 | Log | Shape |
+| shapes.ads:21:4:21:57 | Area | Circle | shapes.ads:4:4:4:45 | Area | Shape |

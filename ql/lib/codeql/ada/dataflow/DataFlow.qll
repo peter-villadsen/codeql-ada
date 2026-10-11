@@ -71,4 +71,12 @@ module DataFlow {
       body.(BasicDecl).hasQualifiedName(qualifiedName)
     )
   }
+
+  /**
+   * Holds if `n` is the value that `call` leaves in the variable passed for its
+   * callee's `idx`th formal, an `out` or `in out` one: what the program reads from that
+   * variable after the call (`Get_Line (Buffer, Last)` fills in `Buffer`). Only a
+   * variable passed as a whole has such a node.
+   */
+  predicate isOutArgument(Node n, Raw::Expr call, int idx) { Impl::outArgumentNode(n, call, idx) }
 }

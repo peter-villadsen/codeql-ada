@@ -13,11 +13,9 @@
  *              `exec` family. Formals that name files (`Output_File`) or carry stdin
  *              data are not sinks. Runtime entities are recognised by what they
  *              resolve to (D-026), so `use` clauses and renamings are covered;
- *              without a GNAT runtime at extraction the query finds nothing. v1
- *              limitations are those of the data-flow library
- *              (`docs/dataflow-design.md`, "Named v1 limitations"): no dispatching or
- *              access-to-subprogram calls, no package-level variables, record
- *              components tracked only as a whole.
+ *              without a GNAT runtime at extraction the query finds nothing. The
+ *              data-flow library's approximations apply
+ *              (`docs/known-limitations.md`).
  * @id ada/command-line-injection
  * @kind path-problem
  * @problem.severity error

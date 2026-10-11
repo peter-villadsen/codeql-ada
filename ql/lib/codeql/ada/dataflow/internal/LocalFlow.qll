@@ -23,6 +23,7 @@
 private import codeql.ada.ast.internal.Raw
 private import codeql.ada.controlflow.internal.ControlFlowGraphImpl as Impl
 private import codeql.ada.dataflow.internal.SsaImpl
+private import codeql.ada.dataflow.internal.Content
 private import ada
 
 /** Holds if `e` has a node in the control-flow graph, i.e. is evaluated. */
@@ -33,7 +34,13 @@ private predicate hasCfgNode(Raw::Expr e) {
 private newtype TNode =
   TExprNode(Raw::Expr e) { hasCfgNode(e) } or
   TSsaNode(SsaFlow::Node n) { not exists(n.(SsaFlow::ExprNode).getExpr().asExpr()) } or
-  TParameterNode(SsaSourceVariable p) { formalOf(p, _, _, _) and formalReceivesArgument(p) }
+  TParameterNode(SsaSourceVariable p) { formalOf(p, _, _, _) and formalReceivesArgument(p) } or
+  TPostUpdateNode(Raw::Expr e) {
+    hasCfgNode(e) and isUpdatedPrefix(e) and not exists(ssaPostUpdate(e))
+  }
+
+/** Gets the post-update node the SSA layer has for variable read `e`. */
+private SsaFlow::ExprPostUpdateNode ssaPostUpdate(Raw::Expr e) { result.getExpr().asExpr() = e }
 
 /**
  * A node in the local data-flow graph: an expression (`asExpr()`), a formal parameter
@@ -51,13 +58,38 @@ class Node extends TNode {
   /** Gets the SSA data-flow node this node is, if it is neither of the above. */
   SsaFlow::Node asSsaNode() { this = TSsaNode(result) }
 
+  /**
+   * Gets the expression this node is the post-update node of: the object a store
+   * into one of its components or elements updates (`R` in `R.A := X`).
+   */
+  Raw::Expr asPostUpdateOf() {
+    this = TPostUpdateNode(result)
+    or
+    this = TSsaNode(ssaPostUpdate(result))
+  }
+
+  /**
+   * Gets the actual whose value after the call this node is: the write-back of an
+   * `out` or `in out` actual, shown as that actual rather than as an SSA definition.
+   */
+  private Raw::Expr getWrittenBackActual() {
+    exists(Raw::Expr call, int idx |
+      isOutActualDef(this.asSsaNode().(SsaFlow::WriteDefSourceNode).getDefinition(), call, idx) and
+      callActual(call, result, idx)
+    )
+  }
+
   /** Gets a textual representation of this node. */
   string toString() {
     result = this.asExpr().toString()
     or
     result = "[param] " + this.asParameter().toString()
     or
-    result = this.asSsaNode().toString()
+    result = this.getWrittenBackActual().toString() + " [post update]"
+    or
+    not exists(this.getWrittenBackActual()) and result = this.asSsaNode().toString()
+    or
+    this = TPostUpdateNode(_) and result = this.asPostUpdateOf().toString() + " [post update]"
   }
 
   /** Gets the location of this node. */
@@ -66,9 +98,16 @@ class Node extends TNode {
     or
     result = this.asParameter().getLocation()
     or
-    result = this.asSsaNode().getLocation()
+    result = this.getWrittenBackActual().getLocation()
+    or
+    not exists(this.getWrittenBackActual()) and result = this.asSsaNode().getLocation()
+    or
+    this = TPostUpdateNode(_) and result = this.asPostUpdateOf().getLocation()
   }
 }
+
+/** Gets the post-update node of `e`, the object a component or element store updates. */
+Node postUpdateOf(Raw::Expr e) { result.asPostUpdateOf() = e and isUpdatedPrefix(e) }
 
 /** Gets the node for SSA data-flow node `n`: reads are represented by their expression. */
 Node fromSsa(SsaFlow::Node n) {

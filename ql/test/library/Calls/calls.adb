@@ -37,5 +37,9 @@ package body Calls is
       I := Integer (I);    --  a type conversion: not a call
       Unknown (I);         --  does not resolve: not a call
       Inner;
+      Free (Ptr);          --  an instance of Ada.Unchecked_Deallocation
+      Inst (Item => 6);    --  an instance of a generic in this package
    end Main;
+
+   procedure G_Proc (Item : Integer) is null;
 end Calls;

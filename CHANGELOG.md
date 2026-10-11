@@ -2,6 +2,51 @@
 
 ## Unreleased
 
+### Data flow follows much more
+
+- **Record components, array elements and standard containers.** A value stored in
+  `R.F`, `V (I)`, an aggregate, or an `Ada.Containers` vector, list, map or set
+  (`Append`, `Insert`, `Include`, ...) is followed to where it is read back (`R.F`,
+  `V (I)`, `Element`, cursors, `for E of V`). Elements of one array or container count
+  as one.
+- **Package variables and variables shared with nested subprograms.** A value stored by
+  one subprogram reaches reads in another, regardless of call order. A qualified
+  reference (`Pkg.V`) is the same variable as `V`.
+- **Calls to generic subprogram instances** resolve to the generic: `Call.getTarget()` of
+  `Free (X)` is `Ada.Unchecked_Deallocation`, and data flow enters the generic's body.
+- **Dispatching calls** (a class-wide actual) flow into every override. New:
+  `Subprogram.overrides`, `getAnOverride` and `isPrimitiveOf`.
+- **Calls through access-to-subprogram values** (`Fn (X)`, `Fn.all (X)`) flow into the
+  subprograms whose `'Access` reaches them, including through record components.
+- **Task and protected entry calls** pass their actuals to the `accept` statement or
+  entry body.
+- The "not provably deallocated" example in `docs/query-writing.md` now proves frees
+  through shared variables and record components, and uses `Call` instead of matching
+  `Free` by its syntax. `docs/known-limitations.md` lists what remains approximate.
+
+### New queries
+
+- **`ada/path-injection`**: data received from the network names a file or directory
+  that is opened, created, deleted, renamed or copied (`Ada.Text_IO`,
+  `Ada.Streams.Stream_IO`, `Ada.Sequential_IO`, `Ada.Direct_IO`, `Ada.Directories`,
+  `GNAT.OS_Lib`). `Ada.Directories.Simple_Name` is a barrier.
+- **`ada/sql-injection`**: data received from the network in the text of an SQL
+  statement run with `GNATCOLL.SQL.Exec`.
+- Both use the new shared sources in `codeql/ada/security/FlowSources.qll`:
+  `RemoteFlowSource` (`GNAT.Sockets`, AWS request data) and `LocalUserInput` (command
+  line, environment, standard input), each an extension point.
+
+### Control flow
+
+- Calls in the message of `raise E with Msg` and in quantified expressions
+  (`for all E of V => P (E)`) are evaluated, so data flow and `Call`-based queries see
+  them. A GNAT `finally` part runs after the statements before it complete normally.
+- An `accept ... do` statement has its own node, where the rendezvous begins.
+
+### Other changes
+
+- Taint tracking follows conversion attributes (`X'Image`, `T'Value (S)`, ...) and the
+  `Ada.Directories` path builders (`Compose`, `Full_Name`, ...).
 - **New query `ada/indirect-recursion`**: a subprogram that calls itself through other
   subprograms (P -> Q -> R -> P), next to `ada/direct-recursion`. 162 results on the
   test corpus, most in gpr2's generated recursive-descent parser.

@@ -17,6 +17,8 @@ private import codeql.ada.ast.internal.Raw
 private import codeql.ada.controlflow.internal.ControlFlowGraphImpl as Impl
 private import codeql.ada.dataflow.internal.SsaImpl
 private import codeql.ada.dataflow.internal.LocalFlow as LF
+private import codeql.ada.dataflow.internal.Content as C
+private import codeql.ada.internal.CallResolution as CallResolution
 private import ada
 
 /** Gets the scope of the CFG node that evaluates `e`. */
@@ -50,6 +52,61 @@ private class Void extends TVoid {
 
 /** Gets `d`'s completion, or `d` itself; only a result that is a CFG scope survives. */
 private Impl::Scopes::CfgScope bodyOf(Raw::BasicDecl d) { result = [d.(BasicDecl).getCompletion(), d] }
+
+/** Holds if `n` is `T'Class`. */
+private predicate isClassAttribute(Raw::Name n) {
+  n.(Raw::AttributeRef).getAttribute().getValue().toLowerCase() = "class"
+}
+
+/** Holds if `te` is `T'Class`, or names an access type to `T'Class`. */
+private predicate isClassWideTypeExpr(Raw::TypeExpr te) {
+  exists(Raw::Name n | n = te.(Raw::SubtypeIndication).getName() |
+    isClassAttribute(n)
+    or
+    isClassAttribute(n.getReferencedDecl()
+          .(Raw::TypeDecl)
+          .getTypeDef()
+          .(Raw::TypeAccessDef)
+          .getSubtypeIndication()
+          .getName())
+  )
+  or
+  // an anonymous access type, `access T'Class`
+  isClassAttribute(te.(Raw::AnonymousType).getTypeDecl().getTypeDef().(Raw::TypeAccessDef).getSubtypeIndication().getName())
+}
+
+/**
+ * Holds if `e` is class-wide, or designates a class-wide object: its type is `T'Class`,
+ * it is a conversion to one (`Shape'Class (S)`), or it names an object or parameter
+ * declared with such a type (`S : Shape'Class`, `P : access Shape'Class`).
+ */
+private predicate isClassWide(Raw::Expr e) {
+  exists(Raw::BaseTypeDecl t | ada_expr_type(e, t) | t instanceof Raw::ClasswideTypeDecl)
+  or
+  isClassAttribute(e.(Raw::CallExpr).getName())
+  or
+  isClassWideTypeExpr(e.(Name).getReferencedDecl().(Raw::ParamSpec).getTypeExpr())
+  or
+  isClassWideTypeExpr(e.(Name).getReferencedDecl().(Raw::ObjectDecl).getTypeExpr())
+  or
+  isClassWide(e.(Raw::ParenExpr).getExpr())
+  or
+  isClassWide(e.(Raw::ExplicitDeref).getPrefix())
+}
+
+/**
+ * Holds if `call` dispatches: its static target is a primitive operation of a tagged
+ * type, and the actual for a parameter controlling it is class-wide. Such a call may run
+ * the target or any override of it (`Subprogram.overrides`).
+ */
+private predicate isDispatchingCall(Raw::Expr call, Subprogram target) {
+  target.getADeclaration() = resolveSubpRenaming(getCallTarget(call)) and
+  exists(int i, Raw::Expr actual |
+    target.isPrimitiveOf(_, i) and
+    callActual(call, actual, i) and
+    isClassWide(actual)
+  )
+}
 
 /** A 0-based formal position (see `formalOf` and `callActual`). */
 private class Position extends int {
@@ -119,11 +176,14 @@ module AdaDataFlowInput implements DF::InputSig<Raw::Location> {
     OutNode() { outNode(this, _, _) }
   }
 
-  /** No post-update nodes: without content flow v1 has no stores for them to receive. */
+  /**
+   * The object after a store into one of its components or elements (`R` in
+   * `R.A := X`), and, from the SSA layer, every variable read after the read.
+   */
   class PostUpdateNode extends Node {
-    PostUpdateNode() { none() }
+    PostUpdateNode() { exists(this.asPostUpdateOf()) }
 
-    Node getPreUpdateNode() { none() }
+    Node getPreUpdateNode() { result.asExpr() = this.asPostUpdateOf() }
   }
 
   class CastNode extends Node {
@@ -144,6 +204,8 @@ module AdaDataFlowInput implements DF::InputSig<Raw::Location> {
     formalOf(node.asParameter(), result, _, _)
     or
     result = ssaNodeBlock(node.asSsaNode()).getScope()
+    or
+    result = exprScope(node.(LF::Node).asPostUpdateOf()) and not exists(node.asSsaNode())
   }
 
   DataFlowType getNodeType(Node node) { exists(node) and result = TUnitType() }
@@ -153,15 +215,21 @@ module AdaDataFlowInput implements DF::InputSig<Raw::Location> {
    * reads) from path explanations, except an `out`/`in out` write-back: that is the
    * hop where a value re-enters the caller, and a path should show it.
    */
-  predicate nodeIsHidden(Node node) { exists(node.asSsaNode()) and not node instanceof OutNode }
+  predicate nodeIsHidden(Node node) {
+    exists(node.asSsaNode()) and not node instanceof OutNode and not node instanceof PostUpdateNode
+  }
 
   class DataFlowExpr = Raw::Expr;
 
   Node exprNode(DataFlowExpr e) { result.asExpr() = e }
 
-  /** A call with a resolvable target declaration (`getCallTarget`), written with or without parentheses. */
+  /**
+   * A call with a resolvable target declaration (`getCallTarget`), written with or
+   * without parentheses, or a call through an access-to-subprogram value, whose
+   * targets come from `lambdaCreation`.
+   */
   class DataFlowCall extends Raw::Expr {
-    DataFlowCall() { exists(getCallTarget(this)) }
+    DataFlowCall() { exists(getCallTarget(this)) or isAccessCall(this, _) }
 
     DataFlowCallable getEnclosingCallable() { result = exprScope(this) }
   }
@@ -190,6 +258,11 @@ module AdaDataFlowInput implements DF::InputSig<Raw::Location> {
     exists(Raw::BasicDecl d | d = resolveSubpRenaming(getCallTarget(c)) |
       result = bodyOf(d) or result = bodyOf(resolveSubpRenaming(d.(BasicDecl).getCompletion()))
     )
+    or
+    // a dispatching call may run any override of its static target
+    exists(Subprogram target | isDispatchingCall(c, target) |
+      result = target.getAnOverride().getBody()
+    )
   }
 
   OutNode getAnOutNode(DataFlowCall call, ReturnKind kind) { outNode(result, call, kind) }
@@ -203,20 +276,21 @@ module AdaDataFlowInput implements DF::InputSig<Raw::Location> {
 
   predicate typeStrongerThan(DataFlowType t1, DataFlowType t2) { none() }
 
-  /** No content (D-023): record components and array elements are not tracked in v1. */
-  class Content = Void;
+  /** A record component, or the elements of an array (`Content.qll`). */
+  class Content = C::Content;
 
   predicate forceHighPrecision(Content c) { none() }
 
-  class ContentSet extends Void {
-    Content getAStoreContent() { none() }
+  /** A single content: stores and reads name one component, or the elements. */
+  class ContentSet extends Content {
+    Content getAStoreContent() { result = this }
 
-    Content getAReadContent() { none() }
+    Content getAReadContent() { result = this }
   }
 
-  class ContentApprox = Void;
+  class ContentApprox = Content;
 
-  ContentApprox getContentApprox(Content c) { none() }
+  ContentApprox getContentApprox(Content c) { result = c }
 
   /** A 0-based formal position, flattened across `ParamSpec` groups. */
   class ParameterPosition = Position;
@@ -228,14 +302,105 @@ module AdaDataFlowInput implements DF::InputSig<Raw::Location> {
 
   predicate simpleLocalFlowStep(Node node1, Node node2, string model) {
     LF::localFlowStep(node1, node2) and model = ""
+    or
+    // a cursor stands for its container (`Content.qll`)
+    C::containerCursorStep(node1.asExpr(), node2.asExpr()) and model = ""
+    or
+    // `for C in V.Iterate`: the loop variable is a value of the iterable
+    exists(SsaFlow::WriteDefSourceNode w, Raw::Expr iterable |
+      forLoopDef(w.getDefinition(), iterable, false) and
+      not iterable.(Raw::BinOp).getOp() instanceof Raw::OpDoubleDot and
+      node1.asExpr() = iterable and
+      node2 = LF::fromSsa(w)
+    ) and
+    model = ""
   }
 
-  /** No jump steps: library-level (package) variables are not tracked in v1. */
-  predicate jumpStep(Node node1, Node node2) { none() }
+  /**
+   * Flow through a variable between subprograms: from a value stored into a package
+   * variable, or into a variable of an enclosing subprogram, to a read of it in a
+   * different subprogram. SSA tracks a variable within one subprogram only, so this
+   * step is flow-insensitive: any store reaches any read elsewhere, whatever the
+   * order of the calls -- except a read that a certain write in its own subprogram
+   * reaches (`V := 0; ... V ...`), which sees only that write.
+   *
+   * An entry call's actuals also jump, to the formals of each `accept` statement and
+   * entry body for the entry: values passed in only, not `out` formals passed back.
+   */
+  predicate jumpStep(Node node1, Node node2) {
+    // an entry call's actual to the formal of an `accept` statement or entry body
+    // for that entry: a rendezvous is not a call the shared library can follow
+    exists(Raw::Expr call, Raw::BasicDecl entry, int idx, Raw::AdaNode completion,
+      SsaFlow::WriteDefSourceNode w |
+      entryCallActual(call, entry, node1.asExpr(), idx) and
+      entry = completedEntry(completion) and
+      isEntryFormalDef(w.getDefinition(), completion, idx) and
+      node2 = LF::fromSsa(w)
+    )
+    or
+    exists(SsaSourceVariable v, Raw::Expr value, Name read |
+      variableStore(v, value) and
+      variableReadRef(v, read) and
+      node1.asExpr() = value and
+      node2.asExpr() = read and
+      not exprScope(value) = exprScope(read) and
+      not readOverwrittenLocally(v, read)
+    )
+  }
 
-  predicate readStep(Node node1, ContentSet c, Node node2) { none() }
+  /** A component access `R.F`, or indexing `V (I)`, reads the content from the prefix. */
+  predicate readStep(Node node1, ContentSet c, Node node2) {
+    exists(Raw::Expr e, Raw::Expr prefix |
+      C::contentAccess(e, prefix, c) and
+      node1.asExpr() = prefix and
+      node2.asExpr() = e
+    )
+    or
+    c.isElement() and
+    (
+      C::containerRead(node2.asExpr(), node1.asExpr())
+      or
+      // `for E of V`: the loop variable is an element of `V`
+      exists(SsaFlow::WriteDefSourceNode w |
+        forLoopDef(w.getDefinition(), node1.asExpr(), true) and
+        node2 = LF::fromSsa(w)
+      )
+    )
+  }
 
-  predicate storeStep(Node node1, ContentSet c, Node node2) { none() }
+  /**
+   * A store into a component or element (`R.F := X`, `V (I) := X`) stores the value
+   * into the updated object's post-update node, and a store into a nested one
+   * (`R.P.A := X`) stores that post-update node in turn into its own prefix's. An
+   * aggregate stores each associated value, and a container operation (`Append`) its
+   * new element.
+   */
+  predicate storeStep(Node node1, ContentSet c, Node node2) {
+    exists(Raw::Expr t, Raw::Expr prefix |
+      C::isStoreTarget(t) and
+      C::contentAccess(t, prefix, c) and
+      node2 = LF::postUpdateOf(prefix)
+    |
+      node1.asExpr() = any(Raw::AssignStmt s | s.getDest() = t).getExpr()
+      or
+      node1 = LF::postUpdateOf(t)
+    )
+    or
+    exists(Raw::BaseAggregate agg, Raw::Expr value |
+      C::aggregateStore(agg, value, c) and
+      node1.asExpr() = value and
+      node2.asExpr() = agg
+    )
+    or
+    // a container operation stores into the write-back of its `in out` container
+    exists(Raw::Expr call, Raw::Expr value, int idx, SsaFlow::WriteDefSourceNode w |
+      C::containerStore(call, value, idx) and
+      c.isElement() and
+      node1.asExpr() = value and
+      isOutActualDef(w.getDefinition(), call, idx) and
+      node2 = LF::fromSsa(w)
+    )
+  }
 
   predicate clearsContent(Node n, ContentSet c) { none() }
 
@@ -252,20 +417,63 @@ module AdaDataFlowInput implements DF::InputSig<Raw::Location> {
   /** Only used to refine types, and v1 has a single type. */
   predicate localMustFlowStep(Node node1, Node node2) { none() }
 
-  /** No access-to-subprogram flow (D-023). */
+  /** Access-to-subprogram values: one kind of call through them. */
   class LambdaCallKind = Unit;
 
-  predicate lambdaCreation(Node creation, LambdaCallKind kind, DataFlowCallable c) { none() }
+  /**
+   * `P'Access` (also `'Unchecked_Access`, `'Unrestricted_Access`) creates an access
+   * value designating `P`'s body; a call through it runs that body.
+   */
+  predicate lambdaCreation(Node creation, LambdaCallKind kind, DataFlowCallable c) {
+    exists(Raw::AttributeRef a, Raw::BasicDecl d |
+      creation.asExpr() = a and
+      a.getAttribute().getValue().toLowerCase() =
+        ["access", "unchecked_access", "unrestricted_access"] and
+      d =
+        resolveSubpRenaming(CallResolution::instanceGeneric(a.getPrefix()
+                .(Raw::Name)
+                .getReferencedDecl())) and
+      (c = bodyOf(d) or c = bodyOf(resolveSubpRenaming(d.(BasicDecl).getCompletion()))) and
+      exists(kind)
+    )
+  }
 
-  predicate lambdaCall(DataFlowCall call, LambdaCallKind kind, Node receiver) { none() }
+  /** `Fn (X)` or `Fn.all (X)` calls through the access value `Fn`. */
+  predicate lambdaCall(DataFlowCall call, LambdaCallKind kind, Node receiver) {
+    isAccessCall(call, receiver.asExpr()) and exists(kind)
+  }
 
-  predicate additionalLambdaFlowStep(Node nodeFrom, Node nodeTo, boolean preservesValue) { none() }
+  /**
+   * An access-to-subprogram value stored in a record component reaches every read of
+   * that component (`Cb.Op := P'Access; ... Cb.Op (X)`): the shared library tracks
+   * where such values go without content, so this step stands in for the store and
+   * the read. It does not tell objects of the record type apart.
+   */
+  predicate additionalLambdaFlowStep(Node nodeFrom, Node nodeTo, boolean preservesValue) {
+    exists(Content c |
+      exists(c.asComponent()) and
+      storeStep(nodeFrom, c, _) and
+      readStep(_, c, nodeTo)
+    ) and
+    preservesValue = true
+  }
 
   predicate knownSourceModel(Node source, string model) { none() }
 
   predicate knownSinkModel(Node sink, string model) { none() }
 
   class DataFlowSecondLevelScope = Void;
+}
+
+/**
+ * Holds if `n` is the write-back of the variable `call` passes for its `idx`th formal,
+ * an `out` or `in out` one: the value the variable holds after the call.
+ */
+predicate outArgumentNode(LF::Node n, Raw::Expr call, int idx) {
+  exists(SsaFlow::WriteDefSourceNode w |
+    isOutActualDef(w.getDefinition(), call, idx) and
+    n = LF::fromSsa(w)
+  )
 }
 
 /** The Ada instantiation of the shared global data-flow library. */

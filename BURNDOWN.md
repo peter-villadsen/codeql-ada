@@ -5,36 +5,38 @@ QL standard library, and an initial query suite — usable via `codeql database 
 
 ---
 
-## Resume here (2026-10-09) — v0.2.0 released; external testing is next
+## Resume here (2026-10-10) — data-flow gaps closed, two new security queries
 
-**State.** v0.2.0 is tagged and released (2026-10-09): GitHub Release with the extractor
-tarball, packs `peter-villadsen/ada-all` and `ada-queries` 0.2.0 published to GHCR.
-`master` is ahead of the tag by four commits: the CI trigger fix, the lock-file fix and
-`ada/indirect-recursion` (see CHANGELOG.md, "Unreleased"). Local suite green (69/69);
-CI on `master` was green at `579e66d`; the run for `f7f0a71` (37878120653) was started
-at the end of the session and not checked. 26 queries. Corpus: 2,334 results
-(`scripts/corpus_query_baseline.json`).
+**State.** v0.2.0 is tagged and released (2026-10-09); `master` is ahead of it (see
+CHANGELOG.md, "Unreleased"). The repository and both GHCR packs are public (D-028), with
+tester setup in place (`docs/known-limitations.md`, issue templates). 28 queries. Local
+suite green (76/76). Corpus: 2,334 results, unchanged by the data-flow work
+(`scripts/corpus_query_baseline.json`; the two new queries find nothing there, since no
+corpus project uses sockets, AWS or GNATCOLL.SQL).
 
-**Decided 2026-10-10 (D-028):** public open source under MIT, no commercial offering.
-Done the same day: the repository and both GHCR packs are public (an anonymous
-`codeql pack download peter-villadsen/ada-queries@0.2.0` into an empty cache works), and
-tester setup is in place (`docs/known-limitations.md`, issue templates under
-`.github/ISSUE_TEMPLATE/`, a README status block saying the database format may still
-change).
+**Done 2026-10-10** (the whole "next work" list of the previous note):
+- **Content flow**: record components, array elements, aggregates, `Ada.Containers`
+  (`Content.qll`), with post-update nodes and value-less entry writes.
+- **Shared variables**: package variables and variables shared with nested subprograms,
+  by `jumpStep`; calls are uncertain writes of them (`callMayWrite`). Qualified
+  references (`Pkg.V`) resolve.
+- **Calls**: generic subprogram instances (target the generic), dispatching calls
+  (`Subprogram.overrides`), access-to-subprogram calls (lambda flow), task and protected
+  entry calls (jump to `accept` / entry body).
+- **CFG**: `raise ... with` messages, quantified expressions, GNAT `finally` parts
+  (normal completion only), `accept ... do` has its own node.
+- **Phase 11**: `FlowSources.qll` (`RemoteFlowSource`, `LocalUserInput`),
+  `ada/path-injection`, `ada/sql-injection`; taint through conversion attributes and
+  `Ada.Directories` path builders.
 
-**Next work, in order of payoff (ask before starting; each is a project):**
-- **Content flow** (record components, array elements, containers): the largest gap.
-  It hides real taint flows (alire's environment-to-`Spawn`) and is why the
-  "not provably deallocated" example reports storage kept in components.
-- **Calls to generic instances** (`Free (X)` on an `Unchecked_Deallocation` instance,
-  `AAA.Strings.Vector` operations) do not resolve; generic subprograms themselves are
-  `Subprogram`s since Phase 12.
-- **Dispatching calls** (static target only), **access-to-subprogram calls**, and
-  variables of enclosing scopes written by nested subprograms.
-- CFG gaps found by `ql/debug/CallConsistency.ql`: `raise ... with` messages,
-  quantified-expression iterators; and GNAT `finally` parts (precision check).
-- Phase 11, more sources and sinks beyond command injection (now a few lines each
-  with `Call`/`Parameter`).
+**Next work (ask before starting):**
+- What remains approximate is listed in `docs/known-limitations.md`: entry `out`
+  formals, generic formal subprograms, interfaces in overriding, element/key precision,
+  `finally` on abnormal completion.
+- More sources and sinks: `LocalUserInput`-based queries for setuid-style programs,
+  cleartext storage, more web frameworks.
+- A corpus with network code, to measure the two new queries on real code.
+- Release 0.3.0 (databases from 0.2.0 still load: no dbscheme change).
 
 **Where to read:**
 - [CHANGELOG.md](CHANGELOG.md): what each release changes for results and for query

@@ -74,21 +74,28 @@ class SsaSourceVariable extends Raw::DefiningName {
  * `DefiningName` within it, so a multi-identifier declaration such as
  * `X, Y : Integer` is ambiguous at that level. Narrowing by name text is
  * exact here because identifiers introduced by one declaration are distinct
- * by construction (D-024). Ada does not allow a local object, parameter or
- * loop variable to be referenced through a dotted (package-qualified) name
- * within its own scope, so `n` is always a plain reference for the
- * constructs `SsaSourceVariable` covers -- never itself a `DottedName`,
- * though `Name.getText()` is used regardless since it also handles that case
- * uniformly. The texts are compared ignoring case, as Ada does: `X` may be
- * declared `X` and referenced as `x`. `p_referenced_defining_name` is the
- * documented extractor-side fallback if a case is found this cannot settle.
+ * by construction (D-024). A package-level object may be referenced by an
+ * expanded name (`Store.G`), and so may an enclosing subprogram's object
+ * (`Outer.X`): such a reference is compared by its last identifier, and the
+ * identifier inside it is not a reference of its own. The texts are compared
+ * ignoring case, as Ada does: `X` may be declared `X` and referenced as `x`.
+ * `p_referenced_defining_name` is the documented extractor-side fallback if a
+ * case is found this cannot settle.
  */
 SsaSourceVariable getSourceVariable(Name n) {
   exists(Raw::BasicDecl d |
     d = n.getReferencedDecl() and
     result = d.(BasicDecl).getADefiningName() and
-    result.getName().(Name).getText().toLowerCase() = n.getText().toLowerCase()
+    result.getName().(Name).getText().toLowerCase() = simpleNameText(n).toLowerCase() and
+    not n = any(Raw::DottedName dn).getSuffix()
   )
+}
+
+/** Gets the text of `n`, or of its last identifier if it is an expanded name. */
+private string simpleNameText(Name n) {
+  result = n.(Raw::DottedName).getSuffix().(Name).getText()
+  or
+  not n instanceof Raw::DottedName and result = n.getText()
 }
 
 /**
@@ -187,16 +194,20 @@ private predicate objectDeclInitWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVar
  * `nameNode` is `v` itself, same reasoning as `objectDeclInitWrite`.
  */
 private predicate forLoopVarWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v, Raw::AdaNode nameNode) {
-  exists(Raw::ForLoopStmt s, Raw::ForLoopSpec spec |
-    spec = s.getSpec() and
+  exists(Raw::ForLoopSpec spec |
+    // a `for` loop's, or a quantified expression's (`for all E of V => ...`)
+    (spec = any(Raw::ForLoopStmt s).getSpec() or spec = any(Raw::QuantifiedExpr q).getLoopSpec()) and
     v = spec.getVarDecl().(BasicDecl).getADefiningName() and
     nameNode = v and
     cfgPos(spec.getIterExpr(), bb, i)
   )
 }
 
-/** Gets the `SubpSpec` of a callable declaration (`Formals::subpSpecOf`, D-023). */
-private Raw::SubpSpec getSubpSpecOf(Raw::BasicDecl d) { result = Formals::subpSpecOf(d) }
+/**
+ * Gets the `SubpSpec` of a callable declaration (`Formals::callableSpecOf`): also of a
+ * generic subprogram, the target of a call to one of its instances.
+ */
+private Raw::SubpSpec getSubpSpecOf(Raw::BasicDecl d) { result = Formals::callableSpecOf(d) }
 
 /**
  * Gets the `CfgScope` that formal parameter `ps` belongs to, if it is part of
@@ -253,6 +264,112 @@ private predicate paramEntryWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariabl
   )
 }
 
+/**
+ * A write with no value at its scope's entry, for an object declared without an
+ * initialiser (`R : Pair;`) and for an `out` formal. It stores nothing, so no value
+ * flows from it; it exists so that a component or element stored before any whole
+ * write (`R.A := X;`) is a store into a defined variable, whose post-update node then
+ * reaches the next read of `R`.
+ */
+private predicate uninitializedWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v, Raw::AdaNode nameNode) {
+  nameNode = v and
+  i = 0 and
+  (
+    exists(Raw::ObjectDecl d |
+      v = d.(BasicDecl).getADefiningName() and
+      not exists(d.getDefaultExpr()) and
+      not exists(d.getRenamingClause()) and
+      bb.(Impl::CfgImpl::BasicBlocks::EntryBasicBlock).getScope() = Impl::getEnclosingCfgScope(d)
+    )
+    or
+    exists(Raw::ParamSpec ps |
+      v = ps.(BasicDecl).getADefiningName() and
+      ps.getMode() instanceof Raw::ModeOut and
+      bb.(Impl::CfgImpl::BasicBlocks::EntryBasicBlock).getScope() = paramOwningScope(ps)
+    )
+  )
+}
+
+/**
+ * Gets the entry that `accept` statement or entry body `completion` completes: for an
+ * `accept`, the entry of that name declared by the task whose body it is in (`accept`
+ * names do not resolve, and a task body is matched to its declaration by qualified
+ * name); for an entry body, the declaration it completes.
+ */
+Raw::BasicDecl completedEntry(Raw::AdaNode completion) {
+  // an `accept` in the body of the task that declares the entry, by the entry's name
+  exists(Raw::BasicDecl task, Raw::TaskBody taskBody |
+    (task instanceof Raw::SingleTaskDecl or task instanceof Raw::TaskTypeDecl) and
+    task.(BasicDecl).getQualifiedName() = taskBody.(BasicDecl).getQualifiedName() and
+    completion.(Raw::AcceptStmt).getParent+() = taskBody and
+    result.(Raw::EntryDecl).getParent+() = task and
+    result.(Raw::EntryDecl).getSpec().getEntryName().getName().(Name).getText().toLowerCase() =
+      completion.(Raw::AcceptStmt).getBodyDecl().getName().getName().(Name).getText().toLowerCase()
+  )
+  or
+  ada_body_part(result, completion) and completion instanceof Raw::EntryBody
+}
+
+/** Gets the formal part of `accept` statement or entry body `completion`. */
+private Raw::Params completionParams(Raw::AdaNode completion) {
+  result = completion.(Raw::AcceptStmt).getParams().getParams()
+  or
+  result = completion.(Raw::EntryBody).getParams().getParams()
+}
+
+/**
+ * Holds if `v` is the `idx`th formal of `accept` statement or entry body `completion`.
+ */
+predicate entryCompletionFormal(Raw::AdaNode completion, SsaSourceVariable v, int idx) {
+  v = Formals::paramsFormalAt(completionParams(completion), idx) and
+  exists(completedEntry(completion))
+}
+
+/**
+ * A write of an entry's formal where the rendezvous begins: at the `accept`
+ * statement's own node, or at an entry body's entry. Its value comes from the entry
+ * call's actual (`jumpStep` in `DataFlowImpl.qll`), or, for an `out` formal, from
+ * nowhere, like an uninitialised object.
+ */
+private predicate entryFormalWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v, Raw::AdaNode nameNode) {
+  nameNode = v and
+  exists(Raw::AdaNode completion | entryCompletionFormal(completion, v, _) |
+    cfgPos(completion.(Raw::AcceptStmt), bb, i)
+    or
+    bb.(Impl::CfgImpl::BasicBlocks::EntryBasicBlock).getScope() = completion.(Raw::EntryBody) and
+    i = 0
+  )
+}
+
+/** Holds if `def` is the write of the `idx`th formal of `completion` (`entryFormalWrite`). */
+predicate isEntryFormalDef(SsaImpl::WriteDefinition def, Raw::AdaNode completion, int idx) {
+  exists(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v |
+    def.definesAt(v, bb, i) and
+    entryFormalWrite(bb, i, v, _) and
+    entryCompletionFormal(completion, v, idx)
+  )
+}
+
+/**
+ * Holds if `actual` is what entry call `call` (`Worker.Put (X)`) passes for the
+ * entry's `idx`th formal, by position or by name; `entry` is the entry called.
+ */
+predicate entryCallActual(Raw::CallExpr call, Raw::BasicDecl entry, Raw::Expr actual, int idx) {
+  entry = call.getName().(Name).getReferencedDecl() and
+  entry instanceof Raw::EntryDecl and
+  cfgPos(call, _, _) and
+  exists(Raw::Params params, Raw::ParamAssoc assoc |
+    params = entry.(Raw::EntryDecl).getSpec().getEntryParams() and
+    assoc = call.getSuffix().(Raw::AssocList).getChild(_) and
+    actual = assoc.getRExpr()
+  |
+    not exists(assoc.getDesignator()) and idx = assoc.getParentIndex()
+    or
+    Formals::paramsFormalAt(params, idx).getName().(Name).getText().toLowerCase() =
+      assoc.getDesignator().(Name).getText().toLowerCase()
+  )
+}
+
 /** Gets the 0-based flattened formal index of `dn` among `spec`'s formals (`Formals::formalIndex`). */
 private int formalIndex(Raw::SubpSpec spec, Raw::DefiningName dn) {
   result = Formals::formalIndex(spec, dn)
@@ -289,7 +406,7 @@ private Raw::Mode formalMode(Raw::SubpSpec spec, int i) {
 /** Holds if `n` has a CFG node: data flow counts a call only where the CFG evaluates it. */
 private predicate hasCfgNode(Raw::AdaNode n) { cfgPos(n, _, _) }
 
-private module Resolution = CallResolution::Make<hasCfgNode/1, Formals::subpSpecOf/1>;
+private module Resolution = CallResolution::Make<hasCfgNode/1, Formals::callableSpecOf/1>;
 
 /**
  * Gets the declaration `call` invokes (`CallResolution::Make::getCallTarget`), for a
@@ -300,12 +417,29 @@ Raw::BasicDecl getCallTarget(Raw::Expr call) { result = Resolution::getCallTarge
 /** Holds if `call` is written in prefixed-view notation, `Obj.Op (Args)`. */
 predicate isPrefixedViewCall(Raw::Expr call) { Resolution::isPrefixedViewCall(call) }
 
-/** Gets the `SubpSpec` of the subprogram `call` invokes (see `getCallTarget`). */
-Raw::SubpSpec getCalleeSpec(Raw::Expr call) { result = Resolution::getCalleeSpec(call) }
+/**
+ * Holds if `call` calls through access-to-subprogram value `receiver`
+ * (`CallResolution::accessCallSpec`), and has a CFG node.
+ */
+predicate isAccessCall(Raw::Expr call, Raw::Expr receiver) {
+  exists(CallResolution::accessCallSpec(call, receiver)) and hasCfgNode(call)
+}
+
+/**
+ * Gets the `SubpSpec` of the subprogram `call` invokes (see `getCallTarget`), or, for a
+ * call through an access-to-subprogram value, the access type's profile.
+ */
+Raw::SubpSpec getCalleeSpec(Raw::Expr call) {
+  result = Resolution::getCalleeSpec(call)
+  or
+  isAccessCall(call, _) and result = CallResolution::accessCallSpec(call, _)
+}
 
 /** Holds if `actual` is what `call` passes for its callee's `idx`th formal. */
 predicate callActual(Raw::Expr call, Raw::Expr actual, int idx) {
   Resolution::callActual(call, actual, idx)
+  or
+  isAccessCall(call, _) and CallResolution::accessCallActual(call, actual, idx)
 }
 
 /** Gets the subprogram `d` denotes once subprogram renamings are followed. */
@@ -399,6 +533,34 @@ private predicate outOrInOutActualWriteAt(
   )
 }
 
+/** Gets the CFG scope that evaluates `n`. */
+private Impl::Scopes::CfgScope nodeScope(Raw::AdaNode n) {
+  exists(Impl::CfgImpl::AstCfgNode cn | cn.getAstNode() = n | result = cn.getScope())
+}
+
+/**
+ * Holds if `v` is referred to in scope `sc` and stored into in a different scope: a
+ * package variable, or a variable shared between a subprogram and the subprograms
+ * nested in it.
+ */
+private predicate writtenElsewhere(SsaSourceVariable v, Impl::Scopes::CfgScope sc) {
+  exists(Name n | v = getSourceVariable(n) and sc = nodeScope(n)) and
+  exists(Raw::Expr value | variableStore(v, value) and not nodeScope(value) = sc)
+}
+
+/**
+ * An uncertain write of `v` at each resolved call in a scope where `v` is written
+ * elsewhere (`writtenElsewhere`): the callee may store into it, so a read after the
+ * call need not see the value written before it.
+ */
+private predicate callMayWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+  exists(Raw::Expr call |
+    exists(getCallTarget(call)) and
+    cfgPos(callEffectNode(call), bb, i) and
+    writtenElsewhere(v, bb.getScope())
+  )
+}
+
 /** The `InputSig` implementation consumed by `SsaLib::Make`. */
 private module SsaInput implements SsaLib::InputSig<Raw::Location, SsaCfg::BasicBlock> {
   class SourceVariable = SsaSourceVariable;
@@ -408,11 +570,15 @@ private module SsaInput implements SsaLib::InputSig<Raw::Location, SsaCfg::Basic
       assignWrite(bb, i, v, _) or
       objectDeclInitWrite(bb, i, v, _) or
       forLoopVarWrite(bb, i, v, _) or
-      paramEntryWrite(bb, i, v, _)
+      paramEntryWrite(bb, i, v, _) or
+      uninitializedWrite(bb, i, v, _) or
+      entryFormalWrite(bb, i, v, _)
     ) and
     certain = true
     or
     outOrInOutActualWrite(bb, i, v, _) and certain = false
+    or
+    callMayWrite(bb, i, v) and certain = false
   }
 
   predicate variableRead(SsaCfg::BasicBlock bb, int i, SourceVariable v, boolean certain) {
@@ -454,6 +620,8 @@ Raw::AdaNode getWriteNameOccurrence(SsaImpl::WriteDefinition wd) {
     objectDeclInitWrite(bb, i, v, result) or
     forLoopVarWrite(bb, i, v, result) or
     paramEntryWrite(bb, i, v, result) or
+    uninitializedWrite(bb, i, v, result) or
+    entryFormalWrite(bb, i, v, result) or
     outOrInOutActualWrite(bb, i, v, result)
   )
 }
@@ -599,5 +767,54 @@ predicate isParameterEntryDef(SsaImpl::WriteDefinition def, SsaSourceVariable v)
 predicate isOutActualDef(SsaImpl::WriteDefinition def, Raw::Expr call, int idx) {
   exists(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v |
     def.definesAt(v, bb, i) and outOrInOutActualWriteAt(bb, i, v, _, call, idx)
+  )
+}
+
+/**
+ * Holds if `value` is stored into variable `v` by an assignment (`V := value`) or by
+ * `v`'s own initialiser. Used for flow between subprograms through a variable that
+ * more than one of them refers to (`jumpStep`), where SSA, which works within one
+ * subprogram, does not apply.
+ */
+predicate variableStore(SsaSourceVariable v, Raw::Expr value) {
+  exists(Raw::AssignStmt s | v = getSourceVariable(s.getDest()) and value = s.getExpr())
+  or
+  exists(Raw::ObjectDecl d | v = d.(BasicDecl).getADefiningName() and value = d.getDefaultExpr())
+}
+
+/** Holds if `n` reads variable `v`: a reference that is neither an assignment target nor a designator. */
+predicate variableReadRef(SsaSourceVariable v, Name n) {
+  v = getSourceVariable(n) and
+  not isAssignTarget(n) and
+  not isDesignator(n) and
+  cfgPos(n, _, _)
+}
+
+/**
+ * Holds if the read `n` of `v` is reached by a certain write in its own subprogram, with
+ * no other definition merging in: whatever other subprograms store into `v`, `n` sees
+ * this write's value.
+ */
+predicate readOverwrittenLocally(SsaSourceVariable v, Name n) {
+  exists(SsaCfg::BasicBlock bb, int i, SsaImpl::WriteDefinition def |
+    variableReadRef(v, n) and
+    cfgPos(n, bb, i) and
+    SsaImpl::ssaDefReachesRead(v, def, bb, i) and
+    not def instanceof SsaImpl::UncertainWriteDefinition
+  )
+}
+
+/**
+ * Holds if `def` is the write of a `for` loop's variable and `iterable` is what the
+ * loop iterates over; `isOf` is `true` for `for E of V` (an element of `V`) and `false`
+ * for `for C in V.Iterate` or a range (a value of the iterable itself).
+ */
+predicate forLoopDef(SsaImpl::WriteDefinition def, Raw::Expr iterable, boolean isOf) {
+  exists(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v, Raw::ForLoopSpec spec |
+    def.definesAt(v, bb, i) and
+    forLoopVarWrite(bb, i, v, _) and
+    v = spec.getVarDecl().(BasicDecl).getADefiningName() and
+    iterable = spec.getIterExpr() and
+    if spec.getLoopType() instanceof Raw::IterTypeOf then isOf = true else isOf = false
   )
 }

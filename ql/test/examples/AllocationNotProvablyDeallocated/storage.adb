@@ -48,13 +48,13 @@ procedure Storage is
 
    procedure Kept_In_Shared is
    begin
-      Shared := new Node'(5, null);                --  reported: freed, but by another subprogram
+      Shared := new Node'(5, null);                --  fine: freed at the end, through Shared
    end Kept_In_Shared;
 
    procedure Linked is
       Head : Node_Access := new Node'(6, null);    --  fine: freed below
    begin
-      Head.Next := new Node'(7, null);             --  reported: kept in a record component
+      Head.Next := new Node'(7, null);             --  fine: freed through the component
       Free (Head.Next);
       Free (Head);
    end Linked;

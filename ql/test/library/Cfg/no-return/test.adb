@@ -5,7 +5,7 @@
 package body No_Return_Test is
    procedure Fail (Msg : String) is
    begin
-      raise Program_Error with Msg;  -- $ edge=Identifier@8:13|successor|RaiseStmt@8:7 edge=RaiseStmt@8:7|exception|exitSubpBody(abnormal)@6:4
+      raise Program_Error with Msg;  -- $ edge=Identifier@8:13|successor|Identifier@8:32 edge=Identifier@8:32|successor|RaiseStmt@8:7 edge=RaiseStmt@8:7|exception|exitSubpBody(abnormal)@6:4
    end Fail;  -- $ edge=enterSubpBody@6:4|successor|Identifier@8:13 edge=exitSubpBody(abnormal)@6:4|successor|exitSubpBody@6:4
 
    procedure Stop;

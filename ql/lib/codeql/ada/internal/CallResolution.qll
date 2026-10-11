@@ -73,6 +73,52 @@ Raw::BasicDecl resolveSubpRenaming(Raw::BasicDecl d) {
   )
 }
 
+/**
+ * Gets the generic subprogram that `d` is an instance of (`procedure Free is new
+ * Ada.Unchecked_Deallocation (...)`), or `d` itself if it is not an instance. A call to
+ * an instance is a call to the generic: its formals are the generic's, and its body,
+ * when there is one, is the generic's single body, shared by all instances.
+ */
+Raw::BasicDecl instanceGeneric(Raw::BasicDecl d) {
+  result = d.(Raw::GenericSubpInstantiation).getDesignatedGeneric()
+  or
+  not d instanceof Raw::GenericSubpInstantiation and result = d
+}
+
+/**
+ * Gets the parameter profile of the access-to-subprogram value that `call` calls
+ * through, `receiver`: `Fn (X)` or `Fn.all (X)`, where `Fn` is of an access-to-
+ * subprogram type, named or anonymous. Such a call has no target declaration; which
+ * subprograms it may run depends on where the access value came from (`P'Access`).
+ */
+Raw::SubpSpec accessCallSpec(Raw::CallExpr call, Raw::Expr receiver) {
+  exists(Raw::Expr callee | callee = call.getName() |
+    receiver = callee and not callee instanceof Raw::ExplicitDeref
+    or
+    receiver = callee.(Raw::ExplicitDeref).getPrefix()
+  ) and
+  exists(Raw::BaseTypeDecl t | ada_expr_type(receiver, t) |
+    result = t.(Raw::TypeDecl).getTypeDef().(Raw::AccessToSubpDef).getSubpSpec()
+  )
+}
+
+/**
+ * Holds if `actual` is what `call`, a call through an access-to-subprogram value, passes
+ * for the `idx`th formal of the access type's profile: by position, or by the profile's
+ * formal names.
+ */
+predicate accessCallActual(Raw::CallExpr call, Raw::Expr actual, int idx) {
+  exists(Raw::SubpSpec spec, Raw::ParamAssoc assoc |
+    spec = accessCallSpec(call, _) and
+    assoc = call.getSuffix().(Raw::AssocList).getChild(_) and
+    actual = assoc.getRExpr()
+  |
+    not exists(assoc.getDesignator()) and idx = assoc.getParentIndex()
+    or
+    idx = formalIndexNamed(spec, assoc.getDesignator().(Raw::Name).getText().toLowerCase())
+  )
+}
+
 /** Holds if `n` is evaluated where it stands, so that, if it names a subprogram, it is a call. */
 signature predicate isEvaluatedSig(Raw::AdaNode n);
 
@@ -89,8 +135,8 @@ module Make<isEvaluatedSig/1 isEvaluated, specOfSig/1 specOf> {
    * or `call` itself for a call written without parentheses (`X := Get;`,
    * `Obj.Op;`). A bare name is a call only where it is evaluated (`isEvaluated`), and
    * not where it is the callee part of a larger name: a `CallExpr`'s name, a dotted
-   * name's suffix, an expanded name's prefix, an attribute's prefix (`F'Access`) or
-   * a named association's designator.
+   * name's suffix, an expanded name's prefix, an attribute's prefix (`F'Access`), a
+   * named association's designator or the generic an instantiation names.
    */
   Raw::Name calleeName(Raw::Expr call) {
     result = call.(Raw::CallExpr).getName() and isEvaluated(call)
@@ -102,18 +148,27 @@ module Make<isEvaluatedSig/1 isEvaluated, specOfSig/1 specOf> {
     not isExpandedNamePrefix(call) and
     not call = any(Raw::AttributeRef a).getPrefix() and
     not isDesignator(call) and
+    // the generic named by an instantiation (`is new Ada.Unchecked_Deallocation`)
+    not call = any(Raw::GenericSubpInstantiation g).getGenericSubpName() and
     isEvaluated(call)
   }
 
   /**
    * Holds if `call` is written in prefixed-view (dot) notation, `Obj.Op (Args)`:
    * `Obj` is then its first actual. Recognised by a dotted callee whose prefix is not
-   * an expanded name's and has a type, i.e. denotes a value.
+   * an expanded name's and denotes a value: it has a type, or names an object or a
+   * parameter (a class-wide one, `S : Shape'Class`, has no recorded type).
    */
   predicate isPrefixedViewCall(Raw::Expr call) {
     exists(Raw::DottedName dn | dn = calleeName(call) |
       not isExpandedNamePrefix(dn.getPrefix()) and
-      exists(dn.getPrefix().(Raw::Expr).getType()) and
+      (
+        exists(dn.getPrefix().(Raw::Expr).getType())
+        or
+        dn.getPrefix().(Raw::Name).getReferencedDecl() instanceof Raw::ObjectDecl
+        or
+        dn.getPrefix().(Raw::Name).getReferencedDecl() instanceof Raw::ParamSpec
+      ) and
       // a protected operation's prefix is the protected object, never a formal
       not isProtectedOperation(dn.getSuffix().(Raw::Name).getReferencedDecl())
     )
@@ -124,8 +179,9 @@ module Make<isEvaluatedSig/1 isEvaluated, specOfSig/1 specOf> {
    * resolved through `ada_xref` (`Name.getReferencedDecl()`, D-021), never by name
    * text. Libadalang parses indexing, slicing and type conversion as a `CallExpr`
    * too; those resolve to an object or a type, so they have no result here, and
-   * neither do calls to generic instantiations, entries and access values
-   * (docs/dataflow-design.md, D-023). A subprogram renaming is a result -- it is a
+   * neither do calls to entries and access values (docs/dataflow-design.md, D-023).
+   * A call to an instance of a generic subprogram targets the generic
+   * (`instanceGeneric`). A subprogram renaming is a result -- it is a
    * `BaseSubpBody` with a `SubpSpec` of its own, whose formals bind the actuals --
    * and `resolveSubpRenaming` takes it on to the subprogram it renames. A protected
    * operation (`PO.Op (X)`) is a call whose prefix is the protected object, not a
@@ -140,7 +196,7 @@ module Make<isEvaluatedSig/1 isEvaluated, specOfSig/1 specOf> {
    */
   Raw::BasicDecl getCallTarget(Raw::Expr call) {
     exists(Raw::Name callee | callee = calleeName(call) |
-      result = callee.(Raw::Name).getReferencedDecl() and
+      result = instanceGeneric(callee.(Raw::Name).getReferencedDecl()) and
       exists(specOf(result)) and
       (
         not callee instanceof Raw::DottedName

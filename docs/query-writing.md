@@ -97,11 +97,15 @@ Two things differ from Java because Ada differs:
   `getBody()` and `getADeclaration()` reach the others. Its parameters are the
   spec's; `Parameter.getAnAccess()` finds the uses in the body, which resolve to
   the body's copy.
-- **What v1 does not cover.** A generic subprogram is a `Subprogram`
-  (`isGeneric()`), but an instance of one (`procedure P is new G (...)`) is not,
-  and calls to instances are not `Call`s. Dispatching calls bind to the static
-  target, and calls through access-to-subprogram values do not resolve
-  (`docs/dataflow-design.md`). A private type and its full declaration are two
+- **Generic subprograms and their instances.** A generic subprogram is a
+  `Subprogram` (`isGeneric()`); an instance of one (`procedure P is new G (...)`) is
+  not, and a call to an instance targets the generic: `getTarget()` of `Free (X)` is
+  `Ada.Unchecked_Deallocation`, and its parameters are the generic's.
+- **What `Call` does not cover.** A dispatching call's `getTarget()` is its
+  static target, and a call through an access-to-subprogram value is not a
+  `Call`. Data flow follows both: into every override
+  (`Subprogram.getAnOverride()`), and into the subprograms whose `'Access` reaches
+  the call (`docs/dataflow-design.md`). A private type and its full declaration are two
   `Type`s.
 
 **AST classes**, one per Libadalang node kind (`CallExpr`, `PragmaNode`,
@@ -466,8 +470,8 @@ calls itself; not `Leaf`, and not `Calls_Cycle`, which calls into the cycle with
 being part of it. The shipped queries split the two cases: `ada/direct-recursion` for
 a subprogram that calls itself, `ada/indirect-recursion` for one that comes back to
 itself through others. Like every `Call`-based query, it sees only calls that resolve:
-not dispatching calls (bound to their static target), calls through
-access-to-subprogram values, or calls to generic instances.
+not dispatching calls (bound to their static target) or calls through
+access-to-subprogram values. Data flow follows both.
 
 ## Data flow and taint tracking
 
@@ -732,9 +736,8 @@ it.
  * @description Storage allocated with `new` whose access value cannot be shown to
  *              reach a deallocation (`Free (X)`, an instance of
  *              Ada.Unchecked_Deallocation). Either the storage is never released, or
- *              it is released in a way the data-flow library does not follow: kept in
- *              a record component, an array or a variable of an enclosing subprogram,
- *              or in a container.
+ *              it is released in a way the data-flow library does not follow
+ *              (docs/known-limitations.md).
  * @kind problem
  * @id my-app/allocation-not-provably-deallocated
  * @problem.severity recommendation
@@ -743,22 +746,15 @@ it.
 import ada
 import codeql.ada.dataflow.DataFlow
 
-/** Holds if `free` calls an instance of Ada.Unchecked_Deallocation: `Free (X)`. */
-predicate isDeallocation(CallExpr free) {
-  free.getName()
-      .getReferencedDecl()
-      .(GenericInstantiation)
-      .getDesignatedGeneric()
-      .hasQualifiedName("Ada.Unchecked_Deallocation")
-}
-
 module Config implements DataFlow::ConfigSig {
   predicate isSource(DataFlow::Node n) { n.asExpr() instanceof Allocator }
 
-  // The access value handed to a deallocation.
+  // The access value handed to a deallocation: a call to an instance of
+  // Ada.Unchecked_Deallocation targets the generic.
   predicate isSink(DataFlow::Node n) {
-    exists(CallExpr free | isDeallocation(free) |
-      n.asExpr() = free.getSuffix().(AssocList).getChild(0).(ParamAssoc).getRExpr()
+    exists(Call free |
+      free.getTarget().hasQualifiedName("Ada.Unchecked_Deallocation") and
+      n.asExpr() = free.getArgument(0)
     )
   }
 }
@@ -824,13 +820,13 @@ procedure Storage is
 
    procedure Kept_In_Shared is
    begin
-      Shared := new Node'(5, null);                --  reported: freed, but by another subprogram
+      Shared := new Node'(5, null);                --  fine: freed at the end, through Shared
    end Kept_In_Shared;
 
    procedure Linked is
       Head : Node_Access := new Node'(6, null);    --  fine: freed below
    begin
-      Head.Next := new Node'(7, null);             --  reported: kept in a record component
+      Head.Next := new Node'(7, null);             --  fine: freed through the component
       Free (Head.Next);
       Free (Head);
    end Linked;
@@ -847,27 +843,23 @@ end Storage;
 
 What it can prove, and so does not report: freeing in the same subprogram
 (`Freed_Here`), through a helper's `in out` parameter (`Freed_By_Helper`, freed in
-`Release`), and by the caller of a function that returns the allocation
-(`Freed_By_Caller`, through `Make`). What it reports:
+`Release`), by the caller of a function that returns the allocation
+(`Freed_By_Caller`, through `Make`), through `Shared`, a variable of the enclosing
+procedure that the nested `Kept_In_Shared` writes and `Free (Shared)` releases at the
+end, and through a record component (`Head.Next`). It reports only `Never_Freed`,
+whose storage is never released: a real leak.
 
-- **`Never_Freed`**: the storage is never released. A real leak.
-- **`Kept_In_Shared`**: the storage *is* released, by `Free (Shared)` at the end, but
-  through `Shared`, a variable of the enclosing procedure that a nested subprogram
-  writes. Data flow follows a subprogram's own variables, not those of enclosing
-  subprograms or packages.
-- **`Head.Next := new ...`**: released by `Free (Head.Next)`, but the value is stored in
-  a record component, and v1 data flow does not follow values through components,
-  array elements or containers (`docs/dataflow-design.md`, "Named v1 limitations").
-
-So a result means "not proven", not "leaked": read it as a list of allocations whose
-release a reviewer has to check by hand. Storage released by other means is not
+A result still means "not proven", not "leaked": storage released through a gap in
+data flow (`docs/known-limitations.md`), such as an entry's `out` formal, is reported
+too, so read the results as a list of allocations whose release a reviewer has to
+check by hand. Storage released by other means is not
 recognised either: a controlled type's `Finalize`, a storage pool, or an access type
 with a `Storage_Size` (whose storage is reclaimed when the type goes out of scope).
 
-`Free (X)` is matched as a `CallExpr` rather than a `Call`, because a call to an
-instance of a generic does not resolve in v1. `UncheckedDeallocation.ql` shows the
-fuller match, including the Ada 83 name `Unchecked_Deallocation` and a fallback for
-databases built without the GNAT runtime.
+A call to an instance of a generic subprogram targets the generic, so
+`free.getTarget()` is `Ada.Unchecked_Deallocation` whatever the instance is called.
+`UncheckedDeallocation.ql` shows a fuller match, including the Ada 83 name
+`Unchecked_Deallocation` and a fallback for databases built without the GNAT runtime.
 
 ### Adding to the built-in command-injection query
 
@@ -887,6 +879,38 @@ class MyShellSink extends CommandInjection::Sink {
 
 `CommandInjection::Source` and `CommandInjection::Barrier` extend the same way.
 
+### Sources of untrusted data
+
+`codeql/ada/security/FlowSources.qll` has the sources the security queries share, as in
+CodeQL for other languages:
+
+- **`RemoteFlowSource`**: data received from the network. `GNAT.Sockets.Receive_Socket`
+  and `Receive_Vector` (the buffer they fill in), `T'Input (Stream (Socket))`, and AWS
+  request data (`AWS.Status.Parameter`, `URI`, `Payload`, ..., `AWS.Parameters.Get`).
+  `ada/path-injection` and `ada/sql-injection` use these.
+- **`LocalUserInput`**: command-line arguments (`Ada.Command_Line.Argument`,
+  `GNAT.Command_Line`), environment variables, and lines read from standard input. No
+  shipped query uses these as sources by default: a command-line tool that opens the file
+  it is given is doing its job. Use them in a query of your own when the local user is not
+  trusted, a setuid program for instance.
+
+Both are abstract classes: subclass one to add a source, such as the request data of a
+web framework the library does not model. `getSourceType()` gives the text the query
+message uses. A source that is an `out` parameter, like the buffer `Receive_Socket` fills
+in, is the variable after the call: `DataFlow::isOutArgument(n, call, i)`.
+
+```ql
+class MyRequestField extends RemoteFlowSource {
+  MyRequestField() {
+    exists(Call c | c.getTarget().hasQualifiedName("My_Server.Requests.Field") |
+      this.asExpr() = c
+    )
+  }
+
+  override string getSourceType() { result = "HTTP request data" }
+}
+```
+
 ### What is followed
 
 Calls resolve by meaning, not text, so `use` clauses and renamings are covered, and
@@ -894,8 +918,8 @@ Calls resolve by meaning, not text, so `use` clauses and renamings are covered, 
 ones Libadalang computes: a subprogram nested in another is `Outer.Inner`. The
 `DataFlow` module also has string-based helpers that predate the semantic classes
 (`DataFlow::isCallTo`, `getAnArgument`, `isArgumentFor`, `isParameterOf`); they give the
-same answers. What is and is not followed (dispatching calls, access-to-subprogram
-values, generic instances, components and containers) is listed in
+same answers. How dispatching calls, access-to-subprogram values, components and
+containers are followed is described in
 [dataflow-design.md](dataflow-design.md), "Named v1 limitations" and "Taint tracking".
 A test of your own query should route the value through at least one other
 subprogram, so it fails if cross-procedure flow breaks.

@@ -1,0 +1,21 @@
+edges
+| test.adb:8:26:8:30 | [param] Name | test.adb:11:49:11:53 | Name | provenance |  |
+| test.adb:16:30:16:68 | AWS.Status.Parameter (...) | test.adb:18:36:18:71 | Ada.Directories.Compose (...) | provenance |  |
+| test.adb:29:16:29:44 | String'Input (...) | test.adb:8:26:8:30 | [param] Name | provenance |  |
+| test.adb:32:26:32:29 | Buf [post update] | test.adb:33:16:33:46 | Stream_Element'Image (...) | provenance |  |
+| test.adb:33:16:33:46 | Stream_Element'Image (...) | test.adb:8:26:8:30 | [param] Name | provenance |  |
+nodes
+| test.adb:8:26:8:30 | [param] Name | semmle.label | [param] Name |
+| test.adb:11:49:11:53 | Name | semmle.label | Name |
+| test.adb:16:30:16:68 | AWS.Status.Parameter (...) | semmle.label | AWS.Status.Parameter (...) |
+| test.adb:18:36:18:71 | Ada.Directories.Compose (...) | semmle.label | Ada.Directories.Compose (...) |
+| test.adb:21:73:21:97 | AWS.Status.URI (...) | semmle.label | AWS.Status.URI (...) |
+| test.adb:29:16:29:44 | String'Input (...) | semmle.label | String'Input (...) |
+| test.adb:32:26:32:29 | Buf [post update] | semmle.label | Buf [post update] |
+| test.adb:33:16:33:46 | Stream_Element'Image (...) | semmle.label | Stream_Element'Image (...) |
+subpaths
+#select
+| test.adb:11:49:11:53 | Name | test.adb:29:16:29:44 | String'Input (...) | test.adb:11:49:11:53 | Name | This path depends on $@. | test.adb:29:16:29:44 | String'Input (...) | network data |
+| test.adb:11:49:11:53 | Name | test.adb:32:26:32:29 | Buf [post update] | test.adb:11:49:11:53 | Name | This path depends on $@. | test.adb:32:26:32:29 | Buf [post update] | network data |
+| test.adb:18:36:18:71 | Ada.Directories.Compose (...) | test.adb:16:30:16:68 | AWS.Status.Parameter (...) | test.adb:18:36:18:71 | Ada.Directories.Compose (...) | This path depends on $@. | test.adb:16:30:16:68 | AWS.Status.Parameter (...) | HTTP request data |
+| test.adb:21:73:21:97 | AWS.Status.URI (...) | test.adb:21:73:21:97 | AWS.Status.URI (...) | test.adb:21:73:21:97 | AWS.Status.URI (...) | This path depends on $@. | test.adb:21:73:21:97 | AWS.Status.URI (...) | HTTP request data |

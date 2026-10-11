@@ -141,16 +141,15 @@ longevity, this policy is revisited.
   instantiation to the *generic* declaration it instantiates, not to a
   synthesized instance body. Queries that need to reason about what a
   specific instantiation's body actually does (as opposed to the generic
-  template) aren't supported yet, and a call to an instance
-  (`procedure P is new G (...)`, then `P (X)`) does not resolve to a target.
-- **What data flow does not follow (v1).** There is a control-flow graph
+  template) aren't supported yet. A call to an instance
+  (`procedure P is new G (...)`, then `P (X)`) resolves to the generic `G`.
+- **Data flow approximations.** There is a control-flow graph
   and a data-flow and taint-tracking library that follows values across
   subprograms (see [query-writing.md](query-writing.md), "Data flow and taint
-  tracking"). It does not follow: dispatching calls (bound to their static
-  target), calls through access-to-subprogram values, calls to generic
-  instances, values stored in record components, array elements or
-  containers, and variables of enclosing subprograms or packages written by a
-  nested subprogram. A query built on it misses flows through these, and a
-  query that needs to *prove* something (that storage is freed, say) reports
-  them as unproven. The full list is in
+  tracking"). It follows dispatching calls, calls through access-to-subprogram
+  values and entry calls, and values in record components, array elements,
+  standard containers and shared variables, some of them coarsely: all elements
+  of an array count as one, and shared variables ignore call order.
+  [known-limitations.md](known-limitations.md) lists each approximation and what
+  it means for a query's results. The full list is in
   [dataflow-design.md](dataflow-design.md), "Named v1 limitations".

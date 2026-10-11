@@ -713,6 +713,53 @@ body, while the aspect is on the spec. So a function whose last statement is
 call whose callee does not resolve is still assumed to return. (Before Task 9.6
 `No_Return` was ignored. It caused 38 of 53 `function-missing-return` corpus results.)
 
+### Finally parts
+
+Test: [`ql/test/library/Cfg/finally/`](../ql/test/library/Cfg/finally/)
+
+**Rule.** GNAT's `finally` part (`begin … exception … finally … end`, an extension) runs
+when the protected statements or a handler complete **normally**; when it completes
+normally, the sequence completes normally. Its own abnormal completions escape, as a
+handler's do. In v1 a `return`, `exit`, `goto` or escaping raise leaves the sequence
+without running the `finally` part: modelling that would need the graph to remember, at
+the end of the `finally` part, which completion to resume (splitting), which v1 does not
+do.
+
+```
+l1: begin
+l2:    P;
+l3:    X := 1;
+l4: exception
+l5:    when others =>
+l6:       X := 2;
+l7: finally
+l8:    X := 3;
+l9: end;
+l10: X := 4;
+
+l2 P;          -> l3 (normal), l6 (exception)
+l3 X := 1      -> l8 X := 3
+l6 X := 2      -> l8 X := 3
+l8 X := 3      -> l10
+```
+
+### Quantified expressions and raise messages
+
+Test: [`ql/test/library/Cfg/quantified/`](../ql/test/library/Cfg/quantified/)
+
+**Rule.** A quantified expression `(for all E of V => P (E))` evaluates what it iterates
+over (`V`), then its predicate once, standing for every iteration, then itself. Data flow
+defines `E` at `V`, as for a `for` loop. `raise E with Msg` evaluates the exception name,
+then the message, then raises.
+
+```
+l1: B := (for all E of V => F (E));
+l2: raise Program_Error with Msg;
+
+V -> F -> E -> … -> F (E) -> QuantifiedExpr -> … -> B := …
+Program_Error -> Msg -> RaiseStmt -> (exception)
+```
+
 ### Return
 
 Test: [`ql/test/library/Cfg/return/`](../ql/test/library/Cfg/return/)
@@ -850,9 +897,10 @@ Test: [`ql/test/library/Cfg/tasking/`](../ql/test/library/Cfg/tasking/)
 rendezvous modelling, but every statement must still appear in the graph. A `select` is a
 `PostOrderTree` shaped like a `case`: control may enter *any* branch — each guarded
 alternative's statements, the `else` part, and the abortable part of `select … then
-abort` — and every branch converges on the select node. `accept … do … end` is transparent
-to its statements; a plain `accept E;`, a `delay`, an `abort` and a `requeue` are opaque
-leaves that complete normally.
+abort` — and every branch converges on the select node. `accept … do … end` is a
+pre-order node followed by its statements (data flow defines the entry's formals at that
+node); a plain `accept E;`, a `delay`, an `abort` and a `requeue` are opaque leaves that
+complete normally.
 
 ```
 l1: select
@@ -866,7 +914,8 @@ l8:    null;
 l9: end select;
 l10: <next statement>
 
-enter          -> l3 NullStmt   ; any branch may be entered …
+enter          -> l2 AcceptStmtWithStmts   ; any branch may be entered …
+l2 AcceptStmtWithStmts -> l3 NullStmt
 enter          -> l6 AcceptStmt
 enter          -> l8 NullStmt
 l3 NullStmt    -> l1 SelectStmt ; … and all converge on the select node
@@ -875,8 +924,8 @@ l8 NullStmt    -> l1 SelectStmt
 l1 SelectStmt  -> l10
 ```
 
-`accept E do … end` contributes no node of its own — only its inner statements — whereas
-the plain `accept F;` is itself a leaf node.
+`accept E do … end` contributes its own node before its inner statements, where the
+rendezvous begins; the plain `accept F;` is itself a leaf node.
 
 ```
 l1: select
@@ -918,17 +967,17 @@ A CFG scope: gets its own disconnected graph with an entry and an exit. See Part
 
 `EntryBody`, `ExprFunction`, `PackageBody`, `SubpBody`, `TaskBody`
 
-### shaped (27)
+### shaped (28)
 
 Has a dedicated control-flow tree: its successor structure is specified in Part 3 and pinned by a conformance test.
 
-`AcceptStmtWithStmts`, `AssignStmt`, `BeginBlock`, `BinOp`, `CallExpr`, `CallStmt`, `CaseExpr`, `CaseStmt`, `DeclBlock`, `ExitStmt`, `ExtendedReturnStmt`, `ForLoopStmt`, `GotoStmt`, `HandledStmts`, `IfExpr`, `IfStmt`, `Label`, `LoopStmt`, `NamedStmt`, `NullStmt`, `PragmaNode`, `RaiseStmt`, `ReturnStmt`, `SelectStmt`, `StmtList`, `SubtypeIndication`, `WhileLoopStmt`
+`AcceptStmtWithStmts`, `AssignStmt`, `BeginBlock`, `BinOp`, `CallExpr`, `CallStmt`, `CaseExpr`, `CaseStmt`, `DeclBlock`, `ExitStmt`, `ExtendedReturnStmt`, `ForLoopStmt`, `GotoStmt`, `HandledStmts`, `IfExpr`, `IfStmt`, `Label`, `LoopStmt`, `NamedStmt`, `NullStmt`, `PragmaNode`, `QuantifiedExpr`, `RaiseStmt`, `ReturnStmt`, `SelectStmt`, `StmtList`, `SubtypeIndication`, `WhileLoopStmt`
 
-### expression (43)
+### expression (42)
 
 Reached by `GenericPostOrderTree`: children are evaluated left to right, then the node itself. No construct-specific shape.
 
-`AbstractStateDeclExpr`, `Aggregate`, `AggregateAssoc`, `Allocator`, `ArraySubcomponentChoiceName`, `AssocList`, `AttributeRef`, `BoxExpr`, `BracketAggregate`, `BracketDeltaAggregate`, `CharLiteral`, `CompositeConstraintAssoc`, `ConcatOp`, `ConcatOperand`, `DeclExpr`, `DefiningName`, `DeltaAggregate`, `DiscreteSubtypeName`, `DottedName`, `EndName`, `ExplicitDeref`, `FormatStringLiteral`, `Identifier`, `IntLiteral`, `IteratedAssoc`, `MembershipExpr`, `MultiDimArrayAssoc`, `NullLiteral`, `NullRecordAggregate`, `ParamAssoc`, `ParenExpr`, `QualExpr`, `QuantifiedExpr`, `RaiseExpr`, `RealLiteral`, `ReduceAttributeRef`, `RelationOp`, `StringLiteral`, `SyntheticDefiningName`, `SyntheticIdentifier`, `TargetName`, `UnOp`, `UpdateAttributeRef`
+`AbstractStateDeclExpr`, `Aggregate`, `AggregateAssoc`, `Allocator`, `ArraySubcomponentChoiceName`, `AssocList`, `AttributeRef`, `BoxExpr`, `BracketAggregate`, `BracketDeltaAggregate`, `CharLiteral`, `CompositeConstraintAssoc`, `ConcatOp`, `ConcatOperand`, `DeclExpr`, `DefiningName`, `DeltaAggregate`, `DiscreteSubtypeName`, `DottedName`, `EndName`, `ExplicitDeref`, `FormatStringLiteral`, `Identifier`, `IntLiteral`, `IteratedAssoc`, `MembershipExpr`, `MultiDimArrayAssoc`, `NullLiteral`, `NullRecordAggregate`, `ParamAssoc`, `ParenExpr`, `QualExpr`, `RaiseExpr`, `RealLiteral`, `ReduceAttributeRef`, `RelationOp`, `StringLiteral`, `SyntheticDefiningName`, `SyntheticIdentifier`, `TargetName`, `UnOp`, `UpdateAttributeRef`
 
 ### opaque (7)
 
@@ -988,8 +1037,10 @@ Not control-relevant: nothing here is executed, so nothing is in the graph.
   `open-without-close` query uses `normalPathsOnly` for v1 signal quality.
 - **Exception identities are not matched.** A raise in a protected region has an edge to
   *every* handler of that region, regardless of which exception each handler names.
-- **Ada 2022 `QuantifiedExpr` and `DeclExpr`** are treated as opaque post-order
-  expressions; their quantifier/declaration sub-structure is not modelled.
+- **A quantified expression's predicate is evaluated once**, standing for every
+  iteration, and its iterator filter (`when`) is not evaluated. Ada 2022 `DeclExpr` is an
+  opaque post-order expression.
+- **A `finally` part runs on normal completion only** (see [Finally parts](#finally-parts)).
 - **Tasking is opaque** (D-013): no inter-task edges, no rendezvous modelling.
 - **An unresolved call without parentheses does not raise.** A name like
   `Id.P_Referenced_Decl` whose callee does not resolve cannot be told apart from an object,
