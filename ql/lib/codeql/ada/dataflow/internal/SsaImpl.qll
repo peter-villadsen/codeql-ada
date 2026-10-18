@@ -602,6 +602,91 @@ private module SsaInput implements SsaLib::InputSig<Raw::Location, SsaCfg::Basic
 module SsaImpl = SsaLib::Make<Raw::Location, SsaCfg, SsaInput>;
 
 /**
+ * Holds if the `i`th node of `bb` is a write of `v` that is written in the source, and
+ * `nameNode` is where (see `getWriteNameOccurrence`): every certain write kind. The
+ * uncertain ones (an `out` actual, a call that may store into `v`) are implicit.
+ */
+private predicate explicitWriteAt(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v, Raw::AdaNode nameNode) {
+  assignWrite(bb, i, v, nameNode) or
+  objectDeclInitWrite(bb, i, v, nameNode) or
+  forLoopVarWrite(bb, i, v, nameNode) or
+  paramEntryWrite(bb, i, v, nameNode) or
+  uninitializedWrite(bb, i, v, nameNode) or
+  entryFormalWrite(bb, i, v, nameNode)
+}
+
+private newtype TVariableWrite = TWrite(Raw::Expr nameNode) { explicitWriteAt(_, _, _, nameNode) }
+
+/**
+ * A write to a variable written in the source: an assignment (`X := E`), an object
+ * declaration, with or without an initialiser, a `for` loop's variable, or a formal
+ * parameter's value on entry (including an entry's formal, at its `accept`).
+ *
+ * It is represented by the name written: the assignment's target, or the declaration's
+ * defining name.
+ */
+class VariableWrite extends TVariableWrite {
+  /** Gets the name being written: the assignment's target, or the defining name. */
+  SsaExpr asExpr() { this = TWrite(result) }
+
+  /**
+   * Gets the expression with the value being written, if any: the assignment's
+   * right-hand side, or the declaration's initialiser. A `for` loop variable takes the
+   * elements of its iterable, not the iterable itself, so it has no value; nor has a
+   * parameter, whose value comes from the caller.
+   */
+  SsaExpr getValue() {
+    exists(Raw::AssignStmt s | this.asExpr() = s.getDest() | result = s.getExpr())
+    or
+    exists(Raw::ObjectDecl d |
+      this.asExpr() = d.(BasicDecl).getADefiningName() and result = d.getDefaultExpr()
+    )
+  }
+
+  /** Holds if this write is the value of parameter `p` on entry to its body. */
+  predicate isParameterInit(Parameter p) {
+    exists(Raw::AdaNode n | n = this.asExpr() |
+      n = p.getADeclaration() and
+      (paramEntryWrite(_, _, _, n) or uninitializedWrite(_, _, _, n))
+    )
+  }
+
+  /** Gets a textual representation of this write. */
+  string toString() { result = this.asExpr().toString() }
+
+  /** Gets the location of this write. */
+  Raw::Location getLocation() { result = this.asExpr().getLocation() }
+}
+
+/** An expression, with the control-flow node that evaluates it (see `cfgPos`). */
+class SsaExpr extends Raw::Expr {
+  /** Gets the control-flow node that evaluates this expression. */
+  Impl::CfgImpl::Node getControlFlowNode() { result.(Impl::CfgImpl::AstCfgNode).getAstNode() = this }
+}
+
+private class ParameterAlias = Parameter;
+
+private class VariableWriteAlias = VariableWrite;
+
+private module SsaMakeInput implements SsaImpl::SsaInputSig {
+  class Expr = SsaExpr;
+
+  class Parameter = ParameterAlias;
+
+  class VariableWrite = VariableWriteAlias;
+
+  predicate explicitWrite(VariableWrite w, SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
+    explicitWriteAt(bb, i, v, w.asExpr())
+  }
+}
+
+/**
+ * The class-based SSA API (`SsaDefinition`, `SsaExplicitWrite`, `SsaParameterInit`,
+ * `SsaPhiDefinition`, ...), with its predicates cached; public in `codeql.ada.dataflow.Ssa`.
+ */
+module Ssa = SsaImpl::MakeSsa<SsaMakeInput>;
+
+/**
  * Gets the AST node whose text represents write `wd` in the source -- as
  * opposed to `wd`'s own `getLocation()`, which is its CFG anchor and, for
  * every write kind except a call-site `out`/`in out` actual, a different

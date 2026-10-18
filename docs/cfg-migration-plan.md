@@ -6,7 +6,7 @@
 
 **Why.** A CodeQL engineer reviewed the library (2026-10) and pointed out that GitHub is
 moving away from CFG splitting and intends to **delete `codeql.controlflow.Cfg`**. Ruby has
-already migrated; Java and C# instantiate the replacement, `codeql.controlflow.ControlFlowGraph`.
+since migrated (after CLI 2.25.6); Java and C# instantiate the replacement, `codeql.controlflow.ControlFlowGraph`.
 Their guidance, in short:
 
 1. Instantiate `ControlFlowGraph` instead of `Cfg` — simpler to instantiate and use.
@@ -39,15 +39,29 @@ These were checked against installed packs, not recalled.
 | **So no pack bump is needed.** The CLI 2.25.6 pin and its pack-resolution trap (see `qlpack.yml`) stay untouched | — |
 | `ControlFlowGraph` is three-stage: `Make0<Location, AstSig>` → `Make1<InputSig1>` → `Make2<InputSig2>` | `ControlFlowGraph.qll:384,510,1135` |
 | `ControlFlowReachability::Make<Location, Cfg, Input>` has an explicit `FinallyBlock` input and needs SSA classes (`SsaDefinition`, `SsaPhiDefinition`, `SsaUncertainWrite`, `SsaExplicitWrite`) and a `GuardValue` | `ControlFlowReachability.qll:1-140` |
-| Java instantiates `Make0/1/2` in `java/ql/lib/semmle/code/java/ControlFlowGraph.qll` (697 lines on `main`) | `gh api repos/github/codeql/contents/...` |
+| Java instantiates `Make0/1/2` in `java/ql/lib/semmle/code/java/ControlFlowGraph.qll` | tag `codeql-cli/v2.25.6` |
 | Java's `Nullness.qll` uses `ControlFlowReachability::Flow<NullnessConfig>` together with `controlflow.Guards`, `IntegerGuards` and `NullGuards` | same |
-| The CLI at `/root/tools/codeql` is bare: no `java-all`/`ruby-all` sources. Read reference instantiations from `github/codeql` instead (clone under `/root/src/github-codeql`, pinned to `codeql-cli/v2.25.6` **and** compared to `main`) | `ls /root/tools/codeql` |
+| The CLI at `/root/tools/codeql` is bare: no `java-all`/`ruby-all` sources. Read reference instantiations from the `github/codeql` clone at `/root/src/github-codeql` | `ls /root/tools/codeql` |
 
-**Still to verify (Step 0):**
-- That the `ControlFlowGraph.qll` in 2.0.35 matches what Java uses on the `codeql-cli/v2.25.6`
-  tag. If the API moved after 2.25.6, follow the tag, not `main`.
-- The Ruby and C# instantiation paths. They aren't at the obvious `…/ControlFlowGraphImpl.qll` paths on `main`.
-- Whether `Guards::Make` in 2.0.35 takes the same inputs Java passes on the tag.
+**Step 0 answers (2026-10-17).** `github/codeql` is cloned in WSL at
+`/root/src/github-codeql`, checked out at `codeql-cli/v2.25.6` (1a82a682e9).
+- `shared/controlflow` at the tag is **byte-identical** to the pinned 2.0.35 pack, and
+  `shared/ssa/.../Ssa.qll` to the pinned 2.0.27. **Read the references at the tag**: they
+  match what we compile against.
+- At the tag, **Java and C# use `ControlFlowGraph`; Ruby still uses `Cfg`.** Ruby migrated
+  after 2.25.6, so its new instantiation exists only on `main`: useful to read, but it may
+  rely on API that 2.0.35 lacks.
+- Reference files at the tag:
+
+  | What | Java | C# |
+  | --- | --- | --- |
+  | CFG instantiation | `java/ql/lib/semmle/code/java/ControlFlowGraph.qll` (694) | `csharp/ql/lib/semmle/code/csharp/controlflow/internal/ControlFlowGraph.qll` (284) |
+  | Guards | `java/.../controlflow/Guards.qll` (419) | `csharp/.../controlflow/Guards.qll` |
+  | Reachability | `java/.../controlflow/ControlFlowReachability.qll` (44) | `csharp/.../controlflow/ControlFlowReachability.qll` |
+  | `MakeSsa` | `java/.../dataflow/internal/SsaImpl.qll:232`, `BaseSSA.qll:213`; public `dataflow/SSA.qll` | `csharp/.../dataflow/internal/SsaImpl.qll:77`, `BaseSSA.qll:11` |
+  | Consumer | `java/.../dataflow/Nullness.qll`, `java/ql/src/Likely Bugs/Nullness/NullMaybe.ql` | |
+
+- Open, for Step 2: compare `Guards::Make`'s inputs against Java's, when Step 4 starts.
 
 ---
 
@@ -131,7 +145,8 @@ Independent of the CFG swap, and it gives Guards/Reachability the API they expec
 - Instantiate `SsaImpl::MakeSsa<SsaInput>` (`Expr`, `Parameter`, `VariableWrite`,
   `explicitWrite`) in a new public `codeql/ada/dataflow/Ssa.qll`, mirroring Java.
 - Point `PrintSsa`, `SsaAnnotations` and the data-flow integration at the class API, where
-  this is a rename rather than a rewrite.
+  this is a rename rather than a rewrite. *(Deferred to Step 3: they all get rewritten for
+  the new `BasicBlock` then, so they would be touched twice.)*
 - **Exit:** `ql/test/library/Ssa` unchanged; new API documented in `ssa-design.md`.
 
 ### Step 2 — `AstSig` for Ada, new graph built *alongside* the old one
@@ -206,8 +221,8 @@ query (if any) now needs ControlFlowReachability.)*
 
 | Step | Status | Commit |
 | --- | --- | --- |
-| 0 Reference reading | not started | |
-| 1 `MakeSsa` | not started | |
+| 0 Reference reading | **done** 2026-10-17 | 5ef030c (plan) |
+| 1 `MakeSsa` | **done** 2026-10-17 | (this commit) |
 | 2 New graph alongside | not started | |
 | 3 Switch over | not started | |
 | 4 Guards | not started | |
@@ -219,6 +234,17 @@ query (if any) now needs ControlFlowReachability.)*
 
 - **2026-10-17** — Plan written after the reviewer's feedback. Pack contents verified (§1);
   no version bump needed.
+- **2026-10-17** — Step 0: reference clone at the 2.25.6 tag; shared libraries identical to
+  the pinned packs; Ruby still on `Cfg` at that tag (§1).
+- **2026-10-17** — Step 1: `Ssa = SsaImpl::MakeSsa<SsaMakeInput>` in `SsaImpl.qll`, public
+  as `codeql.ada.dataflow.Ssa` (`SsaDefinition`, `SsaExplicitWrite`, `SsaParameterInit`,
+  `SsaUncertainWrite`, `SsaPhiDefinition`, `VariableWrite`, `SsaSourceVariable`).
+  `VariableWrite.asExpr()` is the name written (Ada's `:=` is a statement, so there is no
+  assignment expression); `isParameterInit` maps the body's formal to the public
+  `Parameter` via `Parameter.getADeclaration()`. Value-less writes (uninitialised
+  declaration, `out` formal) count as explicit. New test `ql/test/library/Ssa/class-api`;
+  existing SSA tests unchanged. Consumers (data flow, test helpers, `PrintSsa`) still use
+  `SsaImpl::Definition`: they move in Step 3 along with the CFG.
 
 ## 9. Open questions for the reviewer
 

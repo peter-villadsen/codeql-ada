@@ -16,10 +16,33 @@ not the narrative of how it was built.
   `NumberDecl`s or renamings.
 - **A definition is either a write or a phi node.** A write survives only if some read
   reaches it without an intervening write of the same variable (dead-store elision, part of
-  the shared framework, not this project's code) — an uninitialised declaration or a pure
-  `out`-mode parameter is therefore *not* a write at all; it relies on the framework
-  correctly reporting "no reaching definition" for a read that precedes the first real
-  write.
+  the shared framework, not this project's code). An uninitialised declaration and a pure
+  `out`-mode parameter get a value-less write at their scope's entry (`uninitializedWrite`),
+  so that a component stored before any whole write is a store into a defined variable; it
+  has no value, so nothing flows from it.
+- **`codeql.ada.dataflow.Ssa`** is the public, class-based API over the same definitions:
+  see the next section.
+
+## The class-based API (`codeql.ada.dataflow.Ssa`)
+
+`SsaImpl.qll` also instantiates the shared framework's nested `MakeSsa` module, as Java and
+C# do. It gives classes whose predicates are cached, and it is the SSA shape the shared
+Guards and ControlFlowReachability libraries expect (see `docs/cfg-migration-plan.md`).
+Test: [`ql/test/library/Ssa/class-api/`](../ql/test/library/Ssa/class-api/).
+
+| Class | Ada definitions |
+| --- | --- |
+| `SsaParameterInit` | a formal's value on entry to its body (`in`, `in out`; an `out` formal's is value-less). `getParameter()` is the public `Parameter` |
+| `SsaExplicitWrite` | the above, and `X := E`, an object declaration (with or without an initialiser), a `for` loop variable, an entry formal at its `accept` |
+| `SsaUncertainWrite` | an `out`/`in out` actual at a call, and a call that may store into a variable other subprograms write (`callMayWrite`) |
+| `SsaPhiDefinition` | where control flow merges |
+
+`SsaExplicitWrite.getDefinition()` is a `VariableWrite`: `asExpr()` is the name written
+(the assignment's target, or the declaration's defining name) and `getValue()` is the
+right-hand side or initialiser, if any. A `for` loop variable has no value: it takes the
+iterable's elements, not the iterable. `SsaDefinition.getARead()` gives the reads a
+definition reaches; the synthetic exit reads of `out` formals and extended-return objects
+are not expressions, so they are not among them.
 
 ## How to read a construct entry
 
