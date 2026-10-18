@@ -16,3 +16,50 @@ file_types:
       - .ads
       - .adb
       - .ada
+options:
+  gpr:
+    title: GNAT project file
+    description: >
+      The .gpr project to extract, as a path. Without it, the extractor uses the only
+      .gpr under the source root, or else parses every Ada file there (the auto unit
+      provider). Also CODEQL_EXTRACTOR_ADA_GPR.
+    type: string
+  scenario:
+    title: Scenario variables
+    description: >
+      Scenario variables for the project, as gprbuild's -X: NAME=VALUE pairs separated by
+      commas, e.g. MODE=release,OS=linux.
+    type: string
+    pattern: "^[A-Za-z_][A-Za-z0-9_]*=[^,; ]*([,; ]+[A-Za-z_][A-Za-z0-9_]*=[^,; ]*)*$"
+  target:
+    title: Target
+    description: The project's target, as gprbuild's --target (e.g. arm-eabi).
+    type: string
+  rts:
+    title: Runtime
+    description: The project's runtime, as gprbuild's --RTS (e.g. light-cortex-m4).
+    type: string
+  config:
+    title: Configuration project
+    description: A configuration project (.cgpr), as gprbuild's --config.
+    type: string
+  charset:
+    title: Source encoding
+    description: >
+      The character set of the sources, e.g. iso-8859-1 or utf-8. Default: Libadalang's
+      (ISO-8859-1).
+    type: string
+  extensions:
+    title: Extra file extensions
+    description: >
+      Without a project, extensions besides .ads, .adb and .ada to read as Ada sources,
+      separated by commas, e.g. .a,.spc,.bdy. A project lists its own sources (its Naming
+      package).
+    type: string
+  runtime:
+    title: Runtime source directory
+    description: >
+      Without a project, a directory with the runtime's specs (GNAT's adainclude), so that
+      Ada.*, Interfaces.* and System.* resolve. Default: gcc -print-file-name=adainclude.
+      Also CODEQL_EXTRACTOR_ADA_RUNTIME.
+    type: string

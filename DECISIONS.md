@@ -374,3 +374,16 @@ exception, an `exit` or a `goto`), and lets the part's end continue only that wa
 the precision splitting gave, computed only by the queries that ask. `PairedCalls`,
 `function-missing-return` and `unreachable-statement` use it. An `exit` is not told apart
 by its target loop (`exit Inner` and `exit Outer` are both "exit").
+
+## D-036 (2026-10-18) — Project loading is configurable through extractor options
+Real projects need gprbuild's switches to load the sources that build uses, and code
+written for other compilers (DDC-I's, for one) has no GNAT project and often other file
+extensions and several units per file. The extractor takes CodeQL extractor options
+(`-O ada.<name>=<value>`, declared in `codeql-extractor.yml`), each also an environment
+variable `CODEQL_EXTRACTOR_ADA_<NAME>`: `gpr`, `scenario`, `target`, `rts` and `config`
+load the project as gprbuild would; `charset` sets the source encoding; `extensions` adds
+file extensions for the auto unit provider; `runtime` and `jobs` as before. A project's
+sources are no longer filtered by extension: its `Naming` package decides. No compiler is
+needed for code built with another one; the user guide has a section for GNAT and one for
+DDC-I. `scripts/test_extractor_options.sh` checks scenario selection, a `Naming` package,
+extra extensions and a multi-unit file.

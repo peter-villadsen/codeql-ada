@@ -240,6 +240,10 @@ Extraction dominates the run; query evaluation is comparatively cheap. Measured 
 project's corpus, a 1,700-file codebase extracts in a few minutes and evaluates the
 syntactic queries in seconds; the data-flow queries take longer on a large codebase.
 
+- **Project options**: every extractor setting is also an extractor option,
+  `-O ada.<name>=<value>` on `codeql database create` (`gpr`, `scenario`, `target`, `rts`,
+  `config`, `charset`, `extensions`, `runtime`, `jobs`); see the user guide, "Extractor
+  options". The `CODEQL_EXTRACTOR_ADA_*` variables keep working.
 - **`CODEQL_EXTRACTOR_ADA_JOBS`** controls parallelism (default: CPU count). Each worker
   loads its own Libadalang context and re-parses the dependency closure it needs, so
   speedup is real but sublinear — do not expect it to scale with core count.

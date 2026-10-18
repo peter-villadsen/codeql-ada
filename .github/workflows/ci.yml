@@ -128,6 +128,9 @@ jobs:
       - name: Run QL test suite (Phase 5.2)
         run: codeql test run ql/test --search-path=extractors --additional-packs=ql
 
+      - name: Check extractor options (D-036)
+        run: bash scripts/test_extractor_options.sh
+
       - name: Run corpus regression (Phase 5.3)
         run: python3 scripts/corpus_regression.py --out corpus-report.json
 

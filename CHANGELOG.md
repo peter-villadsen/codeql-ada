@@ -7,6 +7,17 @@ library, as CodeQL for Java's and C#'s are, instead of `codeql.controlflow.Cfg`,
 GitHub means to delete (D-029; `docs/cfg-migration-plan.md`). The database format and the
 extractor are unchanged.
 
+### Extractor options
+
+- **`-O ada.<name>=<value>`** on `codeql database create` (or `CODEQL_EXTRACTOR_ADA_<NAME>`):
+  `gpr`, `scenario` (gprbuild's `-X`), `target`, `rts` and `config` load the project as
+  gprbuild would; `charset` is the source encoding; `extensions` adds file extensions
+  besides `.ads`/`.adb`/`.ada` when there is no project; `runtime` and `jobs` as before
+  (D-036). A project's sources are read by its `Naming` package (other extensions were
+  dropped before).
+- **The user guide** has sections on analyzing code built with GNAT and with DDC-I Ada (or
+  another non-GNAT compiler): no compiler is needed, a file may hold several units.
+
 ### Breaking changes
 
 - **The CFG API is `codeql.ada.controlflow.ControlFlowGraph`**, with Java's names:

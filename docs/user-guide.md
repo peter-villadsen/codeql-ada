@@ -214,15 +214,14 @@ original tree.
 The extractor looks for a GNAT project in three steps, each a fallback for the one
 before:
 
-1. **`CODEQL_EXTRACTOR_ADA_GPR`**: set this environment variable to an exact `.gpr`
-   path to skip discovery. Use it in a repository with several `.gpr` files, where
-   step 2 cannot choose for you.
+1. **The `gpr` option**: `--extractor-option ada.gpr=<path>` (or the environment
+   variable `CODEQL_EXTRACTOR_ADA_GPR`) names the `.gpr` to use. Use it in a repository
+   with several `.gpr` files, where step 2 cannot choose for you.
 2. **A single `.gpr` under the source root**: if exactly one `.gpr` file exists
    anywhere under `--source-root`, the extractor uses it.
-3. **Auto unit provider**: with no `.gpr` (none found, or several and no environment
-   variable), Libadalang parses every `.ads`, `.adb` and `.ada` file under the source
-   root as one flat set, with no project configuration (no scenario variables, no build
-   profile).
+3. **Auto unit provider**: with no `.gpr` (none found, or several and no option),
+   Libadalang parses every `.ads`, `.adb` and `.ada` file under the source root (and any
+   extensions you add, below) as one flat set, with no project configuration.
 
 All three extract successfully; this is not a failure path. What changes is the
 **quality of name resolution**. With a real `.gpr`, references between units resolve
@@ -233,6 +232,132 @@ resolve. Queries that follow names or types (`getReferencedDecl()`, `getType()`,
 data flow) find less. If your results look thin, a working `.gpr` is the first thing to
 set up.
 
+The extractor prints what it chose at the start of its output (`[ada-extractor]
+project: …`, then the scenario, or the file extensions it reads).
+
+### Extractor options
+
+Every option is given on the `codeql database create` command line as
+`--extractor-option ada.<name>=<value>` (short: `-O ada.<name>=<value>`), or as the
+environment variable `CODEQL_EXTRACTOR_ADA_<NAME>`; the command line wins. A malformed
+value stops the extraction with a message naming the option.
+
+| Option | Meaning |
+|---|---|
+| `gpr` | The `.gpr` project to extract (see above). |
+| `scenario` | Scenario variables, as gprbuild's `-X`: `NAME=VALUE` pairs separated by commas, e.g. `MODE=release,OS=linux`. |
+| `target` | The project's target, as gprbuild's `--target` (e.g. `arm-eabi`). |
+| `rts` | The project's runtime, as gprbuild's `--RTS` (e.g. `light-cortex-m4`). |
+| `config` | A configuration project (`.cgpr`), as gprbuild's `--config`. |
+| `charset` | The sources' character set, e.g. `iso-8859-1` (Libadalang's default) or `utf-8`. |
+| `extensions` | Without a project: extensions besides `.ads`, `.adb` and `.ada` to read as Ada sources, e.g. `.a,.spc,.bdy`. A project lists its own sources, through its `Naming` package. |
+| `runtime` | Without a project: a directory with the runtime's specs (see below). |
+| `jobs` | The number of extraction workers (see [Parallelism](#parallelism)). |
+
+The first five load the project the way `gprbuild` would with the same switches, so a
+project that needs `-XMODE=release` to build needs `-O ada.scenario=MODE=release` to be
+extracted with the sources that build uses.
+
+### With GNAT
+
+A project built with GNAT (or GNAT Pro, or through Alire) already has what the extractor
+needs: a `.gpr` file, and a toolchain on the `PATH` that tells Libadalang where the
+runtime is. Give the extractor the same project and switches you give `gprbuild`.
+
+```sh
+# gprbuild -P app.gpr -XMODE=release --target=arm-eabi --RTS=light-cortex-m4
+codeql database create app-db --language=ada --build-mode=none \
+  --search-path=$HOME/tools/ada-extractor --source-root=. \
+  -O ada.gpr=app.gpr -O ada.scenario=MODE=release \
+  -O ada.target=arm-eabi -O ada.rts=light-cortex-m4
+```
+
+- **The toolchain must be found** the way `gprbuild` finds it: put GNAT's `bin` on the
+  `PATH` of the process that runs `codeql database create` (in CI, the step's
+  environment). Without it, Libadalang cannot locate the runtime for the project, and
+  names that refer to runtime units (`Ada.*`, `System.*`) do not resolve.
+- **Dependencies** the project `with`s must be on disk, at the paths the project gives
+  (`GPR_PROJECT_PATH` works as for `gprbuild`). An Alire crate's dependencies are where
+  `alr build` put them; run `alr build` (or `alr update`) once first.
+- **Several projects in one repository**: extract each root project into its own
+  database, or use an aggregate project. A project with no `Main` is fine: every source
+  of the project is extracted.
+- **No `.gpr` at all** (a few sources, a script, an exercise): leave out `gpr`. The
+  auto unit provider reads every Ada file under the source root, and finds the runtime
+  through `gcc -print-file-name=adainclude` when GNAT is installed.
+
+### With DDC-I Ada (and other non-GNAT compilers)
+
+The extractor does not run a compiler: Libadalang reads the source and resolves names
+itself. So code written for another compiler — DDC-I's, or any other vendor's — can be
+analyzed without that compiler and without converting the build. What such a code base
+lacks is a GNAT project file, so the extractor has to be told where the sources are and
+what they are named. **We have not yet run it on a DDC-I code base**; the steps below are
+what the extractor supports, and the list of differences is what to check first. Please
+report what fails.
+
+**Option A — without a project (quickest).** Point `--source-root` at the source tree and
+name the file extensions the code base uses:
+
+```sh
+codeql database create legacy-db --language=ada --build-mode=none \
+  --search-path=$HOME/tools/ada-extractor --source-root=src \
+  -O ada.extensions=.a,.ada -O ada.charset=iso-8859-1
+```
+
+Every file with those extensions is read, and **a file may hold several compilation
+units** (a package spec and its body, or many packages), as is common outside GNAT: the
+units are found by parsing, not by file name. The names resolve across all of them.
+
+**Option B — with a small project file (better resolution).** A `.gpr` describing just
+the source directories and naming lets Libadalang look units up the way GNAT would:
+
+```ada
+--  legacy.gpr, next to the sources; not used to build anything
+project Legacy is
+   for Source_Dirs use ("src/**");
+   package Naming is
+      for Spec_Suffix ("Ada") use ".spc";   --  the code base's own extensions
+      for Body_Suffix ("Ada") use ".bdy";
+   end Naming;
+end Legacy;
+```
+
+```sh
+codeql database create legacy-db --language=ada --build-mode=none \
+  --search-path=$HOME/tools/ada-extractor --source-root=. -O ada.gpr=legacy.gpr
+```
+
+A project expects one compilation unit per file, named after the unit. A code base with
+several units per file either uses Option A, or is split once with GNAT's `gnatchop`
+(into a copy, for analysis only).
+
+**What to check, in order of how much it matters:**
+
+1. **The predefined and vendor units.** `Standard`, `System`, `Ada.*` and the compiler's
+   own packages are DDC-I's, not GNAT's. Without their specs, names that refer to them do
+   not resolve. Without a project, point `runtime` at a directory holding the specs of
+   the predefined units the code uses (`-O ada.runtime=<dir>`; a copy of the specs from
+   the DDC-I installation, or GNAT's `adainclude` for the standard `Ada.*` units).
+   `Standard` is always Libadalang's (GNAT's sizes for `Integer`, `Long_Integer`, …), so a
+   query that depends on a type's size or range sees GNAT's.
+2. **Ada 83 code using later reserved words.** Libadalang parses current Ada. An Ada 83
+   identifier spelled `protected`, `tagged`, `abstract`, `aliased`, `requeue`, `until`,
+   `interface`, `overriding`, `synchronized` or `some` is a parse error in the file that
+   uses it. Each is recorded as a `parse-error` diagnostic and the rest of the file is
+   recovered as far as possible ([Parse errors and diagnostics](#parse-errors-and-diagnostics));
+   check the diagnostics before trusting results for those files.
+3. **The source encoding.** Older code is often Latin-1; set `charset` if comments or
+   string literals use characters outside ASCII.
+4. **Implementation-defined pragmas and attributes** parse and are kept in the tree, but
+   have no meaning to the analysis (a vendor's `pragma Inline_Only`, say). Machine-code
+   insertions and representation clauses are parsed as written.
+5. **Generic and separate units** resolve as long as their files are among the sources.
+
+The queries themselves are compiler-independent: they work on the Ada the code is
+written in. Queries about GNAT-specific things (`pragma Warnings`, GNAT `finally` parts)
+simply find nothing.
+
 ### The GNAT runtime (auto provider only)
 
 In auto-provider mode the extractor also needs the specs of the GNAT runtime
@@ -241,8 +366,8 @@ resolve any statement that mentions a runtime entity, *including your own names 
 statement*, which shows up as false positives in queries such as
 `ada/unused-parameter`. The runtime is found by:
 
-1. **`CODEQL_EXTRACTOR_ADA_RUNTIME`**: a directory containing the runtime's `.ads`
-   files (GNAT's `adainclude`).
+1. **The `runtime` option** (or `CODEQL_EXTRACTOR_ADA_RUNTIME`): a directory containing
+   the runtime's `.ads` files (GNAT's `adainclude`).
 2. **`gcc -print-file-name=adainclude`**: works whenever a GNAT toolchain is installed
    (`apt install gnat` on Debian and Ubuntu).
 
@@ -263,8 +388,8 @@ are not extracted. The extractor's summary line reports their number as
 
 ### Parallelism
 
-Extraction runs one file per worker process; **`CODEQL_EXTRACTOR_ADA_JOBS`** sets the
-number of workers (default: the number of CPUs). Each worker loads its own Libadalang
+Extraction runs one file per worker process; the **`jobs`** option (or
+`CODEQL_EXTRACTOR_ADA_JOBS`) sets the number of workers (default: the number of CPUs). Each worker loads its own Libadalang
 context and re-parses the units its file depends on, so the speed-up is real but less
 than linear: 228 s at one job, 76.6 s at 12 jobs on a 345-file project. Set it to `1` to
 debug the extraction of one file.
