@@ -11,6 +11,7 @@
 
 import ada
 import codeql.ada.controlflow.ControlFlowGraph
+import codeql.ada.controlflow.PathReachability
 
 /**
  * Holds if `n` is a call statement whose callee did not resolve (typically a missing
@@ -33,14 +34,23 @@ private predicate isUnresolvedNoReturnCall(AdaNode n) {
  * unresolved call to a `No_Return` subprogram (`isUnresolvedNoReturnCall`): control
  * does not come back from such a call, although the CFG cannot know it.
  */
+private module AvoidingNoReturn implements PathReachability::ConfigSig {
+  predicate isSource(ControlFlowNode n) { n instanceof ControlFlow::EntryNode }
+
+  predicate isSink(ControlFlowNode n) { none() }
+
+  predicate isBarrierEdge(ControlFlowNode n1, SuccessorType t, ControlFlowNode n2) {
+    isUnresolvedNoReturnCall(n1.getAstNode()) and n2 = n1.getASuccessor(t)
+  }
+}
+
+/**
+ * Holds if control can reach `n` in `body` along a feasible path (`PathReachability`:
+ * a GNAT `finally` part continues only the way it was entered) that does not pass
+ * through an unresolved call to a `No_Return` subprogram.
+ */
 private predicate reachableAvoidingNoReturn(ControlFlowNode n, SubpBody body) {
-  n.(ControlFlow::EntryNode).getEnclosingCallable() = body
-  or
-  exists(ControlFlowNode pred |
-    reachableAvoidingNoReturn(pred, body) and
-    n = pred.getASuccessor() and
-    not isUnresolvedNoReturnCall(pred.getAstNode())
-  )
+  PathReachability::Make<AvoidingNoReturn>::reached(n) and n.getEnclosingCallable() = body
 }
 
 /**

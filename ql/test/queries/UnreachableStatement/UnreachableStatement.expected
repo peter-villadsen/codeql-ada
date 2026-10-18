@@ -2,3 +2,4 @@
 | test.adb:13:7:13:56 | Ada.Text_IO.Put_Line (...); | This statement is unreachable. |
 | test.adb:37:7:37:67 | Ada.Text_IO.Put_Line (...); | This statement is unreachable. |
 | test.adb:47:7:47:75 | Ada.Text_IO.Put_Line (...); | This statement is unreachable. |
+| test.adb:84:4:84:9 | null; | This statement is unreachable. |

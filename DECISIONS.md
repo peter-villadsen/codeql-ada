@@ -358,3 +358,19 @@ deprecated aliases for one release.
 An `exit` is labelled with the loop it leaves and a `goto` with the label statement it
 goes to, never with a name, so that only that loop or that statement list catches the
 jump: an unlabelled `exit` in a `case` alternative leaves the loop, not the `case`.
+
+## D-035 (2026-10-18) — Path queries recover `finally` precision with `PathReachability`
+With `finally` parts merged (D-029), a query that asks whether control can get from one
+point to another sees paths that enter a `finally` part one way and leave it another: two
+shipped queries reported false positives from them (`open-without-close`,
+`function-missing-return`). The shared `ControlFlowReachability` library is the tool the
+CodeQL engineer pointed to, and it is the one for questions about a variable's value along
+paths (as Java's `NullMaybe.ql`); but it tracks only whether each `finally` part was
+entered abruptly, which does not tell the end of a `finally` part continuing a `return`
+from one continuing normally, and it needs an SSA variable to follow. Path questions with
+no variable use `codeql.ada.controlflow.PathReachability` instead: along a path it keeps,
+for each enclosing `finally` part, the way it was entered (normally, by `return`, an
+exception, an `exit` or a `goto`), and lets the part's end continue only that way. That is
+the precision splitting gave, computed only by the queries that ask. `PairedCalls`,
+`function-missing-return` and `unreachable-statement` use it. An `exit` is not told apart
+by its target loop (`exit Inner` and `exit Outer` are both "exit").

@@ -80,3 +80,21 @@ package body Logs is
       Ada.Text_IO.Create (Log, Ada.Text_IO.Out_File, "shared.log");
    end Open_Shared;
 end Logs;
+
+--  Closed on every real path, around a GNAT finally part (CFG migration, Step 5):
+--  the path that closes and returns, and the one that continues and closes.
+with Ada.Text_IO; use Ada.Text_IO;
+procedure Closes_Around_Finally (C : Boolean) is   --  fine
+   F : File_Type;
+begin
+   Open (F, In_File, "a.txt");
+   begin
+      if C then
+         Close (F);
+         return;
+      end if;
+   finally
+      null;
+   end;
+   Close (F);
+end Closes_Around_Finally;

@@ -763,8 +763,12 @@ graph has both a `return` edge and a normal one out of it, so it also contains t
 that enters by `return` and continues as if the sequence had completed normally. The graph
 is sound (every real path is in it) but over-approximate at a `finally` part. Up to 0.3.0
 the graph split the `finally` part by the way it was entered; CodeQL has moved away from
-splitting, and a query that needs to tell the ways apart uses `ControlFlowReachability`
-instead (see `docs/cfg-migration-plan.md`, Step 5).
+splitting. A query that needs to tell the ways apart follows only the feasible paths:
+`codeql.ada.controlflow.PathReachability` for a path question (D-035; `PairedCalls`,
+`function-missing-return` and `unreachable-statement` use it), and the shared
+`ControlFlowReachability` for a question about a variable's value along paths. Test:
+`finally-abnormal/PathReachability.ql` lists the nodes the graph reaches but no feasible
+path does.
 
 ```
 l1: begin

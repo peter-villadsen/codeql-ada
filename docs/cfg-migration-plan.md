@@ -251,8 +251,8 @@ path-level, and it is what Step 5 checks.
 | 1 `MakeSsa` | **done** 2026-10-17 | 78ed57f |
 | 2 New graph alongside | **done** 2026-10-17 | 1951f11 |
 | 3 Switch over | **done** 2026-10-17 | be9d387 |
-| 4 Guards | **done** 2026-10-18 | (this commit) |
-| 5 ControlFlowReachability | not started | |
+| 4 Guards | **done** 2026-10-18 | 79d3816, 3c46f38 |
+| 5 Feasible paths (`PathReachability`; `ControlFlowReachability` for value queries) | **done** 2026-10-18 | (this commit) |
 | 6 Precision queries | optional | |
 | 7 Docs + 0.4.0 | docs done in Step 3; release not started | |
 
@@ -320,7 +320,22 @@ path-level, and it is what Step 5 checks.
   alternative's pattern is now its whole `AlternativesList`, matched at once (Ada choices
   are static, never evaluated one by one), so each alternative has one `match` edge that
   dominates its statements and Guards finds `when 2 | 3` to control them. The `case-stmt`
-  and `cond-expr` fixtures re-annotated; Guards test gains the row.
+  and `cond-expr` fixtures re-annotated; Guards test gains the row. Pushed (3c46f38).
+- **2026-10-18** — Step 5. Probes first: `finally` cases appended to the
+  `open-without-close` and `function-missing-return` tests — both reported false positives
+  on the merged graph (a file closed on every real path around a `finally` part; a
+  function whose `if`/`else` both return through one). `ControlFlowReachability` does not
+  fit them: it follows an SSA variable, and tracks only whether a `finally` part was
+  entered abruptly, so a part entered normally may still leave by the `return`
+  continuation — the `open-without-close` shape. New `codeql.ada.controlflow.
+  PathReachability` (D-035): reachability that keeps, per enclosing `finally` part, the
+  way it was entered (normal, return, exception, exit, goto) and lets the part's end
+  continue only that way. `PairedCalls`, `function-missing-return` and
+  `unreachable-statement` use it; the latter also drops its stale "`finally` not
+  modelled" exclusion and gains a probe (code after a block that returns either way
+  through its `finally` part: now reported). Test `finally-abnormal/PathReachability.ql`
+  (nodes reached in the graph but not along feasible paths). 88/88 tests; corpus counts
+  unchanged. `ControlFlowReachability` itself is for Step 6's value queries.
 
 ## 9. Open questions for the reviewer
 

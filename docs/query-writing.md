@@ -362,6 +362,9 @@ A few things worth knowing before you instantiate it:
   called". Document this limitation in your query the way
   `OpenWithoutClose.ql` does, rather than trying to fix it here — proper
   per-object pairing needs dataflow (Phase 9), not just a CFG.
+- **Paths through GNAT `finally` parts are the feasible ones.** The module follows a
+  `finally` part's end only the way the part was entered (`PathReachability`), so a
+  close in the `finally` part, or on every real path around it, counts.
 - **Two variants, different signal-to-noise.** Use
   `missingPairedCallNormalPathsOnly` (ignores exceptional/raise edges) as
   your default — a path that only reaches the scope exit by first raising an

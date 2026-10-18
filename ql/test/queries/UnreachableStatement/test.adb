@@ -67,3 +67,19 @@ begin
       pragma Annotate (Xcov, Exempt_Off);
    end if;
 end Not_Run;
+
+--  After a block that returns either way through a GNAT finally part (CFG migration,
+--  Step 5): the finally part only continues the returns.
+procedure After_Finally (C : Boolean) is
+begin
+   begin
+      if C then
+         return;
+      else
+         return;
+      end if;
+   finally
+      null;
+   end;
+   null;   --  BUG: unreachable
+end After_Finally;

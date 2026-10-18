@@ -76,3 +76,27 @@ begin
       Errors.Fail (Missing_Pkg.Describe (X));
    end if;
 end Checked_Else;
+
+--  A return through a GNAT finally part (CFG migration, Step 5): the finally part
+--  continues the return, so the function cannot run off its end.
+function Returns_Through_Finally (X : Integer) return Integer is   --  fine
+begin
+   begin
+      return X;
+   finally
+      null;
+   end;
+end Returns_Through_Finally;
+
+function Returns_Both_Ways (C : Boolean) return Integer is   --  fine
+begin
+   begin
+      if C then
+         return 1;
+      else
+         return 2;
+      end if;
+   finally
+      null;
+   end;
+end Returns_Both_Ways;

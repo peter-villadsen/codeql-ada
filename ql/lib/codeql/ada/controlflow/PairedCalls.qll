@@ -9,6 +9,7 @@
  */
 
 import ControlFlowGraph
+private import codeql.ada.controlflow.PathReachability
 private import codeql.ada.ast.internal.Raw
 
 signature predicate isFirstCallSig(Raw::AdaNode call);
@@ -24,27 +25,38 @@ module MissingPairedCall<isFirstCallSig/1 first, isSecondCallSig/1 second> {
   private predicate isSecond(ControlFlowNode n) { second(any(Raw::AdaNode a | n.injects(a))) }
 
   /**
-   * Holds if `n` can reach its scope's exit node without passing through a
-   * `second` call, considering every CFG edge, including exceptional
-   * (raise) ones.
+   * Paths from a `first` call to its scope's exit that do not pass through a `second`
+   * call, considering every CFG edge, including exceptional (raise) ones. They are the
+   * feasible paths through `finally` parts (`PathReachability`): a `finally` part's end
+   * continues only the way it was entered.
    */
-  private predicate reachesExitStrict(ControlFlowNode n) {
-    n instanceof ControlFlow::ExitNode
-    or
-    exists(ControlFlowNode succ | succ = n.getASuccessor() |
-      not isSecond(succ) and reachesExitStrict(succ)
-    )
+  private module StrictConfig implements PathReachability::ConfigSig {
+    predicate isSource(ControlFlowNode n) { first(any(Raw::AdaNode a | n.injects(a))) }
+
+    predicate isSink(ControlFlowNode n) { n instanceof ControlFlow::ExitNode }
+
+    predicate isBarrier(ControlFlowNode n) { isSecond(n) }
   }
 
-  /** As `reachesExitStrict`, but only following non-exceptional edges. */
+  /** As `StrictConfig`, but only following non-exceptional edges. */
+  private module NormalOnlyConfig implements PathReachability::ConfigSig {
+    predicate isSource = StrictConfig::isSource/1;
+
+    predicate isSink = StrictConfig::isSink/1;
+
+    predicate isBarrier = StrictConfig::isBarrier/1;
+
+    predicate isBarrierEdge(ControlFlowNode n1, SuccessorType t, ControlFlowNode n2) {
+      t instanceof ExceptionSuccessor and exists(n1) and exists(n2)
+    }
+  }
+
+  private predicate reachesExitStrict(ControlFlowNode n) {
+    PathReachability::Make<StrictConfig>::reaches(n, _)
+  }
+
   private predicate reachesExitNormalOnly(ControlFlowNode n) {
-    n instanceof ControlFlow::ExitNode
-    or
-    exists(ControlFlowNode succ, SuccessorType t | succ = n.getASuccessor(t) |
-      not t instanceof ExceptionSuccessor and
-      not isSecond(succ) and
-      reachesExitNormalOnly(succ)
-    )
+    PathReachability::Make<NormalOnlyConfig>::reaches(n, _)
   }
 
   /**

@@ -35,6 +35,16 @@ extractor are unchanged.
   matching what is left; choices are static and never raise.
 - **A `for` loop's variable has a node**, where each iteration starts.
 
+### Feasible paths through `finally` parts
+
+- **`codeql.ada.controlflow.PathReachability`** follows only the paths on which a
+  `finally` part continues the way it was entered (D-035). `MissingPairedCall`,
+  `ada/function-missing-return` and `ada/unreachable-statement` use it, so the merged
+  `finally` parts cost them no precision: a file closed on every real path around a
+  `finally` part, and a function that returns through one, are not reported.
+- **`ada/unreachable-statement`** now also checks statements in `finally` parts, and finds
+  code after a block whose every path returns through its `finally` part.
+
 ### Guards
 
 - **`codeql.ada.controlflow.Guards`**, the shared Guards library, as Java has: `Guard`

@@ -68,8 +68,10 @@ The approximations:
 
 The control-flow graph runs a GNAT `finally` part however its sequence is left, but does
 not split it: after the `finally` part, control may continue any way the part was
-entered, so a path entering by `return` may also continue as if the sequence had completed
-normally. It evaluates a quantified expression's predicate once, standing for every
+entered. The path queries (`unreachable-statement`, `function-missing-return`,
+`open-without-close` and `MissingPairedCall`) follow only the feasible paths
+(`PathReachability`), except that an `exit` from one loop and from another are not told
+apart there. It evaluates a quantified expression's predicate once, standing for every
 iteration, and does not tell `case` alternatives apart by value: every alternative is
 reachable. The Guards library knows integer ranges only from a comparison with a decimal
 literal.
