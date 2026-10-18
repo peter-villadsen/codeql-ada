@@ -189,37 +189,15 @@ signature predicate guardChecksSig(Raw::Expr g, Raw::Expr e, boolean branch);
  */
 module BarrierGuard<guardChecksSig/3 guardChecks> {
   /**
-   * Lifts `guardChecks` through the logical operators, because only an expression
-   * that ends a basic block with Boolean edges is a guard: in `if C and then
-   * Is_Safe (X)` that is the whole `and then` (its right operand completes normally
-   * into it, see `docs/cfg-design.md`), and the check is only implied by it. A
-   * conjunction is true only if both operands are; a disjunction is false only if
-   * both are; `not` inverts; parentheses are transparent.
+   * The check, as the shared SSA library wants it. The Guards library
+   * (`codeql.ada.controlflow.Guards`) carries it through `and then`, `or else`, `not`,
+   * parentheses and SSA variables: in `if C and then Is_Safe (X)` the block that runs
+   * when the whole is true is controlled by `Is_Safe (X)` being true.
    */
-  private predicate guardChecksLifted(Raw::Expr g, Raw::Expr e, boolean branch) {
-    guardChecks(g, e, branch)
-    or
-    exists(Raw::BinOp op | op = g |
-      (op.getOp() instanceof Raw::OpAndThen or op.getOp() instanceof Raw::OpAnd) and
-      branch = true and
-      guardChecksLifted([op.getLeft(), op.getRight()], e, true)
-      or
-      (op.getOp() instanceof Raw::OpOrElse or op.getOp() instanceof Raw::OpOr) and
-      branch = false and
-      guardChecksLifted([op.getLeft(), op.getRight()], e, false)
-    )
-    or
-    exists(Raw::UnOp op | op = g and op.getOp() instanceof Raw::OpNot |
-      guardChecksLifted(op.getExpr(), e, branch.booleanNot())
-    )
-    or
-    guardChecksLifted(g.(Raw::ParenExpr).getExpr(), e, branch)
-  }
-
   private predicate guardChecksAdapted(
-    SsaDataFlowInput::Guard g, SsaDataFlowInput::Expr e, SsaDataFlowInput::GuardValue branch
+    SsaDataFlowInput::Guard g, SsaDataFlowInput::Expr e, SsaDataFlowInput::GuardValue v
   ) {
-    guardChecksLifted(g, e.asExpr(), branch)
+    guardChecks(g.(Raw::Expr), e.asExpr(), v.asBooleanValue())
   }
 
   /** Gets a node that is safely guarded by a `guardChecks` guard. */

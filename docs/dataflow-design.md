@@ -37,23 +37,32 @@ every uncertain write, because the callee may leave an `out`/`in out` actual unc
 (D-022). Without this, passing a variable to any procedure with an `in out` formal would
 cut its flow.
 
-**Guards: implemented, not stubbed** (the decision `docs/phase9.2-plan.md` asks to be
-made explicitly). A guard is any expression whose CFG node ends a basic block with
-`BooleanSuccessor` edges: an `if`/`elsif`/`while`/`exit when` condition, or the *left*
-operand of `and then`/`or else`. `hasValueBranchEdge` reads that edge,
-`guardDirectlyControlsBlock` is edge dominance (`dominatingEdge` plus `dominates`), and
-`supportBarrierGuardsOnPhiEdges` keeps its default. This took about 20 lines on the shared
-basic-block API. It gives `BarrierGuard`: uses of the checked SSA value, in blocks the
-validating outcome controls, are barrier nodes.
+**Guards: the shared Guards library** (`codeql.ada.controlflow.Guards`, 0.4.0), as in
+CodeQL for Java. Up to 0.3.0 a guard was any expression whose CFG node ended a basic block
+with `BooleanSuccessor` edges, and `BarrierGuard` lifted the user's check through `and
+then`/`or else`/`not` by hand. Now the integration's `Guard` is the library's:
+`guardDirectlyControlsBlock` is its `directlyValueControls` (edge dominance) and
+`guardControlsBlock` its `valueControls`, which adds the implications — `C and then
+Is_Safe (X)` true means `Is_Safe (X)` was; `not` inverts; parentheses are transparent; an
+SSA variable assigned a condition carries it (`OK := Is_Safe (X); if OK then`), and a
+non-overridden function returning a test of its parameter is a wrapper of that test.
+`supportBarrierGuardsOnPhiEdges` keeps its default. `BarrierGuard`: uses of the checked
+SSA value, in blocks the validating outcome controls, are barrier nodes.
 
-The *right* operand of a short-circuit operator is not a guard: it completes normally into
-the operator node, which is what branches (`docs/cfg-design.md`, "Short-circuit
-operators"). So in `if C and then Is_Safe (X)` only the whole condition branches, and the
-check is merely implied by it. `LocalFlow`'s `BarrierGuard` therefore lifts the user's
-check through the logical operators: `and then`/`and` true implies both operands true,
-`or else`/`or` false implies both false, `not` inverts, and parentheses are transparent.
 The test pins a plain guard, a short-circuit operand, the failed branch of `not`
-(unguarded), and its other branch (guarded).
+(unguarded), its other branch (guarded), and a check carried by a variable (guarded; new
+with the library).
+
+`codeql.ada.controlflow.Guards` is public on its own: `Guard.controls(bb, branch)`,
+`valueControls` with null, constant and integer-range values (`X > 5` true gives `X` a
+lower bound of 6), and `isEquality`. Its inputs are in Guards.qll: `=`/`/=` are the
+equality tests, `<`/`<=`/`>`/`>=` against a decimal literal the range guards, `null`,
+`True`/`False`, integer, character, string and enumeration literals the constants,
+allocators and `'Access` the non-null expressions, and a `case` alternative a guard that
+matches when one of its choices does. An alternative with more than one choice (`when 2 |
+3`) is not found to control its statements when it matches, as each choice's match edge
+alone does not dominate them; Java's instantiation has the same restriction. Test:
+`ql/test/library/Guards/`.
 
 **Not value flow, by design.** Operators (`X + 1`), function calls, conversions and
 attribute references do not propagate values; they are taint steps and belong to the

@@ -21,6 +21,7 @@ private import codeql.ada.controlflow.internal.ControlFlowGraphImpl as Impl
 private import ada
 private import codeql.ada.internal.Formals as Formals
 private import codeql.ada.internal.CallResolution as CallResolution
+private import codeql.ada.controlflow.Guards as Guards
 
 /** The basic blocks of the control-flow graph, which implement `codeql/ssa`'s `CfgSig`. */
 private module SsaCfg = Impl::Cfg;
@@ -648,6 +649,9 @@ class VariableWrite extends TVariableWrite {
 class SsaExpr extends Raw::Expr {
   /** Gets the control-flow node that evaluates this expression. */
   Impl::ControlFlowNode getControlFlowNode() { result.injects(this) }
+
+  /** Gets the basic block that evaluates this expression. */
+  Impl::BasicBlock getBasicBlock() { result = this.getControlFlowNode().getBasicBlock() }
 }
 
 private class ParameterAlias = Parameter;
@@ -762,16 +766,12 @@ class DfExpr extends TDfExpr {
  * part of the local data-flow graph: nodes for definitions, phis and reads, and the
  * steps between them.
  *
- * Guards are implemented, not stubbed (decided in Task 9.3, see
- * `docs/dataflow-design.md`): a guard is any expression whose CFG node ends a basic
- * block with `BooleanSuccessor` edges -- a condition, or an operand of a
- * short-circuit operator -- which gives `BarrierGuard` support
- * (`if Is_Safe (X) then ... X ...`).
+ * Guards are the shared Guards library's (`codeql.ada.controlflow.Guards`), as in
+ * CodeQL for Java: a guard controls a block directly, by dominance, or through an
+ * implication (`C and then Is_Safe (X)`, `OK := Is_Safe (X); if OK`), which gives
+ * `BarrierGuard` its support (`if Is_Safe (X) then ... X ...`).
  */
 module SsaDataFlowInput implements SsaImpl::DataFlowIntegrationInputSig {
-  private import codeql.controlflow.SuccessorType
-  private import codeql.util.Boolean
-
   class Expr = DfExpr;
 
   /**
@@ -781,26 +781,18 @@ module SsaDataFlowInput implements SsaImpl::DataFlowIntegrationInputSig {
    */
   predicate allowFlowIntoUncertainDef(SsaImpl::UncertainWriteDefinition def) { any() }
 
-  class GuardValue = Boolean;
+  class GuardValue = Guards::GuardValue;
 
-  class Guard extends Raw::Expr {
-    /** Holds if evaluating this guard to `val` takes the CFG edge `bb1 -> bb2`. */
-    predicate hasValueBranchEdge(SsaCfg::BasicBlock bb1, SsaCfg::BasicBlock bb2, GuardValue val) {
-      bb1.getLastNode().injects(this) and
-      bb2 = bb1.getASuccessor(any(BooleanSuccessor s | s.getValue() = val))
-    }
+  class Guard = Guards::Guard;
 
-    predicate valueControlsBranchEdge(SsaCfg::BasicBlock bb1, SsaCfg::BasicBlock bb2, GuardValue val) {
-      this.hasValueBranchEdge(bb1, bb2, val)
-    }
+  /** Holds if `guard` evaluating to `val` directly controls `bb`: by dominance. */
+  predicate guardDirectlyControlsBlock(Guard guard, SsaCfg::BasicBlock bb, GuardValue val) {
+    guard.directlyValueControls(bb, val)
   }
 
-  predicate guardDirectlyControlsBlock(Guard guard, SsaCfg::BasicBlock bb, GuardValue val) {
-    exists(SsaCfg::BasicBlock bb1, SsaCfg::BasicBlock bb2 |
-      guard.hasValueBranchEdge(bb1, bb2, val) and
-      SsaCfg::dominatingEdge(bb1, bb2) and
-      bb2.dominates(bb)
-    )
+  /** Holds if `guard` evaluating to `val` controls `bb`, also through implications. */
+  predicate guardControlsBlock(Guard guard, SsaCfg::BasicBlock bb, GuardValue val) {
+    guard.valueControls(bb, val)
   }
 }
 

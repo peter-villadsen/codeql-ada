@@ -34,6 +34,15 @@ extractor are unchanged.
   choice is static and never raises.
 - **A `for` loop's variable has a node**, where each iteration starts.
 
+### Guards
+
+- **`codeql.ada.controlflow.Guards`**, the shared Guards library, as Java has: `Guard`
+  with `controls`, `valueControls` (Boolean, null, constant and integer-range values),
+  `isEquality`, and implications through `and then`, `or else`, `not`, parentheses and
+  SSA variables (`OK := X > 0; if OK then` is guarded by `X > 0`).
+- **Data-flow barrier guards use it**: `BarrierGuard` now also sees a check carried by a
+  variable or a wrapper function.
+
 ### SSA
 
 - **`codeql.ada.dataflow.Ssa`** is a class-based SSA API (`SsaDefinition`,

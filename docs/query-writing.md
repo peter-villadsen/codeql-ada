@@ -149,7 +149,8 @@ statement by its leading keywords (`if ...`, `raise Constraint_Error`).
 
 Reach for the semantic classes first, and the AST classes for the shape of the
 code. Beyond these, `codeql.ada.controlflow.ControlFlowGraph` gives the control-flow graph
-(see `MissingPairedCall` below), and `codeql.ada.dataflow.DataFlow` /
+(see `MissingPairedCall` below), `codeql.ada.controlflow.Guards` which conditions control
+which code (`Guard.controls`, as in CodeQL for Java), and `codeql.ada.dataflow.DataFlow` /
 `TaintTracking` give data flow (see
 [Data flow and taint tracking](#data-flow-and-taint-tracking)).
 

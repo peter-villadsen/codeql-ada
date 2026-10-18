@@ -250,8 +250,8 @@ path-level, and it is what Step 5 checks.
 | 0 Reference reading | **done** 2026-10-17 | 5ef030c (plan) |
 | 1 `MakeSsa` | **done** 2026-10-17 | 78ed57f |
 | 2 New graph alongside | **done** 2026-10-17 | 1951f11 |
-| 3 Switch over | **done** 2026-10-17 | (this commit) |
-| 4 Guards | not started | |
+| 3 Switch over | **done** 2026-10-17 | be9d387 |
+| 4 Guards | **done** 2026-10-18 | (this commit) |
 | 5 ControlFlowReachability | not started | |
 | 6 Precision queries | optional | |
 | 7 Docs + 0.4.0 | docs done in Step 3; release not started | |
@@ -299,6 +299,23 @@ path-level, and it is what Step 5 checks.
   `query-writing.md`, `known-limitations.md`, `user-guide.md`, CHANGELOG (Unreleased
   0.4.0), DECISIONS D-029–D-034 (renumbered from the plan's D-028–D-033: D-028 was
   taken).
+- **2026-10-18** — Pushed Steps 0–3 (CI run 39089858442). Step 4: `codeql/ada/controlflow/
+  Guards.qll` instantiates `codeql.controlflow.Guards` (`Make` + `Logic` over
+  `codeql.ada.dataflow.Ssa`), modelled on Java's: `SsaExpr` (now with `getBasicBlock`)
+  is the expression type; constants are `null`, `Standard.True`/`False`, decimal integer,
+  character, string and enumeration literals; `=`/`/=` equality; `and then`/`and`,
+  `or else`/`or`, `not`, parentheses; `if` expressions without `elsif`; `case`
+  alternatives (match from any choice, non-match from the last); allocators and
+  `'Access` non-null; range guards from comparisons with a decimal literal; wrapper
+  functions are non-overridden functions. Test `ql/test/library/Guards` (`controls` and
+  `valueControls`): if/elsif, short-circuit operands, `not`, null test, a condition
+  through an SSA variable, case alternatives, while, exit when, ranges. Found: a
+  multi-choice alternative does not control its body on match (no single dominating
+  edge; Java restricts to a single constant too), recorded in `known-limitations.md`.
+  The SSA data-flow integration now uses the library's `Guard` (`directlyValueControls`
+  / `valueControls`), replacing the hand-written guard and `BarrierGuard`'s own lifting
+  through the logical operators; `LocalFlow` gains a check carried by a variable
+  (guarded).
 
 ## 9. Open questions for the reviewer
 

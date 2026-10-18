@@ -8,3 +8,4 @@
 | test.adb:30:9:30:15 | Source | test.adb:37:13:37:14 | G | guarded |
 | test.adb:30:9:30:15 | Source | test.adb:41:13:41:14 | G |  |
 | test.adb:30:9:30:15 | Source | test.adb:43:13:43:14 | G | guarded |
+| test.adb:30:9:30:15 | Source | test.adb:50:16:50:17 | G | guarded |

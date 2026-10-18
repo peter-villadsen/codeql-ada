@@ -1,0 +1,55 @@
+controls
+| test.adb:7:7:7:8 | A | false | CallStmt@10 |
+| test.adb:7:7:7:8 | A | false | CallStmt@12 |
+| test.adb:7:7:7:8 | A | true | CallStmt@8 |
+| test.adb:9:10:9:11 | B | false | CallStmt@12 |
+| test.adb:9:10:9:11 | B | true | CallStmt@10 |
+| test.adb:15:7:15:8 | A | true | CallStmt@16 |
+| test.adb:15:18:15:19 | B | true | CallStmt@16 |
+| test.adb:19:7:19:12 | not ... | false | CallStmt@22 |
+| test.adb:19:11:19:12 | A | true | CallStmt@22 |
+| test.adb:19:21:19:22 | B | false | CallStmt@22 |
+| test.adb:25:7:25:16 | ... /= ... | true | CallStmt@26 |
+| test.adb:29:10:29:15 | ... > ... | true | CallStmt@31 |
+| test.adb:30:7:30:9 | OK | true | CallStmt@31 |
+| test.adb:35:7:36:16 | CaseStmtAlternative | false | CallStmt@38 |
+| test.adb:35:7:36:16 | CaseStmtAlternative | false | CallStmt@40 |
+| test.adb:35:7:36:16 | CaseStmtAlternative | true | CallStmt@36 |
+| test.adb:37:7:38:17 | CaseStmtAlternative | false | CallStmt@40 |
+| test.adb:43:10:43:15 | ... > ... | false | CallStmt@50 |
+| test.adb:43:10:43:15 | ... > ... | false | CallStmt@55 |
+| test.adb:43:10:43:15 | ... > ... | false | CallStmt@60 |
+| test.adb:43:10:43:15 | ... > ... | false | ExitStmt@49 |
+| test.adb:43:10:43:15 | ... > ... | false | IfStmt@53 |
+| test.adb:43:10:43:15 | ... > ... | false | IfStmt@54 |
+| test.adb:43:10:43:15 | ... > ... | false | IfStmt@59 |
+| test.adb:43:10:43:15 | ... > ... | false | LoopStmt@48 |
+| test.adb:43:10:43:15 | ... > ... | true | AssignStmt@45 |
+| test.adb:43:10:43:15 | ... > ... | true | CallStmt@44 |
+| test.adb:49:17:49:22 | ... = ... | false | CallStmt@50 |
+| test.adb:49:17:49:22 | ... = ... | true | CallStmt@55 |
+| test.adb:49:17:49:22 | ... = ... | true | CallStmt@60 |
+| test.adb:49:17:49:22 | ... = ... | true | IfStmt@53 |
+| test.adb:49:17:49:22 | ... = ... | true | IfStmt@54 |
+| test.adb:49:17:49:22 | ... = ... | true | IfStmt@59 |
+| test.adb:53:7:53:13 | ... < ... | true | CallStmt@55 |
+| test.adb:53:7:53:13 | ... < ... | true | IfStmt@54 |
+| test.adb:54:10:54:17 | ... >= ... | true | CallStmt@55 |
+| test.adb:59:7:59:12 | ... > ... | true | CallStmt@60 |
+valueControls
+| test.adb:25:7:25:8 | P | not null | CallStmt@26 |
+| test.adb:29:10:29:11 | N | Lower bound 1 | CallStmt@31 |
+| test.adb:43:10:43:11 | N | Lower bound 1 | AssignStmt@45 |
+| test.adb:43:10:43:11 | N | Lower bound 1 | CallStmt@44 |
+| test.adb:43:10:43:11 | N | Upper bound 0 | CallStmt@50 |
+| test.adb:43:10:43:11 | N | Upper bound 0 | CallStmt@55 |
+| test.adb:43:10:43:11 | N | Upper bound 0 | CallStmt@60 |
+| test.adb:43:10:43:11 | N | Upper bound 0 | ExitStmt@49 |
+| test.adb:43:10:43:11 | N | Upper bound 0 | IfStmt@53 |
+| test.adb:43:10:43:11 | N | Upper bound 0 | IfStmt@54 |
+| test.adb:43:10:43:11 | N | Upper bound 0 | IfStmt@59 |
+| test.adb:43:10:43:11 | N | Upper bound 0 | LoopStmt@48 |
+| test.adb:53:7:53:8 | N | Upper bound 9 | CallStmt@55 |
+| test.adb:53:7:53:8 | N | Upper bound 9 | IfStmt@54 |
+| test.adb:54:10:54:11 | N | Lower bound 10 | CallStmt@55 |
+| test.adb:59:7:59:8 | N | Lower bound 6 | CallStmt@60 |

@@ -42,4 +42,12 @@ begin
    else
       Sink (G);                                --  flow, guarded through not
    end if;
+
+   declare
+      OK : constant Boolean := Is_Safe (G);
+   begin
+      if OK then
+         Sink (G);                             --  flow, guarded through a variable (Guards)
+      end if;
+   end;
 end Test;
