@@ -99,31 +99,36 @@ codeql/ada/controlflow/ControlFlowReachability.qll
 The model for every file is the Java counterpart at the same depth: a query writer should
 not have to walk `Raw::` for an ordinary question.
 
-### 3.1 Ada → `AstSig` mapping (first draft — Step 2 makes it concrete)
+### 3.1 Ada → `AstSig` mapping (as built in Step 2, `ControlFlowGraphImpl2.qll`)
 
-| Ada construct | Shared class / hook | Notes and risks |
+Every AST node in the graph is `Raw::AdaNode`. `getChild` lists the children that are
+*evaluated*, in order. It is also the path along which abrupt completions (raise, return,
+exit, goto) propagate, so it includes the structural nodes (statement lists, handled
+sequences). A node with an explicit step out of its "before" node gets no default
+left-to-right steps. That is how the Ada constructs the library doesn't know get theirs.
+
+| Ada construct | Shared class / hook | As built |
 | --- | --- | --- |
-| Subprogram, task, entry, protected-op body | `Callable`, `callableGetBody` | Package-body elaboration: separate `Callable`, or `CallableContext` + `callableGetBodyPart`. **Decide in Step 2.** |
-| Formal parameter | `Parameter`, `callableGetParameter` | Defaults are evaluated by the caller, so `getDefaultValue` is `none()` in the callee graph |
-| Declarative part + statements | `callableGetBodyPart` order, or a `BlockStmt` whose first children are declarations | Elaboration order is significant (initialisers run) |
-| `declare … begin … end` | `BlockStmt` (+ `TryStmt` if it has handlers) | |
-| Statement list | `BlockStmt` | `IfStmt.getThen/getElse` take one `Stmt`, so Ada branch lists must be `BlockStmt`s |
-| `if … elsif … else` | `IfStmt` | **Risk:** `elsif` chains have no AST node per link. Options: synthetic nested-if view, or language-specific `step`s. Same for `if` expressions → `ConditionalExpr` |
-| `loop … end loop` | `LoopStmt` | infinite loop |
+| Subprogram, expression function, task, entry, package body | `Callable` (= `CfgScope`) | Body parts via `callableGetBodyPart` with `CallableContext = Unit` (**D-030**): formal defaults, an entry's barrier, object-declaration initialisers in order, then the statements. An expression function's body is its expression (`callableGetBody`) |
+| Formal parameter | `Parameter` | `none()`. Defaults are body parts, as before |
+| Statement list | `BlockStmt` | pragmas and labels among its statements are leaves |
+| Handled sequence with handlers or `finally` | `TryStmt` | handlers are `CatchClause`s, ranked so that pragmas are skipped; `when others` is `catchAll`; GNAT `finally` is `getFinally` (**merged, not split**) |
+| `if … elsif … else`, `if` expression | none: own `step`s | Guard by guard, as Java's Kotlin `when` (**D-031**). An `if` expression is pre-order and gets its value from its branches (`propagatesValue`); `(if C then E)` is `True` when `C` is false |
+| `loop … end loop` | `LoopStmt` + own `step`s | through the library's `[LoopHeader]` node; only a jump leaves it |
 | `while C loop` | `WhileStmt` | |
-| `for I in R loop`, `for E of C loop` | `ForeachStmt` (`getVariable`, `getCollection`) | `reverse` doesn't affect the CFG |
-| `exit [L] [when C]` | `BreakStmt` + `hasLabel` | `when C` is a conditional exit; model as an implicit if, or with an extra `step` |
-| `goto L` / `<<L>>` | `GotoStmt` + `Label` | The new lib allows several labelled abrupt successors out of a finally (`ControlFlowGraph.qll:2227`), which may fix the v1 gap in "goto out of finally" |
-| `return`, extended `return … do … end return` | `ReturnStmt` | Extended return has a body: language-specific |
-| `raise E`, `raise` expression | `Throw` | Re-raise (`raise;`) has no `getExpr` |
-| Exception handlers | `TryStmt` + `CatchClause`; `when others` → `catchAll` | Choice parameter `when X : E =>` → `getVariable`. Several exception names per handler → `getCondition`? check Java multi-catch |
-| GNAT `finally` | `TryStmt.getFinally` | Replaces `FinallySplitting` entirely |
-| `case` statement / expression | `Switch` / `Case`; `when others` → `DefaultCase` / `matchAll` | No fall-through: `fallsThrough` is `none()` |
-| `and then` / `or else` / `not` | `LogicalAndExpr` / `LogicalOrExpr` / `LogicalNotExpr` | Plain `and`/`or`/`xor` are not short-circuit: ordinary `BinaryExpr` |
-| `:=` | statement, not an expression | Probably `ExprStmt`-free: give it default post-order, write = after RHS. Check how Java's `AssignExpr` ordering interacts with SSA `explicitWrite` |
-| Membership, quantified, declare, `delta`/aggregates | default left-to-right, or `step`s | Quantified expressions loop: language-specific |
-| `select`, `accept`, `delay`, `abort`, `requeue` | `InputSig2::step` / `beginAbruptCompletion` | Copy today's `tasking` test semantics |
-| Pragmas, null statements | default leaf | |
+| `for … in/of …` | `ForeachStmt` | the iterable has emptiness successors; the loop variable's defining name is a node of its own (new) |
+| `exit [L]` | `BreakStmt` + `Label` | every `exit` is labelled with its *resolved* loop (`TLoopLabel`), so a `case` never catches it |
+| `exit [L] when C` | none: own `step`s + `beginAbruptCompletion` | a `BreakStmt` has no "after" node, so it couldn't fall through when `C` is false |
+| `goto L` / `<<L>>` | `GotoStmt` + `Label` (`TStmtLabel`) | the library joins the goto to the label within the statement list holding it |
+| `return`, extended `return` | `ReturnStmt` | an extended return's object initialiser and statements are its children |
+| `raise`, `raise` expression | `Throw` | |
+| A call (incl. without parentheses) | `postOrInOrder` + `beginAbruptCompletion` | may raise; a `No_Return` call can only raise |
+| `case` statement / expression | `Switch` / `Case` | choices are the patterns, matched in order but not evaluated (static, cannot raise); the last alternative matches what is left (`matchAll`), since Ada `case` is exhaustive |
+| `and then` / `or else` | `LogicalAndExpr` / `LogicalOrExpr` | the left operand's value decides, so no infeasible path joins at the operator |
+| `not` | ordinary `UnaryExpr` | the library's `LogicalNotExpr` only has steps in a conditional context |
+| `:=`, call statement | ordinary statements, `postOrInOrder` | node after their parts: SSA writes there |
+| `select` | none: own `step`s + `additionalNode` | any one alternative, chosen through `[select i]` / `[skip i]` nodes with Boolean successors (a node may not have two plain successors) |
+| `accept … do`, pragmas, `null`, other simple statements | default | pre-order / leaves |
 
 ---
 
@@ -155,9 +160,13 @@ Independent of the CFG swap, and it gives Guards/Reachability the API they expec
   handlers, `finally`, `goto`, then tasking.
 - Debug query `ql/debug/PrintCfg2.ql`, plus a **diff query** that reports edges present in
   one graph and not the other, using the same AST-node keys.
-- Run the CFG inline-expectation suite against both graphs (parameterise `CfgAnnotations`).
-- **Exit:** every diff in `ql/test/library/Cfg/*` is either gone or recorded in §6 as an
-  accepted, explained difference (expected: only `finally*` merges).
+- ~~Run the CFG inline-expectation suite against both graphs.~~ The annotations name the
+  old graph's nodes (`IfStmt` as a join at the end, no before/after nodes), so they can't
+  be shared. They are rewritten for the new graph in Step 3. The diff query is the check
+  instead: `ql/debug/CfgDiff.ql` compares, per AST node that both graphs represent at
+  the same point, which such node follows it, skipping everything in between.
+- **Exit:** every diff in `ql/test/library/Cfg/*` and the corpus is gone or recorded in §6;
+  the library's consistency checks (`ql/debug/Cfg2Consistency.ql`) are empty.
 
 ### Step 3 — Switch over
 - Rename to `ControlFlowGraphImpl.qll`; delete the old trees, `Completion.qll` and
@@ -207,23 +216,39 @@ null/range check, condition always true/false. Each one is its own small plan en
 | # | Question | Leaning |
 | --- | --- | --- |
 | D-028 | Adopt shared `ControlFlowGraph`, drop CFG splitting | **Yes**, per reviewer |
-| D-029 | Build the new graph alongside the old one and diff, or rewrite in place | Alongside: the diff query is the safety net |
-| D-030 | Package-body elaboration: own `Callable`, or `CallableContext` | Open (Step 2) |
-| D-031 | `elsif` representation | Open (Step 2) |
+| D-029 | Build the new graph alongside the old one and diff, or rewrite in place | **Alongside**, with `CfgDiff.ql` |
+| D-030 | Body elaboration: own `Callable`, or `CallableContext` | **`callableGetBodyPart` with `Unit`**: each body (package bodies too) is a `Callable` whose parts are defaults, barrier, initialisers, statements |
+| D-031 | `elsif` representation | **Own `step`s**, like Java's Kotlin `when`; no synthetic AST |
 | D-032 | Public naming: Java's (`ControlFlowNode`), with old names deprecated for one release | Yes |
+| D-033 | Jump labels | **Resolved targets** (`TLoopLabel(loop)`, `TStmtLabel(label)`), never names |
 
 ## 6. Accepted differences between the old and new graph
 
-*(Filled in during Step 2. One row per difference: test, edge, why it's acceptable, which
-query (if any) now needs ControlFlowReachability.)*
+From `ql/debug/CfgDiff.ql` over the 23 CFG test databases and the five corpus projects
+(2026-10-17). The consistency checks are empty everywhere. Comparable edges agree to
+within 0.5%: gpr2 383,308 old / 381,360 new, libadalang-tools 174,016 / 172,484,
+alire 136,555 / 135,954, libkeccak 43,963 / 43,961, adasat 3,222 / 3,217.
+
+| Difference | Where | Why it is acceptable | Query impact |
+| --- | --- | --- | --- |
+| **Short-circuit operands no longer reach the other branch.** The old graph joined `A and then B` at one node, so `A` false could lead to the `then` branch | `short-circuit`; nearly all old-only edges in the corpus | the old edges were infeasible: the new graph is more precise | fewer false paths; none expected to lose true results |
+| **`finally` is merged, not split.** After the `finally` part, control may leave every way it was entered | `finally*` | the reviewer's recommendation; recovered per query in Step 5 | `FunctionMissingReturn`, `OpenWithoutClose` to re-check in Steps 3/5 |
+| **`goto` out of a sequence runs its `finally` part** | `finally-abnormal` line 71 | Ada semantics; the old graph skipped it (a documented v1 gap) | the `finally` part is now reachable there |
+| **`case` choices are nodes** (matched, not evaluated) | `case-stmt`, `cond-expr` | the library matches alternatives choice by choice | none |
+| **A `for` loop's variable is a node** | `loops-for`, `for-subtype` | where each iteration's value is defined; SSA can anchor the loop variable's write there (Step 3) | none yet |
+| **An empty `then abort` part of a `select` can complete** | libadalang-tools `pp/then_abort_part/a.adb` | the old graph had no path through an empty branch | none |
+
+The AST-level diff can't see what splitting bought: the old graph's split copies of a
+`finally` part are the same AST nodes, so their edges coincide. That difference is
+path-level, and it is what Step 5 checks.
 
 ## 7. Tracker
 
 | Step | Status | Commit |
 | --- | --- | --- |
 | 0 Reference reading | **done** 2026-10-17 | 5ef030c (plan) |
-| 1 `MakeSsa` | **done** 2026-10-17 | (this commit) |
-| 2 New graph alongside | not started | |
+| 1 `MakeSsa` | **done** 2026-10-17 | 78ed57f |
+| 2 New graph alongside | **done** 2026-10-17 | (this commit) |
 | 3 Switch over | not started | |
 | 4 Guards | not started | |
 | 5 ControlFlowReachability | not started | |
@@ -245,6 +270,12 @@ query (if any) now needs ControlFlowReachability.)*
   declaration, `out` formal) count as explicit. New test `ql/test/library/Ssa/class-api`;
   existing SSA tests unchanged. Consumers (data flow, test helpers, `PrintSsa`) still use
   `SsaImpl::Definition`: they move in Step 3 along with the CFG.
+- **2026-10-17** — Step 2: `ControlFlowGraphImpl2.qll` (mapping in §3.1), debug queries
+  `PrintCfg2`, `Cfg2Consistency`, `CfgDiff`. First run: consistency failed only on
+  `select` (several plain successors), now fixed with `[select i]`/`[skip i]` nodes. Diff
+  findings, all in §6. Fixed on the way: a loop variable's inner `Identifier` was
+  evaluated, and choices that are calls (`Character_Type'Val (16#9#)` in gpr2's lexer)
+  got exception edges; choices are now static leaves. Nothing consumes the new graph yet.
 
 ## 9. Open questions for the reviewer
 
