@@ -71,9 +71,8 @@ not split it: after the `finally` part, control may continue any way the part wa
 entered, so a path entering by `return` may also continue as if the sequence had completed
 normally. It evaluates a quantified expression's predicate once, standing for every
 iteration, and does not tell `case` alternatives apart by value: every alternative is
-reachable. The Guards library does not find a `case` alternative with more than one
-choice (`when 2 | 3`) to control its statements, and knows integer ranges only from a
-comparison with a decimal literal.
+reachable. The Guards library knows integer ranges only from a comparison with a decimal
+literal.
 
 ## Other modelling limits
 

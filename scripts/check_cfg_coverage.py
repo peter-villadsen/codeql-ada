@@ -63,6 +63,7 @@ STRUCTURAL = {
     "ParamSpec": "Raw::ParamSpec",                    # its default is a body part (formalDefault)
     "NamedStmtDecl": "Raw::NamedStmt",                # NamedStmt.getDecl(), for the loop's name
     "LabelDecl": "Raw::Label",                        # Label.getDecl(), for the label's name
+    "OthersDesignator": "Raw::OthersDesignator",      # a choice: its AlternativesList is the node
 }
 
 # Kinds `exprLike` names: evaluated by the default rule, not shaped.

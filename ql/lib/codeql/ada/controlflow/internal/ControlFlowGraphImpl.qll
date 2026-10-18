@@ -107,22 +107,11 @@ private predicate exprLike(Raw::AdaNode n) {
   not n instanceof Raw::Op
 }
 
-/**
- * Holds if `n` is a choice of a `case` alternative (`when A | B .. C =>`). Ada
- * requires choices to be static, so a choice is matched but not evaluated: it is a
- * leaf, and cannot raise.
- */
-private predicate isChoice(Raw::AdaNode n) {
-  n = any(Raw::CaseStmtAlternative a).getChoices().getChild(_) or
-  n = any(Raw::CaseExprAlternative a).getChoices().getChild(_)
-}
-
 /** Holds if evaluating `n` may raise (`mayRaiseAny`), other than by `raise`. */
 private predicate mayRaise(Raw::AdaNode n) {
   mayRaiseAny(n) and
   not n instanceof Raw::RaiseStmt and
-  not n instanceof Raw::RaiseExpr and
-  not isChoice(n)
+  not n instanceof Raw::RaiseExpr
 }
 
 /** Gets the `i`th branch of `select` statement `s`: an alternative, the `else` or abortable part. */
@@ -191,8 +180,9 @@ private Raw::AdaNode getChild0(Raw::AdaNode n, int index) {
     result = s.getAlternatives().getChild(index - 1)
   )
   or
+  // a `case` alternative's choices are its pattern (see `Ast::Case`)
   exists(Raw::CaseStmtAlternative a | a = n |
-    result = a.getChoices().getChild(index)
+    index = 0 and result = a.getChoices()
     or
     index = 1000 and result = a.getStmts()
   )
@@ -275,7 +265,7 @@ private Raw::AdaNode getChild0(Raw::AdaNode n, int index) {
   )
   or
   exists(Raw::CaseExprAlternative a | a = n |
-    result = a.getChoices().getChild(index)
+    index = 0 and result = a.getChoices()
     or
     index = 1000 and result = a.getExpr()
   )
@@ -287,9 +277,8 @@ private Raw::AdaNode getChild0(Raw::AdaNode n, int index) {
   not n instanceof Raw::IfExpr and
   not n instanceof Raw::CaseExpr and
   not n instanceof Raw::RaiseExpr and
-  // a defining name (a `for` loop's variable) and a `case` choice are leaves
+  // a defining name (a `for` loop's variable) is a leaf
   not n instanceof Raw::DefiningName and
-  not isChoice(n) and
   result = n.getChild(index) and
   exprLike(result)
 }
@@ -459,10 +448,19 @@ private module Ast implements AstSig<Raw::Location> {
   class Case extends AstNode {
     Case() { this instanceof Raw::CaseStmtAlternative or this instanceof Raw::CaseExprAlternative }
 
-    /** Gets the `index`th choice of this alternative (`when A | B .. C =>`). */
+    /**
+     * Gets the pattern of this alternative: its whole list of choices
+     * (`Raw::AlternativesList`, `when A | B .. C =>`), matched at once. Ada choices
+     * are static and are not evaluated one by one, so the list is a leaf that matches
+     * or not, and cannot raise; the alternative then has a single match edge, which
+     * dominates its body (as the Guards library needs).
+     */
     AstNode getPattern(int index) {
-      result = this.(Raw::CaseStmtAlternative).getChoices().getChild(index) or
-      result = this.(Raw::CaseExprAlternative).getChoices().getChild(index)
+      index = 0 and
+      (
+        result = this.(Raw::CaseStmtAlternative).getChoices() or
+        result = this.(Raw::CaseExprAlternative).getChoices()
+      )
     }
 
     Expr getGuard() { none() }
@@ -475,7 +473,7 @@ private module Ast implements AstSig<Raw::Location> {
 
   /** A `when others =>` alternative. */
   class DefaultCase extends Case {
-    DefaultCase() { this.getPattern(_) instanceof Raw::OthersDesignator }
+    DefaultCase() { this.getPattern(0).getChild(_) instanceof Raw::OthersDesignator }
   }
 
   class ConditionalExpr extends Expr {

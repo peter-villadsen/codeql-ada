@@ -30,8 +30,9 @@ extractor are unchanged.
 - **`and then` / `or else` no longer join their values.** The old graph let `A` false in
   `if A and then B` lead to the `then` branch; the new one does not.
 - **A `goto` out of a sequence runs its `finally` part**, as Ada does.
-- **`case` alternatives are matched choice by choice**, the last matching what is left; a
-  choice is static and never raises.
+- **`case` alternatives are matched in order**, each by its list of choices at once (one
+  `match` edge, so the alternative guards its statements, also for `when 2 | 3`), the last
+  matching what is left; choices are static and never raise.
 - **A `for` loop's variable has a node**, where each iteration starts.
 
 ### Guards

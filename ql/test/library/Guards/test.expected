@@ -16,6 +16,7 @@ controls
 | test.adb:35:7:36:16 | CaseStmtAlternative | false | CallStmt@40 |
 | test.adb:35:7:36:16 | CaseStmtAlternative | true | CallStmt@36 |
 | test.adb:37:7:38:17 | CaseStmtAlternative | false | CallStmt@40 |
+| test.adb:37:7:38:17 | CaseStmtAlternative | true | CallStmt@38 |
 | test.adb:43:10:43:15 | ... > ... | false | CallStmt@50 |
 | test.adb:43:10:43:15 | ... > ... | false | CallStmt@55 |
 | test.adb:43:10:43:15 | ... > ... | false | CallStmt@60 |

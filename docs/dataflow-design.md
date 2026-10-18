@@ -59,10 +59,8 @@ lower bound of 6), and `isEquality`. Its inputs are in Guards.qll: `=`/`/=` are 
 equality tests, `<`/`<=`/`>`/`>=` against a decimal literal the range guards, `null`,
 `True`/`False`, integer, character, string and enumeration literals the constants,
 allocators and `'Access` the non-null expressions, and a `case` alternative a guard that
-matches when one of its choices does. An alternative with more than one choice (`when 2 |
-3`) is not found to control its statements when it matches, as each choice's match edge
-alone does not dominate them; Java's instantiation has the same restriction. Test:
-`ql/test/library/Guards/`.
+matches at its list of choices (one `match` edge, which dominates its statements, even for
+`when 2 | 3`). Test: `ql/test/library/Guards/`.
 
 **Not value flow, by design.** Operators (`X + 1`), function calls, conversions and
 attribute references do not propagate values; they are taint steps and belong to the

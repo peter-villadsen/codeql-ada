@@ -234,7 +234,7 @@ alire 136,555 / 135,954, libkeccak 43,963 / 43,961, adasat 3,222 / 3,217.
 | **Short-circuit operands no longer reach the other branch.** The old graph joined `A and then B` at one node, so `A` false could lead to the `then` branch | `short-circuit`; nearly all old-only edges in the corpus | the old edges were infeasible: the new graph is more precise | fewer false paths; none expected to lose true results |
 | **`finally` is merged, not split.** After the `finally` part, control may leave every way it was entered | `finally*` | the reviewer's recommendation; recovered per query in Step 5 | `FunctionMissingReturn`, `OpenWithoutClose` to re-check in Steps 3/5 |
 | **`goto` out of a sequence runs its `finally` part** | `finally-abnormal` line 71 | Ada semantics; the old graph skipped it (a documented v1 gap) | the `finally` part is now reachable there |
-| **`case` choices are nodes** (matched, not evaluated) | `case-stmt`, `cond-expr` | the library matches alternatives choice by choice | none |
+| **`case` choice lists are nodes** (matched, not evaluated) | `case-stmt`, `cond-expr` | the library matches alternatives in order, each at its list of choices (changed from per choice on 2026-10-18 so that a multi-choice alternative has one dominating match edge) | none |
 | **A `for` loop's variable is a node** | `loops-for`, `for-subtype` | where each iteration's value is defined; SSA can anchor the loop variable's write there (Step 3) | none yet |
 | **An empty `then abort` part of a `select` can complete** | libadalang-tools `pp/then_abort_part/a.adb` | the old graph had no path through an empty branch | none |
 | **An empty block is reached** (`declare begin end;`) | libadalang-tools pretty-printer inputs (found in Step 3's corpus run) | the old graph gave a block with no statements no node | `unreachable-statement` −3, all false positives |
@@ -315,7 +315,12 @@ path-level, and it is what Step 5 checks.
   The SSA data-flow integration now uses the library's `Guard` (`directlyValueControls`
   / `valueControls`), replacing the hand-written guard and `BarrierGuard`'s own lifting
   through the logical operators; `LocalFlow` gains a check carried by a variable
-  (guarded).
+  (guarded). Pushed (79d3816, CI run 39091559925).
+- **2026-10-18** — Follow-up: the multi-choice `case` limitation is fixed. A `case`
+  alternative's pattern is now its whole `AlternativesList`, matched at once (Ada choices
+  are static, never evaluated one by one), so each alternative has one `match` edge that
+  dominates its statements and Guards finds `when 2 | 3` to control them. The `case-stmt`
+  and `cond-expr` fixtures re-annotated; Guards test gains the row.
 
 ## 9. Open questions for the reviewer
 

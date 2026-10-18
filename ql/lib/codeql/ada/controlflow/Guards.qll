@@ -52,12 +52,6 @@ private Raw::EnumLiteralDecl enumLiteralOf(Raw::AdaNode e) {
   ada_xref(e, result) and not isBooleanLiteral(e, _)
 }
 
-/** Gets the 0-based position of `n` among the choices of its `case` alternative. */
-private int choiceIndex(Raw::AdaNode n) {
-  n = any(Raw::CaseStmtAlternative a).getChoices().getChild(result) or
-  n = any(Raw::CaseExprAlternative a).getChoices().getChild(result)
-}
-
 private class ParameterAlias = Parameter;
 
 final private class FinalSubprogram = Subprogram;
@@ -125,16 +119,19 @@ private module GuardsInput implements
   }
 
   /**
-   * A `case` alternative. It matches when one of its choices does, and does not when
-   * its last choice does not; `when others` matches whatever is left.
+   * A `case` alternative. Its choices are matched at once, at the node of their list,
+   * which has a `match` and a `no-match` edge (`docs/cfg-design.md`); `when others`
+   * matches whatever is left.
    */
   class Case extends AstNode {
     Case() { this instanceof Raw::CaseStmtAlternative or this instanceof Raw::CaseExprAlternative }
 
-    private Raw::AdaNode getChoice(int i) {
-      result = this.(Raw::CaseStmtAlternative).getChoices().getChild(i) or
-      result = this.(Raw::CaseExprAlternative).getChoices().getChild(i)
+    private Raw::AlternativesList getChoices() {
+      result = this.(Raw::CaseStmtAlternative).getChoices() or
+      result = this.(Raw::CaseExprAlternative).getChoices()
     }
+
+    private Raw::AdaNode getChoice(int i) { result = this.getChoices().getChild(i) }
 
     Expr getSwitchExpr() {
       result = this.getParent().getParent().(Raw::CaseStmt).getExpr()
@@ -148,20 +145,14 @@ private module GuardsInput implements
       result = this.getChoice(0) and not exists(this.getChoice(1))
     }
 
-    private predicate choiceEdge(BasicBlock bb1, BasicBlock bb2, Raw::AdaNode choice, boolean match) {
-      choice = this.getChoice(_) and
-      bb1.getLastNode().injects(choice) and
+    private predicate choicesEdge(BasicBlock bb1, BasicBlock bb2, boolean match) {
+      bb1.getLastNode().injects(this.getChoices()) and
       bb2 = bb1.getASuccessor(any(MatchingSuccessor s | s.getValue() = match))
     }
 
-    predicate matchEdge(BasicBlock bb1, BasicBlock bb2) { this.choiceEdge(bb1, bb2, _, true) }
+    predicate matchEdge(BasicBlock bb1, BasicBlock bb2) { this.choicesEdge(bb1, bb2, true) }
 
-    predicate nonMatchEdge(BasicBlock bb1, BasicBlock bb2) {
-      exists(Raw::AdaNode last |
-        this.choiceEdge(bb1, bb2, last, false) and
-        not exists(this.getChoice(choiceIndex(last) + 1))
-      )
-    }
+    predicate nonMatchEdge(BasicBlock bb1, BasicBlock bb2) { this.choicesEdge(bb1, bb2, false) }
   }
 
   /** `A and then B`, and `A and B` on Booleans. */

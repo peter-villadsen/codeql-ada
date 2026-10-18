@@ -368,11 +368,14 @@ The `case` statement's selector does the same.
 Test: [`ql/test/library/Cfg/case-stmt/`](../ql/test/library/Cfg/case-stmt/)
 
 **Rule.** A `case` statement is the library's `Switch`: the selector is evaluated, then
-the alternatives are tested in order, each by its choices (`match` into the alternative's
-statements, `no-match` on to the next choice or alternative). A choice is matched but not
-evaluated: Ada requires choices to be static, so a choice is a leaf that cannot raise.
-**The last alternative matches whatever is left** (`matchAll`), since Ada's `case` covers
-every value; `when others` likewise. Every alternative converges after the `case`.
+the alternatives are tested in order, each by its **list of choices at once** (the
+`AlternativesList`, `when 2 | 3 =>`: `match` into the alternative's statements,
+`no-match` on to the next alternative). Ada requires choices to be static, so they are not
+evaluated one by one: the list is a leaf that cannot raise, and an alternative has a
+single `match` edge, which dominates its statements (so the Guards library finds the
+alternative to control them). **The last alternative matches whatever is left**
+(`matchAll`), since Ada's `case` covers every value; `when others` likewise. Every
+alternative converges after the `case`.
 
 ```
 l1: case N is
@@ -386,21 +389,21 @@ l8: end case;
 l9: <next statement>
 
 l1 CaseStmt    -> l1 N
-l1 N           -> l2 0             ; the first alternative's choice
-l2 0           -> l3 (10)          ; match
-l2 0           -> l4 1             ; no-match -- the next alternative
-l4 1           -> l5 (11)          ; match
-l4 1           -> l6 others        ; no-match
-l6 others      -> l7 (12)          ; match -- the only way out of `others`
+l1 N           -> l2 (0)           ; the first alternative's choices
+l2 (0)         -> l3 (10)          ; match
+l2 (0)         -> l4 (1)           ; no-match -- the next alternative
+l4 (1)         -> l5 (11)          ; match
+l4 (1)         -> l6 (others)      ; no-match
+l6 (others)    -> l7 (12)          ; match -- the only way out of `others`
 l3 AssignStmt  -> after CaseStmt
 l5 AssignStmt  -> after CaseStmt
 l7 AssignStmt  -> after CaseStmt
 after CaseStmt -> l9
 ```
 
-The alternatives are told apart by their choices only as far as matching order goes: no
-value is compared (so `when 0` is not known to exclude `when 1`), and every alternative
-is reachable.
+`(0)` names the alternative's list of choices. The alternatives are told apart only as
+far as matching order goes: no value is compared (so `when 0` is not known to exclude
+`when 1`), and every alternative is reachable.
 
 A selector that can raise gets an `exception` edge, exactly as an `if`'s condition does:
 
@@ -410,7 +413,7 @@ l2:    when others =>
 l3:       R := 20;
 l4: end case;
 
-l1 CallExpr -> l2 others        ; successor
+l1 CallExpr -> l2 (others)      ; successor
 l1 CallExpr -> exit (abnormal)  ; exception
 ```
 
@@ -945,10 +948,10 @@ l1 N         -> l1 AssignStmt
 ```
 l1: N := (case N is when 0 => 10, when others => 20);
 
-l1 N        -> l1 0              ; the first alternative's choice
-l1 0        -> l1 (10)           ; match
-l1 0        -> l1 others         ; no-match
-l1 others   -> l1 (20)           ; match
+l1 N        -> l1 (0)            ; the first alternative's choices
+l1 (0)      -> l1 (10)           ; match
+l1 (0)      -> l1 (others)       ; no-match
+l1 (others) -> l1 (20)           ; match
 l1 (10)     -> after CaseExpr
 l1 (20)     -> after CaseExpr
 ```
@@ -1038,7 +1041,7 @@ A CFG scope: gets its own disconnected graph with an entry and an exit. See Part
 
 Has a rule of its own in `ControlFlowGraphImpl.qll` (its evaluated children, a class of the library's AST signature, or steps): its successor structure is specified in Part 3 and pinned by a conformance test.
 
-`AcceptStmtWithStmts`, `AssignStmt`, `BeginBlock`, `BinOp`, `CallExpr`, `CallStmt`, `CaseExpr`, `CaseExprAlternative`, `CaseStmt`, `CaseStmtAlternative`, `DeclBlock`, `DefiningName`, `ElsifExprPart`, `ElsifStmtPart`, `ExceptionHandler`, `ExitStmt`, `ExtendedReturnStmt`, `ForLoopStmt`, `GotoStmt`, `HandledStmts`, `IfExpr`, `IfStmt`, `Label`, `LoopStmt`, `NamedStmt`, `OthersDesignator`, `PragmaNode`, `QuantifiedExpr`, `RaiseExpr`, `RaiseStmt`, `ReturnStmt`, `SelectStmt`, `StmtList`, `SubtypeIndication`, `UnOp`, `WhileLoopStmt`
+`AcceptStmtWithStmts`, `AlternativesList`, `AssignStmt`, `BeginBlock`, `BinOp`, `CallExpr`, `CallStmt`, `CaseExpr`, `CaseExprAlternative`, `CaseStmt`, `CaseStmtAlternative`, `DeclBlock`, `DefiningName`, `ElsifExprPart`, `ElsifStmtPart`, `ExceptionHandler`, `ExitStmt`, `ExtendedReturnStmt`, `ForLoopStmt`, `GotoStmt`, `HandledStmts`, `IfExpr`, `IfStmt`, `Label`, `LoopStmt`, `NamedStmt`, `PragmaNode`, `QuantifiedExpr`, `RaiseExpr`, `RaiseStmt`, `ReturnStmt`, `SelectStmt`, `StmtList`, `SubtypeIndication`, `UnOp`, `WhileLoopStmt`
 
 ### expression (41)
 
@@ -1052,13 +1055,13 @@ A statement with no rule of its own: a leaf that completes normally. It is in th
 
 `AbortStmt`, `AcceptStmt`, `DelayStmt`, `ErrorStmt`, `NullStmt`, `RequeueStmt`, `SimpleDeclStmt`, `TerminateAlternative`
 
-### structural (14)
+### structural (15)
 
 Read by the CFG but never a node: its parts are children of the construct that owns it (`getChild0`). See Part 1.
 
-`DeclarativePart`, `ElsePart`, `ExtendedReturnStmtObjectDecl`, `FinallyPart`, `ForLoopSpec`, `ForLoopVarDecl`, `LabelDecl`, `NamedStmtDecl`, `ObjectDecl`, `ParamSpec`, `RangeConstraint`, `SelectWhenPart`, `ThenAbortPart`, `WhileLoopSpec`
+`DeclarativePart`, `ElsePart`, `ExtendedReturnStmtObjectDecl`, `FinallyPart`, `ForLoopSpec`, `ForLoopVarDecl`, `LabelDecl`, `NamedStmtDecl`, `ObjectDecl`, `OthersDesignator`, `ParamSpec`, `RangeConstraint`, `SelectWhenPart`, `ThenAbortPart`, `WhileLoopSpec`
 
-### n/a (301)
+### n/a (300)
 
 Not control-relevant: nothing here is executed, so nothing is in the graph.
 
@@ -1078,9 +1081,9 @@ Not control-relevant: nothing here is executed, so nothing is in the graph.
 
 `AbstractFormalSubpDecl`, `AbstractStateDecl`, `AbstractSubpDecl`, `AcceptStmtBody`, `AnonymousExprDecl`, `AssertionLevelDecl`, `ComponentDecl`, `ConcreteFormalSubpDecl`, `DiscriminantSpec`, `EntryDecl`, `EntryIndexSpec`, `EnumLiteralDecl`, `ErrorDecl`, `ExceptionDecl`, `GenericFormalObjDecl`, `GenericFormalPackage`, `GenericFormalSubpDecl`, `GenericFormalTypeDecl`, `GenericPackageDecl`, `GenericPackageInstantiation`, `GenericPackageInternal`, `GenericPackageRenamingDecl`, `GenericSubpDecl`, `GenericSubpInstantiation`, `GenericSubpInternal`, `GenericSubpRenamingDecl`, `NoTypeObjectRenamingDecl`, `NullSubpDecl`, `NumberDecl`, `PackageBodyStub`, `PackageDecl`, `PackageRenamingDecl`, `ProtectedBody`, `ProtectedBodyStub`, `SingleProtectedDecl`, `SingleTaskDecl`, `SubpBodyStub`, `SubpDecl`, `SubpRenamingDecl`, `SyntheticCharEnumLit`, `SyntheticFormalParamDecl`, `SyntheticObjectDecl`, `SyntheticSubpDecl`, `TaskBodyStub`
 
-**lists** (24) — List wrappers whose elements the owning construct reads directly. `StmtList` and `AssocList` are the exceptions and appear above.
+**lists** (23) — List wrappers whose elements the owning construct reads directly. `StmtList` and `AssocList` are the exceptions and appear above.
 
-`AbstractStateDeclList`, `AdaNodeList`, `AlternativesList`, `AspectAssocList`, `BaseAssocList`, `CaseExprAlternativeList`, `CaseStmtAlternativeList`, `CompilationUnitList`, `ConstraintList`, `DeclList`, `DefiningNameList`, `DiscriminantChoiceList`, `DiscriminantSpecList`, `ElsifExprPartList`, `ElsifStmtPartList`, `EnumLiteralDeclList`, `FormatStringChunkList`, `NameList`, `ParamSpecList`, `ParentList`, `PragmaNodeList`, `SelectWhenPartList`, `UnconstrainedArrayIndexList`, `VariantList`
+`AbstractStateDeclList`, `AdaNodeList`, `AspectAssocList`, `BaseAssocList`, `CaseExprAlternativeList`, `CaseStmtAlternativeList`, `CompilationUnitList`, `ConstraintList`, `DeclList`, `DefiningNameList`, `DiscriminantChoiceList`, `DiscriminantSpecList`, `ElsifExprPartList`, `ElsifStmtPartList`, `EnumLiteralDeclList`, `FormatStringChunkList`, `NameList`, `ParamSpecList`, `ParentList`, `PragmaNodeList`, `SelectWhenPartList`, `UnconstrainedArrayIndexList`, `VariantList`
 
 **abstract base classes** (72) — Not instantiable: no node in a database has this kind.
 
