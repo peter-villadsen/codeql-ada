@@ -6,11 +6,12 @@ saying how the control-flow graph treats it, so that a future grammar addition
 cannot silently slip past the CFG (decision D-016).
 
 The verdicts are *derived from the implementation*, not maintained by hand:
-this script reads ``ControlFlowGraphImpl.qll`` to find which node kinds have a
-dedicated control-flow tree, which are reached by the generic post-order
-expression tree, which fall to the opaque-statement leaf, and which the
-implementation merely reads without ever turning into a node. Whatever is left
-is not control-relevant, and is grouped by why.
+this script reads ``ControlFlowGraphImpl.qll`` to find which node kinds it gives
+a rule of their own (children in ``getChild0``, a class of the shared library's
+AST signature, or steps), which are evaluated by the library's default rule
+(expressions; statements, as leaves), and which it merely reads without ever
+turning into a node. Whatever is left is not control-relevant, and is grouped by
+why.
 
     python scripts/check_cfg_coverage.py            # verify (CI); exit 1 on drift
     python scripts/check_cfg_coverage.py --write    # regenerate the appendix
@@ -39,33 +40,47 @@ END = "<!-- END GENERATED COVERAGE -->"
 
 # The two catch-all trees, whose `instanceof` targets are base classes rather
 # than a construct with its own shape.
-CATCH_ALL = {"AdaNode", "Stmt"}
+# Where the AST facts the graph is built from start (calls that may raise, jump
+# targets): the node kinds named after this marker are inspected, not shaped.
+HELPERS_MARKER = "// AST facts the graph is built from"
 
-# Structural parts the implementation reaches through an accessor rather than by
-# naming the type (`super.getElsePart()`, `super.getDecl()`, …), so the
-# `Raw::X` scan below cannot see them. Hand-curated; each is consumed directly
-# by its owning construct's tree and never becomes a graph node.
-STRUCTURAL_EXTRA = {
-    "ElsePart",                     # IfStmt.getElsePart(), SelectStmt.getElsePart()
-    "ThenAbortPart",                # SelectStmt.getThenAbortPart()
-    "NamedStmtDecl",                # NamedStmt.getDecl(), for the loop/block name
-    "LabelDecl",                    # Label.getDecl(), for the label name
-    "ExtendedReturnStmtObjectDecl",  # ExtendedReturnStmt.getDecl()
+# Node kinds the implementation reads but never makes nodes of: their parts are
+# children of the construct that owns them. Each maps to the text by which the
+# implementation reaches it (its `Raw::` name or an accessor); that text must occur
+# in the implementation (checked), so that a stale entry is noticed.
+STRUCTURAL = {
+    "DeclarativePart": "Raw::DeclarativePart",        # a body's or block's: its initialisers are children
+    "ObjectDecl": "Raw::ObjectDecl",                  # its initialiser is a child; the declaration is not
+    "ElsePart": "getElsePart()",                      # IfStmt / SelectStmt: the statements are the child
+    "ThenAbortPart": "getThenAbortPart()",            # select ... then abort: the statements are the child
+    "SelectWhenPart": "Raw::SelectWhenPart",          # a select alternative: its statements are the child
+    "FinallyPart": "getFinallyPart()",                # HandledStmts: the statements are the child
+    "WhileLoopSpec": "Raw::WhileLoopSpec",            # the condition is the loop's child
+    "ForLoopSpec": "Raw::ForLoopSpec",                # the iterable and the variable are the loop's children
+    "ForLoopVarDecl": "getVarDecl()",                 # its defining name is the loop's child
+    "RangeConstraint": "Raw::RangeConstraint",        # `for I in T range A .. B`: the range is the child
+    "ExtendedReturnStmtObjectDecl": "getDecl().getDefaultExpr()",  # its initialiser is the return's child
+    "ParamSpec": "Raw::ParamSpec",                    # its default is a body part (formalDefault)
+    "NamedStmtDecl": "Raw::NamedStmt",                # NamedStmt.getDecl(), for the loop's name
+    "LabelDecl": "Raw::Label",                        # Label.getDecl(), for the label's name
 }
+
+# Kinds `exprLike` names: evaluated by the default rule, not shaped.
+EXPR_LIKE_BLOCK = re.compile(r"private predicate exprLike\(.*?\n\}", re.S)
 
 VERDICTS = [
     ("scope", "A CFG scope: gets its own disconnected graph with an entry and an exit. "
               "See Part 1, Scopes."),
-    ("shaped", "Has a dedicated control-flow tree: its successor structure is "
-               "specified in Part 3 and pinned by a conformance test."),
-    ("expression", "Reached by `GenericPostOrderTree`: children are evaluated left to "
-                   "right, then the node itself. No construct-specific shape."),
-    ("opaque", "A statement with no dedicated tree, so `OpaqueStmtTree` makes it a leaf "
-               "that completes normally. It is in the graph; its internals are not "
-               "modelled (D-013)."),
-    ("structural", "Read by the CFG but never becoming a node: its owning construct's "
-                   "tree consumes it directly. Making these nodes would leak spurious "
-                   "reachable elements into the graph -- see Part 1."),
+    ("shaped", "Has a rule of its own in `ControlFlowGraphImpl.qll` (its evaluated "
+               "children, a class of the library's AST signature, or steps): its "
+               "successor structure is specified in Part 3 and pinned by a conformance "
+               "test."),
+    ("expression", "Evaluated by the library's default rule: its evaluated children "
+                   "left to right, then the node itself. No construct-specific shape."),
+    ("opaque", "A statement with no rule of its own: a leaf that completes normally. It "
+               "is in the graph; its internals are not modelled (D-013)."),
+    ("structural", "Read by the CFG but never a node: its parts are children of the "
+                   "construct that owns it (`getChild0`). See Part 1."),
     ("n/a", "Not control-relevant: nothing here is executed, so nothing is in the "
             "graph."),
 ]
@@ -124,41 +139,43 @@ def ancestors(ns, name):
 
 def classify(ns, impl):
     """Assigns every node kind a verdict, deriving the rules from the impl."""
-    shaped = set(re.findall(
-        r"class\s+\w+\s+extends\s+[\w:]+\s+instanceof\s+Raw::(\w+)", impl)) - CATCH_ALL
-    mentioned = set(re.findall(r"Raw::(\w+)", impl))
+    graph = impl.split(HELPERS_MARKER)[0]
 
     # the CfgScope characteristic predicate lists the scope kinds
-    charpred = re.search(r"CfgScope\(\)\s*\{(.*?)\}", impl, re.S)
+    charpred = re.search(r"CfgScope\(\)\s*\{(.*?)\}", graph, re.S)
     scopes = set(re.findall(r"Raw::(\w+)", charpred.group(1))) if charpred else set()
 
-    # kinds GenericPostOrderTree explicitly declines: they either have their own
-    # tree or are structural, so they are not plain post-order expressions
-    gpo = re.search(r"GenericPostOrderTree\(\)\s*\{(.*?)\n  \}", impl, re.S)
-    not_expr = set(re.findall(r"not this instanceof Raw::(\w+)", gpo.group(1))) if gpo else set()
+    expr_like = EXPR_LIKE_BLOCK.search(graph)
+    # the kinds `exprLike` lists (its parameter is typed `Raw::AdaNode`, not a kind)
+    expr_kinds = set(re.findall(r"Raw::(\w+)", expr_like.group(0))) - {"AdaNode"} if expr_like else set()
+    rest = EXPR_LIKE_BLOCK.sub("", graph)
+    if charpred:
+        rest = rest.replace(charpred.group(0), "")
+    mentioned = set(re.findall(r"Raw::(\w+)", rest))
+
+    stale = [k for k, how in STRUCTURAL.items() if how not in impl]
+    if stale:
+        raise SystemExit(f"error: STRUCTURAL names kinds the implementation no longer reads: {sorted(stale)}")
 
     verdict = {}
     for name, node in ns.items():
         anc = ancestors(ns, name)
         concrete = node["concrete"]
         is_op = name.startswith("Op") or "Op" in anc
-        if name in scopes:
-            verdict[name] = "scope"
-        elif name in shaped:
-            verdict[name] = "shaped"
-        elif concrete and not is_op and name not in not_expr and (
-                "Expr" in anc or name == "AssocList" or "BasicAssoc" in anc):
-            verdict[name] = "expression"
-        elif concrete and "Stmt" in anc:
-            verdict[name] = "opaque"
-        elif name in STRUCTURAL_EXTRA or (concrete and name in not_expr):
-            verdict[name] = "structural"
-        elif not concrete or is_op:
+        if not concrete or is_op:
             # abstract bases and operator tokens are never graph nodes, however
             # often the implementation names them
             verdict[name] = "n/a"
-        elif name in mentioned:
+        elif name in scopes:
+            verdict[name] = "scope"
+        elif name in STRUCTURAL:
             verdict[name] = "structural"
+        elif name in mentioned:
+            verdict[name] = "shaped"
+        elif name in expr_kinds or "Expr" in anc or "BasicAssoc" in anc:
+            verdict[name] = "expression"
+        elif "Stmt" in anc:
+            verdict[name] = "opaque"
         else:
             verdict[name] = "n/a"
     return verdict

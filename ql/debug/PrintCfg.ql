@@ -9,7 +9,7 @@
 
 import codeql.ada.test.CfgAnnotations
 
-from CfgNode pred, SuccessorType t, CfgNode succ
+from ControlFlowNode pred, SuccessorType t, ControlFlowNode succ
 where pred.getASuccessor(t) = succ
 select annotationFile(pred) as file, nodeKey(pred) as predecessor, t.toString() as label,
   nodeKey(succ) as successor, annotationLine(pred) as annotate_on_line

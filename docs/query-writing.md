@@ -148,7 +148,7 @@ statement by its leading keywords (`if ...`, `raise Constraint_Error`).
 `getAPrimaryQlClass()` gives the class.
 
 Reach for the semantic classes first, and the AST classes for the shape of the
-code. Beyond these, `codeql.ada.controlflow.Cfg` gives the control-flow graph
+code. Beyond these, `codeql.ada.controlflow.ControlFlowGraph` gives the control-flow graph
 (see `MissingPairedCall` below), and `codeql.ada.dataflow.DataFlow` /
 `TaintTracking` give data flow (see
 [Data flow and taint tracking](#data-flow-and-taint-tracking)).
@@ -333,7 +333,7 @@ built for; read it alongside this section.
 
 ```ql
 import ada
-import codeql.ada.controlflow.Cfg
+import codeql.ada.controlflow.ControlFlowGraph
 import codeql.ada.controlflow.PairedCalls
 
 // The module works on call statements (`Foo (X);`), as `OpenWithoutClose.ql` does.

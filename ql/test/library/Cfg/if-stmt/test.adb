@@ -1,27 +1,25 @@
 --  CFG conformance: if statements.
---  Covers if/elsif/else, an if with no else falling through to the join, and a
---  condition that can raise. See docs/cfg-design.md, "If statement".
+--  Covers if/elsif/else, an if with no else falling through to the point after
+--  it, and a condition that can raise. See docs/cfg-design.md, "If statement".
 --
---  The third if exists for contrast with the case statement: IfStmtTree lists
---  its guard conditions in propagatesAbnormal, so the call in the condition
---  gets an exception edge. The same call in a case selector does not -- see
---  the case-stmt family.
+--  The third if: a call in the condition gets an exception edge, as a call in a
+--  case selector does (the case-stmt family).
 procedure If_Stmt (A, B : Boolean; N : in out Integer) is
-   function Check (X : Integer) return Boolean is (X > 0);  -- $ edge=Identifier@10:52|successor|IntLiteral@10:56 edge=IntLiteral@10:56|successor|RelationOp@10:52 edge=ParenExpr@10:51|successor|exitExprFunction(normal)@10:4 edge=RelationOp@10:52|successor|ParenExpr@10:51 edge=enterExprFunction@10:4|successor|Identifier@10:52 edge=exitExprFunction(normal)@10:4|successor|exitExprFunction@10:4
+   function Check (X : Integer) return Boolean is (X > 0);  -- $ edge=Identifier@8:52|successor|IntLiteral@8:56 edge=IntLiteral@8:56|successor|RelationOp@8:52 edge=ParenExpr@8:51|successor|after:ParenExpr@8:51 edge=RelationOp@8:52|successor|after:RelationOp@8:52 edge=after:ParenExpr@8:51|successor|exitExprFunction(normal)@8:4 edge=after:RelationOp@8:52|successor|ParenExpr@8:51 edge=before:ParenExpr@8:51|successor|before:RelationOp@8:52 edge=before:RelationOp@8:52|successor|Identifier@8:52 edge=enterExprFunction@8:4|successor|before:ParenExpr@8:51 edge=exitExprFunction(normal)@8:4|successor|exitExprFunction@8:4
 begin
-   if A then  -- $ edge=Identifier@12:7|false|Identifier@14:10 edge=Identifier@12:7|true|IntLiteral@13:12
-      N := 1;  -- $ edge=AssignStmt@13:7|successor|IfStmt@12:4 edge=Identifier@13:7|successor|AssignStmt@13:7 edge=IntLiteral@13:12|successor|Identifier@13:7
-   elsif B then  -- $ edge=Identifier@14:10|false|IntLiteral@17:12 edge=Identifier@14:10|true|IntLiteral@15:12
-      N := 2;  -- $ edge=AssignStmt@15:7|successor|IfStmt@12:4 edge=Identifier@15:7|successor|AssignStmt@15:7 edge=IntLiteral@15:12|successor|Identifier@15:7
+   if A then  -- $ edge=Identifier@10:7|false|after-false:Identifier@10:7 edge=Identifier@10:7|true|after-true:Identifier@10:7 edge=after-false:Identifier@10:7|successor|ElsifStmtPart@12:4 edge=after-true:Identifier@10:7|successor|StmtList@11:7
+      N := 1;  -- $ edge=AssignStmt@11:7|successor|after:AssignStmt@11:7 edge=Identifier@11:7|successor|AssignStmt@11:7 edge=IntLiteral@11:12|successor|Identifier@11:7 edge=StmtList@11:7|successor|before:AssignStmt@11:7 edge=after:AssignStmt@11:7|successor|after:StmtList@11:7 edge=after:StmtList@11:7|successor|after:IfStmt@10:4 edge=before:AssignStmt@11:7|successor|IntLiteral@11:12
+   elsif B then  -- $ edge=Identifier@12:10|false|after-false:Identifier@12:10 edge=Identifier@12:10|true|after-true:Identifier@12:10 edge=after-false:Identifier@12:10|successor|StmtList@15:7 edge=after-true:Identifier@12:10|successor|StmtList@13:7
+      N := 2;  -- $ edge=AssignStmt@13:7|successor|after:AssignStmt@13:7 edge=ElsifStmtPart@12:4|successor|Identifier@12:10 edge=Identifier@13:7|successor|AssignStmt@13:7 edge=IntLiteral@13:12|successor|Identifier@13:7 edge=StmtList@13:7|successor|before:AssignStmt@13:7 edge=after:AssignStmt@13:7|successor|after:StmtList@13:7 edge=after:StmtList@13:7|successor|after:IfStmt@10:4 edge=before:AssignStmt@13:7|successor|IntLiteral@13:12
    else
-      N := 3;  -- $ edge=AssignStmt@17:7|successor|IfStmt@12:4 edge=Identifier@17:7|successor|AssignStmt@17:7 edge=IntLiteral@17:12|successor|Identifier@17:7
-   end if;  -- $ edge=IfStmt@12:4|successor|Identifier@20:7
+      N := 3;  -- $ edge=AssignStmt@15:7|successor|after:AssignStmt@15:7 edge=Identifier@15:7|successor|AssignStmt@15:7 edge=IntLiteral@15:12|successor|Identifier@15:7 edge=StmtList@15:7|successor|before:AssignStmt@15:7 edge=after:AssignStmt@15:7|successor|after:StmtList@15:7 edge=after:StmtList@15:7|successor|after:IfStmt@10:4 edge=before:AssignStmt@15:7|successor|IntLiteral@15:12
+   end if;  -- $ edge=IfStmt@10:4|successor|Identifier@10:7 edge=after:IfStmt@10:4|successor|IfStmt@18:4
 
-   if A then  -- $ edge=Identifier@20:7|false|IfStmt@20:4 edge=Identifier@20:7|true|IntLiteral@21:12
-      N := 4;  -- $ edge=AssignStmt@21:7|successor|IfStmt@20:4 edge=Identifier@21:7|successor|AssignStmt@21:7 edge=IntLiteral@21:12|successor|Identifier@21:7
-   end if;  -- $ edge=IfStmt@20:4|successor|Identifier@24:7
+   if A then  -- $ edge=Identifier@18:7|false|after-false:Identifier@18:7 edge=Identifier@18:7|true|after-true:Identifier@18:7 edge=after-false:Identifier@18:7|successor|after:IfStmt@18:4 edge=after-true:Identifier@18:7|successor|StmtList@19:7
+      N := 4;  -- $ edge=AssignStmt@19:7|successor|after:AssignStmt@19:7 edge=Identifier@19:7|successor|AssignStmt@19:7 edge=IntLiteral@19:12|successor|Identifier@19:7 edge=StmtList@19:7|successor|before:AssignStmt@19:7 edge=after:AssignStmt@19:7|successor|after:StmtList@19:7 edge=after:StmtList@19:7|successor|after:IfStmt@18:4 edge=before:AssignStmt@19:7|successor|IntLiteral@19:12
+   end if;  -- $ edge=IfStmt@18:4|successor|Identifier@18:7 edge=after:IfStmt@18:4|successor|IfStmt@22:4
 
-   if Check (N) then  -- $ edge=AssocList@24:14|successor|CallExpr@24:7 edge=CallExpr@24:7|exception|exitSubpBody(abnormal)@9:1 edge=CallExpr@24:7|false|IfStmt@24:4 edge=CallExpr@24:7|true|IntLiteral@25:12 edge=Identifier@24:14|successor|ParamAssoc@24:14 edge=Identifier@24:7|successor|Identifier@24:14 edge=ParamAssoc@24:14|successor|AssocList@24:14
-      N := 5;  -- $ edge=AssignStmt@25:7|successor|IfStmt@24:4 edge=Identifier@25:7|successor|AssignStmt@25:7 edge=IntLiteral@25:12|successor|Identifier@25:7
-   end if;  -- $ edge=IfStmt@24:4|successor|exitSubpBody(normal)@9:1
-end If_Stmt;  -- $ edge=enterSubpBody@9:1|successor|Identifier@12:7 edge=exitSubpBody(abnormal)@9:1|successor|exitSubpBody@9:1 edge=exitSubpBody(normal)@9:1|successor|exitSubpBody@9:1
+   if Check (N) then  -- $ edge=AssocList@22:14|successor|after:AssocList@22:14 edge=CallExpr@22:7|exception|exitSubpBody(abnormal)@7:1 edge=CallExpr@22:7|false|after-false:CallExpr@22:7 edge=CallExpr@22:7|true|after-true:CallExpr@22:7 edge=Identifier@22:14|successor|ParamAssoc@22:14 edge=Identifier@22:7|successor|before:AssocList@22:14 edge=ParamAssoc@22:14|successor|after:ParamAssoc@22:14 edge=after-false:CallExpr@22:7|successor|after:IfStmt@22:4 edge=after-true:CallExpr@22:7|successor|StmtList@23:7 edge=after:AssocList@22:14|successor|CallExpr@22:7 edge=after:ParamAssoc@22:14|successor|AssocList@22:14 edge=before:AssocList@22:14|successor|before:ParamAssoc@22:14 edge=before:CallExpr@22:7|successor|Identifier@22:7 edge=before:ParamAssoc@22:14|successor|Identifier@22:14
+      N := 5;  -- $ edge=AssignStmt@23:7|successor|after:AssignStmt@23:7 edge=Identifier@23:7|successor|AssignStmt@23:7 edge=IntLiteral@23:12|successor|Identifier@23:7 edge=StmtList@23:7|successor|before:AssignStmt@23:7 edge=after:AssignStmt@23:7|successor|after:StmtList@23:7 edge=after:StmtList@23:7|successor|after:IfStmt@22:4 edge=before:AssignStmt@23:7|successor|IntLiteral@23:12
+   end if;  -- $ edge=IfStmt@22:4|successor|before:CallExpr@22:7 edge=StmtList@10:4|successor|IfStmt@10:4 edge=after:IfStmt@22:4|successor|after:StmtList@10:4 edge=after:StmtList@10:4|successor|after:HandledStmts@9:6
+end If_Stmt;  -- $ edge=HandledStmts@9:6|successor|StmtList@10:4 edge=after:HandledStmts@9:6|successor|exitSubpBody(normal)@7:1 edge=enterSubpBody@7:1|successor|HandledStmts@9:6 edge=exitSubpBody(abnormal)@7:1|successor|exitSubpBody@7:1 edge=exitSubpBody(normal)@7:1|successor|exitSubpBody@7:1

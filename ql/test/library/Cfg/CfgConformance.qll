@@ -43,7 +43,7 @@
  * test.
  */
 
-import codeql.ada.controlflow.Cfg
+import codeql.ada.controlflow.ControlFlowGraph
 private import codeql.ada.test.CfgAnnotations
 private import codeql.ada.test.InlineExpectationsTest
 
@@ -51,7 +51,7 @@ private module CfgEdgeTest implements TestSig {
   string getARelevantTag() { result = "edge" }
 
   predicate hasActualResult(Location location, string element, string tag, string value) {
-    exists(CfgNode pred, SuccessorType t, CfgNode succ |
+    exists(ControlFlowNode pred, SuccessorType t, ControlFlowNode succ |
       pred.getASuccessor(t) = succ and
       location = pred.getLocation() and
       element = pred.toString() and

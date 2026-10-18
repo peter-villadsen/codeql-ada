@@ -18,7 +18,7 @@ from string file, int line, string annotation
 where
   annotation =
     "-- $ " +
-      strictconcat(CfgNode pred, SuccessorType t, CfgNode succ, string value |
+      strictconcat(ControlFlowNode pred, SuccessorType t, ControlFlowNode succ, string value |
         pred.getASuccessor(t) = succ and
         file = annotationFile(pred) and
         line = annotationLine(pred) and

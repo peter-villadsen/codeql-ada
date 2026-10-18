@@ -109,11 +109,11 @@ left-to-right steps. That is how the Ada constructs the library doesn't know get
 
 | Ada construct | Shared class / hook | As built |
 | --- | --- | --- |
-| Subprogram, expression function, task, entry, package body | `Callable` (= `CfgScope`) | Body parts via `callableGetBodyPart` with `CallableContext = Unit` (**D-030**): formal defaults, an entry's barrier, object-declaration initialisers in order, then the statements. An expression function's body is its expression (`callableGetBody`) |
+| Subprogram, expression function, task, entry, package body | `Callable` (= `CfgScope`) | Body parts via `callableGetBodyPart` with `CallableContext = Unit` (**D-031**): formal defaults, an entry's barrier, object-declaration initialisers in order, then the statements. An expression function's body is its expression (`callableGetBody`) |
 | Formal parameter | `Parameter` | `none()`. Defaults are body parts, as before |
 | Statement list | `BlockStmt` | pragmas and labels among its statements are leaves |
 | Handled sequence with handlers or `finally` | `TryStmt` | handlers are `CatchClause`s, ranked so that pragmas are skipped; `when others` is `catchAll`; GNAT `finally` is `getFinally` (**merged, not split**) |
-| `if … elsif … else`, `if` expression | none: own `step`s | Guard by guard, as Java's Kotlin `when` (**D-031**). An `if` expression is pre-order and gets its value from its branches (`propagatesValue`); `(if C then E)` is `True` when `C` is false |
+| `if … elsif … else`, `if` expression | none: own `step`s | Guard by guard, as Java's Kotlin `when` (**D-032**). An `if` expression is pre-order and gets its value from its branches (`propagatesValue`); `(if C then E)` is `True` when `C` is false |
 | `loop … end loop` | `LoopStmt` + own `step`s | through the library's `[LoopHeader]` node; only a jump leaves it |
 | `while C loop` | `WhileStmt` | |
 | `for … in/of …` | `ForeachStmt` | the iterable has emptiness successors; the loop variable's defining name is a node of its own (new) |
@@ -211,16 +211,16 @@ null/range check, condition always true/false. Each one is its own small plan en
 
 ---
 
-## 5. Decisions (to be recorded as D-028 onwards when taken)
+## 5. Decisions (D-029 onwards, recorded in `DECISIONS.md`)
 
 | # | Question | Leaning |
 | --- | --- | --- |
-| D-028 | Adopt shared `ControlFlowGraph`, drop CFG splitting | **Yes**, per reviewer |
-| D-029 | Build the new graph alongside the old one and diff, or rewrite in place | **Alongside**, with `CfgDiff.ql` |
-| D-030 | Body elaboration: own `Callable`, or `CallableContext` | **`callableGetBodyPart` with `Unit`**: each body (package bodies too) is a `Callable` whose parts are defaults, barrier, initialisers, statements |
-| D-031 | `elsif` representation | **Own `step`s**, like Java's Kotlin `when`; no synthetic AST |
-| D-032 | Public naming: Java's (`ControlFlowNode`), with old names deprecated for one release | Yes |
-| D-033 | Jump labels | **Resolved targets** (`TLoopLabel(loop)`, `TStmtLabel(label)`), never names |
+| D-029 | Adopt shared `ControlFlowGraph`, drop CFG splitting | **Yes**, per reviewer |
+| D-030 | Build the new graph alongside the old one and diff, or rewrite in place | **Alongside**, with `CfgDiff.ql` |
+| D-031 | Body elaboration: own `Callable`, or `CallableContext` | **`callableGetBodyPart` with `Unit`**: each body (package bodies too) is a `Callable` whose parts are defaults, barrier, initialisers, statements |
+| D-032 | `elsif` representation | **Own `step`s**, like Java's Kotlin `when`; no synthetic AST |
+| D-033 | Public naming: Java's (`ControlFlowNode`), with old names deprecated for one release | Yes |
+| D-034 | Jump labels | **Resolved targets** (`TLoopLabel(loop)`, `TStmtLabel(label)`), never names |
 
 ## 6. Accepted differences between the old and new graph
 
@@ -237,6 +237,7 @@ alire 136,555 / 135,954, libkeccak 43,963 / 43,961, adasat 3,222 / 3,217.
 | **`case` choices are nodes** (matched, not evaluated) | `case-stmt`, `cond-expr` | the library matches alternatives choice by choice | none |
 | **A `for` loop's variable is a node** | `loops-for`, `for-subtype` | where each iteration's value is defined; SSA can anchor the loop variable's write there (Step 3) | none yet |
 | **An empty `then abort` part of a `select` can complete** | libadalang-tools `pp/then_abort_part/a.adb` | the old graph had no path through an empty branch | none |
+| **An empty block is reached** (`declare begin end;`) | libadalang-tools pretty-printer inputs (found in Step 3's corpus run) | the old graph gave a block with no statements no node | `unreachable-statement` −3, all false positives |
 
 The AST-level diff can't see what splitting bought: the old graph's split copies of a
 `finally` part are the same AST nodes, so their edges coincide. That difference is
@@ -248,12 +249,12 @@ path-level, and it is what Step 5 checks.
 | --- | --- | --- |
 | 0 Reference reading | **done** 2026-10-17 | 5ef030c (plan) |
 | 1 `MakeSsa` | **done** 2026-10-17 | 78ed57f |
-| 2 New graph alongside | **done** 2026-10-17 | (this commit) |
-| 3 Switch over | not started | |
+| 2 New graph alongside | **done** 2026-10-17 | 1951f11 |
+| 3 Switch over | **done** 2026-10-17 | (this commit) |
 | 4 Guards | not started | |
 | 5 ControlFlowReachability | not started | |
 | 6 Precision queries | optional | |
-| 7 Docs + 0.4.0 | not started | |
+| 7 Docs + 0.4.0 | docs done in Step 3; release not started | |
 
 ## 8. Log
 
@@ -276,6 +277,28 @@ path-level, and it is what Step 5 checks.
   findings, all in §6. Fixed on the way: a loop variable's inner `Identifier` was
   evaluated, and choices that are calls (`Character_Type'Val (16#9#)` in gpr2's lexer)
   got exception edges; choices are now static leaves. Nothing consumes the new graph yet.
+- **2026-10-17** — Step 3: switched over. `ControlFlowGraphImpl.qll` is the new graph (the
+  old trees, `Completion.qll` and `FinallySplitting` deleted); public
+  `controlflow/ControlFlowGraph.qll` with Java's names (D-033); `Cfg.qll` deprecated
+  aliases; `BasicBlocks.qll`, `PairedCalls.qll`, SSA, data flow, the three CFG queries,
+  test helpers and debug queries ported (`CfgDiff`/`PrintCfg2` removed with the old
+  graph). A write or read is at the node that `injects` its AST node.
+  `getEnclosingCfgScope` is syntactic again, for declarations. Tests: 60/86 passed before
+  any fixture change, every query and data-flow test among them; the 23 CFG fixtures were
+  re-annotated with `scripts/annotate_cfg_test.py` after checking the graph against
+  `cfg-design.md`'s rules through Step 2's diff (§6) and by reading the `finally`, `case`,
+  loop, exit, short-circuit, exception and `select` annotations; SSA: only the loop phi
+  moved, to the loop variable (inputs and reads unchanged). **Corpus** (before = 1951f11 in
+  a worktree, after = this commit; before equals `corpus_query_baseline.json`): one count
+  changed, `ada/unreachable-statement` on libadalang-tools 10 → 7. The three were blocks
+  with empty statement lists (`declare begin end;` in pretty-printer test inputs), which
+  the old graph gave no node and so reported unreachable: false positives.
+  `function-missing-return` and `open-without-close` are unchanged on the corpus despite
+  the merged `finally` parts. Docs: `cfg-design.md` Parts 1–3 and 5 rewritten,
+  `check_cfg_coverage.py` ported and the appendix regenerated, `ssa-design.md`,
+  `query-writing.md`, `known-limitations.md`, `user-guide.md`, CHANGELOG (Unreleased
+  0.4.0), DECISIONS D-029–D-034 (renumbered from the plan's D-028–D-033: D-028 was
+  taken).
 
 ## 9. Open questions for the reviewer
 

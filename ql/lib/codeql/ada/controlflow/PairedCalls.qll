@@ -8,7 +8,7 @@
  * module for a user-supplied pair of calls.
  */
 
-import Cfg
+import ControlFlowGraph
 private import codeql.ada.ast.internal.Raw
 
 signature predicate isFirstCallSig(Raw::AdaNode call);
@@ -21,26 +21,26 @@ signature predicate isSecondCallSig(Raw::AdaNode call);
  * `second`.
  */
 module MissingPairedCall<isFirstCallSig/1 first, isSecondCallSig/1 second> {
-  private predicate isSecond(CfgNode n) { second(n.getAstNode()) }
+  private predicate isSecond(ControlFlowNode n) { second(any(Raw::AdaNode a | n.injects(a))) }
 
   /**
    * Holds if `n` can reach its scope's exit node without passing through a
    * `second` call, considering every CFG edge, including exceptional
    * (raise) ones.
    */
-  private predicate reachesExitStrict(CfgNode n) {
-    n instanceof ExitNode
+  private predicate reachesExitStrict(ControlFlowNode n) {
+    n instanceof ControlFlow::ExitNode
     or
-    exists(CfgNode succ | succ = n.getASuccessor() |
+    exists(ControlFlowNode succ | succ = n.getASuccessor() |
       not isSecond(succ) and reachesExitStrict(succ)
     )
   }
 
   /** As `reachesExitStrict`, but only following non-exceptional edges. */
-  private predicate reachesExitNormalOnly(CfgNode n) {
-    n instanceof ExitNode
+  private predicate reachesExitNormalOnly(ControlFlowNode n) {
+    n instanceof ControlFlow::ExitNode
     or
-    exists(CfgNode succ, SuccessorType t | succ = n.getASuccessor(t) |
+    exists(ControlFlowNode succ, SuccessorType t | succ = n.getASuccessor(t) |
       not t instanceof ExceptionSuccessor and
       not isSecond(succ) and
       reachesExitNormalOnly(succ)
@@ -56,7 +56,7 @@ module MissingPairedCall<isFirstCallSig/1 first, isSecondCallSig/1 second> {
    */
   predicate missingPairedCallStrict(Raw::AdaNode call) {
     first(call) and
-    exists(CfgNode n | n.getAstNode() = call | reachesExitStrict(n))
+    exists(ControlFlowNode n | n.injects(call) | reachesExitStrict(n))
   }
 
   /**
@@ -67,6 +67,6 @@ module MissingPairedCall<isFirstCallSig/1 first, isSecondCallSig/1 second> {
    */
   predicate missingPairedCallNormalPathsOnly(Raw::AdaNode call) {
     first(call) and
-    exists(CfgNode n | n.getAstNode() = call | reachesExitNormalOnly(n))
+    exists(ControlFlowNode n | n.injects(call) | reachesExitNormalOnly(n))
   }
 }

@@ -12,14 +12,13 @@
  * test into a tautology.
  */
 
-import codeql.ada.controlflow.Cfg
-import codeql.ada.controlflow.BasicBlocks
+import codeql.ada.controlflow.ControlFlowGraph
 import codeql.ada.test.CfgAnnotations
 import codeql.ada.test.SsaAnnotations
 import codeql.ada.dataflow.internal.SsaImpl
 
 private string readsAnnotation(SsaImpl::Definition def, string file, int line) {
-  exists(BasicBlock bb, int i, CfgNode use, string path |
+  exists(BasicBlock bb, int i, ControlFlowNode use, string path |
     SsaImpl::ssaDefReachesRead(_, def, bb, i) and
     use = bb.getNode(i) and
     def.getLocation().hasLocationInfo(path, _, _, line, _) and

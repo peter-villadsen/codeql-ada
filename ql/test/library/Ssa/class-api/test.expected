@@ -6,9 +6,9 @@ definitions
 | test.adb:10:4:19:12 | SSA param(N) | param | N | - | N |
 | test.adb:11:26:11:27 | SSA def(Total) | explicit | Total | 0 | - |
 | test.adb:14:7:16:16 | SSA phi(Total) | phi | - | - | - |
+| test.adb:14:11:14:12 | SSA phi(Total) | phi | - | - | - |
 | test.adb:14:16:14:22 | SSA def(I) | explicit | I | - | - |
 | test.adb:15:10:15:29 | SSA def(Total) | explicit | Total | ... + ... | - |
-| test.adb:15:19:15:24 | SSA phi(Total) | phi | - | - | - |
 | test.adb:17:7:17:18 | SSA def(R) | explicit | R | Total | - |
 | test.adb:21:19:21:20 | SSA def(X) | explicit | X | 1 | - |
 | test.adb:24:4:26:11 | SSA phi(X) | phi | - | - | - |
@@ -21,8 +21,8 @@ reads
 | test.adb:6:7:6:18 | SSA def(A) | test.adb:7:12:7:13 | A |
 | test.adb:10:4:19:12 | SSA param(N) | test.adb:14:21:14:22 | N |
 | test.adb:14:7:16:16 | SSA phi(Total) | test.adb:17:12:17:17 | Total |
+| test.adb:14:11:14:12 | SSA phi(Total) | test.adb:15:19:15:24 | Total |
 | test.adb:14:16:14:22 | SSA def(I) | test.adb:15:27:15:28 | I |
-| test.adb:15:19:15:24 | SSA phi(Total) | test.adb:15:19:15:24 | Total |
 | test.adb:17:7:17:18 | SSA def(R) | test.adb:18:14:18:15 | R |
 | test.adb:21:19:21:20 | SSA def(X) | test.adb:24:7:24:8 | X |
 | test.adb:24:4:26:11 | SSA phi(X) | test.adb:27:12:27:13 | X |
@@ -31,8 +31,8 @@ reads
 phiInputs
 | test.adb:14:7:16:16 | SSA phi(Total) | test.adb:11:26:11:27 | SSA def(Total) |
 | test.adb:14:7:16:16 | SSA phi(Total) | test.adb:15:10:15:29 | SSA def(Total) |
-| test.adb:15:19:15:24 | SSA phi(Total) | test.adb:11:26:11:27 | SSA def(Total) |
-| test.adb:15:19:15:24 | SSA phi(Total) | test.adb:15:10:15:29 | SSA def(Total) |
+| test.adb:14:11:14:12 | SSA phi(Total) | test.adb:11:26:11:27 | SSA def(Total) |
+| test.adb:14:11:14:12 | SSA phi(Total) | test.adb:15:10:15:29 | SSA def(Total) |
 | test.adb:24:4:26:11 | SSA phi(X) | test.adb:21:19:21:20 | SSA def(X) |
 | test.adb:24:4:26:11 | SSA phi(X) | test.adb:25:7:25:14 | SSA def(X) |
 priorDefinitions
@@ -41,7 +41,7 @@ priorDefinitions
 ultimate
 | test.adb:14:7:16:16 | SSA phi(Total) | test.adb:11:26:11:27 | SSA def(Total) |
 | test.adb:14:7:16:16 | SSA phi(Total) | test.adb:15:10:15:29 | SSA def(Total) |
-| test.adb:15:19:15:24 | SSA phi(Total) | test.adb:11:26:11:27 | SSA def(Total) |
-| test.adb:15:19:15:24 | SSA phi(Total) | test.adb:15:10:15:29 | SSA def(Total) |
+| test.adb:14:11:14:12 | SSA phi(Total) | test.adb:11:26:11:27 | SSA def(Total) |
+| test.adb:14:11:14:12 | SSA phi(Total) | test.adb:15:10:15:29 | SSA def(Total) |
 | test.adb:24:4:26:11 | SSA phi(X) | test.adb:21:19:21:20 | SSA def(X) |
 | test.adb:24:4:26:11 | SSA phi(X) | test.adb:25:7:25:14 | SSA def(X) |

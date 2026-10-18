@@ -1210,7 +1210,8 @@ Notes:
   values, entry calls, record components, array elements, standard containers and
   shared variables, some of them coarsely: all elements of an array count as one, and
   shared variables ignore the order of calls. The control-flow graph runs a GNAT
-  `finally` part however its sequence is left, except by `goto`.
+  `finally` part however its sequence is left, and afterwards may continue any way it
+  was entered.
   [known-limitations.md](known-limitations.md) lists each approximation and what it
   means for a query's results.
 

@@ -1,5 +1,47 @@
 # Changelog
 
+## Unreleased (0.4.0)
+
+The control-flow graph is now built on the shared `codeql.controlflow.ControlFlowGraph`
+library, as CodeQL for Java's and C#'s are, instead of `codeql.controlflow.Cfg`, which
+GitHub means to delete (D-029; `docs/cfg-migration-plan.md`). The database format and the
+extractor are unchanged.
+
+### Breaking changes
+
+- **The CFG API is `codeql.ada.controlflow.ControlFlowGraph`**, with Java's names:
+  `ControlFlowNode`, `ControlFlow::EntryNode`, `ControlFlow::NormalExitNode`,
+  `ControlFlow::ExceptionalExitNode`, `ControlFlow::ExitNode`, `BasicBlock`,
+  `EntryBasicBlock`, `dominatingEdge`, `CfgScope`. `codeql.ada.controlflow.Cfg` keeps the
+  old names as deprecated aliases for this release (`CfgNode`, `EntryNode`, `ExitNode`,
+  `AnnotatedExitNode`, `AstCfgNode`, `getScope()`). `getAControlFlowEntryNode` is gone: a
+  statement is reached when `exists(ControlFlowNode n | n.isBefore(s))`.
+- **The graph has more nodes.** Most AST nodes have a "before" and an "after" node besides
+  the one that represents them (`injects`), and a condition has one "after" node per value.
+  An `if`, `case` or loop is represented by a node at its start, not by a join at its end.
+- **`BasicBlocks.qll`** exports the shared library's blocks; the join and condition block
+  classes are gone (`ExitBlock` is new).
+
+### Control flow
+
+- **GNAT `finally` parts are merged, not split.** The end of a `finally` part continues
+  every way it was entered. CodeQL has moved away from splitting; queries that need the
+  distinction will use `ControlFlowReachability`.
+- **`and then` / `or else` no longer join their values.** The old graph let `A` false in
+  `if A and then B` lead to the `then` branch; the new one does not.
+- **A `goto` out of a sequence runs its `finally` part**, as Ada does.
+- **`case` alternatives are matched choice by choice**, the last matching what is left; a
+  choice is static and never raises.
+- **A `for` loop's variable has a node**, where each iteration starts.
+
+### SSA
+
+- **`codeql.ada.dataflow.Ssa`** is a class-based SSA API (`SsaDefinition`,
+  `SsaExplicitWrite`, `SsaParameterInit`, `SsaUncertainWrite`, `SsaPhiDefinition`,
+  `VariableWrite`), the shared `MakeSsa` module, as Java and C# have.
+- A loop's phi is now located at the loop variable rather than at the first read in the
+  body; the definitions it merges are unchanged.
+
 ## 0.3.0 (2026-10-11)
 
 Data flow follows much more (components, arrays, containers, shared variables,

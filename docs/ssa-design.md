@@ -10,7 +10,9 @@ not the narrative of how it was built.
 ## How this fits together
 
 - **`SsaImpl.qll`** (`ql/lib/codeql/ada/dataflow/internal/`) instantiates `codeql/ssa`'s
-  `Make` over the Phase 7 CFG's basic blocks, via a small `SsaCfg` renaming adapter.
+  `Make` over the control-flow graph's basic blocks (`SsaCfg`, the shared library's
+  `BasicBlock` module; see `docs/cfg-design.md`). A write or read is at the node that
+  represents its AST node (`injects`).
 - **`SourceVariable`** is a `Raw::DefiningName` introduced by an `ObjectDecl`, `ParamSpec`
   or `ForLoopVarDecl` (D-024) — not record components, array elements, dereferences,
   `NumberDecl`s or renamings.
@@ -107,13 +109,13 @@ X := X + 1;      --  l11
 ```
 
 - `def(X)@l7`, `def(X)@l9` — one write per branch.
-- `phi(X)@l6` (the `IfStmt`'s own post-order node, which is the join point per
-  `docs/cfg-design.md`'s if-stmt convergence rule) has both as inputs and reads l11's `X`.
+- `phi(X)@l6` (at the point after the `IfStmt`, where its branches converge per
+  `docs/cfg-design.md`'s if-statement rule) has both as inputs and reads l11's `X`.
 
 **Anchoring trap:** a phi's `Definition.getLocation()` is the *whole* branching construct's
 span (`6:4:10:11` here — from `if` to `end if;`), not a single point, because `codeql/ssa`
 defines a phi's location as `bb.getLocation()`, and a basic block's location is its first
-node's — here, the `IfStmt`'s own join node, whose location is the entire `IfStmt`'s span.
+node's — here, the `IfStmt`'s "after" node, whose location is the entire `IfStmt`'s span.
 The anchoring rule (comment's start line = result's end line) therefore puts a phi's
 `reads` annotation on the line where the branching construct *ends* (`end if;`, l10) —
 confirmed by a first, wrong attempt at l6 producing a "Missing result" failure pointing at
@@ -132,15 +134,18 @@ end loop;
 ```
 
 - `def(Total)@l5` and `def(Total)@l8` (the loop body's `AssignStmt`) both feed
-  `phi(Total)@l8:16` — the loop header's phi, merging the initial value with the back edge,
+  `phi(Total)@l7:8` — the loop header's phi, merging the initial value with the back edge,
   exactly as ordinary SSA loop handling requires. No special casing was needed to get this:
   it falls out of the shared framework once the single static write inside the body
   (`def(Total)@l8`) is on the loop's back-edge path, which it always is.
 - `def(I)@l7` (the `for`-loop variable, anchored at the iterable `1 .. 10`; see "For-loop
   variable" below) reads l8's `I`.
-- The phi's own location can coincide exactly with a read it reaches (both `8:16` here) when
-  the join block's first evaluated node is itself the read — not a bug, just how the two
-  independent renderings (`phi(V)@l:c` vs. `nodeKey`) happen to land on the same point.
+- The phi is at `7:8`, the loop variable `I`: in the control-flow graph each iteration
+  starts at the loop variable's node, so the block where the initial value and the back
+  edge meet starts there. (Up to 0.3.0 it was at `8:16`, the first read in the body.) A
+  phi's location is its block's first node, so it can also coincide exactly with a read it
+  reaches — not a bug, just how the two independent renderings (`phi(V)@l:c` vs.
+  `nodeKey`) happen to land on the same point.
 
 Test: `ql/test/library/Ssa/loop/`.
 
@@ -195,9 +200,12 @@ for I in 1 .. 10 loop
 end loop;
 ```
 
-`ForLoopVarDecl` and `ForLoopSpec` are both "n/a" in the CFG's coverage appendix — neither
-gets a node of its own, so `def(I)` is anchored at the position of the loop's *iterable*
-expression (`1 .. 10`) instead. This is a deliberate approximation: SSA does not need one
+`def(I)` is anchored at the position of the loop's *iterable* expression (`1 .. 10`).
+`ForLoopVarDecl` and `ForLoopSpec` are structural in the CFG's coverage appendix; the loop
+variable's defining name does have a node, where each iteration starts, and the write could
+move there (one write per iteration, the more precise anchor) — a possible refinement, not
+done in the CFG migration so as not to change SSA results with it. The iterable anchor is a
+deliberate approximation: SSA does not need one
 write per dynamic iteration, only a static definition that dominates every read inside the
 body (which the iterable's node does, including across the back edge) and a value origin a
 later taint step can use (the iterable itself — taint into the iterated collection should

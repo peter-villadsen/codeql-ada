@@ -10,20 +10,13 @@
  */
 
 import ada
-import codeql.ada.controlflow.Cfg
-
-/** Holds if `n` is part of the analyzed control flow, i.e. has a CFG node. */
-private predicate hasCfgNode(AdaNode n) { exists(AstCfgNode cfn | cfn.getAstNode() = n) }
+import codeql.ada.controlflow.ControlFlowGraph
 
 /**
- * Holds if `stmt` is ever executed: its control-flow entry point (which, for
- * a compound statement, may differ from `stmt` itself -- e.g. an `if`'s
- * guard) has a CFG node. This is deliberately not "`stmt` has a CFG node"
- * directly: a compound statement all of whose branches complete abruptly
- * (e.g. an `if`/`else` that both `return`) never reaches its own
- * normal-completion join node, even though it plainly executes.
+ * Holds if `stmt` is ever executed: control reaches the point before it. (Not "the node
+ * that represents it": that follows the parts of an assignment or a call statement.)
  */
-private predicate isReachable(AdaNode stmt) { hasCfgNode(getAControlFlowEntryNode(stmt)) }
+private predicate isReachable(AdaNode stmt) { exists(ControlFlowNode n | n.isBefore(stmt)) }
 
 from StmtList list, int i, AdaNode stmt
 where

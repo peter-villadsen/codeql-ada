@@ -320,3 +320,41 @@ D-001 chose MIT and left room for paid services around the tool. Uptake has been
 to make setting up a paid offering worth it, so there won't be one. The license stays MIT;
 the repository and its GHCR packs are made public, so anyone can install the tool and
 contribute to it. The 0.1 analysis in BURNDOWN.md is kept as history.
+
+## D-029 (2026-10-17) — The CFG is built on the shared `ControlFlowGraph` library, without splitting
+A CodeQL engineer pointed out that GitHub is moving away from CFG splitting and means to
+delete `codeql.controlflow.Cfg`, on which D-013 built the graph; Ruby has migrated, and
+Java and C# instantiate `codeql.controlflow.ControlFlowGraph`. The Ada graph now does too
+(0.4.0). GNAT `finally` parts are merged, not split: the end of one continues every way it
+was entered. A query that needs to tell those ways apart uses `ControlFlowReachability`,
+as Java's `NullMaybe.ql` does, rather than the graph paying for it everywhere. The pinned
+pack versions already ship the library, so no CLI or pack bump was needed. The migration
+is planned and tracked in `docs/cfg-migration-plan.md`.
+
+## D-030 (2026-10-17) — The new graph was built alongside the old one and compared
+Rather than rewriting the CFG in place, the new instantiation was built next to the old
+one, and `CfgDiff.ql` compared their successor relations per AST node over the CFG tests
+and the five corpus projects. Every difference was explained before the switch-over (the
+plan's §6). The comparison went with the old graph.
+
+## D-031 (2026-10-17) — A body's parts are the library's `callableGetBodyPart`
+Every body (subprogram, expression function, task, entry, package) is a `Callable`. Its
+parts, in order, are its formals' defaults, an entry's barrier, its object declarations'
+initialisers and its statements, given through `callableGetBodyPart` with a `Unit`
+context; an expression function's body is its expression.
+
+## D-032 (2026-10-17) — Ada constructs the library lacks get their own steps
+`if … elsif` (statement and expression), plain `loop`, `exit when` and `select` are not
+mapped onto a synthetic AST: they are ordinary nodes with their own steps, guard by guard,
+the way Java's instantiation handles Kotlin's `when`.
+
+## D-033 (2026-10-17) — The public CFG API uses Java's names
+`codeql.ada.controlflow.ControlFlowGraph` exports `ControlFlowNode`, `ControlFlow::EntryNode`,
+`ControlFlow::NormalExitNode`, `BasicBlock`, …, as CodeQL for Java does. The old names in
+`codeql.ada.controlflow.Cfg` (`CfgNode`, `AstCfgNode`, `AnnotatedExitNode`, …) are
+deprecated aliases for one release.
+
+## D-034 (2026-10-17) — Jumps are labelled with their resolved target
+An `exit` is labelled with the loop it leaves and a `goto` with the label statement it
+goes to, never with a name, so that only that loop or that statement list catches the
+jump: an unlabelled `exit` in a `case` alternative leaves the loop, not the `case`.

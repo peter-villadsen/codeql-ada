@@ -4,11 +4,8 @@
  *
  * `codeql/ssa`'s `Make` module wants a `BB::CfgSig<Location>` (basic blocks with
  * a `ControlFlowNode` type) plus an `InputSig` giving `SourceVariable` and the
- * `variableWrite`/`variableRead` relations. The Phase 7 CFG's own
- * `CfgImpl::BasicBlocks` nested module satisfies most of `CfgSig` already (it is
- * literally the shared `codeql/controlflow` framework's basic-block
- * construction) but does not export `ControlFlowNode` under that name, so
- * `SsaCfg` below is a thin renaming adapter, not a reimplementation.
+ * `variableWrite`/`variableRead` relations. The control-flow graph's basic blocks
+ * (`Impl::Cfg`, from the shared `codeql/controlflow` library) are that `CfgSig`.
  *
  * `SsaInput` was filled in incrementally: `SourceVariable` in Task 9.2.2,
  * `variableWrite`/`variableRead` in Task 9.2.3. See `docs/phase9.2-plan.md` for
@@ -19,23 +16,14 @@
  */
 
 private import codeql.ssa.Ssa as SsaLib
-private import codeql.controlflow.BasicBlock as BB
 private import codeql.ada.ast.internal.Raw
 private import codeql.ada.controlflow.internal.ControlFlowGraphImpl as Impl
 private import ada
 private import codeql.ada.internal.Formals as Formals
 private import codeql.ada.internal.CallResolution as CallResolution
 
-/** The `CfgSig` adapter: renames `CfgImpl`'s node type into the shape `codeql/ssa` wants. */
-private module SsaCfg implements BB::CfgSig<Raw::Location> {
-  class ControlFlowNode = Impl::CfgImpl::Node;
-
-  class BasicBlock = Impl::CfgImpl::BasicBlocks::BasicBlock;
-
-  class EntryBasicBlock = Impl::CfgImpl::BasicBlocks::EntryBasicBlock;
-
-  predicate dominatingEdge = Impl::CfgImpl::BasicBlocks::dominatingEdge/2;
-}
+/** The basic blocks of the control-flow graph, which implement `codeql/ssa`'s `CfgSig`. */
+private module SsaCfg = Impl::Cfg;
 
 /**
  * A local variable, parameter, or loop variable that SSA can track (D-024;
@@ -99,13 +87,12 @@ private string simpleNameText(Name n) {
 }
 
 /**
- * Gets the position `(bb, i)` of `astNode`'s control-flow node -- unique,
- * since this project's `Make` instantiation (`ControlFlowGraphImpl.qll`) does
- * not use CFG splitting, so an `AstCfgNode` maps to at most one node per AST
- * element. No result if `astNode` is unreachable.
+ * Gets the position `(bb, i)` of the control-flow node that represents `astNode`
+ * (`injects`): unique, as the graph is not split. No result if `astNode` is
+ * unreachable.
  */
 private predicate cfgPos(Raw::AdaNode astNode, SsaCfg::BasicBlock bb, int i) {
-  exists(Impl::CfgImpl::AstCfgNode n | n.getAstNode() = astNode | bb.getNode(i) = n)
+  exists(Impl::ControlFlowNode n | n.injects(astNode) | bb.getNode(i) = n)
 }
 
 /** Holds if `n` is the target of an assignment -- a write, never a read. */
@@ -218,7 +205,7 @@ private Raw::SubpSpec getSubpSpecOf(Raw::BasicDecl d) { result = Formals::callab
  * here: `ps` is tied directly to the one `SubpSpec` it is part of, and from
  * there to the one scope whose own `getSubpSpec()` is that same node.
  */
-private Impl::Scopes::CfgScope paramOwningScope(Raw::ParamSpec ps) {
+private Impl::CfgScope paramOwningScope(Raw::ParamSpec ps) {
   exists(Raw::SubpSpec spec |
     ps = spec.getSubpParams().getParams().getChild(_) and
     result.(Raw::BaseSubpBody).getSubpSpec() = spec
@@ -259,7 +246,7 @@ private predicate paramEntryWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariabl
     v = ps.(BasicDecl).getADefiningName() and
     nameNode = v and
     receivesArgument(ps) and
-    bb.(Impl::CfgImpl::BasicBlocks::EntryBasicBlock).getScope() = paramOwningScope(ps) and
+    bb.(SsaCfg::EntryBasicBlock).getScope() = paramOwningScope(ps) and
     i = 0
   )
 }
@@ -279,13 +266,13 @@ private predicate uninitializedWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVari
       v = d.(BasicDecl).getADefiningName() and
       not exists(d.getDefaultExpr()) and
       not exists(d.getRenamingClause()) and
-      bb.(Impl::CfgImpl::BasicBlocks::EntryBasicBlock).getScope() = Impl::getEnclosingCfgScope(d)
+      bb.(SsaCfg::EntryBasicBlock).getScope() = Impl::getEnclosingCfgScope(d)
     )
     or
     exists(Raw::ParamSpec ps |
       v = ps.(BasicDecl).getADefiningName() and
       ps.getMode() instanceof Raw::ModeOut and
-      bb.(Impl::CfgImpl::BasicBlocks::EntryBasicBlock).getScope() = paramOwningScope(ps)
+      bb.(SsaCfg::EntryBasicBlock).getScope() = paramOwningScope(ps)
     )
   )
 }
@@ -336,7 +323,7 @@ private predicate entryFormalWrite(SsaCfg::BasicBlock bb, int i, SsaSourceVariab
   exists(Raw::AdaNode completion | entryCompletionFormal(completion, v, _) |
     cfgPos(completion.(Raw::AcceptStmt), bb, i)
     or
-    bb.(Impl::CfgImpl::BasicBlocks::EntryBasicBlock).getScope() = completion.(Raw::EntryBody) and
+    bb.(SsaCfg::EntryBasicBlock).getScope() = completion.(Raw::EntryBody) and
     i = 0
   )
 }
@@ -450,8 +437,8 @@ Raw::BasicDecl resolveSubpRenaming(Raw::BasicDecl d) {
 
 /**
  * Gets the node whose CFG position represents "the call has now happened": the
- * wrapping `CallStmt`'s own node when `call` is a procedure-call statement (its own
- * node follows the call's, per `CallStmtTree`), or `call` itself otherwise.
+ * wrapping `CallStmt`'s own node when `call` is a procedure-call statement (its node
+ * follows the call's), or `call` itself otherwise.
  */
 private Raw::AdaNode callEffectNode(Raw::Expr call) {
   exists(Raw::CallStmt cs | cs.getCall() = call | result = cs)
@@ -460,8 +447,8 @@ private Raw::AdaNode callEffectNode(Raw::Expr call) {
 }
 
 /**
- * Holds if `v` is an `out`/`in out` formal parameter and `(bb, i)` is a
- * normal-completion `AnnotatedExitNode` of its owning scope.
+ * Holds if `v` is an `out`/`in out` formal parameter and `(bb, i)` is the
+ * normal exit node of its owning scope.
  *
  * `codeql/ssa`'s own `TWriteDef` construction requires a write to be followed
  * by a live read before it becomes a `Definition` at all (correct dead-store
@@ -476,12 +463,11 @@ private Raw::AdaNode callEffectNode(Raw::Expr call) {
  * Task 9.4's `out`/`in out` return-flow step needs.
  */
 private predicate outOrInOutParamExitRead(SsaCfg::BasicBlock bb, int i, SsaSourceVariable v) {
-  exists(Raw::ParamSpec ps, Raw::Mode mode, Impl::CfgImpl::AnnotatedExitNode exitNode |
+  exists(Raw::ParamSpec ps, Raw::Mode mode, Impl::ControlFlow::NormalExitNode exitNode |
     v = ps.(BasicDecl).getADefiningName() and
     mode = ps.getMode() and
     (mode instanceof Raw::ModeOut or mode instanceof Raw::ModeInOut) and
-    exitNode.getScope() = paramOwningScope(ps) and
-    exitNode.isNormal() and
+    exitNode.getEnclosingCallable() = paramOwningScope(ps) and
     bb.getNode(i) = exitNode
   )
 }
@@ -534,8 +520,8 @@ private predicate outOrInOutActualWriteAt(
 }
 
 /** Gets the CFG scope that evaluates `n`. */
-private Impl::Scopes::CfgScope nodeScope(Raw::AdaNode n) {
-  exists(Impl::CfgImpl::AstCfgNode cn | cn.getAstNode() = n | result = cn.getScope())
+private Impl::CfgScope nodeScope(Raw::AdaNode n) {
+  exists(Impl::ControlFlowNode cn | cn.injects(n) | result = cn.getEnclosingCallable())
 }
 
 /**
@@ -543,7 +529,7 @@ private Impl::Scopes::CfgScope nodeScope(Raw::AdaNode n) {
  * package variable, or a variable shared between a subprogram and the subprograms
  * nested in it.
  */
-private predicate writtenElsewhere(SsaSourceVariable v, Impl::Scopes::CfgScope sc) {
+private predicate writtenElsewhere(SsaSourceVariable v, Impl::CfgScope sc) {
   exists(Name n | v = getSourceVariable(n) and sc = nodeScope(n)) and
   exists(Raw::Expr value | variableStore(v, value) and not nodeScope(value) = sc)
 }
@@ -661,7 +647,7 @@ class VariableWrite extends TVariableWrite {
 /** An expression, with the control-flow node that evaluates it (see `cfgPos`). */
 class SsaExpr extends Raw::Expr {
   /** Gets the control-flow node that evaluates this expression. */
-  Impl::CfgImpl::Node getControlFlowNode() { result.(Impl::CfgImpl::AstCfgNode).getAstNode() = this }
+  Impl::ControlFlowNode getControlFlowNode() { result.injects(this) }
 }
 
 private class ParameterAlias = Parameter;
@@ -800,7 +786,7 @@ module SsaDataFlowInput implements SsaImpl::DataFlowIntegrationInputSig {
   class Guard extends Raw::Expr {
     /** Holds if evaluating this guard to `val` takes the CFG edge `bb1 -> bb2`. */
     predicate hasValueBranchEdge(SsaCfg::BasicBlock bb1, SsaCfg::BasicBlock bb2, GuardValue val) {
-      bb1.getLastNode().(Impl::CfgImpl::AstCfgNode).getAstNode() = this and
+      bb1.getLastNode().injects(this) and
       bb2 = bb1.getASuccessor(any(BooleanSuccessor s | s.getValue() = val))
     }
 
@@ -826,7 +812,7 @@ module SsaFlow = SsaImpl::DataFlowIntegration<SsaDataFlowInput>;
  * `idx` (see `formalAt`) and its `mode`, for a formal of a body with its own CFG --
  * the formals Task 9.4's parameter and return nodes are built for.
  */
-predicate formalOf(SsaSourceVariable v, Impl::Scopes::CfgScope c, int idx, Raw::Mode mode) {
+predicate formalOf(SsaSourceVariable v, Impl::CfgScope c, int idx, Raw::Mode mode) {
   exists(Raw::ParamSpec ps |
     v = ps.(BasicDecl).getADefiningName() and
     c = paramOwningScope(ps) and

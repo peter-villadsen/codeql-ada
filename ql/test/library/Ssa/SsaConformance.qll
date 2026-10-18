@@ -41,8 +41,7 @@
  * only after checking the graph against the rule in `docs/ssa-design.md`.
  */
 
-import codeql.ada.controlflow.Cfg
-import codeql.ada.controlflow.BasicBlocks
+import codeql.ada.controlflow.ControlFlowGraph
 private import codeql.ada.test.SsaAnnotations
 private import codeql.ada.test.InlineExpectationsTest
 private import codeql.ada.dataflow.internal.SsaImpl
@@ -51,7 +50,7 @@ private module SsaEdgeTest implements TestSig {
   string getARelevantTag() { result = "ssa" }
 
   predicate hasActualResult(Location location, string element, string tag, string value) {
-    exists(SsaImpl::Definition def, BasicBlock bb, int i, CfgNode use |
+    exists(SsaImpl::Definition def, BasicBlock bb, int i, ControlFlowNode use |
       SsaImpl::ssaDefReachesRead(_, def, bb, i) and
       use = bb.getNode(i) and
       location = def.getLocation() and

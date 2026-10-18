@@ -35,6 +35,11 @@ no corpus project uses sockets, AWS or GNATCOLL.SQL).
 - The extractor's glibc floor is 2.38 (Ubuntu 24.04), measured from the bundled
   libraries' symbol versions.
 
+- **CFG on the shared `ControlFlowGraph` library** (0.4.0, unreleased; D-029–D-034):
+  `finally` parts merged, not split; Java's API names; class-based SSA
+  (`codeql.ada.dataflow.Ssa`). Plan and log: `docs/cfg-migration-plan.md` (Steps 0–3
+  done; Guards and `ControlFlowReachability` next).
+
 **Next work (ask before starting):**
 - Tag `v0.3.0`, then the "After" steps of `docs/releasing.md` (check
   `codeql pack download` from a clean cache).

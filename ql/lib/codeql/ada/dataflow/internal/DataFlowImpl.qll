@@ -22,12 +22,12 @@ private import codeql.ada.internal.CallResolution as CallResolution
 private import ada
 
 /** Gets the scope of the CFG node that evaluates `e`. */
-private Impl::Scopes::CfgScope exprScope(Raw::Expr e) {
-  exists(Impl::CfgImpl::AstCfgNode n | n.getAstNode() = e | result = n.getScope())
+private Impl::CfgScope exprScope(Raw::Expr e) {
+  exists(Impl::ControlFlowNode n | n.injects(e) | result = n.getEnclosingCallable())
 }
 
 /** Gets the basic block that SSA data-flow node `n` belongs to. */
-private Impl::CfgImpl::BasicBlocks::BasicBlock ssaNodeBlock(SsaFlow::Node n) {
+private Impl::BasicBlock ssaNodeBlock(SsaFlow::Node n) {
   result = n.(SsaFlow::SsaNode).getBasicBlock()
   or
   result = n.(SsaFlow::WriteDefSourceNode).getDefinition().getBasicBlock()
@@ -51,7 +51,7 @@ private class Void extends TVoid {
 }
 
 /** Gets `d`'s completion, or `d` itself; only a result that is a CFG scope survives. */
-private Impl::Scopes::CfgScope bodyOf(Raw::BasicDecl d) { result = [d.(BasicDecl).getCompletion(), d] }
+private Impl::CfgScope bodyOf(Raw::BasicDecl d) { result = [d.(BasicDecl).getCompletion(), d] }
 
 /** Holds if `n` is `T'Class`. */
 private predicate isClassAttribute(Raw::Name n) {
@@ -235,7 +235,7 @@ module AdaDataFlowInput implements DF::InputSig<Raw::Location> {
   }
 
   /** A CFG scope: a subprogram body, expression function, task body, entry body or package body. */
-  class DataFlowCallable = Impl::Scopes::CfgScope;
+  class DataFlowCallable = Impl::CfgScope;
 
   class ReturnKind extends TReturnKind {
     string toString() {

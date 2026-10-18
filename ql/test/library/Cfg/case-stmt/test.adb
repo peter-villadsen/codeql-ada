@@ -2,23 +2,24 @@
 --  Covers a case with three alternatives (including others) and a case whose
 --  selector is a call. See docs/cfg-design.md, "Case statement".
 --
---  The second case pins the fix for defect C-2: CaseStmtTree now lists the
---  selector in propagatesAbnormal, so a selector that can raise gets an
---  exception edge, matching an if statement guard condition.
+--  The alternatives are tested in order, choice by choice; the last matches
+--  whatever is left, as Ada's case is exhaustive. The second case pins the fix
+--  for defect C-2: a selector that can raise gets an exception edge, as an if
+--  statement's condition does.
 procedure Case_Stmt (N : Integer; R : out Integer) is
-   function Id (X : Integer) return Integer is (X);  -- $ edge=Identifier@9:49|successor|ParenExpr@9:48 edge=ParenExpr@9:48|successor|exitExprFunction(normal)@9:4 edge=enterExprFunction@9:4|successor|Identifier@9:49 edge=exitExprFunction(normal)@9:4|successor|exitExprFunction@9:4
+   function Id (X : Integer) return Integer is (X);  -- $ edge=Identifier@10:49|successor|ParenExpr@10:48 edge=ParenExpr@10:48|successor|after:ParenExpr@10:48 edge=after:ParenExpr@10:48|successor|exitExprFunction(normal)@10:4 edge=before:ParenExpr@10:48|successor|Identifier@10:49 edge=enterExprFunction@10:4|successor|before:ParenExpr@10:48 edge=exitExprFunction(normal)@10:4|successor|exitExprFunction@10:4
 begin
-   case N is  -- $ edge=Identifier@11:9|successor|IntLiteral@13:15 edge=Identifier@11:9|successor|IntLiteral@15:15 edge=Identifier@11:9|successor|IntLiteral@17:15
-      when 0 =>
-         R := 10;  -- $ edge=AssignStmt@13:10|successor|CaseStmt@11:4 edge=Identifier@13:10|successor|AssignStmt@13:10 edge=IntLiteral@13:15|successor|Identifier@13:10
-      when 1 =>
-         R := 11;  -- $ edge=AssignStmt@15:10|successor|CaseStmt@11:4 edge=Identifier@15:10|successor|AssignStmt@15:10 edge=IntLiteral@15:15|successor|Identifier@15:10
-      when others =>
-         R := 12;  -- $ edge=AssignStmt@17:10|successor|CaseStmt@11:4 edge=Identifier@17:10|successor|AssignStmt@17:10 edge=IntLiteral@17:15|successor|Identifier@17:10
-   end case;  -- $ edge=CaseStmt@11:4|successor|Identifier@20:9
+   case N is  -- $ edge=Identifier@12:9|successor|CaseStmtAlternative@13:7
+      when 0 =>  -- $ edge=IntLiteral@13:12|match|after-true:IntLiteral@13:12 edge=IntLiteral@13:12|no-match|after-false:IntLiteral@13:12 edge=after-false:IntLiteral@13:12|no-match|after-false:CaseStmtAlternative@13:7 edge=after-true:IntLiteral@13:12|match|after-true:CaseStmtAlternative@13:7
+         R := 10;  -- $ edge=AssignStmt@14:10|successor|after:AssignStmt@14:10 edge=CaseStmtAlternative@13:7|successor|IntLiteral@13:12 edge=Identifier@14:10|successor|AssignStmt@14:10 edge=IntLiteral@14:15|successor|Identifier@14:10 edge=StmtList@14:10|successor|before:AssignStmt@14:10 edge=after-false:CaseStmtAlternative@13:7|successor|CaseStmtAlternative@15:7 edge=after-true:CaseStmtAlternative@13:7|successor|StmtList@14:10 edge=after:AssignStmt@14:10|successor|after:StmtList@14:10 edge=after:StmtList@14:10|successor|after:CaseStmt@12:4 edge=before:AssignStmt@14:10|successor|IntLiteral@14:15
+      when 1 =>  -- $ edge=IntLiteral@15:12|match|after-true:IntLiteral@15:12 edge=IntLiteral@15:12|no-match|after-false:IntLiteral@15:12 edge=after-false:IntLiteral@15:12|no-match|after-false:CaseStmtAlternative@15:7 edge=after-true:IntLiteral@15:12|match|after-true:CaseStmtAlternative@15:7
+         R := 11;  -- $ edge=AssignStmt@16:10|successor|after:AssignStmt@16:10 edge=CaseStmtAlternative@15:7|successor|IntLiteral@15:12 edge=Identifier@16:10|successor|AssignStmt@16:10 edge=IntLiteral@16:15|successor|Identifier@16:10 edge=StmtList@16:10|successor|before:AssignStmt@16:10 edge=after-false:CaseStmtAlternative@15:7|successor|CaseStmtAlternative@17:7 edge=after-true:CaseStmtAlternative@15:7|successor|StmtList@16:10 edge=after:AssignStmt@16:10|successor|after:StmtList@16:10 edge=after:StmtList@16:10|successor|after:CaseStmt@12:4 edge=before:AssignStmt@16:10|successor|IntLiteral@16:15
+      when others =>  -- $ edge=OthersDesignator@17:12|match|after-true:OthersDesignator@17:12 edge=after-true:OthersDesignator@17:12|match|after-true:CaseStmtAlternative@17:7
+         R := 12;  -- $ edge=AssignStmt@18:10|successor|after:AssignStmt@18:10 edge=CaseStmtAlternative@17:7|successor|OthersDesignator@17:12 edge=Identifier@18:10|successor|AssignStmt@18:10 edge=IntLiteral@18:15|successor|Identifier@18:10 edge=StmtList@18:10|successor|before:AssignStmt@18:10 edge=after-true:CaseStmtAlternative@17:7|successor|StmtList@18:10 edge=after:AssignStmt@18:10|successor|after:StmtList@18:10 edge=after:StmtList@18:10|successor|after:CaseStmt@12:4 edge=before:AssignStmt@18:10|successor|IntLiteral@18:15
+   end case;  -- $ edge=CaseStmt@12:4|successor|Identifier@12:9 edge=after:CaseStmt@12:4|successor|CaseStmt@21:4
 
-   case Id (N) is  -- $ edge=AssocList@20:13|successor|CallExpr@20:9 edge=CallExpr@20:9|exception|exitSubpBody(abnormal)@8:1 edge=CallExpr@20:9|successor|IntLiteral@22:15 edge=Identifier@20:13|successor|ParamAssoc@20:13 edge=Identifier@20:9|successor|Identifier@20:13 edge=ParamAssoc@20:13|successor|AssocList@20:13
-      when others =>
-         R := 20;  -- $ edge=AssignStmt@22:10|successor|CaseStmt@20:4 edge=Identifier@22:10|successor|AssignStmt@22:10 edge=IntLiteral@22:15|successor|Identifier@22:10
-   end case;  -- $ edge=CaseStmt@20:4|successor|exitSubpBody(normal)@8:1
-end Case_Stmt;  -- $ edge=enterSubpBody@8:1|successor|Identifier@11:9 edge=exitSubpBody(abnormal)@8:1|successor|exitSubpBody@8:1 edge=exitSubpBody(normal)@8:1|successor|exitSubpBody@8:1
+   case Id (N) is  -- $ edge=AssocList@21:13|successor|after:AssocList@21:13 edge=CallExpr@21:9|exception|exitSubpBody(abnormal)@9:1 edge=CallExpr@21:9|successor|after:CallExpr@21:9 edge=Identifier@21:13|successor|ParamAssoc@21:13 edge=Identifier@21:9|successor|before:AssocList@21:13 edge=ParamAssoc@21:13|successor|after:ParamAssoc@21:13 edge=after:AssocList@21:13|successor|CallExpr@21:9 edge=after:CallExpr@21:9|successor|CaseStmtAlternative@22:7 edge=after:ParamAssoc@21:13|successor|AssocList@21:13 edge=before:AssocList@21:13|successor|before:ParamAssoc@21:13 edge=before:CallExpr@21:9|successor|Identifier@21:9 edge=before:ParamAssoc@21:13|successor|Identifier@21:13
+      when others =>  -- $ edge=OthersDesignator@22:12|match|after-true:OthersDesignator@22:12 edge=after-true:OthersDesignator@22:12|match|after-true:CaseStmtAlternative@22:7
+         R := 20;  -- $ edge=AssignStmt@23:10|successor|after:AssignStmt@23:10 edge=CaseStmtAlternative@22:7|successor|OthersDesignator@22:12 edge=Identifier@23:10|successor|AssignStmt@23:10 edge=IntLiteral@23:15|successor|Identifier@23:10 edge=StmtList@23:10|successor|before:AssignStmt@23:10 edge=after-true:CaseStmtAlternative@22:7|successor|StmtList@23:10 edge=after:AssignStmt@23:10|successor|after:StmtList@23:10 edge=after:StmtList@23:10|successor|after:CaseStmt@21:4 edge=before:AssignStmt@23:10|successor|IntLiteral@23:15
+   end case;  -- $ edge=CaseStmt@21:4|successor|before:CallExpr@21:9 edge=StmtList@12:4|successor|CaseStmt@12:4 edge=after:CaseStmt@21:4|successor|after:StmtList@12:4 edge=after:StmtList@12:4|successor|after:HandledStmts@11:6
+end Case_Stmt;  -- $ edge=HandledStmts@11:6|successor|StmtList@12:4 edge=after:HandledStmts@11:6|successor|exitSubpBody(normal)@9:1 edge=enterSubpBody@9:1|successor|HandledStmts@11:6 edge=exitSubpBody(abnormal)@9:1|successor|exitSubpBody@9:1 edge=exitSubpBody(normal)@9:1|successor|exitSubpBody@9:1

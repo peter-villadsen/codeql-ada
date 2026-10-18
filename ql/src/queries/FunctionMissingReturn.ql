@@ -10,7 +10,7 @@
  */
 
 import ada
-import codeql.ada.controlflow.Cfg
+import codeql.ada.controlflow.ControlFlowGraph
 
 /**
  * Holds if `n` is a call statement whose callee did not resolve (typically a missing
@@ -33,23 +33,25 @@ private predicate isUnresolvedNoReturnCall(AdaNode n) {
  * unresolved call to a `No_Return` subprogram (`isUnresolvedNoReturnCall`): control
  * does not come back from such a call, although the CFG cannot know it.
  */
-private predicate reachableAvoidingNoReturn(CfgNode n, SubpBody body) {
-  n.(EntryNode).getScope() = body
+private predicate reachableAvoidingNoReturn(ControlFlowNode n, SubpBody body) {
+  n.(ControlFlow::EntryNode).getEnclosingCallable() = body
   or
-  exists(CfgNode pred |
+  exists(ControlFlowNode pred |
     reachableAvoidingNoReturn(pred, body) and
     n = pred.getASuccessor() and
-    not isUnresolvedNoReturnCall(pred.(AstCfgNode).getAstNode())
+    not isUnresolvedNoReturnCall(pred.getAstNode())
   )
 }
 
-/** Holds if some statement in `body` falls through (not via `return`) to the scope exit. */
+/**
+ * Holds if the statements of `body` can complete normally: a plain edge into the normal
+ * exit, which a `return` reaches by a return edge instead.
+ */
 private predicate fallsOffEnd(SubpBody body) {
-  exists(AstCfgNode last, AnnotatedExitNode exit, DirectSuccessor t |
+  exists(ControlFlowNode last, ControlFlow::NormalExitNode exit, DirectSuccessor t |
     last.getASuccessor(t) = exit and
-    exit.getScope() = body and
-    reachableAvoidingNoReturn(last, body) and
-    not isUnresolvedNoReturnCall(last.getAstNode())
+    exit.getEnclosingCallable() = body and
+    reachableAvoidingNoReturn(last, body)
   )
 }
 

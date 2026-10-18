@@ -24,7 +24,7 @@
  * expectations.
  */
 
-import codeql.ada.controlflow.Cfg
+import codeql.ada.controlflow.ControlFlowGraph
 private import codeql.ada.test.CfgAnnotations
 private import codeql.ada.dataflow.internal.SsaImpl
 
@@ -46,7 +46,7 @@ string defKey(SsaImpl::Definition d) {
 }
 
 /** Gets the annotation value for a def-use edge: `def reads use`. */
-string readsKey(SsaImpl::Definition def, CfgNode use) {
+string readsKey(SsaImpl::Definition def, ControlFlowNode use) {
   result = defKey(def) + "|reads|" + nodeKey(use)
 }
 

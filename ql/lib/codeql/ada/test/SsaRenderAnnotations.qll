@@ -14,20 +14,19 @@
  * reusing `getWriteNameOccurrence` rather than re-deriving it.
  */
 
-import codeql.ada.controlflow.Cfg
-import codeql.ada.controlflow.BasicBlocks
+import codeql.ada.controlflow.ControlFlowGraph
 private import codeql.ada.ast.internal.Raw
 private import ada
 private import codeql.ada.dataflow.internal.SsaImpl
 
 /**
  * Gets `(bb, i)` for `astNode`'s control-flow node, reconstructed from the
- * public `Cfg`/`BasicBlocks` API alone (the same relationship `SsaImpl.qll`'s
+ * public `ControlFlowGraph` API alone (the same relationship `SsaImpl.qll`'s
  * own private `cfgPos` expresses, but that predicate cannot be reused from
  * outside its file).
  */
 private predicate cfgPos(Raw::AdaNode astNode, BasicBlock bb, int i) {
-  exists(CfgNode n | n.getAstNode() = astNode | bb.getNode(i) = n)
+  exists(ControlFlowNode n | n.injects(astNode) | bb.getNode(i) = n)
 }
 
 /**

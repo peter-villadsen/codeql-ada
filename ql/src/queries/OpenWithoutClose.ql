@@ -24,7 +24,7 @@
  */
 
 import ada
-import codeql.ada.controlflow.Cfg
+import codeql.ada.controlflow.ControlFlowGraph
 import codeql.ada.controlflow.PairedCalls
 
 /**

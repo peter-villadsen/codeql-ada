@@ -28,7 +28,7 @@ private import ada
 
 /** Holds if `e` has a node in the control-flow graph, i.e. is evaluated. */
 private predicate hasCfgNode(Raw::Expr e) {
-  exists(Impl::CfgImpl::AstCfgNode n | n.getAstNode() = e)
+  exists(Impl::ControlFlowNode n | n.injects(e))
 }
 
 private newtype TNode =
