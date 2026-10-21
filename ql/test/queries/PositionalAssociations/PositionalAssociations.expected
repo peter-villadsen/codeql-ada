@@ -1,0 +1,1 @@
+| test.adb:14:4:14:20 | Box (...) | This call gives 4 actuals of the same type by position: name them. |

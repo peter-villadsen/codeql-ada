@@ -38,6 +38,7 @@
    "ada/open-without-close": 0,
    "ada/parameter-declarations": 0,
    "ada/path-injection": 0,
+   "ada/positional-associations": 0,
    "ada/pragma-suppress": 0,
    "ada/raise-predefined-exception": 0,
    "ada/self-comparison": 0,
@@ -94,6 +95,7 @@
    "ada/open-without-close": 0,
    "ada/parameter-declarations": 0,
    "ada/path-injection": 0,
+   "ada/positional-associations": 14,
    "ada/pragma-suppress": 0,
    "ada/raise-predefined-exception": 71,
    "ada/self-comparison": 0,
@@ -109,7 +111,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 4
   },
-  "total": 1078
+  "total": 1092
  },
  "gpr2": {
   "results": {
@@ -150,6 +152,7 @@
    "ada/open-without-close": 4,
    "ada/parameter-declarations": 7,
    "ada/path-injection": 0,
+   "ada/positional-associations": 15,
    "ada/pragma-suppress": 3,
    "ada/raise-predefined-exception": 91,
    "ada/self-comparison": 0,
@@ -165,7 +168,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 36
   },
-  "total": 5564
+  "total": 5579
  },
  "libadalang-tools": {
   "results": {
@@ -206,6 +209,7 @@
    "ada/open-without-close": 28,
    "ada/parameter-declarations": 3,
    "ada/path-injection": 0,
+   "ada/positional-associations": 4,
    "ada/pragma-suppress": 8,
    "ada/raise-predefined-exception": 161,
    "ada/self-comparison": 10,
@@ -221,7 +225,7 @@
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 2127
+  "total": 2131
  },
  "libkeccak": {
   "results": {
@@ -262,6 +266,7 @@
    "ada/open-without-close": 0,
    "ada/parameter-declarations": 0,
    "ada/path-injection": 0,
+   "ada/positional-associations": 0,
    "ada/pragma-suppress": 0,
    "ada/raise-predefined-exception": 2,
    "ada/self-comparison": 0,

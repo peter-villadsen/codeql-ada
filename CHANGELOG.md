@@ -145,6 +145,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/parameter-declarations`** (`Parameter_Declarations`): subprograms and entries
   with more than 10 parameters. Counts by mode and kind, and `single_out_parameter`, are
   in the library.
+- **`ada/positional-associations`** (`Positional_Associations`): calls with more than 3
+  positional actuals of the same type. Every kind of association and subrule is in the
+  library.
 
 
 ## 0.3.0 (2026-10-11)

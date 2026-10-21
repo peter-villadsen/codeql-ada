@@ -428,3 +428,15 @@ callable is a subprogram spec, a body without one, a generic subprogram or an en
 generic formal subprograms are not checked. The query checks `all_parameters, max 10`
 (AdaControl's `check` example). Left out: instantiations (counted from the generic in
 AdaControl).
+
+### Positional_Associations
+
+`ada/positional-associations`, library `PositionalAssociations`:
+`associations(site, list, kind)` for the kinds `call`, `discriminant`, `pragma`,
+`record_aggregate`, `array_aggregate`, `instantiation` and
+`enumeration_representation`; `isPositional(list, assoc)`; and the counts of the
+subrules: `allCount(list)` (`all`), `positionalCount(list)` (`all_positional`),
+`sameTypeCount(list)` (`same_type`) and `declaredCount(site)` (`declared`, for calls).
+Infix operators and attributes are not calls here; `not_operator` is
+`isPrefixedOperator(site)`. The query checks `same_type, 3, call`. Left out: `declared`
+for instantiations, and exempted entities (a condition on the target in your query).

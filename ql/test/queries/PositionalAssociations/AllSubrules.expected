@@ -1,0 +1,8 @@
+| test.adb:3:18:3:27 | (...) | enumeration_representation: all 3, all_positional 3, same_type 3, declared  |
+| test.adb:10:8:10:15 | SubtypeIndication | discriminant: all 1, all_positional 1, same_type 1, declared  |
+| test.adb:10:19:10:28 | (...) | record_aggregate: all 3, all_positional 3, same_type 3, declared  |
+| test.adb:11:15:11:24 | (...) | array_aggregate: all 3, all_positional 3, same_type 3, declared  |
+| test.adb:12:4:12:36 | pragma Assert | pragma: all 2, all_positional 2, same_type 1, declared  |
+| test.adb:14:4:14:20 | Box (...) | call: all 4, all_positional 4, same_type 4, declared 4 |
+| test.adb:16:4:16:25 | Box (...) | call: all 4, all_positional 3, same_type 3, declared 4 |
+| test.adb:17:4:17:19 | Mix (...) | call: all 3, all_positional 3, same_type 2, declared 3 |
