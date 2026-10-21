@@ -612,3 +612,37 @@ a condition on `n` in your query. The query checks `global` (AdaControl's exampl
 
 Left out: the variables `Check_Private_With` and `Ignore_Use_Clause` (use clauses never
 count as a use here), and subunits for `inherited`.
+
+### Simplifiable_Statements
+
+`ada/simplifiable-statements`, library `SimplifiableStatements`. `simplifiable(s, subrule)`
+holds for each subrule that applies to `s`, with the modifiers as their own names
+(`no_exit loop_for_while`, `no_exit while_for_for`); `forInForForOf(l, arr, fullRange)`
+gives `full_range`.
+
+| Subrule | Default |
+|---|---|
+| `block` (no name, declarations or handlers) | yes |
+| `dead`: static `False` conditions, paths after a `True` one, a repeated `elsif` condition, static empty `for` ranges | yes |
+| `dead`: statements after `return`, `requeue`, `goto`, `raise`, an unconditional `exit` (`deadAfterJump`) | no: `ada/unreachable-statement` reports them |
+| `for_in_for_for_of` | yes |
+| `for_for_slice` | yes |
+| `handler` (only `raise;`, unless a non-trivial `when others` follows) | yes |
+| `if` (an `else` of only `null`) | yes |
+| `if_for_case` | yes |
+| `if_not` | no: 298 corpus results, a style preference |
+| `loop` (`while True`) | yes |
+| `loop_for_while` | yes |
+| `nested_path` | no: 417 corpus results, a style preference |
+| `null` (among other statements, not labelled) | yes |
+| `true_if` | yes |
+| `unnecessary_if` | yes |
+| `while_for_for` | yes |
+
+Static means the literals `True` and `False` (possibly negated) and integer literals.
+`while_for_for` requires the step to be a statement of the loop body itself, not of a
+branch in it, which AdaControl does not; that is the `While_For_Expression => any`
+setting otherwise. Left out: `dead` for `case` branches over null ranges, the variables
+`Acceptable_Dead_Case` and `Acceptable_Indexings`, and the other values of
+`While_For_Expression`. `ada/useless-if` and `ada/empty-loop-body` are related fixed
+checks.

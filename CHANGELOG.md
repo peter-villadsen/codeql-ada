@@ -189,6 +189,11 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/with-clauses`** (`With_Clauses`): `with` clauses for a unit already withed, by the
   unit or its spec, or for an ancestor. Movable clauses, `multiple_names`, `inherited` and
   the clause kinds are in the library.
+- **`ada/simplifiable-statements`** (`Simplifiable_Statements`): statements that can be
+  removed or simplified: empty blocks, dead code under static conditions, handlers that
+  only re-raise, `if` chains that are `case` statements, loops that are `while`, `for`,
+  `for ... of` loops or slice assignments, and more. `nested_path` and `if_not` are in the
+  library.
 
 
 ## 0.3.0 (2026-10-11)

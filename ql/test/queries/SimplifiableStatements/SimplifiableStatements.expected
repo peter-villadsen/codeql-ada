@@ -1,0 +1,21 @@
+| test.adb:16:7:20:14 | if ... | This if assigns or returns its own condition: use the condition directly. |
+| test.adb:37:4:39:8 | begin ... | This block has no name, declarations or handlers: remove it. |
+| test.adb:45:4:47:11 | if ... | This code never runs: its condition is static. |
+| test.adb:48:4:52:11 | if ... | This condition is always True. |
+| test.adb:50:4:51:14 | ElsifStmtPart | This code never runs: its condition is static. |
+| test.adb:53:4:57:11 | if ... | These conditions compare one variable with static values: use a case statement. |
+| test.adb:55:4:56:14 | ElsifStmtPart | This code never runs: its condition is static. |
+| test.adb:58:4:60:13 | for ... loop | This code never runs: its condition is static. |
+| test.adb:61:4:63:13 | while ... loop | This code never runs: its condition is static. |
+| test.adb:64:4:66:13 | for ... loop | This loop can be a slice or aggregate assignment. |
+| test.adb:64:4:66:13 | for ... loop | This loop only uses its index to index one array: use for ... of. |
+| test.adb:67:4:69:13 | for ... loop | This loop can be a slice or aggregate assignment. |
+| test.adb:77:7:78:16 | ExceptionHandler | This handler only re-raises: remove it. |
+| test.adb:88:4:92:11 | if ... | This else part only holds null: remove it. |
+| test.adb:93:4:97:11 | if ... | These conditions compare one variable with static values: use a case statement. |
+| test.adb:103:4:106:13 | while ... loop | This while loop's condition is always True: use a plain loop. |
+| test.adb:107:4:110:13 | loop ... | This loop starts with its exit: use a while loop. |
+| test.adb:111:4:115:13 | loop ... | This loop starts with its exit: use a while loop. |
+| test.adb:117:4:117:9 | null; | This null statement does nothing: remove it. |
+| test.adb:119:4:123:11 | if ... | This if assigns or returns its own condition: use the condition directly. |
+| test.adb:124:4:127:13 | while ... loop | This while loop steps one variable to a bound: use a for loop. |
