@@ -11,6 +11,9 @@
  * - `in_generic`: anywhere in a generic unit, spec or body;
  * - `task_body`: directly in the declarations of a task body;
  * - `nested`: inside a subprogram, task or entry body, or a block (`Entities` only).
+ *
+ * `isAt` is where a declaration is; `useIsAt` is where a use of an entity is, as
+ * `Entities` means it (in a block at any depth, in a package body, ...).
  */
 
 private import codeql.ada.ast.internal.Raw
@@ -18,7 +21,9 @@ private import codeql.ada.ast.internal.Raw
 module Places {
   /** Holds if `n` is a body or block whose declarations are not at library level. */
   private predicate isLocalScope(Raw::AdaNode n) {
-    n instanceof Raw::BaseSubpBody or
+    // a renaming declares nothing inside it
+    n instanceof Raw::BaseSubpBody and not n instanceof Raw::SubpRenamingDecl
+    or
     n instanceof Raw::TaskBody or
     n instanceof Raw::EntryBody or
     n instanceof Raw::ProtectedBody or
@@ -66,5 +71,48 @@ module Places {
     place = "in_generic" and inGeneric(n)
     or
     place = "task_body" and declarativePart(n).getParent() instanceof Raw::TaskBody
+  }
+
+  /** Holds if `n` is a unit-like construct: a package spec or body, a subprogram, task, entry or protected body. */
+  private predicate isUnitLike(Raw::AdaNode n) {
+    n instanceof Raw::BasePackageDecl or
+    n instanceof Raw::PackageBody or
+    isLocalScope(n) and not n instanceof Raw::BlockStmt
+  }
+
+  /** Gets the innermost unit-like construct around `n`. */
+  private Raw::AdaNode innermostUnit(Raw::AdaNode n) {
+    result = n.getParent+() and
+    isUnitLike(result) and
+    not exists(Raw::AdaNode inner | inner = n.getParent+() and isUnitLike(inner) and inner.getParent+() = result)
+  }
+
+  /** Gets the innermost declarative part around `n`. */
+  private Raw::DeclarativePart innermostDeclarativePart(Raw::AdaNode n) {
+    result = n.getParent+() and
+    not exists(Raw::DeclarativePart inner | inner = n.getParent+() and inner.getParent+() = result)
+  }
+
+  /** Holds if a use `n` of an entity appears at `place` (AdaControl's `Entities` locations). */
+  predicate useIsAt(Raw::AdaNode n, string place) {
+    place = "block" and n.getParent+() instanceof Raw::BlockStmt
+    or
+    place = "library" and isLibraryLevel(n)
+    or
+    place = ["local", "nested"] and not isLibraryLevel(n)
+    or
+    place = "own" and innermostUnit(n) instanceof Raw::PackageBody
+    or
+    place = "public" and
+    innermostDeclarativePart(n) instanceof Raw::PublicPart and
+    innermostDeclarativePart(n).getParent() = innermostUnit(n)
+    or
+    place = "private" and
+    innermostDeclarativePart(n) instanceof Raw::PrivatePart and
+    innermostDeclarativePart(n).getParent() = innermostUnit(n)
+    or
+    place = "in_generic" and inGeneric(n)
+    or
+    place = "task_body" and innermostUnit(n) instanceof Raw::TaskBody
   }
 }

@@ -1,0 +1,2 @@
+| test.adb:8:19:8:37 | X'Unchecked_Access | 'Unchecked_Access skips the accessibility check: the access value may outlive X. |
+| test.adb:13:22:13:43 | Y'Unrestricted_Access | 'Unrestricted_Access skips the accessibility check: the access value may outlive Y. |

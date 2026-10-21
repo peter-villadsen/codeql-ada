@@ -13,6 +13,7 @@
    "ada/derivations": 0,
    "ada/direct-recursion": 0,
    "ada/empty-loop-body": 0,
+   "ada/entities": 0,
    "ada/exception-swallowing": 0,
    "ada/float-equality": 0,
    "ada/function-missing-return": 0,
@@ -53,6 +54,7 @@
    "ada/derivations": 0,
    "ada/direct-recursion": 17,
    "ada/empty-loop-body": 0,
+   "ada/entities": 4,
    "ada/exception-swallowing": 2,
    "ada/float-equality": 0,
    "ada/function-missing-return": 0,
@@ -77,7 +79,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 4
   },
-  "total": 430
+  "total": 434
  },
  "gpr2": {
   "results": {
@@ -93,6 +95,7 @@
    "ada/derivations": 2,
    "ada/direct-recursion": 78,
    "ada/empty-loop-body": 1,
+   "ada/entities": 51,
    "ada/exception-swallowing": 3,
    "ada/float-equality": 0,
    "ada/function-missing-return": 1,
@@ -117,7 +120,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 36
   },
-  "total": 1959
+  "total": 2010
  },
  "libadalang-tools": {
   "results": {
@@ -133,6 +136,7 @@
    "ada/derivations": 11,
    "ada/direct-recursion": 18,
    "ada/empty-loop-body": 49,
+   "ada/entities": 90,
    "ada/exception-swallowing": 0,
    "ada/float-equality": 2,
    "ada/function-missing-return": 2,
@@ -157,7 +161,7 @@
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 635
+  "total": 725
  },
  "libkeccak": {
   "results": {
@@ -173,6 +177,7 @@
    "ada/derivations": 0,
    "ada/direct-recursion": 0,
    "ada/empty-loop-body": 0,
+   "ada/entities": 0,
    "ada/exception-swallowing": 0,
    "ada/float-equality": 0,
    "ada/function-missing-return": 0,

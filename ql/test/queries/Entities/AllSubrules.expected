@@ -1,0 +1,9 @@
+| test.adb:3:41:3:52 | Debug.Trace | uses Debug.Trace (instance only: false) at library, own |
+| test.adb:4:30:4:40 | Debug.Dump | uses Debug.Dump (instance only: false) at library, own |
+| test.adb:8:19:8:37 | X'Unchecked_Access | attribute Unchecked_Access |
+| test.adb:15:7:15:18 | Debug.Trace | uses Debug.Trace (instance only: false) at local, nested |
+| test.adb:16:7:16:10 | Log | uses Debug.Trace (instance only: false) at local, nested |
+| test.adb:17:7:17:15 | Dump_Int | uses Debug.Dump (instance only: false) at local, nested |
+| test.adb:17:7:17:15 | Dump_Int | uses Debug.Dump (instance only: true) at local, nested |
+| test.adb:20:10:20:21 | Debug.Trace | uses Debug.Trace (instance only: false) at block, local, nested |
+| test.adb:24:4:24:15 | Debug.Trace | uses Debug.Trace (instance only: false) at library, own |

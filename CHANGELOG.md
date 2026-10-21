@@ -106,6 +106,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/derivations`** (`Derivations`): a primitive operation of a derived tagged type
   that overrides an inherited one, declared without `overriding`. The library has `from`,
   `max_parents`, `max_depth`, and the other indicator checks.
+- **`ada/entities`** (`Entities`): `'Unchecked_Access` and `'Unrestricted_Access`. Uses
+  of any entity, through renamings and instances, at AdaControl's places, are in the
+  library.
 
 
 ## 0.3.0 (2026-10-11)

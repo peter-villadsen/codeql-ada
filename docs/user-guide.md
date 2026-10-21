@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 35 queries are tested on a
+The project is pre-1.0. The extractor, the library and 36 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -438,6 +438,7 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/derivations` | Overriding operation without indicator | recommendation |
 | `ada/direct-recursion` | Direct recursion | recommendation |
 | `ada/empty-loop-body` | Empty loop body | warning |
+| `ada/entities` | Use of an unchecked access attribute | warning |
 | `ada/exception-swallowing` | Exception handler swallows all exceptions | warning |
 | `ada/float-equality` | Floating-point equality comparison | warning |
 | `ada/function-missing-return` | Function missing return | error |

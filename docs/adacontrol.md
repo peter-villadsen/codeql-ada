@@ -211,3 +211,19 @@ A primitive overrides when an ancestor (parent or progenitor, at any depth) has 
 primitive function or procedure of the same name and number of parameters, controlled by
 the same parameter. Left out: `indicator` on untagged types, and types derived in
 generics followed into their instances.
+
+### Entities
+
+`ada/entities`, library `Entities` (and `Places`).
+`ada/unchecked-conversion` and `ada/unchecked-deallocation` are two fixed entities.
+
+| Subrule | Library | Default |
+|---|---|---|
+| an entity | `uses(n, entity, false)`: by its name or a renaming | no |
+| `instance` | `uses(n, entity, true)`: through an instance of generic `entity` | no |
+| `all '<attribute>` | `usesAttribute(a, name)` | `'Unchecked_Access`, `'Unrestricted_Access` |
+| places | `Places::useIsAt(n, place)`: `block`, `library`, `local`, `nested`, `own`, `public`, `private`, `in_generic`, `task_body` | all |
+
+Left out: entities declared inside a generic, followed into each instance (a use through
+an instance resolves to the generic's declaration, so `uses` finds it as a use of the
+generic's entity).
