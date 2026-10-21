@@ -53,6 +53,7 @@
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
    "ada/statements": 0,
+   "ada/terminating-tasks": 0,
    "ada/todo-comment": 2,
    "ada/type-initial-values": 5,
    "ada/unchecked-conversion": 3,
@@ -124,6 +125,7 @@
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
    "ada/statements": 10,
+   "ada/terminating-tasks": 1,
    "ada/todo-comment": 48,
    "ada/type-initial-values": 121,
    "ada/unchecked-conversion": 1,
@@ -139,7 +141,7 @@
    "ada/warnings-off": 4,
    "ada/with-clauses": 9
   },
-  "total": 1414
+  "total": 1415
  },
  "gpr2": {
   "results": {
@@ -195,6 +197,7 @@
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
    "ada/statements": 158,
+   "ada/terminating-tasks": 7,
    "ada/todo-comment": 58,
    "ada/type-initial-values": 256,
    "ada/unchecked-conversion": 74,
@@ -210,7 +213,7 @@
    "ada/warnings-off": 36,
    "ada/with-clauses": 44
   },
-  "total": 7241
+  "total": 7248
  },
  "libadalang-tools": {
   "results": {
@@ -266,6 +269,7 @@
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
    "ada/statements": 43,
+   "ada/terminating-tasks": 7,
    "ada/todo-comment": 14,
    "ada/type-initial-values": 127,
    "ada/unchecked-conversion": 7,
@@ -281,7 +285,7 @@
    "ada/warnings-off": 55,
    "ada/with-clauses": 3
   },
-  "total": 3156
+  "total": 3163
  },
  "libkeccak": {
   "results": {
@@ -337,6 +341,7 @@
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
    "ada/statements": 0,
+   "ada/terminating-tasks": 0,
    "ada/todo-comment": 0,
    "ada/type-initial-values": 29,
    "ada/unchecked-conversion": 8,

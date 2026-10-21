@@ -1,0 +1,5 @@
+| test.adb:15:4:18:13 | Once | Task Once can terminate: its statements can complete. |
+| test.adb:21:4:27:14 | Exits | Task Exits can terminate: its statements can complete. |
+| test.adb:30:4:35:19 | While_Loop | Task While_Loop can terminate: its statements can complete. |
+| test.adb:40:4:49:15 | Server | Task Server can terminate: it has a terminate alternative. |
+| test.adb:52:4:60:16 | Failing | Task Failing can terminate: an exception it raises can propagate out of it. |

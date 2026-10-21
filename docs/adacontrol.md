@@ -646,3 +646,17 @@ setting otherwise. Left out: `dead` for `case` branches over null ranges, the va
 `Acceptable_Dead_Case` and `Acceptable_Indexings`, and the other values of
 `While_For_Expression`. `ada/useless-if` and `ada/empty-loop-body` are related fixed
 checks.
+
+### Terminating_Tasks
+
+`ada/terminating-tasks`, library `TerminatingTasks`: `isTerminating(t, reason)` for a task
+body that can terminate because its statements can complete (`completesNormally(t)`, the
+normal exit reached along a feasible path), because an explicit `raise` propagates out of
+it (`raisesOut(t)`: an unhandled exception ends a task silently), or because it has a
+`terminate` alternative (`terminateAlternative(t)`).
+
+AdaControl judges by the shape of the last statement (not an unconditional loop, or a loop
+that is exited); the control-flow graph decides it here, so a loop left only by a `goto`,
+or a `raise` caught by a handler inside the loop, is judged by where control can really
+go. Exceptions that calls may raise are not followed (every call may raise), nor aborts,
+as in AdaControl.

@@ -194,6 +194,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   only re-raise, `if` chains that are `case` statements, loops that are `while`, `for`,
   `for ... of` loops or slice assignments, and more. `nested_path` and `if_not` are in the
   library.
+- **`ada/terminating-tasks`** (`Terminating_Tasks`): tasks whose body can complete, let an
+  explicit `raise` out, or accept a `terminate` alternative.
 
 
 ## 0.3.0 (2026-10-11)
