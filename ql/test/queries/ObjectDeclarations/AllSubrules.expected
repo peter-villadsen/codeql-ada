@@ -1,0 +1,16 @@
+| test.adb:7:4:7:48 | Register | address_not_volatile |
+| test.adb:7:4:7:48 | Register | type Integer (exact: true) |
+| test.adb:8:4:8:58 | Device | type Integer (exact: true) |
+| test.adb:9:4:9:56 | Status | type Integer (exact: true) |
+| test.adb:10:4:10:23 | Old | address_not_volatile |
+| test.adb:10:4:10:23 | Old | type Integer (exact: true) |
+| test.adb:12:4:12:37 | Shared | type Integer (exact: true) |
+| test.adb:12:4:12:37 | Shared | volatile_no_address |
+| test.adb:13:4:13:23 | Flag | type Integer (exact: true) |
+| test.adb:13:4:13:23 | Flag | volatile_no_address |
+| test.adb:15:4:15:26 | S | span 3 |
+| test.adb:16:4:16:25 | T | span 2 |
+| test.adb:16:4:16:25 | T | type Integer (exact: false) |
+| test.adb:17:4:17:51 | C | span 11 |
+| test.adb:17:4:17:51 | C | type Integer (exact: true) |
+| test.adb:18:4:18:28 | N | type Integer (exact: false) |

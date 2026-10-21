@@ -1,0 +1,2 @@
+| test.adb:7:4:7:48 | Register | Register has an address clause but is not volatile. |
+| test.adb:10:4:10:23 | Old | Old has an address clause but is not volatile. |

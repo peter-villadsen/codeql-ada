@@ -34,6 +34,7 @@
    "ada/max-statement-nesting": 5,
    "ada/naming-convention": 0,
    "ada/not-selected-name": 0,
+   "ada/object-declarations": 1,
    "ada/open-without-close": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
@@ -51,7 +52,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 1
   },
-  "total": 44
+  "total": 45
  },
  "alire": {
   "results": {
@@ -88,6 +89,7 @@
    "ada/max-statement-nesting": 8,
    "ada/naming-convention": 27,
    "ada/not-selected-name": 0,
+   "ada/object-declarations": 2,
    "ada/open-without-close": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
@@ -105,7 +107,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 4
   },
-  "total": 1076
+  "total": 1078
  },
  "gpr2": {
   "results": {
@@ -142,6 +144,7 @@
    "ada/max-statement-nesting": 195,
    "ada/naming-convention": 1409,
    "ada/not-selected-name": 58,
+   "ada/object-declarations": 68,
    "ada/open-without-close": 4,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 3,
@@ -159,7 +162,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 36
   },
-  "total": 5489
+  "total": 5557
  },
  "libadalang-tools": {
   "results": {
@@ -196,6 +199,7 @@
    "ada/max-statement-nesting": 89,
    "ada/naming-convention": 742,
    "ada/not-selected-name": 0,
+   "ada/object-declarations": 0,
    "ada/open-without-close": 28,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 8,
@@ -250,6 +254,7 @@
    "ada/max-statement-nesting": 0,
    "ada/naming-convention": 4,
    "ada/not-selected-name": 0,
+   "ada/object-declarations": 0,
    "ada/open-without-close": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,

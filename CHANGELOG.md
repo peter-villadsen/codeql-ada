@@ -140,6 +140,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/not-selected-name`** (`Not_Selected_Name`): types named `Object`, `Instance` or
   `T` used by their simple name outside their own unit. Other entities and exception
   places are in the library.
+- **`ada/object-declarations`** (`Object_Declarations`): variables with an address but
+  not volatile. `min_integer_span`, `type` and `volatile_no_address` are in the library.
 
 
 ## 0.3.0 (2026-10-11)

@@ -399,3 +399,19 @@ exception places `none`, `unit`, `compilation` and `family`. The query checks ty
 named `Object`, `Instance` or `T` with `unit`, after AdaControl's tip. Left out: a
 prefix that itself must be selected ("only one level of prefix is required, unless the
 prefix itself is the target of a rule").
+
+### Object_Declarations
+
+`ada/object-declarations`, library `ObjectDeclarations`.
+
+| Subrule | Library | Default |
+|---|---|---|
+| `min_integer_span` | `integerSpan(d)`, where the range has literal bounds | no |
+| `type` | `hasType(d, t, exact)`: `t` or a subtype of it | no |
+| `volatile_no_address` | `volatileNoAddress(d)` | no |
+| `address_not_volatile` | `addressNotVolatile(d)` | yes |
+
+`constant` and `variable` are `isObject(d, isConstant)`. Volatile means a `Volatile`,
+`Atomic` or `Volatile_Full_Access` aspect or pragma; an address an `Address` aspect, an
+attribute definition clause or an `at` clause. Left out: `not_required_type`, and
+`min_integer_span` for bounds that are not literals (they need static evaluation).
