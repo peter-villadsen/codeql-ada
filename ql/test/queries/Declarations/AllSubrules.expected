@@ -1,0 +1,273 @@
+| decls.adb:1:1:53:11 | Decls | package_statements |
+| decls.adb:2:4:2:18 | Own | place own |
+| decls.adb:2:4:2:18 | Own | scalar_variable |
+| decls.adb:2:4:2:18 | Own | uninitialized_variable |
+| decls.adb:2:4:2:18 | Own | variable |
+| decls.adb:3:4:7:15 | Worker | place own |
+| decls.adb:4:7:4:28 | Local | initialized_variable |
+| decls.adb:4:7:4:28 | Local | place local |
+| decls.adb:4:7:4:28 | Local | place task_body |
+| decls.adb:4:7:4:28 | Local | scalar_variable |
+| decls.adb:4:7:4:28 | Local | variable |
+| decls.adb:6:14:6:19 | Start | place local |
+| decls.adb:8:4:17:14 | Guard | place own |
+| decls.adb:9:7:12:17 | Seize | place local |
+| decls.adb:13:7:16:19 | Release | place local |
+| decls.adb:18:4:21:10 | P | place own |
+| decls.adb:18:4:21:10 | P | procedure |
+| decls.adb:18:4:21:10 | P | self_calling_procedure |
+| decls.adb:22:4:25:10 | F | function |
+| decls.adb:22:4:25:10 | F | place own |
+| decls.adb:22:4:25:10 | F | self_calling_function |
+| decls.adb:26:4:29:12 | "=" | function |
+| decls.adb:26:4:29:12 | "=" | place own |
+| decls.adb:26:18:26:28 | L, R | multiple_names |
+| decls.adb:30:4:33:14 | Relay | function |
+| decls.adb:30:4:33:14 | Relay | no_spec_function |
+| decls.adb:30:4:33:14 | Relay | place own |
+| decls.adb:30:4:33:14 | Relay | relay_function |
+| decls.adb:34:4:37:16 | Nothing | no_spec_procedure |
+| decls.adb:34:4:37:16 | Nothing | null_procedure |
+| decls.adb:34:4:37:16 | Nothing | null_procedure_body |
+| decls.adb:34:4:37:16 | Nothing | place own |
+| decls.adb:34:4:37:16 | Nothing | procedure |
+| decls.adb:38:4:46:14 | Gen_P | place own |
+| decls.adb:38:4:46:14 | Gen_P | procedure |
+| decls.adb:39:9:46:4 | HandledStmts | handlers |
+| decls.adb:44:7:45:15 | ExceptionHandler | non_joint_ce_ne_handler |
+| decls.adb:49:7:49:19 | B | place block |
+| decls.adb:49:7:49:19 | B | place local |
+| decls.adb:49:7:49:19 | B | scalar_variable |
+| decls.adb:49:7:49:19 | B | uninitialized_variable |
+| decls.adb:49:7:49:19 | B | variable |
+| decls.ads:2:1:78:11 | Decls | package |
+| decls.ads:3:4:3:30 | Int | integer_type |
+| decls.ads:3:4:3:30 | Int | place public |
+| decls.ads:3:4:3:30 | Int | signed_type |
+| decls.ads:3:4:3:30 | Int | type |
+| decls.ads:4:4:4:29 | Word | integer_type |
+| decls.ads:4:4:4:29 | Word | modular_type |
+| decls.ads:4:4:4:29 | Word | place public |
+| decls.ads:4:4:4:29 | Word | type |
+| decls.ads:5:4:5:26 | Real | float_type |
+| decls.ads:5:4:5:26 | Real | place public |
+| decls.ads:5:4:5:26 | Real | type |
+| decls.ads:6:4:6:44 | Fix | fixed_type |
+| decls.ads:6:4:6:44 | Fix | ordinary_fixed_type |
+| decls.ads:6:4:6:44 | Fix | place public |
+| decls.ads:6:4:6:44 | Fix | type |
+| decls.ads:7:4:7:36 | Dec | decimal_fixed_type |
+| decls.ads:7:4:7:36 | Dec | fixed_type |
+| decls.ads:7:4:7:36 | Dec | place public |
+| decls.ads:7:4:7:36 | Dec | type |
+| decls.ads:8:4:8:36 | Color | enumeration_type |
+| decls.ads:8:4:8:36 | Color | place public |
+| decls.ads:8:4:8:36 | Color | type |
+| decls.ads:8:31:8:34 | 'x' | character_literal |
+| decls.ads:9:4:9:38 | Small | place public |
+| decls.ads:9:4:9:38 | Small | subtype |
+| decls.ads:10:4:10:42 | Arr | array |
+| decls.ads:10:4:10:42 | Arr | array_type |
+| decls.ads:10:4:10:42 | Arr | constrained_array_type |
+| decls.ads:10:4:10:42 | Arr | place public |
+| decls.ads:10:4:10:42 | Arr | type |
+| decls.ads:11:4:11:66 | Open_Arr | aliased_array_component |
+| decls.ads:11:4:11:66 | Open_Arr | array |
+| decls.ads:11:4:11:66 | Open_Arr | array_type |
+| decls.ads:11:4:11:66 | Open_Arr | place public |
+| decls.ads:11:4:11:66 | Open_Arr | type |
+| decls.ads:11:4:11:66 | Open_Arr | unconstrained_array_type |
+| decls.ads:12:4:12:39 | Int_Ptr | access_all_type |
+| decls.ads:12:4:12:39 | Int_Ptr | access_type |
+| decls.ads:12:4:12:39 | Int_Ptr | place public |
+| decls.ads:12:4:12:39 | Int_Ptr | type |
+| decls.ads:13:4:13:46 | Const_Ptr | access_constant_type |
+| decls.ads:13:4:13:46 | Const_Ptr | access_type |
+| decls.ads:13:4:13:46 | Const_Ptr | place public |
+| decls.ads:13:4:13:46 | Const_Ptr | type |
+| decls.ads:14:4:14:38 | Proc_Ptr | access_subprogram_type |
+| decls.ads:14:4:14:38 | Proc_Ptr | access_type |
+| decls.ads:14:4:14:38 | Proc_Ptr | place public |
+| decls.ads:14:4:14:38 | Proc_Ptr | type |
+| decls.ads:15:4:15:36 | Arr_Ptr | access_type |
+| decls.ads:15:4:15:36 | Arr_Ptr | access_unconstrained_array_type |
+| decls.ads:15:4:15:36 | Arr_Ptr | place public |
+| decls.ads:15:4:15:36 | Arr_Ptr | type |
+| decls.ads:16:4:20:15 | Rec | ordinary_record_type |
+| decls.ads:16:4:20:15 | Rec | place public |
+| decls.ads:16:4:20:15 | Rec | record_type |
+| decls.ads:16:4:20:15 | Rec | type |
+| decls.ads:17:7:17:22 | A, B | multiple_names |
+| decls.ads:17:7:17:22 | A, B | uninitialized_record_component |
+| decls.ads:18:7:18:27 | C | initialized_record_component |
+| decls.ads:19:7:19:29 | P | anonymous_access_component |
+| decls.ads:19:7:19:29 | P | uninitialized_record_component |
+| decls.ads:21:4:21:30 | Empty | null_ordinary_record_type |
+| decls.ads:21:4:21:30 | Empty | ordinary_record_type |
+| decls.ads:21:4:21:30 | Empty | place public |
+| decls.ads:21:4:21:30 | Empty | record_type |
+| decls.ads:21:4:21:30 | Empty | type |
+| decls.ads:22:4:22:35 | Tag | null_tagged_type |
+| decls.ads:22:4:22:35 | Tag | place public |
+| decls.ads:22:4:22:35 | Tag | record_type |
+| decls.ads:22:4:22:35 | Tag | tagged_type |
+| decls.ads:22:4:22:35 | Tag | type |
+| decls.ads:23:4:23:48 | Abs_Tag | abstract_type |
+| decls.ads:23:4:23:48 | Abs_Tag | null_tagged_type |
+| decls.ads:23:4:23:48 | Abs_Tag | place public |
+| decls.ads:23:4:23:48 | Abs_Tag | record_type |
+| decls.ads:23:4:23:48 | Abs_Tag | tagged_type |
+| decls.ads:23:4:23:48 | Abs_Tag | type |
+| decls.ads:24:4:24:43 | Child | extension |
+| decls.ads:24:4:24:43 | Child | null_extension |
+| decls.ads:24:4:24:43 | Child | place public |
+| decls.ads:24:4:24:43 | Child | type |
+| decls.ads:25:4:27:15 | Child2 | extension |
+| decls.ads:25:4:27:15 | Child2 | place public |
+| decls.ads:25:4:27:15 | Child2 | type |
+| decls.ads:26:7:26:19 | X | uninitialized_record_component |
+| decls.ads:28:4:28:28 | Derived | derived_type |
+| decls.ads:28:4:28:28 | Derived | place public |
+| decls.ads:28:4:28:28 | Derived | type |
+| decls.ads:29:4:29:28 | Iface | interface_type |
+| decls.ads:29:4:29:28 | Iface | place public |
+| decls.ads:29:4:29:28 | Iface | type |
+| decls.ads:30:4:35:15 | Disc | defaulted_discriminant |
+| decls.ads:30:4:35:15 | Disc | discriminant |
+| decls.ads:30:4:35:15 | Disc | ordinary_record_type |
+| decls.ads:30:4:35:15 | Disc | place public |
+| decls.ads:30:4:35:15 | Disc | record_type |
+| decls.ads:30:4:35:15 | Disc | type |
+| decls.ads:31:7:34:16 | VariantPart | variant_part |
+| decls.ads:33:25:33:37 | V | uninitialized_record_component |
+| decls.ads:36:4:36:25 | Priv | non_limited_private_type |
+| decls.ads:36:4:36:25 | Priv | place public |
+| decls.ads:36:4:36:25 | Priv | type |
+| decls.ads:37:4:37:32 | Lim | limited_private_type |
+| decls.ads:37:4:37:32 | Lim | place public |
+| decls.ads:37:4:37:32 | Lim | type |
+| decls.ads:38:4:38:36 | Tag_Priv | non_limited_private_type |
+| decls.ads:38:4:38:36 | Tag_Priv | place public |
+| decls.ads:38:4:38:36 | Tag_Priv | tagged_private_type |
+| decls.ads:38:4:38:36 | Tag_Priv | type |
+| decls.ads:39:4:39:42 | Priv_Ext | place public |
+| decls.ads:39:4:39:42 | Priv_Ext | private_extension |
+| decls.ads:39:4:39:42 | Priv_Ext | type |
+| decls.ads:40:4:40:13 | Inc | incomplete_type |
+| decls.ads:40:4:40:13 | Inc | place public |
+| decls.ads:40:4:40:13 | Inc | type |
+| decls.ads:41:4:41:31 | Inc_Ptr | access_type |
+| decls.ads:41:4:41:31 | Inc_Ptr | place public |
+| decls.ads:41:4:41:31 | Inc_Ptr | type |
+| decls.ads:42:4:42:28 | Inc | null_ordinary_record_type |
+| decls.ads:42:4:42:28 | Inc | ordinary_record_type |
+| decls.ads:42:4:42:28 | Inc | place public |
+| decls.ads:42:4:42:28 | Inc | record_type |
+| decls.ads:42:4:42:28 | Inc | type |
+| decls.ads:43:4:45:15 | Worker | place public |
+| decls.ads:43:4:45:15 | Worker | task |
+| decls.ads:43:4:45:15 | Worker | task_type |
+| decls.ads:43:4:45:15 | Worker | type |
+| decls.ads:44:7:44:19 | Start | entry |
+| decls.ads:44:7:44:19 | Start | task_entry |
+| decls.ads:46:4:49:14 | Guard | multiple_protected_entries |
+| decls.ads:46:4:49:14 | Guard | place public |
+| decls.ads:46:4:49:14 | Guard | protected |
+| decls.ads:46:4:49:14 | Guard | protected_type |
+| decls.ads:46:4:49:14 | Guard | type |
+| decls.ads:47:7:47:19 | Seize | entry |
+| decls.ads:47:7:47:19 | Seize | protected_entry |
+| decls.ads:48:7:48:21 | Release | entry |
+| decls.ads:48:7:48:21 | Release | protected_entry |
+| decls.ads:50:4:50:25 | Max | named_number |
+| decls.ads:50:4:50:25 | Max | place public |
+| decls.ads:51:4:51:32 | Deferred | constant |
+| decls.ads:51:4:51:32 | Deferred | deferred_constant |
+| decls.ads:51:4:51:32 | Deferred | place public |
+| decls.ads:52:4:52:21 | Oops | exception |
+| decls.ads:52:4:52:21 | Oops | place public |
+| decls.ads:53:4:53:21 | V1, V2 | multiple_names |
+| decls.ads:53:4:53:21 | V1, V2 | place public |
+| decls.ads:53:4:53:21 | V1, V2 | scalar_variable |
+| decls.ads:53:4:53:21 | V1, V2 | uninitialized_variable |
+| decls.ads:53:4:53:21 | V1, V2 | variable |
+| decls.ads:54:4:54:30 | V3 | aliased_variable |
+| decls.ads:54:4:54:30 | V3 | initialized_variable |
+| decls.ads:54:4:54:30 | V3 | place public |
+| decls.ads:54:4:54:30 | V3 | scalar_variable |
+| decls.ads:54:4:54:30 | V3 | variable |
+| decls.ads:55:4:55:35 | V4 | array |
+| decls.ads:55:4:55:35 | V4 | place public |
+| decls.ads:55:4:55:35 | V4 | single_array |
+| decls.ads:55:4:55:35 | V4 | uninitialized_variable |
+| decls.ads:55:4:55:35 | V4 | variable |
+| decls.ads:56:4:56:31 | C1 | constant |
+| decls.ads:56:4:56:31 | C1 | place public |
+| decls.ads:57:4:57:92 | P | place public |
+| decls.ads:57:4:57:92 | P | procedure |
+| decls.ads:57:17:57:35 | X | in_out_parameter |
+| decls.ads:57:37:57:52 | Y | out_parameter |
+| decls.ads:57:54:57:70 | Z | defaulted_parameter |
+| decls.ads:57:72:57:90 | A | anonymous_access_parameter |
+| decls.ads:58:4:58:44 | F | function |
+| decls.ads:58:4:58:44 | F | place public |
+| decls.ads:59:4:59:45 | "=" | equality_operator |
+| decls.ads:59:4:59:45 | "=" | function |
+| decls.ads:59:4:59:45 | "=" | operator |
+| decls.ads:59:4:59:45 | "=" | place public |
+| decls.ads:59:18:59:28 | L, R | multiple_names |
+| decls.ads:60:4:60:46 | Abs_P | abstract_procedure |
+| decls.ads:60:4:60:46 | Abs_P | place public |
+| decls.ads:60:4:60:46 | Abs_P | procedure |
+| decls.ads:61:4:61:24 | N | null_procedure |
+| decls.ads:61:4:61:24 | N | null_procedure_declaration |
+| decls.ads:61:4:61:24 | N | place public |
+| decls.ads:61:4:61:24 | N | procedure |
+| decls.ads:62:4:62:55 | E | expression_function |
+| decls.ads:62:4:62:55 | E | place public |
+| decls.ads:63:4:68:12 | Gen | generic |
+| decls.ads:63:4:68:12 | Gen | generic_package |
+| decls.ads:63:4:68:12 | Gen | place public |
+| decls.ads:64:7:64:28 | Size | defaulted_generic_parameter |
+| decls.ads:64:7:64:28 | Size | place in_generic |
+| decls.ads:65:12:65:34 | Act | formal_procedure |
+| decls.ads:65:12:65:34 | Act | null_defaulted_formal_procedure |
+| decls.ads:65:12:65:34 | Act | place in_generic |
+| decls.ads:66:12:66:63 | Cmp | box_defaulted_formal_function |
+| decls.ads:66:12:66:63 | Cmp | formal_function |
+| decls.ads:66:12:66:63 | Cmp | place in_generic |
+| decls.ads:66:26:66:40 | L, R | multiple_names |
+| decls.ads:66:26:66:40 | L, R | place in_generic |
+| decls.ads:67:4:68:12 | Gen | place in_generic |
+| decls.ads:69:4:70:20 | Gen_P | generic |
+| decls.ads:69:4:70:20 | Gen_P | generic_procedure |
+| decls.ads:69:4:70:20 | Gen_P | place public |
+| decls.ads:70:4:70:19 | Gen_P | place in_generic |
+| decls.ads:71:4:71:28 | Inst | instantiation |
+| decls.ads:71:4:71:28 | Inst | package_instantiation |
+| decls.ads:71:4:71:28 | Inst | place public |
+| decls.ads:73:4:73:29 | Priv | derived_type |
+| decls.ads:73:4:73:29 | Priv | place private |
+| decls.ads:73:4:73:29 | Priv | type |
+| decls.ads:74:4:74:36 | Lim | null_ordinary_record_type |
+| decls.ads:74:4:74:36 | Lim | ordinary_record_type |
+| decls.ads:74:4:74:36 | Lim | place private |
+| decls.ads:74:4:74:36 | Lim | record_type |
+| decls.ads:74:4:74:36 | Lim | type |
+| decls.ads:75:4:75:40 | Tag_Priv | null_tagged_type |
+| decls.ads:75:4:75:40 | Tag_Priv | place private |
+| decls.ads:75:4:75:40 | Tag_Priv | record_type |
+| decls.ads:75:4:75:40 | Tag_Priv | tagged_type |
+| decls.ads:75:4:75:40 | Tag_Priv | type |
+| decls.ads:76:4:76:46 | Priv_Ext | extension |
+| decls.ads:76:4:76:46 | Priv_Ext | null_extension |
+| decls.ads:76:4:76:46 | Priv_Ext | place private |
+| decls.ads:76:4:76:46 | Priv_Ext | type |
+| decls.ads:77:4:77:37 | Deferred | constant |
+| decls.ads:77:4:77:37 | Deferred | place private |
+| empty.ads:1:1:5:11 | Empty | empty_private_part |
+| empty.ads:1:1:5:11 | Empty | package |
+| empty.ads:2:4:2:21 | X | initialized_variable |
+| empty.ads:2:4:2:21 | X | place public |
+| empty.ads:2:4:2:21 | X | scalar_variable |
+| empty.ads:2:4:2:21 | X | variable |

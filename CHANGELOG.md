@@ -97,6 +97,10 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/comments`** (`Comments`): the `end record` of a record declaration longer than
   10 lines without a comment repeating the type's name. The library also has `pattern`,
   `position`, `terminating` and `unnamed_begin`.
+- **`ada/declarations`** (`Declarations`): subprograms whose only statement calls
+  themselves (unfinished `gnatstub` bodies), and empty private parts. The library has
+  130 of AdaControl's 157 declaration kinds, and AdaControl's places
+  (`codeql/ada/adacontrol/Places.qll`), shared with the rules that take them.
 
 
 ## 0.3.0 (2026-10-11)

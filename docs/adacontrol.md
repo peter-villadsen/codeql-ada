@@ -105,3 +105,76 @@ Comments are not AST nodes: they are matched with code by file and line. A comme
 terminating when an AST node starts or ends before it on its line. Left out:
 `terminating`'s `end` option (a line holding only an `end`), and AdaControl's `search`
 and `check` with different `position` values (two queries).
+
+### Declarations
+
+`ada/declarations`, library `Declarations` (and `Places`). `declaration(d, kw)` holds for
+each keyword that applies to `d`; several may apply, as in AdaControl. The query checks
+`self_calling_function`, `self_calling_procedure` and `empty_private_part`, at all
+places.
+
+AdaControl's `<location>`s are `Places::isAt(n, place)`, shared with the other rules that
+take them:
+
+| Place | Meaning |
+|---|---|
+| `library` | no enclosing subprogram, task, entry, protected body or block |
+| `local` | inside one of those |
+| `block` | directly in a block's declarations |
+| `own` | directly in a package body's declarations |
+| `public`, `private` | directly in a package spec's visible or private part |
+| `in_generic` | anywhere in a generic unit, its formal part, spec or body |
+| `task_body` | directly in a task body's declarations |
+
+`not <location>` and `ignore "<pattern>"` (on `getQualifiedName()`) are conditions in your
+query.
+
+Implemented (130 of 157): `abstract_function`, `abstract_operator`, `abstract_procedure`,
+`abstract_type`, `access_all_type`, `access_constant_type`,
+`access_constrained_array_type`, `access_protected_type`, `access_subprogram_type`,
+`access_task_type`, `access_type`, `access_unconstrained_array_type`,
+`aliased_array_component`, `aliased_constant`, `aliased_record_component`,
+`aliased_variable`, `anonymous_access_component`, `anonymous_access_constant`,
+`anonymous_access_discriminant`, `anonymous_access_parameter`,
+`anonymous_access_variable`, `any_declaration`, `array`, `array_type`,
+`box_defaulted_formal_function`, `box_defaulted_formal_procedure`, `character_literal`,
+`child_unit`, `class_wide_constant`, `class_wide_variable`, `constant`,
+`constrained_array_type`, `decimal_fixed_type`, `defaulted_discriminant`,
+`defaulted_generic_parameter`, `defaulted_parameter`, `deferred_constant`,
+`derived_type`, `discriminant`, `empty_private_part`, `empty_visible_part`, `entry`,
+`enumeration_type`, `equality_operator`, `exception`, `expression_function`,
+`extension`, `fixed_type`, `float_type`, `formal_function`, `formal_package`,
+`formal_procedure`, `formal_type`, `function`, `function_instantiation`, `generic`,
+`generic_function`, `generic_package`, `generic_procedure`, `handlers`,
+`in_out_generic_parameter`, `in_out_parameter`, `incomplete_type`,
+`initialized_record_component`, `initialized_variable`, `instantiation`,
+`integer_type`, `interface_type`, `limited_private_type`, `modular_type`,
+`multiple_names`, `multiple_protected_entries`, `name_defaulted_formal_function`,
+`name_defaulted_formal_procedure`, `named_number`, `no_spec_function`,
+`no_spec_procedure`, `non_joint_ce_ne_handler`, `non_limited_private_type`,
+`null_defaulted_formal_procedure`, `null_extension`, `null_ordinary_record_type`,
+`null_procedure`, `null_procedure_body`, `null_procedure_declaration`,
+`null_tagged_type`, `operator`, `ordinary_fixed_type`, `ordinary_record_type`,
+`ordinary_record_variable`, `out_parameter`, `package`, `package_instantiation`,
+`package_statements`, `private_extension`, `procedure`, `procedure_instantiation`,
+`protected`, `protected_discriminant`, `protected_entry`, `protected_type`,
+`protected_variable`, `record_type`, `relay_function`, `relay_procedure`,
+`scalar_variable`, `self_calling_function`, `self_calling_procedure`, `separate`,
+`signed_type`, `single_array`, `single_protected`, `single_task`, `subtype`,
+`tagged_incomplete_type`, `tagged_private_type`, `tagged_type`, `tagged_variable`,
+`task`, `task_discriminant`, `task_entry`, `task_type`, `task_variable`, `type`,
+`unconstrained_array_type`, `uninitialized_record_component`,
+`uninitialized_variable`, `unknown_discriminant`, `variable`, `variant_part`.
+
+Left out: `access_def_discriminated_type`, `access_nondef_discriminated_type`,
+`access_unknown_discriminated_type`, `access_formal_type`, `access_language_type`,
+`aliased_protected_component`, `initialized_protected_component`,
+`uninitialized_protected_component`, the `anonymous_subtype_*` family,
+`binary_modular_type` and `non_binary_modular_type` (need the modulus's value),
+`constrained_array_constant`, `constrained_array_variable`,
+`unconstrained_array_constant`, `unconstrained_array_variable`,
+`unconstrained_subtype`, `constructor`, `controlled_type`, `non_ravenscar_task`,
+`ordinary_fixed_type_no_small`, `ordinary_fixed_type_with_small`,
+`predefined_operator`, `relay_package`; and the variable `Limited_Initialization`
+(`uninitialized_variable` and `uninitialized_record_component` never report limited
+types).
