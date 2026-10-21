@@ -111,6 +111,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   library.
 - **`ada/entity-inside-exception`** (`Entity_Inside_Exception`): entry calls in exception
   handlers. References to given entities, and all calls, are in the library.
+- **`ada/expressions`** (`Expressions`): unary minus applied to `mod` or `rem`
+  (`-A mod B` is `-(A mod B)`). The library has 50 of AdaControl's 60 expression kinds.
 
 
 ## 0.3.0 (2026-10-11)

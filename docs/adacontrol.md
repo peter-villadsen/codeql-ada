@@ -239,3 +239,33 @@ generic's entity).
 | `entry_calls` | `entryCallIn(call, handler)` | yes |
 
 `not <entity>` is a negation in your query.
+
+### Expressions
+
+`ada/expressions`, library `Expressions`. `expression(e, kw)` holds for each keyword
+that applies to `e`; `typeCategory(e)` gives the category of `e`'s type for AdaControl's
+`<category>` prefixes (derivations traversed). `ada/float-equality` is a fixed
+`real_equality`.
+
+The query checks the unary case of `mixed_operators` (`-A mod B`, `-A rem B`). The binary
+case reports every `A + B * C` and `X > 0 and Y > 0`: 4,589 corpus results.
+
+Implemented (50 of 60): `and`, `and_array`, `and_binary`, `and_boolean`, `and_then`,
+`array_aggregate`, `array_named_others`, `array_others`, `array_partial_others`,
+`array_positional_others`, `array_range`, `case`, `complex_parameter`,
+`downward_conversion`, `dynamic_function_call`, `explicit_dereference`,
+`extension_aggregate`, `fixed_multiplying_op`, `for_all`, `for_some`, `function_call`,
+`if`, `if_elsif`, `if_no_else`, `in`, `mixed_operators`, `not`, `not_in`, `or`,
+`or_array`, `or_binary`, `or_boolean`, `or_else`, `parameter_view_conversion`,
+`prefixed_operator`, `real_equality`, `record_aggregate`, `record_others`,
+`record_partial_others`, `slice`, `target_name`, `trivial_target_name`,
+`type_conversion`, `underived_conversion`, `unqualified_aggregate`, `upward_conversion`,
+`xor`, `xor_array`, `xor_binary`, `xor_boolean`.
+
+Left out: `dispatching_function_call`, `redispatching_function_call`,
+`inherited_function_call`, `implicit_dereference`, `inconsistent_attribute_dimension`,
+`extendable_aggregate`, `array_non_static_range`, `static_membership` and
+`universal_range` (these three need static evaluation),
+`unconverted_fixed_multiplying_op`; the two-category form of the conversion subrules (a
+condition on the operand's and the result's `typeCategory` in your query), and the
+variable `Called_Info`.

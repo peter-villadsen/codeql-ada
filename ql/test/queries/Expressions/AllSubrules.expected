@@ -1,0 +1,68 @@
+| test.adb:25:21:25:38 | (...) | array_aggregate |
+| test.adb:25:21:25:38 | (...) | array_others |
+| test.adb:25:21:25:38 | (...) | unqualified_aggregate |
+| test.adb:31:40:31:66 | (...) | array_aggregate |
+| test.adb:31:40:31:66 | (...) | array_named_others |
+| test.adb:31:40:31:66 | (...) | array_others |
+| test.adb:31:40:31:66 | (...) | array_partial_others |
+| test.adb:31:40:31:66 | (...) | array_range |
+| test.adb:31:40:31:66 | (...) | unqualified_aggregate |
+| test.adb:32:39:32:58 | (...) | array_aggregate |
+| test.adb:32:39:32:58 | (...) | array_others |
+| test.adb:32:39:32:58 | (...) | array_partial_others |
+| test.adb:32:39:32:58 | (...) | array_positional_others |
+| test.adb:32:39:32:58 | (...) | unqualified_aggregate |
+| test.adb:33:18:33:39 | (...) | record_aggregate |
+| test.adb:33:18:33:39 | (...) | record_others |
+| test.adb:33:18:33:39 | (...) | record_partial_others |
+| test.adb:33:18:33:39 | (...) | unqualified_aggregate |
+| test.adb:34:22:34:28 | (...) | record_aggregate |
+| test.adb:35:18:35:45 | (...) | extension_aggregate |
+| test.adb:35:18:35:45 | (...) | record_aggregate |
+| test.adb:35:18:35:45 | (...) | unqualified_aggregate |
+| test.adb:35:24:35:32 | (...) | record_aggregate |
+| test.adb:36:17:36:26 | Base (...) | type_conversion |
+| test.adb:36:17:36:26 | Base (...) | upward_conversion |
+| test.adb:38:10:38:19 | ... and ... | and |
+| test.adb:38:10:38:19 | ... and ... | and_boolean |
+| test.adb:39:10:39:23 | ... or else ... | or_else |
+| test.adb:40:10:40:16 | not ... | not |
+| test.adb:41:10:41:19 | ... xor ... | xor |
+| test.adb:41:10:41:19 | ... xor ... | xor_binary |
+| test.adb:42:10:42:18 | ... or ... | or |
+| test.adb:42:10:42:18 | ... or ... | or_array |
+| test.adb:43:10:43:22 | MembershipExpr | in |
+| test.adb:44:10:44:26 | MembershipExpr | not_in |
+| test.adb:45:10:45:45 | IfExpr | if |
+| test.adb:45:10:45:45 | IfExpr | if_elsif |
+| test.adb:46:11:46:24 | IfExpr | if |
+| test.adb:46:11:46:24 | IfExpr | if_no_else |
+| test.adb:47:10:47:49 | CaseExpr | case |
+| test.adb:48:11:48:36 | QuantifiedExpr | for_all |
+| test.adb:49:11:49:37 | QuantifiedExpr | for_some |
+| test.adb:50:9:50:14 | P.all | explicit_dereference |
+| test.adb:51:4:51:16 | Arr (...) | slice |
+| test.adb:51:20:51:26 | (...) | array_aggregate |
+| test.adb:51:20:51:26 | (...) | unqualified_aggregate |
+| test.adb:52:9:52:10 | TargetName | target_name |
+| test.adb:52:9:52:10 | TargetName | trivial_target_name |
+| test.adb:53:9:53:18 | Twice (...) | function_call |
+| test.adb:54:9:54:18 | ... + ... | mixed_operators |
+| test.adb:56:9:56:17 | - ... | mixed_operators |
+| test.adb:57:10:57:17 | ... = ... | real_equality |
+| test.adb:58:10:58:19 | ... /= ... | real_equality |
+| test.adb:59:10:59:17 | ... * ... | fixed_multiplying_op |
+| test.adb:60:9:60:20 | Integer (...) | type_conversion |
+| test.adb:60:9:60:20 | Integer (...) | upward_conversion |
+| test.adb:61:9:61:18 | Count (...) | downward_conversion |
+| test.adb:61:9:61:18 | Count (...) | type_conversion |
+| test.adb:62:10:62:19 | Float (...) | type_conversion |
+| test.adb:62:10:62:19 | Float (...) | underived_conversion |
+| test.adb:63:10:63:19 | Base (...) | type_conversion |
+| test.adb:63:10:63:19 | Base (...) | upward_conversion |
+| test.adb:64:9:64:22 | Twice (...) | function_call |
+| test.adb:64:16:64:21 | ... + ... | complex_parameter |
+| test.adb:65:9:65:19 | "+" (...) | prefixed_operator |
+| test.adb:66:9:66:20 | Integer (...) | parameter_view_conversion |
+| test.adb:66:9:66:20 | Integer (...) | type_conversion |
+| test.adb:66:9:66:20 | Integer (...) | upward_conversion |
