@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 33 queries are tested on a
+The project is pre-1.0. The extractor, the library and 34 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -434,6 +434,7 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/comments` | End of long record not named | recommendation |
 | `ada/dead-local-subprogram` | Dead local subprogram | warning |
 | `ada/declarations` | Unfinished or empty declaration | warning |
+| `ada/dependencies` | Unit depends on its own child | recommendation |
 | `ada/direct-recursion` | Direct recursion | recommendation |
 | `ada/empty-loop-body` | Empty loop body | warning |
 | `ada/exception-swallowing` | Exception handler swallows all exceptions | warning |

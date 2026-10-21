@@ -101,6 +101,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   themselves (unfinished `gnatstub` bodies), and empty private parts. The library has
   130 of AdaControl's 157 declaration kinds, and AdaControl's places
   (`codeql/ada/adacontrol/Places.qll`), shared with the rules that take them.
+- **`ada/dependencies`** (`Dependencies`): a unit that withs one of its own child units.
+  The library has `with`, `others`, and the `raw`, `direct` and `parent` counts.
 
 
 ## 0.3.0 (2026-10-11)

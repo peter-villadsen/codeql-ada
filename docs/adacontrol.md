@@ -178,3 +178,19 @@ Left out: `access_def_discriminated_type`, `access_nondef_discriminated_type`,
 `predefined_operator`, `relay_package`; and the variable `Limited_Initialization`
 (`uninitialized_variable` and `uninitialized_record_component` never report limited
 types).
+
+### Dependencies
+
+`ada/dependencies`, library `Dependencies`.
+
+| Subrule | Library | Default |
+|---|---|---|
+| `with` | `withOf(cu, withName, unit)`, through renamings and to the generic of an instance | no |
+| `others` | `withOf` with the allowed units negated in your query | no |
+| `public_child`, `private_child` | `dependsOnOwnChild(cu, withName, isPrivate)` | yes |
+| `raw` | `rawCount(cu)` | no |
+| `direct` | `directCount(cu)`: a child unit's parents counted | no |
+| `parent` | `parentCount(cu)` | no |
+
+Left out: AdaControl's semantic dependencies of `others` beyond `with` clauses (a child's
+parent units are counted by `direct` only).
