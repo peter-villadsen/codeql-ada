@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 40 queries are tested on a
+The project is pre-1.0. The extractor, the library and 41 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -450,6 +450,7 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/identical-operands` | Identical operands in boolean expression | warning |
 | `ada/indirect-recursion` | Indirect recursion | recommendation |
 | `ada/instantiations` | Duplicate unchecked instantiation | recommendation |
+| `ada/insufficient-parameters` | Insufficient parameters | recommendation |
 | `ada/open-without-close` | Open without Close | warning |
 | `ada/path-injection` | Uncontrolled data used in path expression | error |
 | `ada/pragma-suppress` | Suppressed runtime checks | warning |

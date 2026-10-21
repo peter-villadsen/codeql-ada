@@ -25,6 +25,7 @@
    "ada/identical-operands": 0,
    "ada/indirect-recursion": 0,
    "ada/instantiations": 0,
+   "ada/insufficient-parameters": 0,
    "ada/open-without-close": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
@@ -70,6 +71,7 @@
    "ada/identical-operands": 0,
    "ada/indirect-recursion": 10,
    "ada/instantiations": 0,
+   "ada/insufficient-parameters": 28,
    "ada/open-without-close": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
@@ -87,7 +89,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 4
   },
-  "total": 916
+  "total": 944
  },
  "gpr2": {
   "results": {
@@ -115,6 +117,7 @@
    "ada/identical-operands": 0,
    "ada/indirect-recursion": 148,
    "ada/instantiations": 7,
+   "ada/insufficient-parameters": 74,
    "ada/open-without-close": 4,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 3,
@@ -132,7 +135,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 36
   },
-  "total": 3234
+  "total": 3308
  },
  "libadalang-tools": {
   "results": {
@@ -160,6 +163,7 @@
    "ada/identical-operands": 0,
    "ada/indirect-recursion": 4,
    "ada/instantiations": 3,
+   "ada/insufficient-parameters": 4,
    "ada/open-without-close": 28,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 8,
@@ -177,7 +181,7 @@
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 1058
+  "total": 1062
  },
  "libkeccak": {
   "results": {
@@ -205,6 +209,7 @@
    "ada/identical-operands": 0,
    "ada/indirect-recursion": 0,
    "ada/instantiations": 7,
+   "ada/insufficient-parameters": 1,
    "ada/open-without-close": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
@@ -222,6 +227,6 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 0
   },
-  "total": 111
+  "total": 112
  }
 }

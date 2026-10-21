@@ -1,0 +1,3 @@
+| test.adb:8:4:8:21 | Draw (...) | This call has 3 actuals given by position that are only literals: name them. |
+| test.adb:9:4:9:21 | Draw (...) | This call has 2 actuals given by position that are only literals: name them. |
+| test.adb:13:9:13:27 | Scale (...) | This call has 2 actuals given by position that are only literals: name them. |

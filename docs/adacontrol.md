@@ -298,3 +298,11 @@ AdaControl's disabling comments.
 
 "Earlier" for `=` is by file name and position. Left out: `=` on formal `in` parameters
 (AdaControl compares static values; here the actual must be a name).
+
+### Insufficient_Parameters
+
+`ada/insufficient-parameters`, library `InsufficientParameters`:
+`Make<enumerationType>::insufficientActual(call, actual)` and `insufficientCount(call)`,
+with the enumeration types as a predicate. The query uses `Standard.Boolean` and a
+maximum of 1. An actual is insufficient when given by position and made only of numeric
+literals and literals of the listed enumerations; operators are not checked.

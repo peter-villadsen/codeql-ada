@@ -119,6 +119,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/instantiations`** (`Instantiations`): a second instance of `Unchecked_Conversion`
   or `Unchecked_Deallocation` with the same actuals. Instantiations of any generic, by
   actual, category, repeat and place, are in the library.
+- **`ada/insufficient-parameters`** (`Insufficient_Parameters`): calls with two or more
+  positional actuals that are only numeric or Boolean literals.
 
 
 ## 0.3.0 (2026-10-11)

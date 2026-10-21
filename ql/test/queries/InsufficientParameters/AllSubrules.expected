@@ -1,0 +1,5 @@
+| test.adb:8:4:8:21 | Draw (...) | 3 |
+| test.adb:9:4:9:21 | Draw (...) | 2 |
+| test.adb:11:4:11:45 | Draw (...) | 1 |
+| test.adb:12:4:12:29 | Draw (...) | 2 |
+| test.adb:13:9:13:27 | Scale (...) | 2 |
