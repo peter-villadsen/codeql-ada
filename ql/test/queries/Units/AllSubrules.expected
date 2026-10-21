@@ -1,0 +1,5 @@
+| main.adb:3:1:6:10 | Main | unreferenced |
+| parent-child.ads:1:1:3:18 | Parent.Child | withed |
+| parent.ads:1:1:3:12 | Parent | withed |
+| unused.ads:1:1:3:12 | Unused | unreferenced |
+| used.ads:1:1:3:10 | Used | withed |

@@ -175,6 +175,7 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/unit-pattern`** (`Unit_Pattern`): packages that declare more than one tagged
   type. The tagged type hierarchy and the order of context clauses and declarations are
   in the library.
+- **`ada/units`** (`Units`): library packages that no unit withs.
 
 
 ## 0.3.0 (2026-10-11)

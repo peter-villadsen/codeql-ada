@@ -57,6 +57,7 @@
    "ada/unchecked-conversion": 3,
    "ada/unchecked-deallocation": 5,
    "ada/unit-pattern": 1,
+   "ada/units": 2,
    "ada/unreachable-statement": 0,
    "ada/unused-local": 0,
    "ada/unused-parameter": 0,
@@ -64,7 +65,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 1
   },
-  "total": 52
+  "total": 54
  },
  "alire": {
   "results": {
@@ -124,6 +125,7 @@
    "ada/unchecked-conversion": 1,
    "ada/unchecked-deallocation": 3,
    "ada/unit-pattern": 24,
+   "ada/units": 22,
    "ada/unreachable-statement": 5,
    "ada/unused-local": 0,
    "ada/unused-parameter": 2,
@@ -131,7 +133,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 4
   },
-  "total": 1305
+  "total": 1327
  },
  "gpr2": {
   "results": {
@@ -191,6 +193,7 @@
    "ada/unchecked-conversion": 74,
    "ada/unchecked-deallocation": 72,
    "ada/unit-pattern": 117,
+   "ada/units": 232,
    "ada/unreachable-statement": 4,
    "ada/unused-local": 36,
    "ada/unused-parameter": 20,
@@ -198,7 +201,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 36
   },
-  "total": 6247
+  "total": 6479
  },
  "libadalang-tools": {
   "results": {
@@ -258,6 +261,7 @@
    "ada/unchecked-conversion": 7,
    "ada/unchecked-deallocation": 12,
    "ada/unit-pattern": 2,
+   "ada/units": 171,
    "ada/unreachable-statement": 10,
    "ada/unused-local": 93,
    "ada/unused-parameter": 21,
@@ -265,7 +269,7 @@
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 2426
+  "total": 2597
  },
  "libkeccak": {
   "results": {
@@ -325,6 +329,7 @@
    "ada/unchecked-conversion": 8,
    "ada/unchecked-deallocation": 8,
    "ada/unit-pattern": 0,
+   "ada/units": 9,
    "ada/unreachable-statement": 0,
    "ada/unused-local": 0,
    "ada/unused-parameter": 10,
@@ -332,6 +337,6 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 0
   },
-  "total": 163
+  "total": 172
  }
 }

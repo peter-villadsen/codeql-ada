@@ -580,3 +580,11 @@ any constant; other types and a name pattern (`"^C_Init_"`) are for a query of y
 allowed. Left out: the `own`, `public` and `private` places of body declarations, and
 `others` (give every remaining kind the last group). An element whose kind is in several
 groups is taken at its first.
+
+### Units
+
+`ada/units`, library `Units`: `isLibraryUnit(d)` and `isUnreferenced(d)` (`unreferenced`:
+no unit withs it, through renamings and instances, and it has no child unit). The query
+checks packages; a library subprogram nobody withs is usually a main program. AdaControl's
+`unchecked` (units withed but not analyzed) is a property of the extraction, not of the
+code: the extractor's diagnostics report the units it could not find.
