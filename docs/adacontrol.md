@@ -88,3 +88,20 @@ instances.
 
 AdaControl's `all` together with marks (the aspects not given) is a negation of
 `hasAspectMark` in your query.
+
+### Comments
+
+`ada/comments`, library `Comments`. `ada/todo-comment` is a fixed `pattern`.
+
+| Subrule | Library | Default |
+|---|---|---|
+| `pattern` | `matchesPattern(c, pattern)`: the text after `--` and spaces, ignoring case | no |
+| `position` | `column(c)` | no |
+| `terminating` | `isTerminating(c, allowBegin)`; allowed patterns are `matchesPattern` | no |
+| `unnamed_begin` | `isUnnamedBegin(body, condition, minLines)` for `always`, `declaration`, `program_unit`; `unitKind(body)` is the `<unit_kind>` | no |
+| `unnamed_end_record` | `isUnnamedEndRecord(t, maxLines)` | 10 lines |
+
+Comments are not AST nodes: they are matched with code by file and line. A comment is
+terminating when an AST node starts or ends before it on its line. Left out:
+`terminating`'s `end` option (a line holding only an `end`), and AdaControl's `search`
+and `check` with different `position` values (two queries).

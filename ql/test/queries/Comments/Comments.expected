@@ -1,0 +1,2 @@
+| test.adb:7:17:16:14 | RecordDef | The end of record Long should have a comment repeating its name. |
+| test.adb:28:18:30:14 | RecordDef | The end of record Wrong should have a comment repeating its name. |

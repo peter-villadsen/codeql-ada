@@ -94,6 +94,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   or category are in the library; categories (`TypeCategories.qll`) are shared by the
   rules that take them.
 - **`ada/aspects`** (`Aspects`): a Boolean aspect given without a value (`with Inline`).
+- **`ada/comments`** (`Comments`): the `end record` of a record declaration longer than
+  10 lines without a comment repeating the type's name. The library also has `pattern`,
+  `position`, `terminating` and `unnamed_begin`.
 
 
 ## 0.3.0 (2026-10-11)

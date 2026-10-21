@@ -1,0 +1,45 @@
+| 1 | position 1 |
+| 2 | position 24 |
+| 2 | terminating, begin allowed: false |
+| 2 | terminating, begin allowed: true |
+| 2 | unnamed_begin always min 1 package Test |
+| 2 | unnamed_begin always min 3 package Test |
+| 2 | unnamed_begin declaration min 1 package Test |
+| 2 | unnamed_begin declaration min 3 package Test |
+| 2 | unnamed_begin program_unit min 1 package Test |
+| 2 | unnamed_begin program_unit min 3 package Test |
+| 3 | unnamed_end_record 0 Short |
+| 7 | unnamed_end_record 0 Long |
+| 7 | unnamed_end_record 10 Long |
+| 16 | position 37 |
+| 16 | terminating, begin allowed: false |
+| 16 | terminating, begin allowed: true |
+| 27 | position 17 |
+| 27 | terminating, begin allowed: false |
+| 27 | terminating, begin allowed: true |
+| 28 | unnamed_end_record 0 Wrong |
+| 28 | unnamed_end_record 10 Wrong |
+| 30 | position 17 |
+| 30 | terminating, begin allowed: false |
+| 30 | terminating, begin allowed: true |
+| 33 | pattern |
+| 33 | position 11 |
+| 33 | terminating, begin allowed: false |
+| 37 | unnamed_begin always min 1 procedure Q |
+| 37 | unnamed_begin always min 3 procedure Q |
+| 37 | unnamed_begin declaration min 1 procedure Q |
+| 37 | unnamed_begin declaration min 3 procedure Q |
+| 38 | pattern |
+| 38 | position 27 |
+| 38 | terminating, begin allowed: false |
+| 38 | terminating, begin allowed: true |
+| 40 | position 7 |
+| 41 | position 1 |
+| 45 | unnamed_begin always min 1 function F |
+| 45 | unnamed_begin always min 3 function F |
+| 45 | unnamed_begin declaration min 1 function F |
+| 45 | unnamed_begin declaration min 3 function F |
+| 45 | unnamed_begin program_unit min 1 function F |
+| 45 | unnamed_begin program_unit min 3 function F |
+| 47 | position 10 |
+| 47 | terminating, begin allowed: false |
