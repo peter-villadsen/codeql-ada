@@ -83,3 +83,26 @@ begin
    end;
    null;   --  BUG: unreachable
 end After_Finally;
+
+--  A handler for an exception that only an unresolved call can raise (as with a
+--  dependency that was not extracted, D-026): the graph finds no way in, but the call
+--  may raise. Fine.
+with Missing_Pkg;
+function Referenced (Id : Integer) return Integer is
+begin
+   return Missing_Pkg.Lookup (Id);
+exception
+   when Constraint_Error =>
+      return 0;   --  fine: Lookup may raise
+end Referenced;
+
+--  The same handler around resolved code that cannot raise.
+function Copied (Id : Integer) return Integer is
+   X : Integer := Id;
+begin
+   X := X + 0;
+   return X;
+exception
+   when Constraint_Error =>
+      return 0;   --  BUG: unreachable (as far as the graph knows: no call, no raise)
+end Copied;

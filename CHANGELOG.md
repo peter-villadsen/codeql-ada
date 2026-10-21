@@ -73,6 +73,14 @@ extractor are unchanged.
 - A loop's phi is now located at the loop variable rather than at the first read in the
   body; the definitions it merges are unchanged.
 
+### Queries
+
+- **`ada/unreachable-statement`** no longer reports a statement in an exception handler
+  when the statements the handler protects contain a name that did not resolve: it may be
+  a call that raises, into a dependency that was not extracted, which the control-flow
+  graph cannot know (4 false positives in libadalang-tools, around Libadalang properties
+  that raise `Property_Error`).
+
 ### AdaControl parity
 
 Queries for the rules of [AdaControl](https://www.adalog.fr/compo/adacontrol_ug.html)
