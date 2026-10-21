@@ -154,6 +154,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/record-declarations`** (`Record_Declarations`): record components of an
   enumeration type without a default value. Other types, categories and representation
   conditions are in the library.
+- **`ada/renaming-declarations`** (`Renaming_Declarations`): renamings declared next to
+  what they rename. Kinds, filters and places are in the library.
 
 
 ## 0.3.0 (2026-10-11)

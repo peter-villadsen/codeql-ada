@@ -471,3 +471,13 @@ pragmas.
 `not` is a negation in your query. The query checks `component, (), not initialized`
 (AdaControl's example; Boolean is an enumeration). Left out: discriminants, which
 AdaControl counts as components, and a storage unit other than 8 bits.
+
+### Renaming_Declarations
+
+`ada/renaming-declarations`, library `RenamingDeclarations` (and `Places`):
+`isRenaming(d)`, `renamed(d)`, `kind(d)` (`object`, `function_call`, `procedure`,
+`function`, `package`, `exception`) and `hasFilter(d, filter)` for `identical`,
+`generic`, `as_body`, `operator`, `as_operator`, `synonym`, `library_unit` and
+`renaming`; places are `Places::isAt(d, place)`. A `synonym` is a renaming in the same
+declarative part as what it renames, not of a function call's result nor a renaming as
+body. The query checks `synonym all`.
