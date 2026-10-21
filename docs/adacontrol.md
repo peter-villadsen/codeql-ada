@@ -564,3 +564,19 @@ a private type stands for its full view), `initialConstant(t, c)` (a constant of
 or a view of it, in the same declarative part; a package's visible and private parts are
 one) and `lacksInitialValue(t, pattern)`. The query checks record and private types with
 any constant; other types and a name pattern (`"^C_Init_"`) are for a query of your own.
+
+### Unit_Pattern
+
+`ada/unit-pattern`, library `UnitPattern`:
+
+| Subrule | Library | Default |
+|---|---|---|
+| `single_tagged_type` | `secondTaggedType(p, t, first)` | yes |
+| `tagged_type_hierarchy` | `breaksHierarchy(t, parent)` | no: 95 corpus results, mostly extensions of `Ada.Finalization.Controlled` |
+| `context_clauses_order` | `Order<group>::outOfOrder(contextClauses(cu), e)`, kinds `clauseKind` | no |
+| `declarations_order` | `Order<group>::outOfOrder(declarations(part, target), e)`, kinds `declarationKind` | no |
+
+`group(kind)` gives the position of the group a kind belongs to; a kind in no group is not
+allowed. Left out: the `own`, `public` and `private` places of body declarations, and
+`others` (give every remaining kind the last group). An element whose kind is in several
+groups is taken at its first.

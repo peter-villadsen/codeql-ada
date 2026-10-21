@@ -1,0 +1,3 @@
+| shapes.ads:7:4:7:46 | Circle | Package declares $@ already; Circle is a second tagged type. | shapes.ads:6:4:6:37 | Shape | Shape |
+| shapes.ads:8:4:8:46 | Square | Package declares $@ already; Square is a second tagged type. | shapes.ads:6:4:6:37 | Shape | Shape |
+| shapes.ads:9:4:9:50 | Guard | Package declares $@ already; Guard is a second tagged type. | shapes.ads:6:4:6:37 | Shape | Shape |

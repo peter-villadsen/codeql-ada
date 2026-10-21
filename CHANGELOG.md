@@ -172,6 +172,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/type-initial-values`** (`Type_Initial_Values`): record and private types
   declared without a constant of the type. Other types and a name pattern are in the
   library.
+- **`ada/unit-pattern`** (`Unit_Pattern`): packages that declare more than one tagged
+  type. The tagged type hierarchy and the order of context clauses and declarations are
+  in the library.
 
 
 ## 0.3.0 (2026-10-11)
