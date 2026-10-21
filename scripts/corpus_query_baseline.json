@@ -21,6 +21,7 @@
    "ada/function-missing-return": 0,
    "ada/goto-statement": 0,
    "ada/hardcoded-credential": 0,
+   "ada/header-comments": 0,
    "ada/identical-operands": 0,
    "ada/indirect-recursion": 0,
    "ada/open-without-close": 0,
@@ -64,6 +65,7 @@
    "ada/function-missing-return": 0,
    "ada/goto-statement": 9,
    "ada/hardcoded-credential": 0,
+   "ada/header-comments": 482,
    "ada/identical-operands": 0,
    "ada/indirect-recursion": 10,
    "ada/open-without-close": 0,
@@ -83,7 +85,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 4
   },
-  "total": 434
+  "total": 916
  },
  "gpr2": {
   "results": {
@@ -107,6 +109,7 @@
    "ada/function-missing-return": 1,
    "ada/goto-statement": 566,
    "ada/hardcoded-credential": 0,
+   "ada/header-comments": 1217,
    "ada/identical-operands": 0,
    "ada/indirect-recursion": 148,
    "ada/open-without-close": 4,
@@ -126,7 +129,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 36
   },
-  "total": 2010
+  "total": 3227
  },
  "libadalang-tools": {
   "results": {
@@ -150,6 +153,7 @@
    "ada/function-missing-return": 2,
    "ada/goto-statement": 36,
    "ada/hardcoded-credential": 0,
+   "ada/header-comments": 330,
    "ada/identical-operands": 0,
    "ada/indirect-recursion": 4,
    "ada/open-without-close": 28,
@@ -169,7 +173,7 @@
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 725
+  "total": 1055
  },
  "libkeccak": {
   "results": {
@@ -193,6 +197,7 @@
    "ada/function-missing-return": 0,
    "ada/goto-statement": 0,
    "ada/hardcoded-credential": 0,
+   "ada/header-comments": 0,
    "ada/identical-operands": 0,
    "ada/indirect-recursion": 0,
    "ada/open-without-close": 0,

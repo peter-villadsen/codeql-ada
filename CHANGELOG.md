@@ -113,6 +113,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   handlers. References to given entities, and all calls, are in the library.
 - **`ada/expressions`** (`Expressions`): unary minus applied to `mod` or `rem`
   (`-A mod B` is `-(A mod B)`). The library has 50 of AdaControl's 60 expression kinds.
+- **`ada/header-comments`** (`Header_Comments`): a file whose first unit starts without a
+  comment. A minimum number of lines, and a model of regular expressions, are in the
+  library.
 
 
 ## 0.3.0 (2026-10-11)

@@ -1,0 +1,5 @@
+| bad.ads:1:1:3:9 | CompilationUnit | header lines 0 |
+| bad.ads:1:1:3:9 | CompilationUnit | model mismatch at line 1 |
+| good.ads:5:1:7:10 | CompilationUnit | header lines 4 |
+| short.ads:2:1:5:11 | CompilationUnit | header lines 1 |
+| short.ads:2:1:5:11 | CompilationUnit | model mismatch at line 1 |

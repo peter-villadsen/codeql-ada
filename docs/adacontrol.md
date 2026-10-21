@@ -269,3 +269,16 @@ Left out: `dispatching_function_call`, `redispatching_function_call`,
 `unconverted_fixed_multiplying_op`; the two-category form of the conversion subrules (a
 condition on the operand's and the result's `typeCategory` in your query), and the
 variable `Called_Info`.
+
+### Header_Comments
+
+`ada/header-comments`, library `HeaderComments`.
+
+| Subrule | Library | Default |
+|---|---|---|
+| `minimum` | `headerLineCount(cu)`: comment lines before the first unit of a file; `headerLine(cu, i)` | 1 line |
+| `model` | `Model<model>::mismatch(cu, i)`, `firstMismatch(cu)`, with `string model(int i)` the `i`th line's regular expression | no |
+
+A model line matches part of the comment line unless anchored with `^` and `$`, as in
+AdaControl. Left out: the model's repetitions (`{min,max}`, `*`, `+`, `?`), and
+AdaControl's disabling comments.
