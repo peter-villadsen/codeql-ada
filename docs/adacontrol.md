@@ -333,3 +333,10 @@ expression (`isWhole(e)`). A primary counts 1: a name, a literal, a call, an agg
 an `if` or `case` expression; operators and parentheses add their operands; what is
 inside a call or an aggregate is counted as an expression of its own. The query's limit
 is 20 (AdaControl's `check` example).
+
+### Max_Nesting
+
+`ada/max-nesting`, library `MaxNesting`: `depth(n, kind)`, the number of constructs of
+`kind` around `n`, for `all` (packages, subprogram bodies, generics, tasks, protected
+units, entry bodies, blocks), `generic` and `task`. The query checks `all` with 7
+(AdaControl's `check` example). Left out: `separate` (the nesting of subunits).

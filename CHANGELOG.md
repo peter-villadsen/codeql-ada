@@ -125,6 +125,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   an enclosing region. `overloading` and the exceptions are in the library.
 - **`ada/max-expression-items`** (`Max_Expression_Items`): expressions of more than 20
   primaries.
+- **`ada/max-nesting`** (`Max_Nesting`): declarative constructs nested more than 7 deep.
+  `generic` and `task` are in the library.
 
 
 ## 0.3.0 (2026-10-11)

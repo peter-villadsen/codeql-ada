@@ -28,6 +28,7 @@
    "ada/insufficient-parameters": 0,
    "ada/local-hiding": 0,
    "ada/max-expression-items": 0,
+   "ada/max-nesting": 0,
    "ada/open-without-close": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
@@ -76,6 +77,7 @@
    "ada/insufficient-parameters": 28,
    "ada/local-hiding": 71,
    "ada/max-expression-items": 0,
+   "ada/max-nesting": 0,
    "ada/open-without-close": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
@@ -124,6 +126,7 @@
    "ada/insufficient-parameters": 74,
    "ada/local-hiding": 368,
    "ada/max-expression-items": 5,
+   "ada/max-nesting": 1,
    "ada/open-without-close": 4,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 3,
@@ -141,7 +144,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 36
   },
-  "total": 3681
+  "total": 3682
  },
  "libadalang-tools": {
   "results": {
@@ -172,6 +175,7 @@
    "ada/insufficient-parameters": 4,
    "ada/local-hiding": 144,
    "ada/max-expression-items": 3,
+   "ada/max-nesting": 2,
    "ada/open-without-close": 28,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 8,
@@ -189,7 +193,7 @@
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 1209
+  "total": 1211
  },
  "libkeccak": {
   "results": {
@@ -220,6 +224,7 @@
    "ada/insufficient-parameters": 1,
    "ada/local-hiding": 1,
    "ada/max-expression-items": 0,
+   "ada/max-nesting": 0,
    "ada/open-without-close": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
