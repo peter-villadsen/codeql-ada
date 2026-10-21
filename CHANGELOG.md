@@ -73,6 +73,19 @@ extractor are unchanged.
 - A loop's phi is now located at the loop variable rather than at the first read in the
   body; the definitions it merges are unchanged.
 
+### AdaControl parity
+
+Queries for the rules of [AdaControl](https://www.adalog.fr/compo/adacontrol_ug.html)
+(issue #73). Each rule's subrules are predicates in `codeql/ada/adacontrol/<Rule>.qll`;
+the query checks a fixed default selection of them, until configuration through data
+extensions (#7). `docs/adacontrol.md` lists, rule by rule, what is implemented, what the
+query checks, and what is left out. The queries carry the tag `adacontrol`.
+
+- **`ada/function-missing-return`** (`Abnormal_Function_Return`) also reports an exception
+  handler of a function's body that can complete normally, on its own. A handler the
+  control-flow graph does not reach (it raises only at calls and `raise`) is judged by its
+  last statement, as AdaControl does.
+
 ## 0.3.0 (2026-10-11)
 
 Data flow follows much more (components, arrays, containers, shared variables,

@@ -1,1 +1,5 @@
 | test.adb:3:4:8:11 | F1 | This function may run off the end without executing a return statement, which raises Program_Error at run time. |
+| test.adb:109:4:110:12 | ExceptionHandler | This exception handler may complete without a return or raise statement, which raises Program_Error at run time. |
+| test.adb:129:1:137:19 | Both_Fall_Off | This function may run off the end without executing a return statement, which raises Program_Error at run time. |
+| test.adb:135:4:136:12 | ExceptionHandler | This exception handler may complete without a return or raise statement, which raises Program_Error at run time. |
+| test.adb:156:4:157:39 | ExceptionHandler | This exception handler may complete without a return or raise statement, which raises Program_Error at run time. |
