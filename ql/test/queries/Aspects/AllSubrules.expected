@@ -1,0 +1,13 @@
+| test.ads:2:21:2:27 | AspectAssoc | implicit_true |
+| test.ads:2:21:2:27 | AspectAssoc | mark Inline |
+| test.ads:3:21:3:35 | AspectAssoc | mark Inline |
+| test.ads:5:11:5:23 | AspectAssoc | given mark |
+| test.ads:5:11:5:23 | AspectAssoc | mark Pre |
+| test.ads:5:25:5:37 | AspectAssoc | mark Post |
+| test.ads:5:39:5:48 | AspectAssoc | implicit_true |
+| test.ads:5:39:5:48 | AspectAssoc | mark No_Return |
+| test.ads:7:29:7:46 | AspectAssoc | given mark |
+| test.ads:7:29:7:46 | AspectAssoc | mark Pre'Class |
+| test.ads:8:21:8:29 | AspectAssoc | implicit_true |
+| test.ads:8:21:8:29 | AspectAssoc | mark Volatile |
+| test.ads:8:31:8:46 | AspectAssoc | mark Atomic |

@@ -75,3 +75,16 @@ traverse derivations and privacy. A partial view (`type T;`, `type T is private;
 full declaration count as the same subtype, paired by qualified name, since the extractor
 does not pair type views. Left out: types declared in generics matched through their
 instances.
+
+### Aspects
+
+`ada/aspects`, library `Aspects`.
+
+| Subrule | Library | Default |
+|---|---|---|
+| all aspects | every `AspectAssoc`; `aspectMark(a)` is its mark (`Pre'Class`) | no |
+| given aspect marks | `hasAspectMark(a, mark)`, ignoring case | no |
+| `implicit_true` | `isImplicitTrue(a)` | yes |
+
+AdaControl's `all` together with marks (the aspects not given) is a negation of
+`hasAspectMark` in your query.

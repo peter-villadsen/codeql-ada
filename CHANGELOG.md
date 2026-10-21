@@ -93,6 +93,7 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   allocators naming another subtype than their access type designates. Allocators by type
   or category are in the library; categories (`TypeCategories.qll`) are shared by the
   rules that take them.
+- **`ada/aspects`** (`Aspects`): a Boolean aspect given without a value (`with Inline`).
 
 
 ## 0.3.0 (2026-10-11)
