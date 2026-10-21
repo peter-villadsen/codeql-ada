@@ -306,3 +306,22 @@ AdaControl's disabling comments.
 with the enumeration types as a predicate. The query uses `Standard.Boolean` and a
 maximum of 1. An actual is insufficient when given by position and made only of numeric
 literals and literals of the listed enumerations; operators are not checked.
+
+### Local_Hiding
+
+`ada/local-hiding`, library `LocalHiding`.
+
+| Subrule | Library | Default |
+|---|---|---|
+| `strict` | `hides(inner, outer)`: the nearest declaration of the same name in an enclosing region; two subprograms overload rather than hide | yes, `not_different_families` |
+| `overloading` | `overloads(inner, outer)`: a subprogram or enumeration literal of the same name in the same or an enclosing region | no |
+| `not_operator` | `isOperator(d)` | |
+| `not_enumeration` | `Raw::EnumLiteralDecl` | |
+| `not_identical_renaming` | `isIdenticalRenaming(d)` | |
+| `not_different_families` | `family(d)`: data, type, subprogram, package, generic, exception, label | |
+
+Regions are packages (spec and body together), subprogram, task, entry and protected
+bodies, blocks, loops and generic formal parts; a subprogram body's parameters are in its
+region. Allowed patterns are a condition on `getAName()` in your query. Left out: names
+declared in a parent unit and hidden in a child unit, the variable
+`Overloading_Report`.

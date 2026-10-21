@@ -1,0 +1,3 @@
+| test.adb:6:19:6:34 | Count | Count hides $@ declared in an enclosing region. | test.adb:2:4:2:25 | Count | Count |
+| test.adb:10:11:10:16 | Count | Count hides $@ declared in an enclosing region. | test.adb:6:19:6:34 | Count | Count |
+| test.adb:17:13:17:34 | Total | Total hides $@ declared in an enclosing region. | test.adb:14:10:14:31 | Total | Total |

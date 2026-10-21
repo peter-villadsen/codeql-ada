@@ -1,0 +1,8 @@
+| test.adb:6:19:6:34 | Count | hides (data hides data) | test.adb:2:4:2:25 | Count |
+| test.adb:7:7:7:31 | Item | hides (data hides type) | test.adb:3:4:3:29 | Item |
+| test.adb:8:7:8:41 | Put | overloads | test.adb:4:4:4:40 | Put |
+| test.adb:10:11:10:16 | Count | hides (data hides data) | test.adb:6:19:6:34 | Count |
+| test.adb:17:13:17:34 | Total | hides (data hides data) | test.adb:14:10:14:31 | Total |
+| test.ads:4:4:4:32 | Red | overloads | test.ads:3:19:3:22 | Red |
+| test.ads:5:19:5:22 | Red | overloads | test.ads:3:19:3:22 | Red |
+| test.ads:5:19:5:22 | Red | overloads | test.ads:4:4:4:32 | Red |
