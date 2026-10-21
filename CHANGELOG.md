@@ -169,6 +169,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/statements`** (`Statements`): backward `goto`s and `when others => null`
   alternatives of `case` statements. About seventy more statement kinds are in the
   library.
+- **`ada/type-initial-values`** (`Type_Initial_Values`): record and private types
+  declared without a constant of the type. Other types and a name pattern are in the
+  library.
 
 
 ## 0.3.0 (2026-10-11)

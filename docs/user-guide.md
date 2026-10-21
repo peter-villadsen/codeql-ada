@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 60 queries are tested on a
+The project is pre-1.0. The extractor, the library and 61 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -478,6 +478,7 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/sql-injection` | SQL query built from user-controlled sources | error |
 | `ada/statements` | Backward goto or null case others | recommendation |
 | `ada/todo-comment` | TODO/FIXME comment | recommendation |
+| `ada/type-initial-values` | Record type without an initial value constant | recommendation |
 | `ada/unchecked-conversion` | Use of Unchecked_Conversion | warning |
 | `ada/unchecked-deallocation` | Use of Unchecked_Deallocation | warning |
 | `ada/unreachable-statement` | Unreachable statement | warning |

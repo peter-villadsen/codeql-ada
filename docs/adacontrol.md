@@ -556,3 +556,11 @@ Implemented: `any_statement`, `abort`, `accept`, `accept_return`, `assignment`,
 Left out: `code`, `dispatching_call`, `redispatching_call`, `inherited_procedure_call`,
 `exited_extended_return`, `hard_bounds_array_for_loop`, `multi_for_of_loop`,
 `raise_foreign`, and the variables `Called_Info` and `Small_Loop_Length`.
+
+### Type_Initial_Values
+
+`ada/type-initial-values`, library `TypeInitialValues`: `isChecked(t)` (type declarations;
+a private type stands for its full view), `initialConstant(t, c)` (a constant of the type,
+or a view of it, in the same declarative part; a package's visible and private parts are
+one) and `lacksInitialValue(t, pattern)`. The query checks record and private types with
+any constant; other types and a name pattern (`"^C_Init_"`) are for a query of your own.

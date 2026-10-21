@@ -1,0 +1,7 @@
+| test.ads:2:4:4:15 | Point | constant Origin |
+| test.ads:2:4:4:15 | Point | lacks ^C_Init_ |
+| test.ads:7:4:9:15 | Item | lacks ^C_Init_ |
+| test.ads:7:4:9:15 | Item | lacks any |
+| test.ads:11:4:11:27 | Handle | constant Null_Handle |
+| test.ads:11:4:11:27 | Handle | lacks ^C_Init_ |
+| test.ads:14:4:14:32 | Count | constant C_Init_Count |
