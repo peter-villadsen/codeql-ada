@@ -103,6 +103,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   (`codeql/ada/adacontrol/Places.qll`), shared with the rules that take them.
 - **`ada/dependencies`** (`Dependencies`): a unit that withs one of its own child units.
   The library has `with`, `others`, and the `raw`, `direct` and `parent` counts.
+- **`ada/derivations`** (`Derivations`): a primitive operation of a derived tagged type
+  that overrides an inherited one, declared without `overriding`. The library has `from`,
+  `max_parents`, `max_depth`, and the other indicator checks.
 
 
 ## 0.3.0 (2026-10-11)

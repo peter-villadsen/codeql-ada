@@ -1,0 +1,2 @@
+| shapes.ads:13:4:13:32 | Draw | Draw overrides an inherited operation, but is not declared overriding. |
+| shapes.ads:19:4:19:30 | Draw | Draw overrides an inherited operation, but is not declared overriding. |

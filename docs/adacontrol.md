@@ -194,3 +194,20 @@ types).
 
 Left out: AdaControl's semantic dependencies of `others` beyond `with` clauses (a child's
 parent units are counted by `direct` only).
+
+### Derivations
+
+`ada/derivations`, library `Derivations`.
+
+| Subrule | Library | Default |
+|---|---|---|
+| `from` an entity | `derivesFrom(t, ancestor)`: a type, a subtype of it, or a unit declaring the parent | no |
+| `from` a category | `derivesFromCategory(t, category)`, derivations traversed, privacy not | no |
+| `max_parents` | `parentCount(t)`: the parent and the progenitors | no |
+| `max_depth` | `depth(t)` | no |
+| `indicator` | `missingIndicator(s, d, expected, onBody)`, `indicatorOnBody(s, d)` | `overriding`, tagged, declarations |
+
+A primitive overrides when an ancestor (parent or progenitor, at any depth) has a
+primitive function or procedure of the same name and number of parameters, controlled by
+the same parameter. Left out: `indicator` on untagged types, and types derived in
+generics followed into their instances.

@@ -1,0 +1,35 @@
+| shapes.adb:4:4:4:77 | Area | indicator on body |
+| shapes.adb:5:4:5:40 | Draw | missing overriding (body: true) |
+| shapes.adb:6:4:6:52 | Print | indicator on body |
+| shapes.adb:7:4:7:47 | Grow | missing not overriding (body: true) |
+| shapes.adb:8:4:8:49 | Shrink | missing not overriding (body: true) |
+| shapes.adb:9:4:9:38 | Draw | missing overriding (body: true) |
+| shapes.ads:9:4:11:15 | Circle | from Shapes |
+| shapes.ads:9:4:11:15 | Circle | from Shapes.Printable |
+| shapes.ads:9:4:11:15 | Circle | from Shapes.Shape |
+| shapes.ads:9:4:11:15 | Circle | from category interface |
+| shapes.ads:9:4:11:15 | Circle | from category tagged |
+| shapes.ads:9:4:11:15 | Circle | parents 2, depth 1 |
+| shapes.ads:13:4:13:32 | Draw | missing overriding (body: false) |
+| shapes.ads:15:4:15:39 | Grow | missing not overriding (body: false) |
+| shapes.ads:18:4:18:45 | Ball | from Shapes |
+| shapes.ads:18:4:18:45 | Ball | from Shapes.Circle |
+| shapes.ads:18:4:18:45 | Ball | from Shapes.Printable |
+| shapes.ads:18:4:18:45 | Ball | from Shapes.Shape |
+| shapes.ads:18:4:18:45 | Ball | from category tagged |
+| shapes.ads:18:4:18:45 | Ball | parents 1, depth 2 |
+| shapes.ads:19:4:19:30 | Draw | missing overriding (body: false) |
+| shapes.ads:21:4:21:30 | Count | from Standard |
+| shapes.ads:21:4:21:30 | Count | from Standard.Integer |
+| shapes.ads:21:4:21:30 | Count | from category range |
+| shapes.ads:21:4:21:30 | Count | parents 1, depth 1 |
+| shapes.ads:23:4:23:34 | Tally | from Shapes |
+| shapes.ads:23:4:23:34 | Tally | from Shapes.Count |
+| shapes.ads:23:4:23:34 | Tally | from Shapes.Small_Count |
+| shapes.ads:23:4:23:34 | Tally | from category range |
+| shapes.ads:23:4:23:34 | Tally | parents 1, depth 1 |
+| shapes.ads:29:4:29:46 | Derived | from More_Shapes |
+| shapes.ads:29:4:29:46 | Derived | from More_Shapes.Base |
+| shapes.ads:29:4:29:46 | Derived | from category tagged |
+| shapes.ads:29:4:29:46 | Derived | parents 1, depth 1 |
+| shapes.ads:30:4:30:59 | Add | missing not overriding (body: false) |
