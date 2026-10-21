@@ -1,0 +1,2 @@
+| test.adb:37:11:37:22 | To_Word (...) | The actual for W is an unchecked conversion, which gets around strong typing. |
+| test.adb:38:11:38:29 | Word'(...) | The actual for W is an unchecked conversion, which gets around strong typing. |

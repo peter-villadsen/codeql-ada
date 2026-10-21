@@ -1,0 +1,39 @@
+| test.adb:25:4:25:30 | B1 | default_used | Fill |  |
+| test.adb:25:4:25:30 | B1 | default_used | Size |  |
+| test.adb:26:4:26:35 | B2 | default_not_used | Size | 16 |
+| test.adb:26:4:26:35 | B2 | default_positional | Size | 16 |
+| test.adb:26:4:26:35 | B2 | default_used | Fill |  |
+| test.adb:27:4:27:43 | B3 | default_not_used | Size | 16 |
+| test.adb:27:4:27:43 | B3 | default_used | Fill |  |
+| test.adb:28:4:28:48 | B4 | default_not_used | Fill | '*' |
+| test.adb:28:4:28:48 | B4 | default_not_used | Size | 16 |
+| test.adb:28:4:28:48 | B4 | default_positional | Size | 16 |
+| test.adb:32:4:32:11 | Put (...) | default_used | Base |  |
+| test.adb:32:4:32:11 | Put (...) | default_used | Width |  |
+| test.adb:33:4:33:14 | Put (...) | default_not_used | Width | 5 |
+| test.adb:33:4:33:14 | Put (...) | default_positional | Width | 5 |
+| test.adb:33:4:33:14 | Put (...) | default_used | Base |  |
+| test.adb:34:4:34:23 | Put (...) | default_not_used | Width | 5 |
+| test.adb:34:4:34:23 | Put (...) | default_used | Base |  |
+| test.adb:35:4:35:18 | Put (...) | default_not_used | Base | 16 |
+| test.adb:35:4:35:18 | Put (...) | default_not_used | Width | 5 |
+| test.adb:35:4:35:18 | Put (...) | default_positional | Base | 16 |
+| test.adb:35:4:35:18 | Put (...) | default_positional | Width | 5 |
+| test.adb:36:4:36:30 | Put (...) | default_not_used | Base | 2 |
+| test.adb:36:4:36:30 | Put (...) | default_used | Width |  |
+| test.adb:37:4:37:23 | Store (...) | entity Ada.Unchecked_Conversion (anywhere: false) | W | To_Word (...) |
+| test.adb:37:4:37:23 | Store (...) | entity Ada.Unchecked_Conversion (anywhere: true) | W | To_Word (...) |
+| test.adb:37:4:37:23 | Store (...) | entity Test.I (anywhere: true) | W | To_Word (...) |
+| test.adb:37:11:37:22 | To_Word (...) | entity Test.I (anywhere: false) | S | I |
+| test.adb:37:11:37:22 | To_Word (...) | entity Test.I (anywhere: true) | S | I |
+| test.adb:38:4:38:30 | Store (...) | entity Ada.Unchecked_Conversion (anywhere: false) | W | Word'(...) |
+| test.adb:38:4:38:30 | Store (...) | entity Ada.Unchecked_Conversion (anywhere: true) | W | Word'(...) |
+| test.adb:38:4:38:30 | Store (...) | entity Test.I (anywhere: true) | W | Word'(...) |
+| test.adb:38:17:38:28 | To_Word (...) | entity Test.I (anywhere: false) | S | I |
+| test.adb:38:17:38:28 | To_Word (...) | entity Test.I (anywhere: true) | S | I |
+| test.adb:39:4:39:27 | Store (...) | entity Ada.Unchecked_Conversion (anywhere: true) | W | ... + ... |
+| test.adb:39:4:39:27 | Store (...) | entity Test.I (anywhere: true) | W | ... + ... |
+| test.adb:39:11:39:22 | To_Word (...) | entity Test.I (anywhere: false) | S | I |
+| test.adb:39:11:39:22 | To_Word (...) | entity Test.I (anywhere: true) | S | I |
+| test.adb:40:4:40:20 | Store (...) | entity Test.I (anywhere: false) | W | Word (...) |
+| test.adb:40:4:40:20 | Store (...) | entity Test.I (anywhere: true) | W | Word (...) |

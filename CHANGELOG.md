@@ -85,6 +85,11 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   handler of a function's body that can complete normally, on its own. A handler the
   control-flow graph does not reach (it raises only at calls and `raise`) is judged by its
   last statement, as AdaControl does.
+- **`ada/actual-parameters`** (`Actual_Parameters`): an instance of
+  `Unchecked_Conversion` called directly as the actual of a call. The library also has
+  `default_used`, `default_not_used` and `default_positional`, for calls and
+  instantiations.
+
 
 ## 0.3.0 (2026-10-11)
 

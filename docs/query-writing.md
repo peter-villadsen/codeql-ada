@@ -63,7 +63,7 @@ language's package registry entry, just for QL:
   queries: `ide-contextual-queries/printAst.ql` (VS Code's "View AST") and
   `tools/PrintAst.ql` (the same tree as text). They live here rather than in
   `ql/src` so that `codeql database analyze ql/src` never picks them up.
-- **`ql/src`, published as `peter-villadsen/ada-queries`** — the 26 shipped
+- **`ql/src`, published as `peter-villadsen/ada-queries`** — the shipped
   queries, each a standalone `.ql` file under `ql/src/queries/`. This pack
   depends on `ada-all`.
 

@@ -1,6 +1,7 @@
 {
  "adasat": {
   "results": {
+   "ada/actual-parameters": 0,
    "ada/boolean-literal-comparison": 0,
    "ada/command-line-injection": 0,
    "ada/dead-local-subprogram": 1,
@@ -34,6 +35,7 @@
  },
  "alire": {
   "results": {
+   "ada/actual-parameters": 1,
    "ada/boolean-literal-comparison": 0,
    "ada/command-line-injection": 0,
    "ada/dead-local-subprogram": 0,
@@ -63,10 +65,11 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 4
   },
-  "total": 184
+  "total": 185
  },
  "gpr2": {
   "results": {
+   "ada/actual-parameters": 8,
    "ada/boolean-literal-comparison": 1,
    "ada/command-line-injection": 0,
    "ada/dead-local-subprogram": 8,
@@ -96,10 +99,11 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 36
   },
-  "total": 1546
+  "total": 1554
  },
  "libadalang-tools": {
   "results": {
+   "ada/actual-parameters": 0,
    "ada/boolean-literal-comparison": 0,
    "ada/command-line-injection": 0,
    "ada/dead-local-subprogram": 9,
@@ -133,6 +137,7 @@
  },
  "libkeccak": {
   "results": {
+   "ada/actual-parameters": 6,
    "ada/boolean-literal-comparison": 0,
    "ada/command-line-injection": 0,
    "ada/dead-local-subprogram": 0,
@@ -162,6 +167,6 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 0
   },
-  "total": 28
+  "total": 34
  }
 }

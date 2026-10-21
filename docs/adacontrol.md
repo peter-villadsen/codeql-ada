@@ -42,3 +42,19 @@ graph does not reach (it raises only at calls and `raise`, not at `10 / X`) is j
 that shape instead: a `return`, a `raise`, a call that does not return, or a block, an
 `if` with an `else`, a `case` or a plain `loop` without `exit` or `goto`, every branch of
 which ends so.
+
+### Actual_Parameters
+
+`ada/actual-parameters`, library `ActualParameters`.
+
+| Subrule | Library | Default |
+|---|---|---|
+| `default_used` | `defaultUsed(site, formal)` | no |
+| `default_not_used` | `defaultNotUsed(site, formal, actual)` | no |
+| `default_positional` | `defaultPositional(site, formal, actual)` | no: ~1,600 corpus results, mostly container instantiations given `"<"` by position |
+| `entity` | `entityActual(site, formal, actual, entity, anywhere)` | all calls, all formals, `Ada.Unchecked_Conversion` |
+
+A site is a `Call` or a `GenericInstantiation`; the formals of an instantiation are the
+generic's formal objects and subprograms. Restrict `site` (by target) and `formal` (by
+name) for AdaControl's `<place>` and `<formal>`; `anywhere = true` is AdaControl's
+`all <entity>`. Left out: formal types with defaults (Ada 2022).
