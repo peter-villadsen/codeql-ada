@@ -14,7 +14,7 @@ private import codeql.ada.Calls
 
 module ActualParameters {
   /** Gets the `i`th name (0-based) declared by the formal part of generic `g`. */
-  private Raw::DefiningName genericFormal(Raw::GenericDecl g, int i) {
+  Raw::DefiningName genericFormal(Raw::GenericDecl g, int i) {
     result =
       rank[i + 1](Raw::DefiningName dn, Raw::GenericFormal f, int j |
         f = g.getFormalPart().getDecls().getChild(j) and

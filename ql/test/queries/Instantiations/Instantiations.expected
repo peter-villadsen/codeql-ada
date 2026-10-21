@@ -1,0 +1,2 @@
+| test.adb:9:4:10:42 | To_Word_2 | This instance of Ada.Unchecked_Conversion repeats $@ with the same actuals. | test.adb:8:4:8:69 | To_Word | To_Word |
+| test.adb:14:4:14:78 | Free_Again | This instance of Ada.Unchecked_Deallocation repeats $@ with the same actuals. | test.adb:13:4:13:72 | Free | Free |

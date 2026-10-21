@@ -1,0 +1,59 @@
+| test.adb:8:4:8:69 | To_Word | actual 0 is Integer (subtypes: false) |
+| test.adb:8:4:8:69 | To_Word | actual 0 is Integer (subtypes: true) |
+| test.adb:8:4:8:69 | To_Word | actual 0 of category range |
+| test.adb:8:4:8:69 | To_Word | actual 1 of category mod |
+| test.adb:8:4:8:69 | To_Word | of Ada.Unchecked_Conversion |
+| test.adb:8:4:8:69 | To_Word | place local |
+| test.adb:8:4:8:69 | To_Word | place nested |
+| test.adb:9:4:10:42 | To_Word_2 | actual 0 is Integer (subtypes: false) |
+| test.adb:9:4:10:42 | To_Word_2 | actual 0 is Integer (subtypes: true) |
+| test.adb:9:4:10:42 | To_Word_2 | actual 0 of category range |
+| test.adb:9:4:10:42 | To_Word_2 | actual 1 of category mod |
+| test.adb:9:4:10:42 | To_Word_2 | of Ada.Unchecked_Conversion |
+| test.adb:9:4:10:42 | To_Word_2 | place local |
+| test.adb:9:4:10:42 | To_Word_2 | place nested |
+| test.adb:9:4:10:42 | To_Word_2 | repeats To_Word at 0 |
+| test.adb:9:4:10:42 | To_Word_2 | repeats To_Word at 0,1 |
+| test.adb:9:4:10:42 | To_Word_2 | repeats To_Word at 1 |
+| test.adb:11:4:11:68 | To_Int | actual 0 of category mod |
+| test.adb:11:4:11:68 | To_Int | actual 1 is Integer (subtypes: false) |
+| test.adb:11:4:11:68 | To_Int | actual 1 is Integer (subtypes: true) |
+| test.adb:11:4:11:68 | To_Int | actual 1 of category range |
+| test.adb:11:4:11:68 | To_Int | of Ada.Unchecked_Conversion |
+| test.adb:11:4:11:68 | To_Int | place local |
+| test.adb:11:4:11:68 | To_Int | place nested |
+| test.adb:12:4:12:73 | Small_To_Word | actual 0 is Integer (subtypes: true) |
+| test.adb:12:4:12:73 | Small_To_Word | actual 1 of category mod |
+| test.adb:12:4:12:73 | Small_To_Word | of Ada.Unchecked_Conversion |
+| test.adb:12:4:12:73 | Small_To_Word | place local |
+| test.adb:12:4:12:73 | Small_To_Word | place nested |
+| test.adb:12:4:12:73 | Small_To_Word | repeats To_Word at 1 |
+| test.adb:12:4:12:73 | Small_To_Word | repeats To_Word_2 at 1 |
+| test.adb:13:4:13:72 | Free | actual 0 is Integer (subtypes: false) |
+| test.adb:13:4:13:72 | Free | actual 0 is Integer (subtypes: true) |
+| test.adb:13:4:13:72 | Free | actual 0 of category range |
+| test.adb:13:4:13:72 | Free | actual 1 of category access |
+| test.adb:13:4:13:72 | Free | of Ada.Unchecked_Deallocation |
+| test.adb:13:4:13:72 | Free | place local |
+| test.adb:13:4:13:72 | Free | place nested |
+| test.adb:14:4:14:78 | Free_Again | actual 0 is Integer (subtypes: false) |
+| test.adb:14:4:14:78 | Free_Again | actual 0 is Integer (subtypes: true) |
+| test.adb:14:4:14:78 | Free_Again | actual 0 of category range |
+| test.adb:14:4:14:78 | Free_Again | actual 1 of category access |
+| test.adb:14:4:14:78 | Free_Again | of Ada.Unchecked_Deallocation |
+| test.adb:14:4:14:78 | Free_Again | place local |
+| test.adb:14:4:14:78 | Free_Again | place nested |
+| test.adb:14:4:14:78 | Free_Again | repeats Free at 0 |
+| test.adb:14:4:14:78 | Free_Again | repeats Free at 0,1 |
+| test.adb:14:4:14:78 | Free_Again | repeats Free at 1 |
+| test.adb:21:4:21:39 | H1 | actual 0 is Integer (subtypes: false) |
+| test.adb:21:4:21:39 | H1 | actual 0 is Integer (subtypes: true) |
+| test.adb:21:4:21:39 | H1 | actual 0 of category range |
+| test.adb:21:4:21:39 | H1 | of Test.Holder |
+| test.adb:21:4:21:39 | H1 | place local |
+| test.adb:21:4:21:39 | H1 | place nested |
+| test.adb:24:7:24:39 | H2 | actual 0 of category mod |
+| test.adb:24:7:24:39 | H2 | of Test.Holder |
+| test.adb:24:7:24:39 | H2 | place block |
+| test.adb:24:7:24:39 | H2 | place local |
+| test.adb:24:7:24:39 | H2 | place nested |

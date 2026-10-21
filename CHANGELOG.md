@@ -116,6 +116,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/header-comments`** (`Header_Comments`): a file whose first unit starts without a
   comment. A minimum number of lines, and a model of regular expressions, are in the
   library.
+- **`ada/instantiations`** (`Instantiations`): a second instance of `Unchecked_Conversion`
+  or `Unchecked_Deallocation` with the same actuals. Instantiations of any generic, by
+  actual, category, repeat and place, are in the library.
 
 
 ## 0.3.0 (2026-10-11)

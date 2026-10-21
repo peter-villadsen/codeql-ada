@@ -282,3 +282,19 @@ variable `Called_Info`.
 A model line matches part of the comment line unless anchored with `^` and `$`, as in
 AdaControl. Left out: the model's repetitions (`{min,max}`, `*`, `+`, `?`), and
 AdaControl's disabling comments.
+
+### Instantiations
+
+`ada/instantiations`, library `Instantiations` (and `Places`).
+
+| Subrule | Library | Default |
+|---|---|---|
+| a generic | `instantiates(inst, generic)`, through generic renamings | `Ada.Unchecked_Conversion`, `Ada.Unchecked_Deallocation` |
+| an actual entity | `actualIs(inst, i, entity, subtypes)`; `subtypes` is `Type_Matches_Subtype` | no |
+| an actual category | `actualIsOfCategory(inst, i, category)`, derivations and privacy not traversed | no |
+| `=` | `repeats(inst, positions, previous)`, positions `"0"`, `"1"`, `"0,1"`, `"0,1,2"` | `=, =` |
+| `<>` | leave the position out | |
+| places | `Places::isAt(inst, place)` | all |
+
+"Earlier" for `=` is by file name and position. Left out: `=` on formal `in` parameters
+(AdaControl compares static values; here the actual must be a name).
