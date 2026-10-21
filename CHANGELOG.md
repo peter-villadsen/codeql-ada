@@ -161,6 +161,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   specifications are in the library.
 - **`ada/return-statements`** (`Return_Statements`): subprograms with more than 5 return
   statements. `depth` and `handler_count` are in the library.
+- **`ada/return-type`** (`Return_Type`): functions returning an anonymous access type.
+  The other kinds and given types are in the library.
 
 
 ## 0.3.0 (2026-10-11)

@@ -1,0 +1,9 @@
+| test.ads:18:4:18:39 | Ptr | anonymous_access |
+| test.ads:19:4:19:42 | Any_Shape | class_wide |
+| test.ads:20:4:20:38 | Any_Lim | class_wide |
+| test.ads:20:4:20:38 | Any_Lim | limited_class_wide |
+| test.ads:21:4:21:31 | Values | unconstrained_array |
+| test.ads:22:4:22:33 | Triple | constrained_array |
+| test.ads:23:4:23:29 | Make | unconstrained_discriminated |
+| test.ads:25:4:25:34 | New_Pool | task |
+| test.ads:26:4:26:34 | Count | type Integer (exact: false) |

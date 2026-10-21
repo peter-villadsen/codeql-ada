@@ -503,3 +503,11 @@ entry body or accept statement a return leaves) and `callableKind(c)` (`procedur
 handler; a block's handlers count on their own, its statements with the enclosing
 callable or handler). `min` and `max` are comparisons in your query. The query checks
 `regular_count, max 5`.
+
+### Return_Type
+
+`ada/return-type`, library `ReturnType`: `returnsKind(f, kind)` for `anonymous_access`,
+`class_wide`, `limited_class_wide`, `constrained_array`, `unconstrained_array`,
+`unconstrained_discriminated`, `task` and `protected` (a type with a task or protected
+component, at any depth, counts), and `returnsType(f, t, exact)` for `type <entity>`.
+The query checks `anonymous_access`.
