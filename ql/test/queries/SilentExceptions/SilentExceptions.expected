@@ -1,0 +1,3 @@
+| test.adb:12:7:13:21 | ExceptionHandler | This handler can let any exception disappear without reporting it. |
+| test.adb:20:7:25:17 | ExceptionHandler | This handler can let any exception disappear without reporting it. |
+| test.adb:54:7:57:19 | ExceptionHandler | This handler can let any exception disappear without reporting it. |

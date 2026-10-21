@@ -1,0 +1,17 @@
+| test.adb:12:7:13:21 | ExceptionHandler | others |
+| test.adb:12:7:13:21 | ExceptionHandler | silent (raise, return) |
+| test.adb:12:7:13:21 | ExceptionHandler | silent (raise, return, Put_Line) |
+| test.adb:20:7:25:17 | ExceptionHandler | others |
+| test.adb:20:7:25:17 | ExceptionHandler | silent (raise, return) |
+| test.adb:20:7:25:17 | ExceptionHandler | silent (raise, return, Put_Line) |
+| test.adb:32:7:37:17 | E | others |
+| test.adb:32:7:37:17 | E | silent (raise, return) |
+| test.adb:44:7:45:15 | ExceptionHandler | others |
+| test.adb:44:7:45:15 | ExceptionHandler | silent (raise, return) |
+| test.adb:44:7:45:15 | ExceptionHandler | silent (raise, return, Put_Line) |
+| test.adb:52:7:53:21 | ExceptionHandler | handles Standard.Constraint_Error |
+| test.adb:52:7:53:21 | ExceptionHandler | silent (raise, return) |
+| test.adb:52:7:53:21 | ExceptionHandler | silent (raise, return, Put_Line) |
+| test.adb:54:7:57:19 | ExceptionHandler | others |
+| test.adb:54:7:57:19 | ExceptionHandler | silent (raise, return) |
+| test.adb:54:7:57:19 | ExceptionHandler | silent (raise, return, Put_Line) |

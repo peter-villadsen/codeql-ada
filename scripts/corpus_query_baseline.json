@@ -48,6 +48,7 @@
    "ada/return-statements": 1,
    "ada/return-type": 0,
    "ada/self-comparison": 0,
+   "ada/silent-exceptions": 0,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
    "ada/todo-comment": 2,
@@ -111,6 +112,7 @@
    "ada/return-statements": 11,
    "ada/return-type": 13,
    "ada/self-comparison": 0,
+   "ada/silent-exceptions": 0,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
    "ada/todo-comment": 48,
@@ -174,6 +176,7 @@
    "ada/return-statements": 41,
    "ada/return-type": 6,
    "ada/self-comparison": 0,
+   "ada/silent-exceptions": 3,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
    "ada/todo-comment": 58,
@@ -186,7 +189,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 36
   },
-  "total": 5713
+  "total": 5716
  },
  "libadalang-tools": {
   "results": {
@@ -237,6 +240,7 @@
    "ada/return-statements": 32,
    "ada/return-type": 0,
    "ada/self-comparison": 10,
+   "ada/silent-exceptions": 1,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
    "ada/todo-comment": 14,
@@ -249,7 +253,7 @@
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 2253
+  "total": 2254
  },
  "libkeccak": {
   "results": {
@@ -300,6 +304,7 @@
    "ada/return-statements": 0,
    "ada/return-type": 0,
    "ada/self-comparison": 0,
+   "ada/silent-exceptions": 0,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
    "ada/todo-comment": 0,

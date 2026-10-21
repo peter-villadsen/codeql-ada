@@ -163,6 +163,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   statements. `depth` and `handler_count` are in the library.
 - **`ada/return-type`** (`Return_Type`): functions returning an anonymous access type.
   The other kinds and given types are in the library.
+- **`ada/silent-exceptions`** (`Silent_Exceptions`): `when others` handlers with a path
+  that neither re-raises, returns, requeues nor calls anything. Other exceptions and
+  reporting entities are in the library.
 
 
 ## 0.3.0 (2026-10-11)

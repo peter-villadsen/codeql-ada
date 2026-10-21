@@ -511,3 +511,19 @@ callable or handler). `min` and `max` are comparisons in your query. The query c
 `unconstrained_discriminated`, `task` and `protected` (a type with a task or protected
 component, at any depth, counts), and `returnsType(f, t, exact)` for `type <entity>`.
 The query checks `anonymous_access`.
+
+### Silent_Exceptions
+
+`ada/silent-exceptions`, library `SilentExceptions`. `Make<isReport>::isSilent(h)` holds
+when some path through handler `h` passes no report item, with `isReport` your report
+items: `isReportOfKind(s, kind)` for `explicit_raise`, `reraise`, `return` and
+`requeue`, and `callsReporting(s, entity)` for reporting subprograms. As in AdaControl,
+reporting must be written in the handler: an `if` reports when every branch does, a
+`case` when every alternative does, a block when its statements do; a loop's body does
+not count. `handlesOthers(h)` and `handles(h, e)` select the exceptions (`with`, `not`,
+`others`).
+
+The query checks `with others`, with `raise`, `return`, `requeue` and any procedure call
+(standing for the reporting procedures a team would list) as report items; handlers of
+only `null` are left to `ada/exception-swallowing`. Left out: exceptions of a library
+unit given as a unit, and generic packages as report items.
