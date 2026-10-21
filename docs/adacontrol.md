@@ -588,3 +588,10 @@ no unit withs it, through renamings and instances, and it has no child unit). Th
 checks packages; a library subprogram nobody withs is usually a main program. AdaControl's
 `unchecked` (units withed but not analyzed) is a property of the extraction, not of the
 code: the extractor's diagnostics report the units it could not find.
+
+### Use_Clauses
+
+`ada/use-clauses`, library `UseClauses`: `controlled(u, n, subrule)` for `package`,
+`global`, `local`, `type`, `type_global`, `type_local`, `all_type`, `all_type_global` and
+`all_type_local`; `clauseKind(u)` and `isGlobal(u)`. The packages and types to allow are
+a condition on `n` in your query. The query checks `global` (AdaControl's example).

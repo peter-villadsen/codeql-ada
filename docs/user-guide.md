@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 63 queries are tested on a
+The project is pre-1.0. The extractor, the library and 64 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -487,6 +487,7 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/unused-parameter` | Unused parameter | recommendation |
 | `ada/unused-local` | Unused local object | recommendation |
 | `ada/unused-with-clause` | Unused with clause | recommendation |
+| `ada/use-clauses` | Use clause in a context clause | recommendation |
 | `ada/useless-if` | Useless if statement | warning |
 | `ada/warnings-off` | Blanket disabling of compiler warnings | recommendation |
 

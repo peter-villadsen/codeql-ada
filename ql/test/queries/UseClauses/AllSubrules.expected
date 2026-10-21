@@ -1,0 +1,8 @@
+| test.adb:1:23:1:34 | Ada.Text_IO | global |
+| test.adb:1:23:1:34 | Ada.Text_IO | package |
+| test.adb:3:10:3:48 | Ada.Strings.Unbounded.Unbounded_String | type |
+| test.adb:3:10:3:48 | Ada.Strings.Unbounded.Unbounded_String | type_global |
+| test.adb:5:8:5:29 | Ada.Strings.Unbounded | local |
+| test.adb:5:8:5:29 | Ada.Strings.Unbounded | package |
+| test.adb:6:17:6:38 | Ada.Text_IO.File_Mode | all_type |
+| test.adb:6:17:6:38 | Ada.Text_IO.File_Mode | all_type_local |

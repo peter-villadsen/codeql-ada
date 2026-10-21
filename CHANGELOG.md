@@ -176,6 +176,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   type. The tagged type hierarchy and the order of context clauses and declarations are
   in the library.
 - **`ada/units`** (`Units`): library packages that no unit withs.
+- **`ada/use-clauses`** (`Use_Clauses`): package `use` clauses among the context clauses.
+  Local clauses and `use type` are in the library.
 
 
 ## 0.3.0 (2026-10-11)
