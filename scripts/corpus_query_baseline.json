@@ -32,6 +32,7 @@
    "ada/max-primitives": 0,
    "ada/max-size": 1,
    "ada/max-statement-nesting": 5,
+   "ada/naming-convention": 0,
    "ada/open-without-close": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
@@ -84,6 +85,7 @@
    "ada/max-primitives": 6,
    "ada/max-size": 20,
    "ada/max-statement-nesting": 8,
+   "ada/naming-convention": 27,
    "ada/open-without-close": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
@@ -101,7 +103,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 4
   },
-  "total": 1049
+  "total": 1076
  },
  "gpr2": {
   "results": {
@@ -136,6 +138,7 @@
    "ada/max-primitives": 16,
    "ada/max-size": 129,
    "ada/max-statement-nesting": 195,
+   "ada/naming-convention": 1409,
    "ada/open-without-close": 4,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 3,
@@ -153,7 +156,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 36
   },
-  "total": 4022
+  "total": 5431
  },
  "libadalang-tools": {
   "results": {
@@ -188,6 +191,7 @@
    "ada/max-primitives": 6,
    "ada/max-size": 76,
    "ada/max-statement-nesting": 89,
+   "ada/naming-convention": 742,
    "ada/open-without-close": 28,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 8,
@@ -205,7 +209,7 @@
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 1382
+  "total": 2124
  },
  "libkeccak": {
   "results": {
@@ -240,6 +244,7 @@
    "ada/max-primitives": 0,
    "ada/max-size": 7,
    "ada/max-statement-nesting": 0,
+   "ada/naming-convention": 4,
    "ada/open-without-close": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
@@ -257,6 +262,6 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 0
   },
-  "total": 120
+  "total": 124
  }
 }

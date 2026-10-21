@@ -133,6 +133,10 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   kind of element is in the library.
 - **`ada/max-statement-nesting`** (`Max_Statement_Nesting`): compound statements nested
   more than 5 deep. The per-kind subrules are in the library.
+- **`ada/naming-convention`** (`Naming_Convention`): identifiers whose words do not each
+  start with a capital letter or a digit. The library classifies names into
+  AdaControl's filter kinds, with locations and conventions of positive and negative
+  patterns.
 
 
 ## 0.3.0 (2026-10-11)

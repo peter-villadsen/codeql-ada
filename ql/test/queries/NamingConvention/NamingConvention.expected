@@ -1,0 +1,6 @@
+| test.adb:4:11:4:12 | i | i is not in Ada case: each word starts with a capital letter. |
+| test.ads:2:24:2:29 | green | green is not in Ada case: each word starts with a capital letter. |
+| test.ads:9:4:9:10 | my_Var | my_Var is not in Ada case: each word starts with a capital letter. |
+| test.ads:11:4:11:12 | Bad_name | Bad_name is not in Ada case: each word starts with a capital letter. |
+| test.ads:13:45:13:54 | out_Value | out_Value is not in Ada case: each word starts with a capital letter. |
+| test.ads:30:9:30:24 | Test.Child_unit | Child_unit is not in Ada case: each word starts with a capital letter. |

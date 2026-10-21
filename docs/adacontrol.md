@@ -365,3 +365,27 @@ inherited primitives, and tasks and protected types.
 `select`, `accept` and extended `return` included), within the statement's body. The
 query checks `all, 5` and reports the outermost statement too deep, not each one inside
 it.
+
+### Naming_Convention
+
+`ada/naming-convention`, library `NamingConvention`.
+
+- `kind(dn)` is the most specific of AdaControl's filter kinds for a defining name,
+  `parentKind(k, parent)` the hierarchy, and `appliesTo(dn, k)` holds for the kind and
+  every kind above it, up to `all`.
+- `location(dn)` is `unit`, `global` or `local`.
+- `Convention<rule>::violates(dn, k, pattern)` checks names against
+  `rule(kind, pattern, positive, caseSensitive)`: a name must match one of its kind's
+  positive patterns, if there are any, and none of the negative ones.
+
+The query checks `all` with the case-sensitive pattern
+`^[A-Z0-9][A-Za-z0-9]*(_[A-Z0-9][A-Za-z0-9]*)*$`: every word starts with a capital
+letter or a digit, so acronyms (`GPR2_Path`) pass. Only the identifier is checked, not
+the parent units of a child unit's name; operators and character literals are not
+checked, nor bodies and their parameters when there is a spec.
+
+Left out: `regular_static_constant` and `regular_nonstatic_constant` (constants are
+`regular_constant`), `class_type`, the modifiers `root` and `others`, `<type_spec>`
+(a condition on the entity's type in your `rule`), pattern files, and the variable
+`Default_Case_Sensitivity`. Subtypes and derived types take the kind of the type they
+derive from; incomplete types are not checked.
