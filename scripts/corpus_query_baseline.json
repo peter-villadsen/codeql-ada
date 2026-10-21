@@ -268,7 +268,7 @@
    "ada/unchecked-deallocation": 12,
    "ada/unit-pattern": 2,
    "ada/units": 171,
-   "ada/unreachable-statement": 10,
+   "ada/unreachable-statement": 7,
    "ada/unused-local": 93,
    "ada/unused-parameter": 21,
    "ada/unused-with-clause": 18,
@@ -277,7 +277,7 @@
    "ada/warnings-off": 55,
    "ada/with-clauses": 3
   },
-  "total": 3041
+  "total": 3038
  },
  "libkeccak": {
   "results": {
