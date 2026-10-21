@@ -1,0 +1,5 @@
+| stacks-extra.ads:2:30:2:36 | Object | compilation, none, unit |
+| stacks.adb:2:31:2:37 | Object | none |
+| stacks.ads:3:31:3:37 | Object | none |
+| stacks.ads:4:21:4:27 | Object | none |
+| user.adb:3:8:3:14 | Object | compilation, family, none, unit |

@@ -389,3 +389,13 @@ Left out: `regular_static_constant` and `regular_nonstatic_constant` (constants 
 (a condition on the entity's type in your `rule`), pattern files, and the variable
 `Default_Case_Sensitivity`. Subtypes and derived types take the kind of the type they
 derive from; incomplete types are not checked.
+
+### Not_Selected_Name
+
+`ada/not-selected-name`, library `NotSelectedName`: `simpleReference(id, entity)` (not
+the selector of a dotted name, a defining name, an `end` name, or the formal of a named
+association), `allowedAt(id, entity, place)` and `notSelected(id, entity, place)` for the
+exception places `none`, `unit`, `compilation` and `family`. The query checks types
+named `Object`, `Instance` or `T` with `unit`, after AdaControl's tip. Left out: a
+prefix that itself must be selected ("only one level of prefix is required, unless the
+prefix itself is the target of a rule").

@@ -137,6 +137,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   start with a capital letter or a digit. The library classifies names into
   AdaControl's filter kinds, with locations and conventions of positive and negative
   patterns.
+- **`ada/not-selected-name`** (`Not_Selected_Name`): types named `Object`, `Instance` or
+  `T` used by their simple name outside their own unit. Other entities and exception
+  places are in the library.
 
 
 ## 0.3.0 (2026-10-11)
