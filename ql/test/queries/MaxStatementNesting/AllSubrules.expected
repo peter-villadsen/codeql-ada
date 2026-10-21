@@ -1,0 +1,20 @@
+| test.adb:3:4:17:11 | if ... | all | 1 |
+| test.adb:3:4:17:11 | if ... | if | 1 |
+| test.adb:4:7:16:14 | if ... | all | 2 |
+| test.adb:4:7:16:14 | if ... | if | 2 |
+| test.adb:5:10:15:17 | if ... | all | 3 |
+| test.adb:5:10:15:17 | if ... | if | 3 |
+| test.adb:6:13:14:20 | if ... | all | 4 |
+| test.adb:6:13:14:20 | if ... | if | 4 |
+| test.adb:7:16:13:23 | if ... | all | 5 |
+| test.adb:7:16:13:23 | if ... | if | 5 |
+| test.adb:8:19:12:26 | if ... | all | 6 |
+| test.adb:8:19:12:26 | if ... | if | 6 |
+| test.adb:9:22:11:29 | if ... | all | 7 |
+| test.adb:9:22:11:29 | if ... | if | 7 |
+| test.adb:18:4:25:13 | for ... loop | all | 1 |
+| test.adb:18:4:25:13 | for ... loop | loop | 1 |
+| test.adb:19:7:24:16 | for ... loop | all | 2 |
+| test.adb:19:7:24:16 | for ... loop | loop | 2 |
+| test.adb:20:10:23:14 | declare ... | all | 3 |
+| test.adb:20:10:23:14 | declare ... | block | 1 |

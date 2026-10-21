@@ -357,3 +357,11 @@ inherited primitives, and tasks and protected types.
 `function_body`, `protected_spec`, `protected_body`, `entry_body`, `task_spec`,
 `task_body`, `unit`), and `lines(n)`. The query checks `procedure_body` and
 `function_body` with 200 lines.
+
+### Max_Statement_Nesting
+
+`ada/max-statement-nesting`, library `MaxStatementNesting`: `depth(s, kind)` for `block`,
+`case`, `if`, `loop` (statements of that kind only) and `all` (any compound statement,
+`select`, `accept` and extended `return` included), within the statement's body. The
+query checks `all, 5` and reports the outermost statement too deep, not each one inside
+it.

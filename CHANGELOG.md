@@ -131,6 +131,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   operations. `total` is in the library.
 - **`ada/max-size`** (`Max_Size`): subprogram bodies longer than 200 lines. Every other
   kind of element is in the library.
+- **`ada/max-statement-nesting`** (`Max_Statement_Nesting`): compound statements nested
+  more than 5 deep. The per-kind subrules are in the library.
 
 
 ## 0.3.0 (2026-10-11)
