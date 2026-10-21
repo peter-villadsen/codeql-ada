@@ -440,3 +440,16 @@ subrules: `allCount(list)` (`all`), `positionalCount(list)` (`all_positional`),
 Infix operators and attributes are not calls here; `not_operator` is
 `isPrefixedOperator(site)`. The query checks `same_type, 3, call`. Left out: `declared`
 for instantiations, and exempted entities (a condition on the target in your query).
+
+### Pragmas
+
+`ada/pragmas`, library `Pragmas`: `pragmaName(p)` (given pragmas and `all`),
+`isStandard(name)` (the pragmas of the Ada 2022 RM, Annexes J and L), `isNonstandard(p)`
+(`nonstandard`) and `isMultiple(p)` (`multiple`: an argument names an overloaded entity,
+declared more than once in the same declarative part; not for the assertion pragmas,
+whose argument is evaluated). `not` is a negation in your query.
+
+The query checks `multiple all`. `nonstandard` reports every GNAT and SPARK pragma
+(`Warnings`, `Unreferenced`, `Loop_Invariant`, ...): 1,218 corpus results.
+`ada/pragma-suppress`, `ada/warnings-off` and `ada/spark-mode-off` are three fixed
+pragmas.

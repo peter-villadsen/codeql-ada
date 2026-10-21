@@ -1,0 +1,9 @@
+| test.ads:4:4:4:24 | pragma Inline | multiple |
+| test.ads:4:4:4:24 | pragma Inline | name inline |
+| test.ads:6:4:6:27 | pragma Inline | name inline |
+| test.ads:7:4:7:35 | pragma Assert | name assert |
+| test.ads:8:4:8:33 | pragma Unreferenced | name unreferenced |
+| test.ads:8:4:8:33 | pragma Unreferenced | nonstandard |
+| test.ads:9:4:9:34 | pragma Pure_Funktion | name pure_funktion |
+| test.ads:9:4:9:34 | pragma Pure_Funktion | nonstandard |
+| test.ads:10:4:10:24 | pragma Preelaborate | name preelaborate |

@@ -1,0 +1,1 @@
+| test.ads:4:4:4:24 | pragma Inline | pragma Inline applies to several overloaded entities. |
