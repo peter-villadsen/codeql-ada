@@ -109,6 +109,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/entities`** (`Entities`): `'Unchecked_Access` and `'Unrestricted_Access`. Uses
   of any entity, through renamings and instances, at AdaControl's places, are in the
   library.
+- **`ada/entity-inside-exception`** (`Entity_Inside_Exception`): entry calls in exception
+  handlers. References to given entities, and all calls, are in the library.
 
 
 ## 0.3.0 (2026-10-11)

@@ -1,0 +1,2 @@
+| test.adb:35:7:35:29 | Logger.Log (...); | Entry call in an exception handler: it may block the handling of the exception. |
+| test.adb:36:7:36:18 | Lock.Seize; | Entry call in an exception handler: it may block the handling of the exception. |

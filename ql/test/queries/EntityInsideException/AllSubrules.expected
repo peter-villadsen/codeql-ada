@@ -1,0 +1,9 @@
+| test.adb:35:7:35:29 | Logger.Log (...); | calls |
+| test.adb:35:7:35:29 | Logger.Log (...); | entry_calls |
+| test.adb:36:7:36:18 | Lock.Seize; | calls |
+| test.adb:36:7:36:18 | Lock.Seize; | entry_calls |
+| test.adb:37:7:37:19 | Lock.Release | calls |
+| test.adb:38:7:38:13 | Report | references Put_Line |
+| test.adb:38:7:38:24 | Report (...) | calls |
+| test.adb:40:7:40:27 | Ada.Text_IO.Put_Line | references Put_Line |
+| test.adb:40:7:40:38 | Ada.Text_IO.Put_Line (...) | calls |

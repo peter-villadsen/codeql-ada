@@ -227,3 +227,15 @@ generics followed into their instances.
 Left out: entities declared inside a generic, followed into each instance (a use through
 an instance resolves to the generic's declaration, so `uses` finds it as a use of the
 generic's entity).
+
+### Entity_Inside_Exception
+
+`ada/entity-inside-exception`, library `EntityInsideException`.
+
+| Subrule | Library | Default |
+|---|---|---|
+| an entity | `referenceIn(n, handler, entity)`, through renamings | no |
+| `calls` | `callIn(call, handler)`: subprogram and entry calls | no |
+| `entry_calls` | `entryCallIn(call, handler)` | yes |
+
+`not <entity>` is a negation in your query.
