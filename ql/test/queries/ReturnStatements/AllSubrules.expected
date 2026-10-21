@@ -1,0 +1,18 @@
+| test.adb:1:1:52:10 | Test | regular_count 0 |
+| test.adb:2:4:30:13 | Many | handler_count 1 at line 21 |
+| test.adb:2:4:30:13 | Many | handler_count 1 at line 26 |
+| test.adb:2:4:30:13 | Many | handler_count 1 at line 28 |
+| test.adb:2:4:30:13 | Many | regular_count 6 |
+| test.adb:5:10:5:19 | return ... | depth 1 in a function |
+| test.adb:7:10:7:19 | return ... | depth 1 in a function |
+| test.adb:9:10:9:19 | return ... | depth 1 in a function |
+| test.adb:13:16:13:25 | return ... | depth 3 in a function |
+| test.adb:19:10:19:19 | return ... | depth 1 in a function |
+| test.adb:22:13:22:22 | return ... | depth 1 in a function |
+| test.adb:24:7:24:16 | return ... | depth 0 in a function |
+| test.adb:27:10:27:20 | return ... | depth 0 in a function |
+| test.adb:29:10:29:20 | return ... | depth 0 in a function |
+| test.adb:32:4:37:13 | Proc | regular_count 1 |
+| test.adb:35:10:35:17 | return | depth 1 in a procedure |
+| test.adb:44:7:48:13 | AcceptStmtWithStmts | regular_count 1 |
+| test.adb:46:13:46:20 | return | depth 1 in a entry |

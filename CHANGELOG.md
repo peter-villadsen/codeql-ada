@@ -159,6 +159,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/representation-clauses`** (`Representation_Clauses`): record representation
   clauses that do not place every component. The other kinds and attribute
   specifications are in the library.
+- **`ada/return-statements`** (`Return_Statements`): subprograms with more than 5 return
+  statements. `depth` and `handler_count` are in the library.
 
 
 ## 0.3.0 (2026-10-11)

@@ -493,3 +493,13 @@ are the modifiers `global` and `object`; `target(c)` is the entity the clause ap
 to, for categories. The query checks `incomplete_layout`. Left out:
 `non_aligned_component` and `non_contiguous_layout` (they need component sizes), and
 representation aspects (`with Size => 8`) other than `Bit_Order`.
+
+### Return_Statements
+
+`ada/return-statements`, library `ReturnStatements`: `callable(r)` (the subprogram body,
+entry body or accept statement a return leaves) and `callableKind(c)` (`procedure`,
+`function`, `entry`); `depth(r)` (compound statements around it, blocks included);
+`regularCount(c)` (`regular_count`) and `handlerCount(c, h)` (`handler_count`, per
+handler; a block's handlers count on their own, its statements with the enclosing
+callable or handler). `min` and `max` are comparisons in your query. The query checks
+`regular_count, max 5`.
