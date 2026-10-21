@@ -89,6 +89,10 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   `Unchecked_Conversion` called directly as the actual of a call. The library also has
   `default_used`, `default_not_used` and `default_positional`, for calls and
   instantiations.
+- **`ada/allocators`** (`Allocators`): allocators of an anonymous access type, and
+  allocators naming another subtype than their access type designates. Allocators by type
+  or category are in the library; categories (`TypeCategories.qll`) are shared by the
+  rules that take them.
 
 
 ## 0.3.0 (2026-10-11)

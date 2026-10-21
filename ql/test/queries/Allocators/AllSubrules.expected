@@ -1,0 +1,31 @@
+| test.adb:23:19:23:34 | new ... | allocates Integer |
+| test.adb:23:19:23:34 | new ... | category range |
+| test.adb:24:19:24:34 | new ... | allocates Integer |
+| test.adb:24:19:24:34 | new ... | allocates Natural |
+| test.adb:24:19:24:34 | new ... | category range |
+| test.adb:24:19:24:34 | new ... | inconsistent |
+| test.adb:25:19:25:35 | new ... | allocates Integer |
+| test.adb:25:19:25:35 | new ... | allocates Positive |
+| test.adb:25:19:25:35 | new ... | category range |
+| test.adb:26:19:26:37 | new ... | allocates String |
+| test.adb:26:19:26:37 | new ... | category array |
+| test.adb:27:19:27:35 | new ... | allocates Rec |
+| test.adb:27:19:27:35 | new ... | category record |
+| test.adb:28:21:28:31 | new ... | allocates Circle |
+| test.adb:28:21:28:31 | new ... | category tagged |
+| test.adb:29:21:29:36 | new ... | allocates Color |
+| test.adb:29:21:29:36 | new ... | category () |
+| test.adb:30:21:30:36 | new ... | allocates Small |
+| test.adb:30:21:30:36 | new ... | allocates Smaller |
+| test.adb:30:21:30:36 | new ... | category range |
+| test.adb:30:21:30:36 | new ... | inconsistent |
+| test.adb:31:26:31:41 | new ... | allocates Integer |
+| test.adb:31:26:31:41 | new ... | anonymous |
+| test.adb:31:26:31:41 | new ... | category range |
+| test.adb:33:10:33:25 | new ... | allocates Integer |
+| test.adb:33:10:33:25 | new ... | anonymous |
+| test.adb:33:10:33:25 | new ... | category range |
+| test.adb:52:20:52:28 | new ... | allocates Node |
+| test.adb:52:20:52:28 | new ... | category record |
+| test.adb:55:14:55:24 | new ... | allocates Hidden |
+| test.adb:55:14:55:24 | new ... | category record |

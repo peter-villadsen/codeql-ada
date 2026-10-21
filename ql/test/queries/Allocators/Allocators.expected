@@ -1,0 +1,4 @@
+| test.adb:24:19:24:34 | new ... | Allocator of subtype Natural, but its access type designates another subtype. |
+| test.adb:30:21:30:36 | new ... | Allocator of subtype Smaller, but its access type designates another subtype. |
+| test.adb:31:26:31:41 | new ... | Allocator of an anonymous access type: declare a named access type. |
+| test.adb:33:10:33:25 | new ... | Allocator of an anonymous access type: declare a named access type. |

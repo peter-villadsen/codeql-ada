@@ -58,3 +58,20 @@ A site is a `Call` or a `GenericInstantiation`; the formals of an instantiation 
 generic's formal objects and subprograms. Restrict `site` (by target) and `formal` (by
 name) for AdaControl's `<place>` and `<formal>`; `anywhere = true` is AdaControl's
 `all <entity>`. Left out: formal types with defaults (Ada 2022).
+
+### Allocators
+
+`ada/allocators`, library `Allocators`.
+
+| Subrule | Library | Default |
+|---|---|---|
+| all allocators, or of a type (`<entity>`) | `allocates(a, t)`: `t` or a subtype of it | no |
+| of a category | `allocatesCategory(a, category)` | no |
+| `anonymous` | `isAnonymous(a)` | yes |
+| `inconsistent` | `isInconsistent(a)` | yes |
+
+`not` is a negation in your query. Categories (`codeql/ada/adacontrol/TypeCategories.qll`)
+traverse derivations and privacy. A partial view (`type T;`, `type T is private;`) and its
+full declaration count as the same subtype, paired by qualified name, since the extractor
+does not pair type views. Left out: types declared in generics matched through their
+instances.
