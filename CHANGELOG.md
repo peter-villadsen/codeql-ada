@@ -127,6 +127,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   primaries.
 - **`ada/max-nesting`** (`Max_Nesting`): declarative constructs nested more than 7 deep.
   `generic` and `task` are in the library.
+- **`ada/max-primitives`** (`Max_Primitives`): types with more than 30 visible primitive
+  operations. `total` is in the library.
 
 
 ## 0.3.0 (2026-10-11)

@@ -340,3 +340,11 @@ is 20 (AdaControl's `check` example).
 `kind` around `n`, for `all` (packages, subprogram bodies, generics, tasks, protected
 units, entry bodies, blocks), `generic` and `task`. The query checks `all` with 7
 (AdaControl's `check` example). Left out: `separate` (the nesting of subunits).
+
+### Max_Primitives
+
+`ada/max-primitives`, library `MaxPrimitives`: `isPrimitive(s, t, visible)`,
+`visibleCount(t)` and `totalCount(t)`. A primitive is a subprogram declared in the same
+package spec as `t` with a parameter or the result of type `t`; `tagged` and
+`untagged` are `t.isTagged()` in your query. The query checks `visible, 30`. Left out:
+inherited primitives, and tasks and protected types.
