@@ -129,6 +129,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   `generic` and `task` are in the library.
 - **`ada/max-primitives`** (`Max_Primitives`): types with more than 30 visible primitive
   operations. `total` is in the library.
+- **`ada/max-size`** (`Max_Size`): subprogram bodies longer than 200 lines. Every other
+  kind of element is in the library.
 
 
 ## 0.3.0 (2026-10-11)

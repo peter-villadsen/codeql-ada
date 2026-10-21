@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 45 queries are tested on a
+The project is pre-1.0. The extractor, the library and 46 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -455,6 +455,7 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/max-expression-items` | Expression with too many items | recommendation |
 | `ada/max-nesting` | Declarations nested too deeply | recommendation |
 | `ada/max-primitives` | Type with too many primitive operations | recommendation |
+| `ada/max-size` | Subprogram body too long | recommendation |
 | `ada/open-without-close` | Open without Close | warning |
 | `ada/path-injection` | Uncontrolled data used in path expression | error |
 | `ada/pragma-suppress` | Suppressed runtime checks | warning |

@@ -348,3 +348,12 @@ units, entry bodies, blocks), `generic` and `task`. The query checks `all` with 
 package spec as `t` with a parameter or the result of type `t`; `tagged` and
 `untagged` are `t.isTagged()` in your query. The query checks `visible, 30`. Left out:
 inherited primitives, and tasks and protected types.
+
+### Max_Size
+
+`ada/max-size`, library `MaxSize`: `isElement(n, kind)` for every AdaControl kind
+(`accept`, `block`, `simple_block`, `unnamed_block`, `loop`, `unnamed_loop`, `if`,
+`if_branch`, `case`, `case_branch`, `package_spec`, `package_body`, `procedure_body`,
+`function_body`, `protected_spec`, `protected_body`, `entry_body`, `task_spec`,
+`task_body`, `unit`), and `lines(n)`. The query checks `procedure_body` and
+`function_body` with 200 lines.
