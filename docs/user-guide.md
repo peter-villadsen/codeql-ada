@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 53 queries are tested on a
+The project is pre-1.0. The extractor, the library and 54 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -467,6 +467,7 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/pragma-suppress` | Suppressed runtime checks | warning |
 | `ada/pragmas` | Pragma applying to several overloaded entities | recommendation |
 | `ada/raise-predefined-exception` | Raising a predefined exception | recommendation |
+| `ada/record-declarations` | Uninitialized discrete record component | recommendation |
 | `ada/self-comparison` | Self-comparison | warning |
 | `ada/spark-mode-off` | SPARK_Mode disabled | warning |
 | `ada/sql-injection` | SQL query built from user-controlled sources | error |

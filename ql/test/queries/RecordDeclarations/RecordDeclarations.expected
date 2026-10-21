@@ -1,0 +1,2 @@
+| test.ads:6:7:6:9 | C1 | Component C1 of an enumeration type has no default value. |
+| test.ads:12:13:12:14 | V | Component V of an enumeration type has no default value. |

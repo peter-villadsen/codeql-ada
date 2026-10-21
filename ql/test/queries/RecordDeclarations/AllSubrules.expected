@@ -1,0 +1,19 @@
+| test.ads:6:7:6:9 | C1 | category () |
+| test.ads:6:7:6:9 | C1 | sized |
+| test.ads:6:7:6:9 | C1 | type Color |
+| test.ads:7:7:7:9 | C2 | aligned |
+| test.ads:7:7:7:9 | C2 | category () |
+| test.ads:7:7:7:9 | C2 | initialized |
+| test.ads:7:7:7:9 | C2 | type Color |
+| test.ads:8:7:8:8 | N | aligned |
+| test.ads:8:7:8:8 | N | category range |
+| test.ads:8:7:8:8 | N | sized |
+| test.ads:8:7:8:8 | N | type Integer |
+| test.ads:9:7:9:8 | B | aligned |
+| test.ads:9:7:9:8 | B | category array |
+| test.ads:9:7:9:8 | B | packed |
+| test.ads:9:7:9:8 | B | type Bits |
+| test.ads:12:13:12:14 | V | aligned |
+| test.ads:12:13:12:14 | V | category () |
+| test.ads:12:13:12:14 | V | in_variant |
+| test.ads:12:13:12:14 | V | type Color |

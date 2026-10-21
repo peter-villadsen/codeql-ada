@@ -151,6 +151,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/pragmas`** (`Pragmas`): pragmas that apply to several overloaded entities
   (`pragma Inline (Put)` with several `Put`s). Given pragmas and `nonstandard` are in the
   library.
+- **`ada/record-declarations`** (`Record_Declarations`): record components of an
+  enumeration type without a default value. Other types, categories and representation
+  conditions are in the library.
 
 
 ## 0.3.0 (2026-10-11)

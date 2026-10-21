@@ -453,3 +453,21 @@ The query checks `multiple all`. `nonstandard` reports every GNAT and SPARK prag
 (`Warnings`, `Unreferenced`, `Loop_Invariant`, ...): 1,218 corpus results.
 `ada/pragma-suppress`, `ada/warnings-off` and `ada/spark-mode-off` are three fixed
 pragmas.
+
+### Record_Declarations
+
+`ada/record-declarations`, library `RecordDeclarations` (on `Component`):
+
+| `component` condition | Library |
+|---|---|
+| of a type (or its subtypes) | `isOfType(c, t, exact)` |
+| of a category | `isOfCategory(c, category)`, derivations traversed, privacy not |
+| `in_variant` | `inVariant(c)` |
+| `initialized` | `isInitialized(c)` |
+| `sized` | `isSized(c)`: a component clause applies |
+| `aligned` | `isAligned(c)`: no component clause, or its first bit (when literal) a multiple of 8 |
+| `packed` | `isPacked(c)`: `Pack` applies to the component's type |
+
+`not` is a negation in your query. The query checks `component, (), not initialized`
+(AdaControl's example; Boolean is an enumeration). Left out: discriminants, which
+AdaControl counts as components, and a storage unit other than 8 bits.
