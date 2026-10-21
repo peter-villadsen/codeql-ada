@@ -415,3 +415,16 @@ prefix itself is the target of a rule").
 `Atomic` or `Volatile_Full_Access` aspect or pragma; an address an `Address` aspect, an
 attribute definition clause or an `at` clause. Left out: `not_required_type`, and
 `min_integer_span` for bounds that are not literals (they need static evaluation).
+
+### Parameter_Declarations
+
+`ada/parameter-declarations`, library `ParameterDeclarations`:
+`parameterCount(c, subrule)` for `all_parameters`, `in_parameters`, `out_parameters`,
+`in_out_parameters`, `defaulted_parameters`, `access_parameters`, `tagged_parameters`
+and `class_wide_parameters`; `singleOutParameter(c, noInout)`; and `callableKind(c)`
+(`function`, `procedure`, `dispatching_function`, `dispatching_procedure`,
+`protected_function`, `protected_procedure`, `protected_entry`, `task_entry`). A
+callable is a subprogram spec, a body without one, a generic subprogram or an entry;
+generic formal subprograms are not checked. The query checks `all_parameters, max 10`
+(AdaControl's `check` example). Left out: instantiations (counted from the generic in
+AdaControl).

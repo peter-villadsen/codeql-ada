@@ -142,6 +142,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   places are in the library.
 - **`ada/object-declarations`** (`Object_Declarations`): variables with an address but
   not volatile. `min_integer_span`, `type` and `volatile_no_address` are in the library.
+- **`ada/parameter-declarations`** (`Parameter_Declarations`): subprograms and entries
+  with more than 10 parameters. Counts by mode and kind, and `single_out_parameter`, are
+  in the library.
 
 
 ## 0.3.0 (2026-10-11)

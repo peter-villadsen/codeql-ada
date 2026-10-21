@@ -1,0 +1,33 @@
+| test.ads:3:4:3:63 | Many | all_parameters 11 |
+| test.ads:3:4:3:63 | Many | in_parameters 11 |
+| test.ads:3:4:3:63 | Many | kind procedure |
+| test.ads:4:4:4:59 | Ten | all_parameters 10 |
+| test.ads:4:4:4:59 | Ten | in_parameters 10 |
+| test.ads:4:4:4:59 | Ten | kind procedure |
+| test.ads:5:4:5:36 | Get | all_parameters 1 |
+| test.ads:5:4:5:36 | Get | kind procedure |
+| test.ads:5:4:5:36 | Get | out_parameters 1 |
+| test.ads:5:4:5:36 | Get | single_out_parameter (no_inout: false) |
+| test.ads:5:4:5:36 | Get | single_out_parameter (no_inout: true) |
+| test.ads:6:4:6:57 | Get2 | all_parameters 2 |
+| test.ads:6:4:6:57 | Get2 | in_out_parameters 1 |
+| test.ads:6:4:6:57 | Get2 | kind procedure |
+| test.ads:6:4:6:57 | Get2 | out_parameters 1 |
+| test.ads:6:4:6:57 | Get2 | single_out_parameter (no_inout: false) |
+| test.ads:7:4:7:80 | F | access_parameters 1 |
+| test.ads:7:4:7:80 | F | all_parameters 3 |
+| test.ads:7:4:7:80 | F | defaulted_parameters 1 |
+| test.ads:7:4:7:80 | F | in_parameters 3 |
+| test.ads:7:4:7:80 | F | kind dispatching_function |
+| test.ads:7:4:7:80 | F | kind function |
+| test.ads:7:4:7:80 | F | tagged_parameters 1 |
+| test.ads:8:4:8:37 | Draw | all_parameters 1 |
+| test.ads:8:4:8:37 | Draw | class_wide_parameters 1 |
+| test.ads:8:4:8:37 | Draw | in_parameters 1 |
+| test.ads:8:4:8:37 | Draw | kind procedure |
+| test.ads:10:7:10:33 | Start | all_parameters 1 |
+| test.ads:10:7:10:33 | Start | in_parameters 1 |
+| test.ads:10:7:10:33 | Start | kind task_entry |
+| test.ads:13:7:13:39 | Seize | all_parameters 1 |
+| test.ads:13:7:13:39 | Seize | in_parameters 1 |
+| test.ads:13:7:13:39 | Seize | kind protected_procedure |

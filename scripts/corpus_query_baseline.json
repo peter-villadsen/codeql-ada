@@ -36,6 +36,7 @@
    "ada/not-selected-name": 0,
    "ada/object-declarations": 1,
    "ada/open-without-close": 0,
+   "ada/parameter-declarations": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
    "ada/raise-predefined-exception": 0,
@@ -91,6 +92,7 @@
    "ada/not-selected-name": 0,
    "ada/object-declarations": 2,
    "ada/open-without-close": 0,
+   "ada/parameter-declarations": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
    "ada/raise-predefined-exception": 71,
@@ -146,6 +148,7 @@
    "ada/not-selected-name": 58,
    "ada/object-declarations": 68,
    "ada/open-without-close": 4,
+   "ada/parameter-declarations": 7,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 3,
    "ada/raise-predefined-exception": 91,
@@ -162,7 +165,7 @@
    "ada/useless-if": 0,
    "ada/warnings-off": 36
   },
-  "total": 5557
+  "total": 5564
  },
  "libadalang-tools": {
   "results": {
@@ -201,6 +204,7 @@
    "ada/not-selected-name": 0,
    "ada/object-declarations": 0,
    "ada/open-without-close": 28,
+   "ada/parameter-declarations": 3,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 8,
    "ada/raise-predefined-exception": 161,
@@ -217,7 +221,7 @@
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 2124
+  "total": 2127
  },
  "libkeccak": {
   "results": {
@@ -256,6 +260,7 @@
    "ada/not-selected-name": 0,
    "ada/object-declarations": 0,
    "ada/open-without-close": 0,
+   "ada/parameter-declarations": 0,
    "ada/path-injection": 0,
    "ada/pragma-suppress": 0,
    "ada/raise-predefined-exception": 2,
