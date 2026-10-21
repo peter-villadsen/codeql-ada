@@ -325,3 +325,11 @@ bodies, blocks, loops and generic formal parts; a subprogram body's parameters a
 region. Allowed patterns are a condition on `getAName()` in your query. Left out: names
 declared in a parent unit and hidden in a child unit, the variable
 `Overloading_Report`.
+
+### Max_Expression_Items
+
+`ada/max-expression-items`, library `MaxExpressionItems`: `items(e)` of each whole
+expression (`isWhole(e)`). A primary counts 1: a name, a literal, a call, an aggregate,
+an `if` or `case` expression; operators and parentheses add their operands; what is
+inside a call or an aggregate is counted as an expression of its own. The query's limit
+is 20 (AdaControl's `check` example).

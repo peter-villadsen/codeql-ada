@@ -123,6 +123,8 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   positional actuals that are only numeric or Boolean literals.
 - **`ada/local-hiding`** (`Local_Hiding`): a declaration hiding one of the same family in
   an enclosing region. `overloading` and the exceptions are in the library.
+- **`ada/max-expression-items`** (`Max_Expression_Items`): expressions of more than 20
+  primaries.
 
 
 ## 0.3.0 (2026-10-11)
