@@ -1,0 +1,73 @@
+| test.adb:9:7:11:14 | if ... | if |
+| test.adb:9:7:11:14 | if ... | no_else |
+| test.adb:10:10:10:19 | return ... | function_return |
+| test.adb:12:7:12:16 | return ... | function_return |
+| test.adb:15:4:18:13 | case ... | case |
+| test.adb:15:4:18:13 | case ... | case_others |
+| test.adb:15:4:18:13 | case ... | case_others_null |
+| test.adb:15:4:18:13 | case ... | null_case_path |
+| test.adb:16:19:16:26 | X := ... | assignment |
+| test.adb:17:22:17:27 | null; | null |
+| test.adb:19:4:19:13 | Label | labelled |
+| test.adb:20:4:20:15 | X := ... | assignment |
+| test.adb:21:4:23:11 | if ... | if |
+| test.adb:21:4:23:11 | if ... | no_else |
+| test.adb:22:7:22:18 | goto Again | backward_goto |
+| test.adb:22:7:22:18 | goto Again | goto |
+| test.adb:22:7:22:18 | goto Again | goto_not_continue |
+| test.adb:24:12:29:19 | loop ... | multiple_exits |
+| test.adb:24:12:29:19 | loop ... | simple_loop |
+| test.adb:25:7:27:16 | for ... loop | for_in_loop |
+| test.adb:25:7:27:16 | for ... loop | for_loop |
+| test.adb:25:7:27:16 | for ... loop | unnamed_for_loop |
+| test.adb:25:7:27:16 | for ... loop | unnamed_multiple_loop |
+| test.adb:25:7:27:16 | for ... loop | untyped_for |
+| test.adb:25:7:27:16 | for ... loop | untyped_for_in |
+| test.adb:26:10:26:32 | exit | exit |
+| test.adb:26:10:26:32 | exit | exit_outer_loop |
+| test.adb:26:10:26:32 | exit | exit_plain_loop |
+| test.adb:26:10:26:32 | exit | named_exit |
+| test.adb:28:7:28:12 | exit | exit |
+| test.adb:28:7:28:12 | exit | exit_plain_loop |
+| test.adb:28:7:28:12 | exit | unconditional_exit |
+| test.adb:28:7:28:12 | exit | unnamed_exit |
+| test.adb:30:4:32:13 | for ... loop | for_loop |
+| test.adb:30:4:32:13 | for ... loop | for_of_loop |
+| test.adb:30:4:32:13 | for ... loop | null_loop_body |
+| test.adb:30:4:32:13 | for ... loop | unnamed_for_loop |
+| test.adb:30:4:32:13 | for ... loop | untyped_for |
+| test.adb:30:4:32:13 | for ... loop | untyped_for_of |
+| test.adb:31:7:31:12 | null; | null |
+| test.adb:33:4:37:13 | while ... loop | multiple_exits |
+| test.adb:33:4:37:13 | while ... loop | unnamed_while_loop |
+| test.adb:33:4:37:13 | while ... loop | while_loop |
+| test.adb:34:7:34:18 | X := ... | assignment |
+| test.adb:35:7:35:23 | exit | exit |
+| test.adb:35:7:35:23 | exit | exit_while_loop |
+| test.adb:35:7:35:23 | exit | unnamed_loop_exited |
+| test.adb:36:7:36:23 | exit | exit |
+| test.adb:36:7:36:23 | exit | exit_while_loop |
+| test.adb:36:7:36:23 | exit | unnamed_loop_exited |
+| test.adb:38:4:44:13 | for ... loop | for_in_loop |
+| test.adb:38:4:44:13 | for ... loop | for_loop |
+| test.adb:38:4:44:13 | for ... loop | unnamed_for_loop |
+| test.adb:38:4:44:13 | for ... loop | untyped_for |
+| test.adb:38:4:44:13 | for ... loop | untyped_for_in |
+| test.adb:39:7:41:14 | if ... | if |
+| test.adb:39:7:41:14 | if ... | no_else |
+| test.adb:40:10:40:24 | goto Continue | goto |
+| test.adb:42:7:42:18 | X := ... | assignment |
+| test.adb:43:7:43:19 | Label | labelled |
+| test.adb:43:20:43:25 | null; | null |
+| test.adb:45:4:50:8 | begin ... | block |
+| test.adb:45:4:50:8 | begin ... | unnamed_block |
+| test.adb:46:7:46:18 | X := ... | assignment |
+| test.adb:48:7:49:33 | ExceptionHandler | exception_others |
+| test.adb:49:10:49:33 | raise Constraint_Error | raise |
+| test.adb:49:10:49:33 | raise Constraint_Error | raise_standard |
+| test.adb:51:4:55:8 | declare ... | block |
+| test.adb:51:4:55:8 | declare ... | declare_block |
+| test.adb:51:4:55:8 | declare ... | effective_declare_block |
+| test.adb:51:4:55:8 | declare ... | unnamed_block |
+| test.adb:54:7:54:14 | X := ... | assignment |
+| test.adb:56:4:56:14 | delay ... | delay |

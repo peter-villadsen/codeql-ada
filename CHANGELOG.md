@@ -166,6 +166,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/silent-exceptions`** (`Silent_Exceptions`): `when others` handlers with a path
   that neither re-raises, returns, requeues nor calls anything. Other exceptions and
   reporting entities are in the library.
+- **`ada/statements`** (`Statements`): backward `goto`s and `when others => null`
+  alternatives of `case` statements. About seventy more statement kinds are in the
+  library.
 
 
 ## 0.3.0 (2026-10-11)

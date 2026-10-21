@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 59 queries are tested on a
+The project is pre-1.0. The extractor, the library and 60 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -476,6 +476,7 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/silent-exceptions` | Exception silently handled by when others | warning |
 | `ada/spark-mode-off` | SPARK_Mode disabled | warning |
 | `ada/sql-injection` | SQL query built from user-controlled sources | error |
+| `ada/statements` | Backward goto or null case others | recommendation |
 | `ada/todo-comment` | TODO/FIXME comment | recommendation |
 | `ada/unchecked-conversion` | Use of Unchecked_Conversion | warning |
 | `ada/unchecked-deallocation` | Use of Unchecked_Deallocation | warning |

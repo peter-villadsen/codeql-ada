@@ -527,3 +527,32 @@ The query checks `with others`, with `raise`, `return`, `requeue` and any proced
 (standing for the reporting procedures a team would list) as report items; handlers of
 only `null` are left to `ada/exception-swallowing`. Left out: exceptions of a library
 unit given as a unit, and generic packages as report items.
+
+### Statements
+
+`ada/statements`, library `Statements`. `statement(s, kw)` holds for each keyword that
+applies to `s`; `othersHandler(h, kw)` gives `exception_others` and
+`exception_others_null`. The query checks `backward_goto` and `case_others_null`.
+`ada/goto-statement`, `ada/raise-predefined-exception` and `ada/empty-loop-body` are
+fixed `goto`, `raise_standard` and `null_loop_body`.
+
+Implemented: `any_statement`, `abort`, `accept`, `accept_return`, `assignment`,
+`asynchronous_select`, `backward_goto`, `block`, `case`, `case_others`,
+`case_others_null`, `conditional_entry_call`, `declare_block`, `delay`, `delay_until`,
+`dynamic_procedure_call`, `effective_declare_block`, `entry_call`, `entry_return`,
+`exception_others`, `exception_others_null`, `exit`, `exit_expanded_name`,
+`exit_for_loop`, `exit_outer_loop`, `exit_plain_loop`, `exit_while_loop`,
+`extended_return`, `for_in_loop`, `for_iterator_loop`, `for_loop`, `for_of_loop`,
+`function_return`, `goto`, `goto_not_continue`, `if`, `if_elsif`, `labelled`,
+`loop_return`, `multiple_exits`, `named_exit`, `no_else`, `null`, `null_case_path`,
+`null_if_path`, `null_loop_body`, `procedure_call`, `procedure_return`, `raise`,
+`raise_locally_handled`, `raise_nonpublic`, `raise_standard`, `requeue`, `reraise`,
+`selective_accept`, `simple_block`, `simple_loop`, `terminate`, `timed_entry_call`,
+`unconditional_exit`, `unnamed_block`, `unnamed_exit`, `unnamed_for_loop`,
+`unnamed_loop_exited`, `unnamed_multiple_loop`, `unnamed_simple_block`,
+`unnamed_simple_loop`, `unnamed_while_loop`, `untyped_for`, `untyped_for_in`,
+`untyped_for_of`, `while_loop`.
+
+Left out: `code`, `dispatching_call`, `redispatching_call`, `inherited_procedure_call`,
+`exited_extended_return`, `hard_bounds_array_for_loop`, `multi_for_of_loop`,
+`raise_foreign`, and the variables `Called_Info` and `Small_Loop_Length`.
