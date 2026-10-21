@@ -44,6 +44,7 @@
    "ada/raise-predefined-exception": 0,
    "ada/record-declarations": 0,
    "ada/renaming-declarations": 0,
+   "ada/representation-clauses": 0,
    "ada/self-comparison": 0,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
@@ -104,6 +105,7 @@
    "ada/raise-predefined-exception": 71,
    "ada/record-declarations": 26,
    "ada/renaming-declarations": 8,
+   "ada/representation-clauses": 0,
    "ada/self-comparison": 0,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
@@ -164,6 +166,7 @@
    "ada/raise-predefined-exception": 91,
    "ada/record-declarations": 83,
    "ada/renaming-declarations": 4,
+   "ada/representation-clauses": 0,
    "ada/self-comparison": 0,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
@@ -224,6 +227,7 @@
    "ada/raise-predefined-exception": 161,
    "ada/record-declarations": 53,
    "ada/renaming-declarations": 24,
+   "ada/representation-clauses": 1,
    "ada/self-comparison": 10,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
@@ -237,7 +241,7 @@
    "ada/useless-if": 7,
    "ada/warnings-off": 55
   },
-  "total": 2220
+  "total": 2221
  },
  "libkeccak": {
   "results": {
@@ -284,6 +288,7 @@
    "ada/raise-predefined-exception": 2,
    "ada/record-declarations": 10,
    "ada/renaming-declarations": 0,
+   "ada/representation-clauses": 0,
    "ada/self-comparison": 0,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,

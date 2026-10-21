@@ -481,3 +481,15 @@ AdaControl counts as components, and a storage unit other than 8 bits.
 `renaming`; places are `Places::isAt(d, place)`. A `synonym` is a renaming in the same
 declarative part as what it renames, not of a function call's result nor a renaming as
 body. The query checks `synonym all`.
+
+### Representation_Clauses
+
+`ada/representation-clauses`, library `RepresentationClauses`:
+`representation(c, kw)` for `at`, `at_mod`, `enumeration`, `layout`,
+`no_bit_order_layout`, `incomplete_layout`, `overlay`, `fractional_size` and
+`non_power2_size` (literal sizes), and `'<attribute>` for each attribute definition
+clause (`'size`, `'address`, `'class'input`, ...); `isGlobal(c)` and `isForObject(c)`
+are the modifiers `global` and `object`; `target(c)` is the entity the clause applies
+to, for categories. The query checks `incomplete_layout`. Left out:
+`non_aligned_component` and `non_contiguous_layout` (they need component sizes), and
+representation aspects (`with Size => 8`) other than `Bit_Order`.

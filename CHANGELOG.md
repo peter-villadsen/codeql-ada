@@ -156,6 +156,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   conditions are in the library.
 - **`ada/renaming-declarations`** (`Renaming_Declarations`): renamings declared next to
   what they rename. Kinds, filters and places are in the library.
+- **`ada/representation-clauses`** (`Representation_Clauses`): record representation
+  clauses that do not place every component. The other kinds and attribute
+  specifications are in the library.
 
 
 ## 0.3.0 (2026-10-11)
