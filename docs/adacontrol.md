@@ -595,3 +595,20 @@ code: the extractor's diagnostics report the units it could not find.
 `global`, `local`, `type`, `type_global`, `type_local`, `all_type`, `all_type_global` and
 `all_type_local`; `clauseKind(u)` and `isGlobal(u)`. The packages and types to allow are
 a condition on `n` in your query. The query checks `global` (AdaControl's example).
+
+### With_Clauses
+
+`ada/with-clauses`, library `WithClauses`. `ada/unused-with-clause` is the unused part of
+`reduceable`.
+
+| Subrule | Library | Default |
+|---|---|---|
+| `multiple_names` | `hasMultipleNames(w)` | no |
+| `reduceable`, redundant | `isRedundant(cu, withName, earlier)`: twice in a unit, or in the spec and again in the body | yes |
+| `reduceable`, an ancestor | `withsAncestor(cu, withName)` | yes |
+| `reduceable`, movable | `isMovable(cu, withName, to)`: to the body, or to a `private with` | no |
+| `inherited` | `inheritsWith(cu, n, unitCu)` | no |
+| `limited`, `private`, `limited_private` | `withKind(w)` | no |
+
+Left out: the variables `Check_Private_With` and `Ignore_Use_Clause` (use clauses never
+count as a use here), and subunits for `inherited`.

@@ -64,9 +64,10 @@
    "ada/unused-with-clause": 0,
    "ada/use-clauses": 7,
    "ada/useless-if": 0,
-   "ada/warnings-off": 1
+   "ada/warnings-off": 1,
+   "ada/with-clauses": 1
   },
-  "total": 61
+  "total": 62
  },
  "alire": {
   "results": {
@@ -133,9 +134,10 @@
    "ada/unused-with-clause": 12,
    "ada/use-clauses": 68,
    "ada/useless-if": 0,
-   "ada/warnings-off": 4
+   "ada/warnings-off": 4,
+   "ada/with-clauses": 9
   },
-  "total": 1395
+  "total": 1404
  },
  "gpr2": {
   "results": {
@@ -202,9 +204,10 @@
    "ada/unused-with-clause": 342,
    "ada/use-clauses": 658,
    "ada/useless-if": 0,
-   "ada/warnings-off": 36
+   "ada/warnings-off": 36,
+   "ada/with-clauses": 44
   },
-  "total": 7137
+  "total": 7181
  },
  "libadalang-tools": {
   "results": {
@@ -271,9 +274,10 @@
    "ada/unused-with-clause": 18,
    "ada/use-clauses": 441,
    "ada/useless-if": 7,
-   "ada/warnings-off": 55
+   "ada/warnings-off": 55,
+   "ada/with-clauses": 3
   },
-  "total": 3038
+  "total": 3041
  },
  "libkeccak": {
   "results": {
@@ -340,8 +344,9 @@
    "ada/unused-with-clause": 0,
    "ada/use-clauses": 66,
    "ada/useless-if": 0,
-   "ada/warnings-off": 0
+   "ada/warnings-off": 0,
+   "ada/with-clauses": 1
   },
-  "total": 238
+  "total": 239
  }
 }

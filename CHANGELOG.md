@@ -178,6 +178,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/units`** (`Units`): library packages that no unit withs.
 - **`ada/use-clauses`** (`Use_Clauses`): package `use` clauses among the context clauses.
   Local clauses and `use type` are in the library.
+- **`ada/with-clauses`** (`With_Clauses`): `with` clauses for a unit already withed, by the
+  unit or its spec, or for an ancestor. Movable clauses, `multiple_names`, `inherited` and
+  the clause kinds are in the library.
 
 
 ## 0.3.0 (2026-10-11)

@@ -1,0 +1,18 @@
+| lib-child.ads:1:1:1:10 | with ... | kind regular |
+| lib-child.ads:1:6:1:9 | Lib | ancestor |
+| lib-child.ads:2:1:2:13 | with ... | kind regular |
+| lib-child.ads:3:1:3:13 | with ... | kind regular |
+| lib-child.ads:3:6:3:12 | Helper | redundant |
+| lib-child.ads:5:19:5:31 | Hidden.Value | inherited |
+| lib.adb:1:1:1:18 | with ... | kind regular |
+| lib.adb:1:6:1:17 | Ada.Text_IO | redundant |
+| lib.adb:2:1:2:13 | with ... | kind regular |
+| lib.adb:2:6:2:12 | Helper | redundant |
+| lib.ads:1:1:1:31 | with ... | kind regular |
+| lib.ads:1:1:1:31 | with ... | multiple_names |
+| lib.ads:1:6:1:17 | Ada.Text_IO | movable to body |
+| lib.ads:2:1:2:13 | with ... | kind regular |
+| lib.ads:2:6:2:12 | Helper | movable to body |
+| lib.ads:3:1:3:13 | with ... | kind regular |
+| lib.ads:3:6:3:12 | Hidden | movable to private |
+| lib.ads:4:1:4:20 | with ... | kind limited |

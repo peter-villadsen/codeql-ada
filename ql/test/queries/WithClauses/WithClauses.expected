@@ -1,0 +1,4 @@
+| lib-child.ads:1:6:1:9 | Lib | Lib is an ancestor of this unit, always visible. |
+| lib-child.ads:3:6:3:12 | Helper | Helper is already withed, at line 2 of lib-child.ads. |
+| lib.adb:1:6:1:17 | Ada.Text_IO | Ada.Text_IO is already withed, at line 1 of lib.ads. |
+| lib.adb:2:6:2:12 | Helper | Helper is already withed, at line 2 of lib.ads. |
