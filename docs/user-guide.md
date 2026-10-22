@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 67 queries are tested on a
+The project is pre-1.0. The extractor, the library and 68 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -430,6 +430,7 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/allocators` | Questionable allocator | recommendation |
 | `ada/aspects` | Boolean aspect without a value | recommendation |
 | `ada/boolean-literal-comparison` | Comparison with boolean literal | recommendation |
+| `ada/case-statement` | Case statement with an empty when others | warning |
 | `ada/command-line-injection` | Command built from a command-line argument | error |
 | `ada/comments` | End of long record not named | recommendation |
 | `ada/dead-local-subprogram` | Dead local subprogram | warning |

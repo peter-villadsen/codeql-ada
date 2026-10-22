@@ -660,3 +660,23 @@ that is exited); the control-flow graph decides it here, so a loop left only by 
 or a `raise` caught by a handler inside the loop, is judged by where control can really
 go. Exceptions that calls may raise are not followed (every call may raise), nor aborts,
 as in AdaControl.
+
+### Case_Statement
+
+`ada/case-statement`, library `CaseStatement`:
+
+| Subrule | Library | Default |
+|---|---|---|
+| `paths` | `paths(c)` | no |
+| `values` | `values(c)` | no |
+| `values_if_others` | `valuesIfOthers(c)` | no |
+| `others_span` | `othersSpan(c)` | `min 1`: a `when others` that covers no value |
+| `range_span` | `rangeSpan(c, range)` | no |
+
+`<category>` is `selectorCategory(c)`; `min` and `max` are comparisons in your query. The
+counts need static values: integer, character and enumeration literals, named numbers,
+`2 ** N`, and ranges and subtypes made of them; `Standard.Character` has 256 values.
+Where a bound or a choice is anything else (a selector of type `Integer`, whose bounds
+exceed QL's integers, a constant, an expression), the count is unknown and nothing is
+reported: on gpr2, 31 of the 209 `case` statements with `when others` get an
+`others_span`. Left out: static predicates, and values beyond 2^30.

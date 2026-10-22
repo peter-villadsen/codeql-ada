@@ -196,6 +196,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   library.
 - **`ada/terminating-tasks`** (`Terminating_Tasks`): tasks whose body can complete, let an
   explicit `raise` out, or accept a `terminate` alternative.
+- **`ada/case-statement`** (`Case_Statement`): `case` statements whose `when others`
+  covers no value. `paths`, `values`, `values_if_others` and `range_span` are in the
+  library.
 
 
 ## 0.3.0 (2026-10-11)
