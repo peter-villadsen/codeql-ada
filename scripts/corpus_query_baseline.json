@@ -50,6 +50,7 @@
    "ada/return-type": 0,
    "ada/self-comparison": 0,
    "ada/silent-exceptions": 0,
+   "ada/simplifiable-expressions": 0,
    "ada/simplifiable-statements": 8,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
@@ -123,6 +124,7 @@
    "ada/return-type": 13,
    "ada/self-comparison": 0,
    "ada/silent-exceptions": 0,
+   "ada/simplifiable-expressions": 10,
    "ada/simplifiable-statements": 10,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
@@ -143,7 +145,7 @@
    "ada/warnings-off": 4,
    "ada/with-clauses": 9
   },
-  "total": 1415
+  "total": 1425
  },
  "gpr2": {
   "results": {
@@ -196,6 +198,7 @@
    "ada/return-type": 6,
    "ada/self-comparison": 0,
    "ada/silent-exceptions": 3,
+   "ada/simplifiable-expressions": 113,
    "ada/simplifiable-statements": 60,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
@@ -216,7 +219,7 @@
    "ada/warnings-off": 36,
    "ada/with-clauses": 44
   },
-  "total": 7248
+  "total": 7361
  },
  "libadalang-tools": {
   "results": {
@@ -269,6 +272,7 @@
    "ada/return-type": 0,
    "ada/self-comparison": 10,
    "ada/silent-exceptions": 1,
+   "ada/simplifiable-expressions": 17,
    "ada/simplifiable-statements": 122,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
@@ -289,7 +293,7 @@
    "ada/warnings-off": 55,
    "ada/with-clauses": 3
   },
-  "total": 3163
+  "total": 3180
  },
  "libkeccak": {
   "results": {
@@ -342,6 +346,7 @@
    "ada/return-type": 0,
    "ada/self-comparison": 0,
    "ada/silent-exceptions": 0,
+   "ada/simplifiable-expressions": 1,
    "ada/simplifiable-statements": 9,
    "ada/spark-mode-off": 0,
    "ada/sql-injection": 0,
@@ -362,6 +367,6 @@
    "ada/warnings-off": 0,
    "ada/with-clauses": 1
   },
-  "total": 248
+  "total": 249
  }
 }

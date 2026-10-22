@@ -12,7 +12,7 @@ private import codeql.ada.adacontrol.TypeCategories
 
 module SimplifiableStatements {
   /** Gets `e` without the parentheses around it. */
-  private Raw::Expr unparen(Raw::Expr e) {
+  Raw::Expr unparen(Raw::Expr e) {
     if e instanceof Raw::ParenExpr then result = unparen(e.(Raw::ParenExpr).getExpr()) else result = e
   }
 
@@ -86,8 +86,11 @@ module SimplifiableStatements {
     exists(Raw::ElsifStmtPart e | e = i.getAlternatives().getChild(pos) | result = e.getCondExpr())
   }
 
-  /** Holds if `e` and `f` are the same expression, compared as source-text-like structure. */
-  private predicate sameExpr(Raw::Expr e, Raw::Expr f) {
+  /**
+   * Holds if `e` and `f` are distinct occurrences of the same expression: the same names
+   * (denoting the same entities), literals and operators.
+   */
+  predicate sameExpr(Raw::Expr e, Raw::Expr f) {
     e != f and
     e.getAPrimaryQlClass() = f.getAPrimaryQlClass() and
     e.toString() = f.toString() and

@@ -199,6 +199,9 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/case-statement`** (`Case_Statement`): `case` statements whose `when others`
   covers no value. `paths`, `values`, `values_if_others` and `range_span` are in the
   library.
+- **`ada/simplifiable-expressions`** (`Simplifiable_Expressions`): redundant conversions,
+  `A and A`, `not` of a comparison, tests of one value that a membership test can replace,
+  `T'First .. T'Last`. `parentheses` and `if_not` are in the library.
 
 
 ## 0.3.0 (2026-10-11)

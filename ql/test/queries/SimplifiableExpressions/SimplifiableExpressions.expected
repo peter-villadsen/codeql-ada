@@ -1,0 +1,10 @@
+| test.adb:12:9:12:18 | Small (...) | This conversion is redundant: the value already has the type, or is universal. |
+| test.adb:13:9:13:18 | Small (...) | This conversion is redundant: the value already has the type, or is universal. |
+| test.adb:15:9:15:20 | Integer (...) | This conversion is redundant: the value already has the type, or is universal. |
+| test.adb:16:9:16:18 | Small (...) | This conversion is redundant: the value already has the type, or is universal. |
+| test.adb:17:9:17:20 | Small (...) | This conversion is redundant: the value already has the type, or is universal. |
+| test.adb:19:9:19:28 | ... and ... | Both operands of this logical operator are the same: a copy-paste slip? |
+| test.adb:21:9:21:20 | not ... | Invert this comparison instead of negating it. |
+| test.adb:25:9:25:32 | ... or ... | These tests of one value can be a single membership test (in, not in). |
+| test.adb:26:9:26:31 | ... and then ... | These tests of one value can be a single membership test (in, not in). |
+| test.adb:28:13:28:38 | ... .. ... | Write T'Range (or T) for T'First .. T'Last. |

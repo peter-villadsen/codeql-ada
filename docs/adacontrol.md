@@ -680,3 +680,23 @@ Where a bound or a choice is anything else (a selector of type `Integer`, whose 
 exceed QL's integers, a constant, an expression), the count is unknown and nothing is
 reported: on gpr2, 31 of the 209 `case` statements with `when others` get an
 `others_span`. Left out: static predicates, and values beyond 2^30.
+
+### Simplifiable_Expressions
+
+`ada/simplifiable-expressions`, library `SimplifiableExpressions`.
+`simplifiable(e, subrule)` holds for each subrule that applies to `e`.
+
+| Subrule | Default |
+|---|---|
+| `conversion` (of a universal value, to the operand's subtype or its first subtype) | yes |
+| `if_not` | no: 103 corpus results, a style preference |
+| `logical_true`, `logical_false` | no: `ada/boolean-literal-comparison` reports them |
+| `logical_redundant` | yes |
+| `logical_not` | yes |
+| `membership` (equalities and `in` joined by `or`; inequalities and `not in` by `and`) | yes |
+| `parentheses` | no: 427 corpus results, a style preference |
+| `range` (`T'First .. T'Last`) | yes |
+
+`parentheses` follows the precedence levels of Ada RM 4.5 (`precedence(e)`) and, as
+AdaControl does, does not report parentheses between operators of the same level. Left
+out: `membership` for range comparisons (`X >= A and X <= B`).

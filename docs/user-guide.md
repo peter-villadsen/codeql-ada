@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 68 queries are tested on a
+The project is pre-1.0. The extractor, the library and 69 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -475,6 +475,7 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/return-type` | Function returning an anonymous access type | recommendation |
 | `ada/self-comparison` | Self-comparison | warning |
 | `ada/silent-exceptions` | Exception silently handled by when others | warning |
+| `ada/simplifiable-expressions` | Simplifiable expression | recommendation |
 | `ada/simplifiable-statements` | Simplifiable statement | recommendation |
 | `ada/spark-mode-off` | SPARK_Mode disabled | warning |
 | `ada/sql-injection` | SQL query built from user-controlled sources | error |
