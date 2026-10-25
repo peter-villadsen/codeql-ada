@@ -1,0 +1,90 @@
+name: Container image
+
+# Builds ghcr.io/peter-villadsen/codeql-ada:<version> from a published release's
+# extractor tarball (container/Dockerfile). release.yml calls this after a tag release;
+# run it by hand to (re)build the image of an existing release.
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: Release tag to build the image from, e.g. v0.4.0
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to build the image from, e.g. v0.3.0
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/peter-villadsen/codeql-ada
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download the release's extractor tarball
+        run: |
+          set -euo pipefail
+          gh release download "$TAG" -R "$GITHUB_REPOSITORY" \
+            -p codeql-extractor-ada-linux64.tar.gz -D container
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+
+      - name: Build image
+        run: |
+          set -euo pipefail
+          version="${TAG#v}"
+          docker build --build-arg "ADA_VERSION=$version" -t "$IMAGE:$version" container
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+        env:
+          TAG: ${{ inputs.tag }}
+
+      # Extract and analyze the hello test project, offline, exactly as the user guide
+      # tells users to: the extractor must be found without --search-path, the runtime
+      # through gcc, and the query packs must already be in the image.
+      - name: Smoke test
+        run: |
+          set -euo pipefail
+          cp -r tests/hello "$RUNNER_TEMP/hello"
+          docker run --rm --network none -v "$RUNNER_TEMP/hello:/src" "$IMAGE:$VERSION" \
+            database create /src/ada-db --language=ada --build-mode=none --source-root=/src \
+            2>&1 | tee "$RUNNER_TEMP/create.log"
+          if ! grep -q "\[ada-extractor\] runtime: /" "$RUNNER_TEMP/create.log"; then
+            echo "::error::the image's extractor did not find the GNAT runtime"
+            exit 1
+          fi
+          docker run --rm --network none -v "$RUNNER_TEMP/hello:/src" "$IMAGE:$VERSION" \
+            database analyze /src/ada-db "peter-villadsen/ada-queries@$VERSION" \
+            --format=sarif-latest --output=/src/ada.sarif
+          test -s "$RUNNER_TEMP/hello/ada.sarif"
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # `latest` follows the latest release only, so rebuilding an older release's
+      # image does not move it.
+      - name: Push image
+        run: |
+          set -euo pipefail
+          docker push "$IMAGE:$VERSION"
+          latest="$(gh release view -R "$GITHUB_REPOSITORY" --json tagName --jq .tagName)"
+          if [ "$latest" = "$TAG" ]; then
+            docker tag "$IMAGE:$VERSION" "$IMAGE:latest"
+            docker push "$IMAGE:latest"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}

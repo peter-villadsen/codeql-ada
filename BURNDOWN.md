@@ -405,7 +405,8 @@ Status of the field (verified 2026-07-02):
     immediately after the build/download step) so a good build is cached
     regardless of unrelated later failures (e.g. corpus-regression network
     flakes). Confirmed both caches populate on the first green run.
-  Windows/macOS packaging (the rest of 5.4's original scope) is still open —
+  Windows/macOS packaging (the rest of 5.4's original scope): Windows is served by
+  the container image (D-037, 2026-10-25); native Windows and macOS builds are still open —
   revisit at Phase 6.
 - [x] 5.5 *Done 2026-07-03 (post-Phase-6) — 3 more queries, 11 total:*
   UnusedWithClause (a `with` clause no other resolved name in the file refers

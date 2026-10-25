@@ -7,6 +7,14 @@ library, as CodeQL for Java's and C#'s are, instead of `codeql.controlflow.Cfg`,
 GitHub means to delete (D-029; `docs/cfg-migration-plan.md`). The database format and the
 extractor are unchanged.
 
+### Container image
+
+- **`ghcr.io/peter-villadsen/codeql-ada:<version>`**: Debian 13 with the CodeQL CLI
+  2.25.6, the extractor, GNAT and the query packs, built by each release (D-037). On
+  Windows, it replaces WSL for database creation; queries and VS Code run on Windows
+  with the native CLI. `0.3.0` is published too. The user guide has a section on it, and
+  now on installing the CLI on Windows.
+
 ### Extractor options
 
 - **`-O ada.<name>=<value>`** on `codeql database create` (or `CODEQL_EXTRACTOR_ADA_<NAME>`):

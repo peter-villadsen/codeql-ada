@@ -52,14 +52,32 @@ Three pieces make this work for a new language:
 
 | Requirement | Details |
 |---|---|
-| OS | Linux x86_64 with glibc 2.38 or newer (Ubuntu 24.04, Debian 13); Windows via WSL |
+| OS | Linux x86_64 with glibc 2.38 or newer (Ubuntu 24.04, Debian 13); Windows via the container image or WSL |
 | Python | ≥ 3.11, already on `PATH` (system Python is fine — no install needed, see below) |
 | CodeQL CLI | 2.25.6 tested; [download separately](https://github.com/github/codeql-cli-binaries) under GitHub's own terms |
 
-Native macOS and Windows are not supported yet (D-010); WSL is the documented
-path for Windows users, and works identically to native Linux.
+The extractor runs only on Linux x86_64 (D-010); a native macOS or Windows build does
+not exist yet. On Windows, the CodeQL CLI, queries and VS Code run natively, and only
+database creation needs Linux: either the container image below (D-037) or WSL, which
+works identically to native Linux.
 
 ## Installing
+
+### Container image (Windows, or any machine with Docker)
+
+`ghcr.io/peter-villadsen/codeql-ada:<version>` contains the CodeQL CLI, the extractor,
+GNAT and the query packs. From your project's directory (PowerShell shown):
+
+```powershell
+docker run --rm -v "${PWD}:/src" ghcr.io/peter-villadsen/codeql-ada:0.3.0 `
+  database create /src/ada-db --language=ada --build-mode=none --source-root=/src
+```
+
+Then analyze `ada-db` with the CodeQL CLI on Windows, or in the container. See
+"Using the container image" in the [user guide](docs/user-guide.md), which also
+covers installing the CLI on Windows.
+
+### Linux and WSL
 
 Download the extractor from the latest release. No Libadalang build is
 needed, because the tarball bundles the Libadalang runtime it needs (D-010):

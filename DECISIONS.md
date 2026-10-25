@@ -387,3 +387,18 @@ sources are no longer filtered by extension: its `Naming` package decides. No co
 needed for code built with another one; the user guide has a section for GNAT and one for
 DDC-I. `scripts/test_extractor_options.sh` checks scenario selection, a `Naming` package,
 extra extensions and a multi-unit file.
+
+## D-037 (2026-10-25) — A container image for Windows users
+Only extraction needs Linux; the CodeQL CLI, the packs and VS Code run natively on Windows.
+Each release publishes `ghcr.io/peter-villadsen/codeql-ada:<version>` (`container/Dockerfile`,
+`.github/workflows/image.yml`): Debian 13, CLI 2.25.6, the release's extractor tarball inside
+the CLI's directory (so no `--search-path`), GNAT (runtime specs, and the toolchain `.gpr`
+projects load with; without it names in statements that mention `Ada.*` don't resolve) and
+the query packs (so analysis works offline). Entry point `codeql`. Windows users create the
+database with `docker run` and analyze with the native CLI; this is documented as the
+recommended Windows path, with WSL kept as the alternative. Microsoft's
+`mcr.microsoft.com/cstsectools/codeql-container` was evaluated and can't be used: Ubuntu
+22.04 (glibc 2.35 < 2.38, Python 3.10) and CLI 2.15.5 (no `--build-mode`, D-012). Measured:
+a bind-mounted Windows folder extracts about 4.6× slower than the container's own file
+system (as `/mnt/c` under WSL), so the user guide gives a copy-in, copy-out form for large
+trees. Native Windows extraction (D-010) stays deferred.

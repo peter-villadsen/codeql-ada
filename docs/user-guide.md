@@ -95,28 +95,43 @@ Exception, which permits bundling them with MIT code); see
 
 | Requirement | Details |
 |---|---|
-| Operating system | Linux x86-64 with glibc 2.38 or newer: Ubuntu 24.04, Debian 13, Fedora 39 or later. On Windows, use WSL (below). There is no native Windows, macOS or arm64 build yet (D-010). |
+| Operating system | Linux x86-64 with glibc 2.38 or newer: Ubuntu 24.04, Debian 13, Fedora 39 or later. On Windows, use the container image or WSL (below). There is no native Windows, macOS or arm64 build of the extractor yet (D-010). |
 | Python | 3.11 or newer, on `PATH`. The system Python is fine: the extractor needs no packages beyond what the tarball bundles. |
 | CodeQL CLI | 2.25.6. Other versions are not tested, and a newer one may refuse the database (D-012). |
 | GNAT (optional) | Only for source trees without a `.gpr` file, to give the extractor the runtime library's specs. See [The GNAT runtime](#the-gnat-runtime-auto-provider-only). |
 
-### On Windows: WSL
+### On Windows
 
-Everything below runs in a Linux distribution under WSL. From PowerShell:
+Only the extractor needs Linux: Libadalang's runtime, which it bundles, is built for
+Linux. The CodeQL CLI, the query packs, running queries and the VS Code extension all
+work natively on Windows. There are two ways to get the Linux part:
 
-```powershell
-wsl --install -d Debian
-```
+- **The container image** (recommended). One image holds the extractor, GNAT and a Linux
+  CodeQL CLI. You create a database with one `docker run`, and do everything else on
+  Windows: install the CLI natively ([below](#installing-the-codeql-cli)), then see
+  [Using the container image](#using-the-container-image). Nothing has to be installed
+  or set up inside Linux.
+- **WSL**. Install a Linux distribution and do everything in it, following the Linux
+  steps. From PowerShell:
 
-Then open the Debian shell and continue with the Linux steps. Your Windows drives are
-under `/mnt/c/...`, but extraction is much faster on the Linux file system (`~/...`),
-so copy or clone the code you analyze there.
+  ```powershell
+  wsl --install -d Debian
+  ```
+
+  Then open the Debian shell and continue with the Linux steps. Your Windows drives are
+  under `/mnt/c/...`, but extraction is much faster on the Linux file system (`~/...`),
+  so copy or clone the code you analyze there.
+
+Docker Desktop runs containers in WSL 2 itself, so WSL 2 must be available either way;
+with the image you just never work inside it. Docker Desktop needs a paid subscription
+in larger organizations. Podman Desktop and Rancher Desktop are free and run the same
+images, but we have tested only Docker Desktop.
 
 ### Installing the CodeQL CLI
 
 Download the CLI (not the "bundle", which you don't need) from
 [github/codeql-cli-binaries](https://github.com/github/codeql-cli-binaries/releases),
-unpack it, and put it on `PATH`:
+unpack it, and put it on `PATH`. On Linux and in WSL:
 
 ```sh
 curl -sSLO https://github.com/github/codeql-cli-binaries/releases/download/v2.25.6/codeql-linux64.zip
@@ -128,10 +143,26 @@ codeql version
 
 The last command prints `CodeQL command-line toolchain release 2.25.6.`
 
+On Windows, in PowerShell (`curl.exe` and `tar` come with Windows 10 and 11):
+
+```powershell
+curl.exe -sSLO https://github.com/github/codeql-cli-binaries/releases/download/v2.25.6/codeql-win64.zip
+New-Item -ItemType Directory -Force $HOME\tools | Out-Null
+tar -xf codeql-win64.zip -C $HOME\tools           # creates $HOME\tools\codeql
+$userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+[Environment]::SetEnvironmentVariable('Path', "$HOME\tools\codeql;$userPath", 'User')
+```
+
+Open a new terminal, so that it sees the new `PATH`, and check with `codeql version`.
+The zip is about 365 MB and includes its own Java runtime: there is no installer, and
+no administrator rights are needed. Unpack it with `tar` rather than Explorer's
+"Extract All", which is much slower on a file this size.
+
 ### Installing the Ada extractor
 
-Download the extractor from the latest release and unpack it. It bundles the Libadalang
-runtime, so nothing has to be built:
+On Linux and in WSL (the container image already contains it), download the extractor
+from the latest release and unpack it. It bundles the Libadalang runtime, so nothing has
+to be built:
 
 ```sh
 mkdir -p ~/tools/ada-extractor && cd ~/tools/ada-extractor
@@ -166,16 +197,79 @@ codeql pack download peter-villadsen/ada-queries
 ```
 
 This also downloads `peter-villadsen/ada-all` and the shared CodeQL packs it depends on,
-into `~/.codeql/packages`. Use the packs of the same release as the extractor: the
-library and the database format change together.
+into `~/.codeql/packages` (`%USERPROFILE%\.codeql\packages` on Windows). Use the packs
+of the same release as the extractor: the library and the database format change
+together.
+
+### Using the container image
+
+`ghcr.io/peter-villadsen/codeql-ada` holds everything a Linux machine would otherwise
+need: Debian 13, the CodeQL CLI 2.25.6, the Ada extractor, GNAT and the query packs, all
+from the same release. GNAT provides the runtime specs that names like `Ada.Text_IO`
+resolve against ([The GNAT runtime](#the-gnat-runtime-auto-provider-only)) and the
+toolchain a `.gpr` project is loaded with ([With GNAT](#with-gnat)). The tag is the
+release's version, as in `:0.3.0`; `:latest` is the latest release. Use a version: a
+database is tied to the release that created it.
+
+```powershell
+docker pull ghcr.io/peter-villadsen/codeql-ada:0.3.0
+```
+
+The image runs `codeql`, so what follows the image name is a CodeQL command. The
+extractor is part of the image's CLI, so no `--search-path` is needed. In PowerShell,
+from the top directory of your project:
+
+```powershell
+docker run --rm -v "${PWD}:/src" ghcr.io/peter-villadsen/codeql-ada:0.3.0 `
+  database create /src/ada-db --language=ada --build-mode=none --source-root=/src
+```
+
+`-v "${PWD}:/src"` makes the current directory `/src` inside the container, and the
+database is written to `ada-db` in it. Paths in the command are paths in the container;
+everything else is as in [Analyzing a project](#analyzing-a-project), including the
+extractor options (`-O ada.gpr=app.gpr`).
+
+The result is an ordinary database. Run the queries with the CLI on Windows:
+
+```powershell
+codeql database analyze ada-db peter-villadsen/ada-queries@0.3.0 `
+  --format=sarif-latest --output=ada.sarif
+```
+
+or open it in VS Code. The SARIF names files relative to the source root, so it is
+the same as from a Linux machine. The queries can also run in the container, which has
+the packs and needs no network:
+
+```powershell
+docker run --rm -v "${PWD}:/src" ghcr.io/peter-villadsen/codeql-ada:0.3.0 `
+  database analyze /src/ada-db peter-villadsen/ada-queries@0.3.0 `
+  --format=sarif-latest --output=/src/ada.sarif
+```
+
+**Large source trees.** A container reads a Windows folder slowly, as WSL reads
+`/mnt/c`. AdaCore's `gpr` (1,830 Ada files) took 286 s to extract from a mounted
+folder, against 62 s from the container's own file system. For a large tree, copy the
+source into the container, create the database there and copy it back. This took 97 s
+for `gpr`, copying included:
+
+```powershell
+docker run --rm -v "${PWD}:/host" --entrypoint bash ghcr.io/peter-villadsen/codeql-ada:0.3.0 -c `
+  "cp -r /host/. /src && codeql database create /tmp/ada-db --language=ada --build-mode=none --source-root=/src && cp -r /tmp/ada-db /host/"
+```
+
+The image works the same way on Linux (without the backticks, which continue lines in
+PowerShell). There, the files the container writes belong to `root`.
+
+To build the image yourself, see [container/Dockerfile](../container/Dockerfile).
 
 ### Editor support (optional)
 
 The [CodeQL extension for VS Code](https://codeql.github.com/docs/codeql-for-visual-studio-code/)
 runs queries from the editor, shows results next to the source, and shows the tree of a
-file ([Seeing the tree](#seeing-the-tree)). On Windows, install it in VS Code's WSL
-window, and point its `codeQL.cli.executablePath` setting at the CLI you installed, so
-that it does not download a different version.
+file ([Seeing the tree](#seeing-the-tree)). Point its `codeQL.cli.executablePath`
+setting at the CLI you installed, so that it does not download a different version. On
+Windows with the container image, install it in VS Code itself and use the Windows CLI;
+with WSL, install it in VS Code's WSL window and use the CLI in WSL.
 
 ---
 
@@ -1390,10 +1484,13 @@ Notes:
 | Symptom | Cause and fix |
 |---|---|
 | `Could not find extractor for language ada` / `Unknown language: ada` | `--search-path` points at the `ada/` directory instead of its parent, or not at the extractor at all. Check with `codeql resolve languages --search-path=...`. |
-| `version 'GLIBC_2.38' not found` during extraction | The system's glibc is too old (Debian 12, Ubuntu 22.04, ...). Use a newer distribution, or WSL with Debian 13 or Ubuntu 24.04. |
+| `version 'GLIBC_2.38' not found` during extraction | The system's glibc is too old (Debian 12, Ubuntu 22.04, ...). Use a newer distribution, WSL with Debian 13 or Ubuntu 24.04, or the container image. |
 | `python3: command not found`, or a syntax error from the extractor | Python 3.11 or newer must be on `PATH` as `python3`. Check with `python3 --version`. |
 | `codeql: command not found` | The CLI's directory is not on `PATH` (`~/tools/codeql` in the setup above). |
 | Extraction is very slow under WSL | The source is on a Windows drive (`/mnt/c/...`). Copy it to the Linux file system. |
+| Extraction is very slow in the container | The source is a mounted Windows folder. Copy it into the container ([Large source trees](#using-the-container-image)). |
+| `docker: error during connect` / `open //./pipe/dockerDesktopLinuxEngine` | Docker Desktop is not running. Start it, and wait until it reports that the engine is running. |
+| `Unknown option: '--build-mode=none'` or a `GLIBC` error in some other CodeQL image | The image's CLI or Linux is too old. Microsoft's `mcr.microsoft.com/cstsectools/codeql-container`, for one, has CLI 2.15.5 on Ubuntu 22.04 (glibc 2.35). Use `ghcr.io/peter-villadsen/codeql-ada`. |
 
 ### Creating databases
 
