@@ -83,6 +83,11 @@ extractor are unchanged.
 
 ### Queries
 
+- **`ada/cyclomatic-complexity`** (new): subprograms whose McCabe cyclomatic complexity
+  (`Subprogram.getMetrics().getCyclomaticComplexity()`) is above 10. The limit is the
+  first query setting given as a data extension, `cyclomaticComplexityThreshold`: a team
+  sets its own in a model pack passed with `--model-packs` (user guide, "Configuring
+  queries").
 - **`ada/unreachable-statement`** no longer reports a statement in an exception handler
   when the statements the handler protects contain a name that did not resolve: it may be
   a call that raises, into a dependency that was not extracted, which the control-flow

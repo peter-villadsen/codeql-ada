@@ -1,0 +1,9 @@
+# A team's own limit, as a model pack would set it (docs/user-guide.md, "Configuring
+# queries"). With two rows the smallest, 3, applies.
+extensions:
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: cyclomaticComplexityThreshold
+    data:
+      - [5]
+      - [3]

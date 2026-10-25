@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 69 queries are tested on a
+The project is pre-1.0. The extractor, the library and 70 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -527,6 +527,7 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/case-statement` | Case statement with an empty when others | warning |
 | `ada/command-line-injection` | Command built from a command-line argument | error |
 | `ada/comments` | End of long record not named | recommendation |
+| `ada/cyclomatic-complexity` | Subprogram too complex | recommendation |
 | `ada/dead-local-subprogram` | Dead local subprogram | warning |
 | `ada/declarations` | Unfinished or empty declaration | warning |
 | `ada/dependencies` | Unit depends on its own child | recommendation |
@@ -593,6 +594,59 @@ The queries in `peter-villadsen/ada-queries`:
 Each query's `@description` (in `ql/src/queries/`) says what it flags and why.
 `ada/path-injection` and `ada/sql-injection` are new since v0.2.0, as is
 `Subprogram.getMetrics()`, used in [Example 4](#example-4-cyclomatic-complexity).
+
+### Configuring queries
+
+Some queries have a setting that a team may want to change: so far, the limit of
+`ada/cyclomatic-complexity`. A setting is a CodeQL *data extension*, the mechanism CodeQL
+for Java and C# use for their models of libraries: the rows of an *extensible predicate*,
+written in YAML. When there are no rows, the query uses its default.
+
+| Query | Extensible predicate | Default | With several rows |
+|---|---|---|---|
+| `ada/cyclomatic-complexity` | `cyclomaticComplexityThreshold(int limit)` | 10 | the smallest applies |
+
+To change a setting, make a *model pack*: a directory, say `ada-settings`, with two
+files. `qlpack.yml` names the pack and the pack it configures:
+
+```yaml
+name: my-team/ada-settings
+version: 0.0.1
+library: true
+extensionTargets:
+  peter-villadsen/ada-all: "*"
+dataExtensions:
+  - settings.yml
+```
+
+`settings.yml` gives the rows:
+
+```yaml
+extensions:
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: cyclomaticComplexityThreshold
+    data:
+      - [15]
+```
+
+Then name the pack with `--model-packs` when you run the queries, and tell the CLI where
+it is with `--additional-packs` (the directory that contains `ada-settings`):
+
+```sh
+codeql database analyze mydb peter-villadsen/ada-queries   --model-packs=my-team/ada-settings --additional-packs=$HOME/codeql-settings   --format=sarif-latest --output=results.sarif
+```
+
+The CLI prints `Loading data extensions.` when it applies them. A model pack that is
+found but not named with `--model-packs` is not applied: the query keeps its default.
+
+**For query writers.** The extensible predicates are declared in the library
+(`codeql/ada/metrics/Limits.qll`), each with an empty list of rows in
+`ql/lib/ext/query-settings.model.yml`, which `ql/lib/qlpack.yml` lists under
+`dataExtensions`. Without that file, CodeQL refuses to run the query ("depends on an
+extensional predicate ... which has not been defined"). A QL test gives its own rows in a
+file named after the test, `<Test>.ext.yml`, next to it, as
+`ql/test/queries/CyclomaticComplexityThreshold/` does.
 
 ### Reading the results
 
@@ -1063,7 +1117,9 @@ select s, "This subprogram has cyclomatic complexity " + complexity + "."
 ```
 
 It reports `Score`: "This subprogram has cyclomatic complexity 7." A real project would
-pick a higher threshold; 10 to 15 is common.
+pick a higher threshold; 10 to 15 is common. The shipped `ada/cyclomatic-complexity` is
+this query with a limit of 10, which you can change without writing a query
+([Configuring queries](#configuring-queries)).
 
 ### Example 5: SQL injection, with sources, sinks and barriers
 

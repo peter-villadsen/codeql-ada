@@ -1,0 +1,10 @@
+# Settings of the queries, as data extensions. Every extensible predicate is declared
+# here with no rows: a team sets its own values in a model pack (docs/user-guide.md,
+# "Configuring queries"), and the query uses its default when there are none.
+extensions:
+  # ada/cyclomatic-complexity (codeql/ada/metrics/Limits.qll): the limit; 10 when
+  # there is no row, the smallest row when there are several.
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: cyclomaticComplexityThreshold
+    data: []

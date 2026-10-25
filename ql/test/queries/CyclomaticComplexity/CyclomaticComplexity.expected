@@ -1,0 +1,2 @@
+| test.adb:32:4:44:20 | Above_Limit | This subprogram has cyclomatic complexity 11, above the limit of 10. |
+| test.adb:49:7:61:17 | Inner | This subprogram has cyclomatic complexity 11, above the limit of 10. |

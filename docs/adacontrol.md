@@ -23,7 +23,9 @@ of subrules. CodeQL queries take no parameters, so a rule is split in two:
 To check a rule your own way, write a query that calls the library with your settings
 (see [Writing queries](query-writing.md)). Configuration through data extensions, so
 that a team can write its standard as YAML instead, is
-[issue #7](https://github.com/peter-villadsen/codeql-ada/issues/7). Every query carries
+[issue #7](https://github.com/peter-villadsen/codeql-ada/issues/7). The mechanism exists
+and one query uses it, `ada/cyclomatic-complexity` (user guide, "Configuring queries");
+the AdaControl rules do not yet. Every query carries
 the tag `adacontrol`.
 
 AdaControl's control kinds (`check`, `search`, `count`) correspond to a query's

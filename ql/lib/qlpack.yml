@@ -4,6 +4,9 @@ library: true
 warnOnImplicitThis: true
 dbscheme: ada.dbscheme
 extractor: ada
+# Extensible predicates' declarations (no rows); see ext/query-settings.model.yml.
+dataExtensions:
+  - ext/*.model.yml
 dependencies:
   # Shared CFG framework (D-013). Version pinned to the codeql-cli/v2.25.6 tag
   # of github/codeql (shared/controlflow/qlpack.yml). Transitively pulls

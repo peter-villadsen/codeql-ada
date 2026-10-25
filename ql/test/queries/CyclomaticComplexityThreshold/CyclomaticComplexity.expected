@@ -1,0 +1,1 @@
+| test.adb:10:4:15:20 | Above_Limit | This subprogram has cyclomatic complexity 4, above the limit of 3. |
