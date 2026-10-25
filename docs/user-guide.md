@@ -74,14 +74,35 @@ The CodeQL CLI is proprietary and licensed separately by GitHub, under the
 [GitHub CodeQL Terms](https://github.com/github/codeql-cli-binaries/blob/main/LICENSE.md).
 
 **Which code you may analyze is set by the CodeQL CLI's license, not by this
-project's.** Under the
-[GitHub CodeQL Terms](https://github.com/github/codeql-cli-binaries/blob/main/LICENSE.md),
-the CLI may be used without charge to analyze open-source codebases (released under an
-OSI-approved license), for academic research, and to demonstrate CodeQL. Analyzing any
-other codebase, including your organization's proprietary code and including in CI,
-requires a license from GitHub (GitHub Advanced Security / GitHub Code Security). This
-applies to every CodeQL language, Ada included. The terms are GitHub's; read them, and
-ask GitHub, rather than relying on this summary.
+project's.** The
+[GitHub CodeQL Terms](https://github.com/github/codeql-cli-binaries/blob/main/LICENSE.md)
+allow the CLI to be used without charge:
+
+- to analyze an *Open Source Codebase*, which the terms define as one "released under an
+  OSI-approved License";
+- to perform academic research;
+- to demonstrate CodeQL;
+- to test CodeQL queries released under an OSI-approved license.
+
+Any other use "in connection with any codebase that is not an Open Source Codebase" is
+not allowed without "a paid customer license for GitHub Advanced Security". That covers
+your organization's proprietary code:
+
+- **wherever the CLI runs**: on your own machine, on a server, or in CI. Running it
+  locally or offline makes no difference;
+- **however it is started**: from the command line, from the VS Code extension (which runs
+  the same CLI), or from this project's container image (which contains it);
+- **for every CodeQL language**, Ada included. That this project is MIT changes nothing:
+  the restriction is on the CLI.
+
+GitHub sells this as a subscription per *active committer*: each person who committed
+to the analyzed private repositories in the billing period. Since 2025 it is offered as
+separate products, of which GitHub Code Security covers code scanning; the CodeQL Terms
+still name only GitHub Advanced Security. GitHub's
+[price estimate](https://docs.github.com/en/code-security/how-tos/secure-at-scale/configure-organization-security/configure-specific-tools/estimate-price)
+page gives the current figures. Ask GitHub which license covers your use, and get the
+answer in writing; this section is a summary, not legal advice.
+
 Libadalang is Apache-2.0. The release tarball bundles Libadalang's runtime and its
 dependencies under their own licenses (several are GPLv3 with the GCC Runtime Library
 Exception, which permits bundling them with MIT code); see
