@@ -128,8 +128,8 @@ about 10 for the image.
   publish step runs after the Release is created, so a green Release is not evidence that
   the packs landed.
 - **Check the image**: `docker run --rm ghcr.io/peter-villadsen/codeql-ada:<version>`
-  prints the CLI version. The first time a package is published, GHCR makes it private;
-  make `codeql-ada` public under the account's Packages settings, as the QL packs are.
+  prints the CLI version, also when logged out of `ghcr.io`. The image is linked to this
+  public repository (its `org.opencontainers.image.source` label), so it is public.
 - **Announce what changed for analysis results**, not just what changed in the code. A
   consumer who pinned a version cares primarily about whether their finding count is about
   to move.
