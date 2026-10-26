@@ -1,0 +1,15 @@
+| test.adb:58:24:58:33 | ... + ... | The barrier of entry Arith uses an arithmetic operator. |
+| test.adb:61:28:61:38 | Level'Succ | The barrier of entry Attr_Func uses the attribute 'Succ. |
+| test.adb:62:24:62:33 | Flags (...) | The barrier of entry Index uses an indexing or slice. |
+| test.adb:63:27:63:33 | Global | The barrier of entry Variable uses Global, declared outside the protected object. |
+| test.adb:64:27:64:32 | Ready | The barrier of entry Call_Ext uses a function call. |
+| test.adb:65:29:65:36 | Is_Open | The barrier of entry Call_Local uses a call to a protected function. |
+| test.adb:66:24:66:31 | Ptr.all | The barrier of entry Deref uses a dereference. |
+| test.adb:67:23:67:37 | Boolean (...) | The barrier of entry Conv uses a conversion or qualification. |
+| test.adb:68:23:68:37 | Boolean'(...) | The barrier of entry Qual uses a conversion or qualification. |
+| test.adb:69:34:69:58 | (...) | The barrier of entry Arr_Agg uses an array aggregate. |
+| test.adb:70:33:70:46 | (...) | The barrier of entry Rec_Agg uses a record aggregate. |
+| test.adb:71:24:71:42 | new ... | The barrier of entry Alloc uses an allocator. |
+| test.adb:71:28:71:42 | Boolean'(...) | The barrier of entry Alloc uses a conversion or qualification. |
+| test.adb:71:45:71:53 | G_Access | The barrier of entry Alloc uses G_Access, declared outside the protected object. |
+| test.adb:72:26:72:40 | ... and ... | The barrier of entry User_Op uses a function call. |

@@ -215,6 +215,14 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/simplifiable-expressions`** (`Simplifiable_Expressions`): redundant conversions,
   `A and A`, `not` of a comparison, tests of one value that a membership test can replace,
   `T'First .. T'Last`. `parentheses` and `if_not` are in the library.
+- **`ada/local-access`** (`Local_Access`): `'Access`, `'Unchecked_Access` and
+  `'Unrestricted_Access` of objects and subprograms not declared in library packages,
+  including components and elements of local objects and protected operations of local
+  protected objects.
+- **`ada/barrier-expressions`** (`Barrier_Expressions`): entry barriers that use more than
+  Ada 2022's `Pure_Barriers` allows: function calls, variables outside the protected
+  object, arithmetic, indexing, dereferences, conversions, aggregates, allocators. Every
+  AdaControl keyword is in the library.
 
 
 ## 0.3.0 (2026-10-11)

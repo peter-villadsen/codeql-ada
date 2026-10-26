@@ -1,0 +1,12 @@
+| globals.adb:19:12:19:33 | X'Unrestricted_Access | 'Unrestricted_Access of local constant $@. | globals.adb:17:24:17:43 | X | X |
+| test.adb:30:10:30:26 | Local_Var'Access | 'Access of local variable $@. | test.adb:3:4:3:39 | Local_Var | Local_Var |
+| test.adb:31:10:31:36 | Local_Var'Unchecked_Access | 'Unchecked_Access of local variable $@. | test.adb:3:4:3:39 | Local_Var | Local_Var |
+| test.adb:32:10:32:28 | Local_Const'Access | 'Access of local constant $@. | test.adb:4:4:4:48 | Local_Const | Local_Const |
+| test.adb:33:10:33:32 | Local_Rec.Field'Access | 'Access of local variable $@. | test.adb:5:4:5:22 | Local_Rec | Local_Rec |
+| test.adb:34:10:34:30 | Local_Arr (...)'Access | 'Access of local variable $@. | test.adb:6:4:6:22 | Local_Arr | Local_Arr |
+| test.adb:35:10:35:34 | Renamed'Unchecked_Access | 'Unchecked_Access of local variable $@. | test.adb:3:4:3:39 | Local_Var | Local_Var |
+| test.adb:37:10:37:27 | Local_Proc'Access | 'Access of local procedure $@. | test.adb:10:4:10:33 | Local_Proc | Local_Proc |
+| test.adb:38:10:38:27 | Local_Func'Access | 'Access of local function $@. | test.adb:11:4:11:46 | Local_Func | Local_Func |
+| test.adb:39:12:39:30 | Local_PO.Op'Access | 'Access of local protected procedure $@. | test.adb:14:7:14:20 | Op | Op |
+| test.adb:42:17:42:36 | Local_PO.Get'Access | 'Access of local protected function $@. | test.adb:15:7:15:35 | Get | Get |
+| test.adb:51:15:51:41 | Block_Var'Unchecked_Access | 'Unchecked_Access of local variable $@. | test.adb:49:10:49:43 | Block_Var | Block_Var |

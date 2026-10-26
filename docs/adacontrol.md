@@ -702,3 +702,53 @@ reported: on gpr2, 31 of the 209 `case` statements with `when others` get an
 `parentheses` follows the precedence levels of Ada RM 4.5 (`precedence(e)`) and, as
 AdaControl does, does not report parentheses between operators of the same level. Left
 out: `membership` for range comparisons (`X >= A and X <= B`).
+
+### Local_Access
+
+`ada/local-access`, library `LocalAccess`: `localAccess(a, entity, category)` for an
+`'Access`, `'Unchecked_Access` or `'Unrestricted_Access` attribute `a` whose prefix
+designates `entity`, which is not global, of category `category`.
+
+| Subrule | Library | Default |
+|---|---|---|
+| `constant`, `variable` | `category(e)`: an `in` parameter is a constant, an `out` or `in out` one a variable | yes |
+| `procedure`, `function` | `category(e)` | yes |
+| `protected_procedure`, `protected_function` | `category(e)` | yes |
+
+The entity is `entity(prefix)`: what the prefix names, through renamings; for a component
+(`R.Field'Access`) or an element (`A (I)'Access`), the object it belongs to. Through a
+dereference (`P.all'Access`, `P.Field'Access` with `P` an access value) the designated
+object is unknown and nothing is reported. Global is `isGlobal(e)`: declared at library
+level, in packages only; a parameter never is. The components and subprograms of a
+protected type are judged by where the type is declared, not by the object. With all
+categories, `ada/local-access` also reports what `ada/entities` reports for
+`'Unchecked_Access` and `'Unrestricted_Access` of local entities.
+
+### Barrier_Expressions
+
+`ada/barrier-expressions`, library `BarrierExpressions`: `construct(n, b, kw)` for each
+part `n` of the barrier of entry body `b` other than a Boolean component of the protected
+object or a literal, with `kw` the keyword that allows it.
+
+| `<keyword>` | What `construct` finds | Default |
+|---|---|---|
+| `allocation` | allocators | reported |
+| `any_component` | protected components not of a Boolean type | allowed |
+| `any_variable` | objects declared outside the protected object, constants included | reported |
+| `arithmetic_operator` | predefined `+`, `-`, `*`, `/`, `mod`, `rem`, `**`, `abs`, `&` | reported |
+| `array_aggregate`, `record_aggregate` | aggregates, by their type | reported |
+| `comparison_operator` | predefined comparisons and membership tests | allowed |
+| `conversion` | type conversions and qualified expressions | reported |
+| `dereference` | `.all`, and selecting, indexing or calling through an access value | reported |
+| `indexing` | indexing and slices | reported |
+| `function_attribute` | attributes with arguments (`'Succ (X)`, `'Image (X)`) | reported |
+| `local_function` | calls of functions of the same protected object | reported |
+| `logical_operator` | predefined `and`, `or`, `xor`, `not`, `and then`, `or else` | allowed |
+| `value_attribute` | attributes without arguments (`'Count`, `'First`) | allowed |
+| `<entity>` | `call`: other function calls and user-defined operators; name the function in your query | reported |
+
+The default allows what Ada 2022's `Pure_Barriers` restriction (the Jorvik profile)
+allows, a little more liberally (any value attribute, not only `'Count`); AdaControl's own
+default, Ravenscar's `Simple_Barriers`, is the query with no keyword allowed. Named
+numbers and the index of an entry family are always allowed. Conditional, quantified and
+declare expressions are not constructs of their own; their parts are checked.

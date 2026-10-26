@@ -1,0 +1,23 @@
+| globals.adb:11:15:11:37 | Count'Unchecked_Access | Count variable global |
+| globals.adb:19:12:19:33 | X'Unrestricted_Access | X constant local |
+| globals.adb:22:22:22:37 | Body_Var'Access | Body_Var variable global |
+| globals.adb:23:22:23:46 | Nested.Nested_Var'Access | Nested_Var variable global |
+| globals.adb:24:24:24:43 | Global_Const'Access | Global_Const constant global |
+| globals.adb:25:22:25:45 | Global_Rec.Field'Access | Global_Rec variable global |
+| globals.adb:26:22:26:43 | Global_Arr (...)'Access | Global_Arr variable global |
+| globals.adb:27:23:27:41 | Global_Proc'Access | Global_Proc procedure global |
+| globals.adb:28:23:28:44 | Lib_PO.Handler'Access | Handler protected_procedure global |
+| test.adb:7:32:7:49 | Global_Var'Access | Global_Var variable global |
+| test.adb:30:10:30:26 | Local_Var'Access | Local_Var variable local |
+| test.adb:31:10:31:36 | Local_Var'Unchecked_Access | Local_Var variable local |
+| test.adb:32:10:32:28 | Local_Const'Access | Local_Const constant local |
+| test.adb:33:10:33:32 | Local_Rec.Field'Access | Local_Rec variable local |
+| test.adb:34:10:34:30 | Local_Arr (...)'Access | Local_Arr variable local |
+| test.adb:35:10:35:34 | Renamed'Unchecked_Access | Local_Var variable local |
+| test.adb:36:10:36:30 | Local_Ptr.all'Access | unknown |
+| test.adb:37:10:37:27 | Local_Proc'Access | Local_Proc procedure local |
+| test.adb:38:10:38:27 | Local_Func'Access | Local_Func function local |
+| test.adb:39:12:39:30 | Local_PO.Op'Access | Op protected_procedure local |
+| test.adb:42:17:42:36 | Local_PO.Get'Access | Get protected_function local |
+| test.adb:46:10:46:27 | Global_Var'Access | Global_Var variable global |
+| test.adb:51:15:51:41 | Block_Var'Unchecked_Access | Block_Var variable local |

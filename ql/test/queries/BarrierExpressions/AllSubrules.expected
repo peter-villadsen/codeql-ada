@@ -1,0 +1,41 @@
+| test.adb:54:30:54:35 | Count | Non_Boolean: any_component |
+| test.adb:54:30:54:39 | ... = ... | Non_Boolean: comparison_operator |
+| test.adb:55:26:55:31 | Count | Compare: any_component |
+| test.adb:55:26:55:35 | ... > ... | Compare: comparison_operator |
+| test.adb:56:24:56:42 | ... and then ... | Logic: logical_operator |
+| test.adb:57:25:57:33 | not ... | Not_Op: logical_operator |
+| test.adb:58:24:58:29 | Count | Arith: any_component |
+| test.adb:58:24:58:33 | ... + ... | Arith: arithmetic_operator |
+| test.adb:58:24:58:37 | ... > ... | Arith: comparison_operator |
+| test.adb:59:25:59:30 | Count | Member: any_component |
+| test.adb:59:25:59:40 | MembershipExpr | Member: comparison_operator |
+| test.adb:60:29:60:41 | Simple'Count | Attr_Count: value_attribute |
+| test.adb:60:29:60:45 | ... = ... | Attr_Count: comparison_operator |
+| test.adb:61:28:61:38 | Level'Succ | Attr_Func: function_attribute |
+| test.adb:61:28:61:50 | ... = ... | Attr_Func: comparison_operator |
+| test.adb:61:40:61:45 | Count | Attr_Func: any_component |
+| test.adb:62:24:62:29 | Flags | Index: any_component |
+| test.adb:62:24:62:33 | Flags (...) | Index: indexing |
+| test.adb:63:27:63:33 | Global | Variable: any_variable |
+| test.adb:64:27:64:32 | Ready | Call_Ext: call |
+| test.adb:65:29:65:36 | Is_Open | Call_Local: local_function |
+| test.adb:66:24:66:27 | Ptr | Deref: any_component |
+| test.adb:66:24:66:31 | Ptr.all | Deref: dereference |
+| test.adb:67:23:67:37 | Boolean (...) | Conv: conversion |
+| test.adb:68:23:68:37 | Boolean'(...) | Qual: conversion |
+| test.adb:69:26:69:31 | Flags | Arr_Agg: any_component |
+| test.adb:69:26:69:58 | ... = ... | Arr_Agg: comparison_operator |
+| test.adb:69:34:69:58 | (...) | Arr_Agg: array_aggregate |
+| test.adb:70:26:70:30 | Both | Rec_Agg: any_component |
+| test.adb:70:26:70:46 | ... = ... | Rec_Agg: comparison_operator |
+| test.adb:70:33:70:46 | (...) | Rec_Agg: record_aggregate |
+| test.adb:71:24:71:42 | new ... | Alloc: allocation |
+| test.adb:71:24:71:53 | ... = ... | Alloc: comparison_operator |
+| test.adb:71:28:71:42 | Boolean'(...) | Alloc: conversion |
+| test.adb:71:45:71:53 | G_Access | Alloc: any_variable |
+| test.adb:72:26:72:31 | Count | User_Op: any_component |
+| test.adb:72:26:72:40 | ... and ... | User_Op: call |
+| test.adb:73:24:73:29 | Count | Named: any_component |
+| test.adb:73:24:73:35 | ... < ... | Named: comparison_operator |
+| test.adb:74:42:74:51 | ... = ... | Family: comparison_operator |
+| test.adb:74:46:74:51 | Count | Family: any_component |
