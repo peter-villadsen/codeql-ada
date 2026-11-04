@@ -223,6 +223,13 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   Ada 2022's `Pure_Barriers` allows: function calls, variables outside the protected
   object, arithmetic, indexing, dereferences, conversions, aggregates, allocators. Every
   AdaControl keyword is in the library.
+- **`ada/assignments`** (`Assignments`): an assignment overwritten in the same group of
+  assignments before anything reads it, every component of a record assigned one by one,
+  and array assignments that slide. `type`, `access_duplication`, `possible_target_name`
+  and the `groupable` filters are in the library.
+- **`ada/directly-accessed-globals`** (`Directly_Accessed_Globals`): variables of package
+  bodies accessed outside a subprogram, protected object or task dedicated to them, or by
+  more than one reader or writer. The kind of each accessor is in the library.
 
 
 ## 0.3.0 (2026-10-11)

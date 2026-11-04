@@ -1,0 +1,56 @@
+| test.adb:54:4:54:26 | S2 | type Shifted component=false |
+| test.adb:61:4:61:32 | Init_Dup | access_duplication A1 controlled=false |
+| test.adb:61:4:61:32 | Init_Dup | type Int_Access component=false |
+| test.adb:68:7:68:17 | I := ... | repeated 67 (read between) |
+| test.adb:72:4:72:11 | I := ... | groupable Pt 1/3 |
+| test.adb:73:4:73:11 | I := ... | repeated 72 |
+| test.adb:75:4:75:14 | Pt.X := ... | type Point component=true |
+| test.adb:77:4:77:14 | Pt.X := ... | repeated 75 |
+| test.adb:77:4:77:14 | Pt.X := ... | type Point component=true |
+| test.adb:80:4:80:15 | K := ... | possible_target_name K trivial=true components=0 |
+| test.adb:80:4:80:15 | K := ... | repeated 79 (read between) |
+| test.adb:82:4:82:15 | V (...) := ... | type Vec component=true |
+| test.adb:83:4:83:15 | V (...) := ... | repeated 82 |
+| test.adb:83:4:83:15 | V (...) := ... | type Vec component=true |
+| test.adb:85:4:85:15 | V (...) := ... | type Vec component=true |
+| test.adb:86:4:86:15 | V (...) := ... | type Vec component=true |
+| test.adb:92:4:92:19 | Global := ... | repeated 91 (read between) |
+| test.adb:95:4:95:14 | J := ... | repeated 94 |
+| test.adb:98:4:98:14 | I := ... | repeated 97 (read between) |
+| test.adb:106:4:106:14 | Pr.A := ... | groupable Pr 2/2 |
+| test.adb:106:4:106:14 | Pr.A := ... | type Pair component=true |
+| test.adb:107:4:107:14 | Pr.B := ... | type Pair component=true |
+| test.adb:109:4:109:14 | Pt.X := ... | groupable Pt 2/3 |
+| test.adb:109:4:109:14 | Pt.X := ... | type Point component=true |
+| test.adb:110:4:110:14 | Pt.Y := ... | type Point component=true |
+| test.adb:112:4:112:15 | H.P.A := ... | groupable H 1/2 |
+| test.adb:112:4:112:15 | H.P.A := ... | type Holder component=true |
+| test.adb:113:4:113:13 | H.N := ... | type Holder component=true |
+| test.adb:115:4:115:17 | Pr.A := ... | groupable Pr 2/2 (read) |
+| test.adb:115:4:115:17 | Pr.A := ... | type Pair component=true |
+| test.adb:116:4:116:14 | Pr.B := ... | type Pair component=true |
+| test.adb:118:4:118:16 | HL.L.V := ... | type Has_Limited component=true |
+| test.adb:119:4:119:14 | HL.K := ... | type Has_Limited component=true |
+| test.adb:123:4:123:13 | S1 := ... | sliding 5 into 1 |
+| test.adb:127:4:127:16 | S3 := ... | sliding 1 into 5 |
+| test.adb:135:4:135:13 | A2 := ... | access_duplication A1 controlled=false |
+| test.adb:135:4:135:13 | A2 := ... | type Int_Access component=false |
+| test.adb:137:4:137:15 | A2 := ... | type Int_Access component=false |
+| test.adb:139:4:139:26 | A2 := ... | type Int_Access component=false |
+| test.adb:141:4:141:13 | W2 := ... | access_duplication W1 controlled=false |
+| test.adb:141:4:141:13 | W2 := ... | type With_Ptr component=false |
+| test.adb:143:4:143:13 | M2 := ... | access_duplication M1 controlled=true |
+| test.adb:143:4:143:13 | M2 := ... | type Managed component=false |
+| test.adb:145:4:145:17 | A2 := ... | access_duplication W1.Ptr controlled=false |
+| test.adb:145:4:145:17 | A2 := ... | type Int_Access component=false |
+| test.adb:149:4:149:14 | Addr := ... | groupable H 1/2 |
+| test.adb:149:4:149:14 | Addr := ... | type Address_Like component=false |
+| test.adb:150:4:150:12 | DA := ... | type Derived_Address component=false |
+| test.adb:151:4:151:13 | H.N := ... | type Holder component=true |
+| test.adb:155:4:155:15 | I := ... | possible_target_name I trivial=true components=0 |
+| test.adb:157:4:157:21 | Pt.X := ... | groupable Pt 1/3 (read) |
+| test.adb:157:4:157:21 | Pt.X := ... | possible_target_name Pt.X trivial=false components=1 |
+| test.adb:157:4:157:21 | Pt.X := ... | type Point component=true |
+| test.adb:159:4:159:23 | V (...) := ... | possible_target_name V (...) trivial=false components=1 |
+| test.adb:159:4:159:23 | V (...) := ... | type Vec component=true |
+| test.adb:161:4:161:23 | V (...) := ... | type Vec component=true |

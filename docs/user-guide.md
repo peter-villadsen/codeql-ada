@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 72 queries are tested on a
+The project is pre-1.0. The extractor, the library and 74 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -544,6 +544,7 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/actual-parameters` | Unchecked conversion as an actual parameter | recommendation |
 | `ada/allocators` | Questionable allocator | recommendation |
 | `ada/aspects` | Boolean aspect without a value | recommendation |
+| `ada/assignments` | Questionable assignment | recommendation |
 | `ada/barrier-expressions` | Complex entry barrier | recommendation |
 | `ada/boolean-literal-comparison` | Comparison with boolean literal | recommendation |
 | `ada/case-statement` | Case statement with an empty when others | warning |
@@ -555,6 +556,7 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/dependencies` | Unit depends on its own child | recommendation |
 | `ada/derivations` | Overriding operation without indicator | recommendation |
 | `ada/direct-recursion` | Direct recursion | recommendation |
+| `ada/directly-accessed-globals` | Global variable accessed directly | recommendation |
 | `ada/empty-loop-body` | Empty loop body | warning |
 | `ada/entities` | Use of an unchecked access attribute | warning |
 | `ada/entity-inside-exception` | Entry call in an exception handler | warning |

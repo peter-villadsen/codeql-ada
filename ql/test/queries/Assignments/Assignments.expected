@@ -1,0 +1,7 @@
+| test.adb:73:4:73:11 | I := ... | This assignment overwrites $@ before anything reads it. | test.adb:72:4:72:11 | I := ... | an earlier assignment |
+| test.adb:77:4:77:14 | Pt.X := ... | This assignment overwrites $@ before anything reads it. | test.adb:75:4:75:14 | Pt.X := ... | an earlier assignment |
+| test.adb:83:4:83:15 | V (...) := ... | This assignment overwrites $@ before anything reads it. | test.adb:82:4:82:15 | V (...) := ... | an earlier assignment |
+| test.adb:95:4:95:14 | J := ... | This assignment overwrites $@ before anything reads it. | test.adb:94:4:94:11 | J := ... | an earlier assignment |
+| test.adb:106:4:106:14 | Pr.A := ... | These assignments set all 2 components of $@ one by one: assign an aggregate. | test.adb:44:4:44:6 | Pr | Pr |
+| test.adb:123:4:123:13 | S1 := ... | This assignment slides: the value's indices start at 5, the target's ($@) at 1. | test.adb:123:4:123:6 | S1 | S1 |
+| test.adb:127:4:127:16 | S3 := ... | This assignment slides: the value's indices start at 1, the target's ($@) at 5. | test.adb:127:4:127:6 | S3 | S3 |

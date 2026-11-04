@@ -1,0 +1,7 @@
+| shared.adb:4:4:4:11 | Written | Global variable $@ is written by Two_Writers_A, Two_Writers_B: give it one reader and one writer. | shared.adb:4:4:4:11 | Written | Written |
+| shared.adb:5:4:5:9 | Mixed | Global variable $@ is read by Also_Reads, Read_Write and written by Read_Write: give it one reader and one writer. | shared.adb:5:4:5:9 | Mixed | Mixed |
+| shared.adb:8:4:8:10 | By_Out | Global variable $@ is written by Uses_Out, Uses_Spec: give it one reader and one writer. | shared.adb:8:4:8:10 | By_Out | By_Out |
+| shared.adb:10:4:10:15 | Two_Objects | Global variable $@ is written by Lock, Other_Lock: give it one reader and one writer. | shared.adb:10:4:10:15 | Two_Objects | Two_Objects |
+| shared.adb:47:10:47:19 | In_Nested | Global variable $@ is accessed in a callable not declared directly in the package body. | shared.adb:6:4:6:13 | In_Nested | In_Nested |
+| shared.adb:106:10:106:18 | Typed_PO | Global variable $@ is accessed in an operation of a protected or task type. | shared.adb:12:4:12:12 | Typed_PO | Typed_PO |
+| shared.adb:133:4:133:11 | At_Elab | Global variable $@ is accessed outside any subprogram. | shared.adb:7:4:7:11 | At_Elab | At_Elab |

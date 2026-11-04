@@ -752,3 +752,77 @@ allows, a little more liberally (any value attribute, not only `'Count`); AdaCon
 default, Ravenscar's `Simple_Barriers`, is the query with no keyword allowed. Named
 numbers and the index of an entry family are always allowed. Conditional, quantified and
 declare expressions are not constructs of their own; their parts are checked.
+
+### Assignments
+
+`ada/assignments`, library `Assignments`. A group is a run of assignment statements with
+nothing but `null` statements between them (`groupStart(s)`, `before(a, b)`). For
+`repeated` and `groupable`, only targets known statically count (`isStaticTarget(n)`): a
+variable, a component of one, or an element at static indices (literals, enumeration
+literals, named numbers, constants). A dereference or a slice never counts.
+
+| Subrule | Library | Default |
+|---|---|---|
+| `type`, `component`, `ancestor` | `assignsType(site, t, component)` for assignments and initialized object declarations; `isOfType(t, wanted, ancestor)` | no |
+| `sliding` | `sliding(a, targetFirst, valueFirst)` | yes |
+| `access_duplication`, `controlled` | `accessDuplication(site, value, controlled)`; `designatedTypeOf(value)` for a `<target>` | no |
+| `repeated` | `repeated(first, second)` | when the target is not read in between (`readBetween`) |
+| `groupable` | `groupable(start, object, t, given, total)`; `passes(given, total, minGiven, maxMissing, minRatio, maxTotal)` for the filters | every component, at least two (`missing 0`, `given 2`), when the group does not read the object (`groupReads`) |
+| `possible_target_name`, `trivial` | `possibleTargetName(a, sub, trivial)`; `nameComponents(n)` for `<max length>` | no |
+
+`repeated` gives each assignment and the latest earlier one to the same target in its
+group. AdaControl reports them whatever happens in between; the query leaves out the
+ones where the first may not be dead (`readBetween`): an assignment in between, or the
+second one, names the target's object (`K := 1; K := K + 1;`), or, for a target that is
+not a local variable (a global, a parameter, a variable of an enclosing subprogram),
+calls a subprogram or allocates, since the callee may read it and an exception would
+leave the first value there.
+
+`groupable` counts the direct components of a record variable assigned in one group
+(`R.F := ...`); `total` is the number of components of the type, or -1 when it is not
+known statically (discriminants, a variant part, a type extension). A group is not
+reported for a limited type or one with a class-wide component. Left out: AdaControl's
+recursive counting of a component that "should have been assigned in full", and arrays.
+
+`sliding` compares the static lower bound of the first index of a whole variable target
+(its constraint, or its constrained array type's) with the value's: another whole
+variable, or a string literal (which starts at 1). Initializations and dynamic bounds
+are not checked; a slice is dynamic.
+
+`access_duplication` holds when the value stored is the content of an object (not a
+function result, `null` or an allocator) of an access type, or of a type with an access
+subcomponent; `controlled` is whether that type is derived from
+`Ada.Finalization.Controlled` or `Limited_Controlled`. It is checked for initializations
+too. `possible_target_name` finds each part of a right-hand side that names the target
+again; `trivial` is whether the target is an identifier.
+
+### Directly_Accessed_Globals
+
+`ada/directly-accessed-globals`, library `DirectlyAccessedGlobals`. The globals are the
+variables declared directly in a package body (`isGlobal(v)`); constants, renamings and
+objects of task or protected types are not. `access(v, n, mode)` gives each read and
+write; an `in out` actual is both, an `out` actual or an assignment to a component or
+element a write. The prefix of `'Access`, `'Unchecked_Access`, `'Unrestricted_Access` or
+`'Address` is not an access: as for AdaControl, aliases are not followed.
+
+An access belongs to the innermost subprogram body, entry body, `accept` statement or task
+body around it (`callable(n)`), of kind `kind(c)`:
+
+| `<kind>` | Callable | Accessor (`accessor(c)`) |
+|---|---|---|
+| `plain` | a subprogram, not protected | the subprogram |
+| `protected` | a protected subprogram or entry | the protected object |
+| `accept` | an `accept` statement | the task |
+
+The callable is dedicated (`isDedicated(c, v)`) unless `notDedicated(c, v, reason)`: the
+accessor is not declared directly in the package body (`nested`), is a generic
+subprogram (`generic`) or the body of a protected or task type (`type`), or the access is
+in a task body outside its `accept` statements (`task body`). The query reports those
+accesses (`undedicatedAccess`), the ones in the package's own statements and declarations
+(`outside`), and the variables with more than one reading or more than one writing
+accessor, or one that does both and another (`tooManyAccessors`). It allows every kind;
+for fewer, also report the accesses whose `kind` you do not allow. The query leaves out
+the files the GNAT binder generates (`b__*.adb`, `b~*.adb`), whose elaboration flags are
+package-body globals set by `adainit` and `adafinal` by design. The operations of one
+protected object, and the `accept` statements of one task, count as one accessor, as
+AdaControl's "the same single protected object" requires.

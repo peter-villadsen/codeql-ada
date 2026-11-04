@@ -1,0 +1,26 @@
+| b__main.adb:7:7:7:10 | E01 | E01 write plain Adainit |
+| b__main.adb:7:14:7:17 | E01 | E01 read plain Adainit |
+| b__main.adb:12:7:12:10 | E01 | E01 write plain Adafinal |
+| b__main.adb:12:14:12:17 | E01 | E01 read plain Adafinal |
+| shared.adb:17:7:17:11 | Good | Good write plain Set_Good |
+| shared.adb:20:41:20:45 | Good | Good read plain Get_Good |
+| shared.adb:24:7:24:12 | Alone | Alone write plain Bump_Alone |
+| shared.adb:24:16:24:21 | Alone | Alone read plain Bump_Alone |
+| shared.adb:29:7:29:14 | Written | Written write plain Two_Writers_A |
+| shared.adb:34:7:34:14 | Written | Written write plain Two_Writers_B |
+| shared.adb:39:7:39:12 | Mixed | Mixed write plain Read_Write |
+| shared.adb:39:16:39:21 | Mixed | Mixed read plain Read_Write |
+| shared.adb:42:43:42:48 | Mixed | Mixed read plain Also_Reads |
+| shared.adb:47:10:47:19 | In_Nested | In_Nested write plain Inner not dedicated: nested |
+| shared.adb:60:12:60:18 | By_Out | By_Out write plain Uses_Out |
+| shared.adb:65:7:65:13 | By_Out | By_Out write plain Uses_Spec |
+| shared.adb:78:10:78:17 | Guarded | Guarded write protected Lock |
+| shared.adb:79:10:79:21 | Two_Objects | Two_Objects write protected Lock |
+| shared.adb:81:40:81:47 | Guarded | Guarded read protected Lock |
+| shared.adb:84:10:84:17 | Guarded | Guarded write protected Lock |
+| shared.adb:84:21:84:28 | Guarded | Guarded read protected Lock |
+| shared.adb:95:10:95:21 | Two_Objects | Two_Objects write protected Other_Lock |
+| shared.adb:106:10:106:18 | Typed_PO | Typed_PO write protected Lock_Type not dedicated: type |
+| shared.adb:120:16:120:23 | By_Task | By_Task write accept Worker |
+| shared.adb:124:21:124:28 | By_Task | By_Task read accept Worker |
+| shared.adb:133:4:133:11 | At_Elab | At_Elab write outside |

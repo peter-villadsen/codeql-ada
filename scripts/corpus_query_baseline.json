@@ -4,6 +4,7 @@
    "ada/actual-parameters": 0,
    "ada/allocators": 0,
    "ada/aspects": 26,
+   "ada/assignments": 1,
    "ada/barrier-expressions": 0,
    "ada/boolean-literal-comparison": 0,
    "ada/case-statement": 0,
@@ -15,6 +16,7 @@
    "ada/dependencies": 0,
    "ada/derivations": 0,
    "ada/direct-recursion": 0,
+   "ada/directly-accessed-globals": 0,
    "ada/empty-loop-body": 0,
    "ada/entities": 0,
    "ada/entity-inside-exception": 0,
@@ -74,13 +76,14 @@
    "ada/warnings-off": 1,
    "ada/with-clauses": 1
   },
-  "total": 70
+  "total": 74
  },
  "alire": {
   "results": {
    "ada/actual-parameters": 1,
    "ada/allocators": 2,
    "ada/aspects": 143,
+   "ada/assignments": 0,
    "ada/barrier-expressions": 0,
    "ada/boolean-literal-comparison": 0,
    "ada/case-statement": 0,
@@ -92,6 +95,7 @@
    "ada/dependencies": 78,
    "ada/derivations": 0,
    "ada/direct-recursion": 17,
+   "ada/directly-accessed-globals": 9,
    "ada/empty-loop-body": 0,
    "ada/entities": 4,
    "ada/entity-inside-exception": 0,
@@ -151,13 +155,14 @@
    "ada/warnings-off": 4,
    "ada/with-clauses": 9
   },
-  "total": 1425
+  "total": 1539
  },
  "gpr2": {
   "results": {
    "ada/actual-parameters": 8,
    "ada/allocators": 0,
    "ada/aspects": 274,
+   "ada/assignments": 7,
    "ada/barrier-expressions": 1,
    "ada/boolean-literal-comparison": 1,
    "ada/case-statement": 0,
@@ -169,6 +174,7 @@
    "ada/dependencies": 24,
    "ada/derivations": 2,
    "ada/direct-recursion": 78,
+   "ada/directly-accessed-globals": 104,
    "ada/empty-loop-body": 1,
    "ada/entities": 51,
    "ada/entity-inside-exception": 0,
@@ -228,13 +234,14 @@
    "ada/warnings-off": 36,
    "ada/with-clauses": 44
   },
-  "total": 7361
+  "total": 7788
  },
  "libadalang-tools": {
   "results": {
    "ada/actual-parameters": 0,
    "ada/allocators": 0,
    "ada/aspects": 36,
+   "ada/assignments": 0,
    "ada/barrier-expressions": 0,
    "ada/boolean-literal-comparison": 0,
    "ada/case-statement": 0,
@@ -246,6 +253,7 @@
    "ada/dependencies": 1,
    "ada/derivations": 11,
    "ada/direct-recursion": 18,
+   "ada/directly-accessed-globals": 65,
    "ada/empty-loop-body": 49,
    "ada/entities": 90,
    "ada/entity-inside-exception": 0,
@@ -305,13 +313,14 @@
    "ada/warnings-off": 55,
    "ada/with-clauses": 3
   },
-  "total": 3180
+  "total": 3521
  },
  "libkeccak": {
   "results": {
    "ada/actual-parameters": 6,
    "ada/allocators": 0,
    "ada/aspects": 67,
+   "ada/assignments": 0,
    "ada/barrier-expressions": 0,
    "ada/boolean-literal-comparison": 0,
    "ada/case-statement": 0,
@@ -323,6 +332,7 @@
    "ada/dependencies": 0,
    "ada/derivations": 0,
    "ada/direct-recursion": 0,
+   "ada/directly-accessed-globals": 0,
    "ada/empty-loop-body": 0,
    "ada/entities": 0,
    "ada/entity-inside-exception": 0,
@@ -382,6 +392,6 @@
    "ada/warnings-off": 0,
    "ada/with-clauses": 1
   },
-  "total": 249
+  "total": 253
  }
 }
