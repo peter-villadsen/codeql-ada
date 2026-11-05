@@ -1,0 +1,8 @@
+# A team's call-back parameter, as a model pack would set it (docs/user-guide.md,
+# "Configuring queries"): CB.Register's Callback.
+extensions:
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: callbackParameter
+    data:
+      - ["cb.register", "CALLBACK"]

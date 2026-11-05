@@ -1,0 +1,12 @@
+# A team's initialization procedures, as a model pack would set them
+# (docs/user-guide.md, "Configuring queries"). With rows, only these are checked, and
+# non-static values and profiles that fit no pattern are reported too.
+extensions:
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: initializationProcedure
+    data:
+      - ["Devices.Init"]
+      - ["Devices.Initialize"]
+      - ["Devices.Init_Other"]
+      - ["Devices.Initialize_Both"]

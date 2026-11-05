@@ -1,0 +1,69 @@
+| b__main.adb:3:4:3:24 | Flag | declaration propagates from level 3 |
+| b__main.adb:5:4:8:16 | Adainit | propagates at level 0 |
+| b__main.adb:5:4:8:16 | Adainit | propagates at level 1 |
+| b__main.adb:5:4:8:16 | Adainit | propagates at level 2 |
+| b__main.adb:5:4:8:16 | Adainit | propagates at level 3 |
+| b__main.ads:2:4:2:22 | Adainit | exported c |
+| cb.adb:3:4:3:25 | Count | declaration propagates from level 3 |
+| cb.adb:7:4:10:24 | Exported_Pragma | propagates at level 0 |
+| cb.adb:7:4:10:24 | Exported_Pragma | propagates at level 1 |
+| cb.adb:7:4:10:24 | Exported_Pragma | propagates at level 2 |
+| cb.adb:7:4:10:24 | Exported_Pragma | propagates at level 3 |
+| cb.adb:12:4:18:24 | Exported_Aspect | propagates at level 0 |
+| cb.adb:12:4:18:24 | Exported_Aspect | propagates at level 1 |
+| cb.adb:12:4:18:24 | Exported_Aspect | propagates at level 2 |
+| cb.adb:12:4:18:24 | Exported_Aspect | propagates at level 3 |
+| cb.adb:20:4:27:22 | Exported_Safe | propagates at level 1 |
+| cb.adb:20:4:27:22 | Exported_Safe | propagates at level 2 |
+| cb.adb:20:4:27:22 | Exported_Safe | propagates at level 3 |
+| cb.adb:21:7:21:34 | Ratio | declaration propagates from level 1 |
+| cb.adb:31:4:34:21 | Not_Exported | propagates at level 0 |
+| cb.adb:31:4:34:21 | Not_Exported | propagates at level 1 |
+| cb.adb:31:4:34:21 | Not_Exported | propagates at level 2 |
+| cb.adb:31:4:34:21 | Not_Exported | propagates at level 3 |
+| cb.adb:38:4:41:20 | Unsafe_Task | propagates at level 0 |
+| cb.adb:38:4:41:20 | Unsafe_Task | propagates at level 1 |
+| cb.adb:38:4:41:20 | Unsafe_Task | propagates at level 2 |
+| cb.adb:38:4:41:20 | Unsafe_Task | propagates at level 3 |
+| cb.adb:45:4:51:23 | Reporting_Task | propagates at level 0 |
+| cb.adb:45:4:51:23 | Reporting_Task | propagates at level 1 |
+| cb.adb:45:4:51:23 | Reporting_Task | propagates at level 2 |
+| cb.adb:45:4:51:23 | Reporting_Task | propagates at level 3 |
+| cb.adb:55:4:63:18 | Safe_Task | propagates at level 2 |
+| cb.adb:55:4:63:18 | Safe_Task | propagates at level 3 |
+| cb.adb:56:7:56:38 | Limit | declaration propagates from level 3 |
+| cb.adb:57:7:57:32 | Start | declaration propagates from level 2 |
+| cb.adb:65:4:69:24 | Local_Unhandled | propagates at level 0 |
+| cb.adb:65:4:69:24 | Local_Unhandled | propagates at level 1 |
+| cb.adb:65:4:69:24 | Local_Unhandled | propagates at level 2 |
+| cb.adb:65:4:69:24 | Local_Unhandled | propagates at level 3 |
+| cb.adb:66:7:66:11 | Oops | local Oops unhandled |
+| cb.adb:71:4:78:22 | Local_By_Name | propagates at level 0 |
+| cb.adb:71:4:78:22 | Local_By_Name | propagates at level 1 |
+| cb.adb:71:4:78:22 | Local_By_Name | propagates at level 2 |
+| cb.adb:71:4:78:22 | Local_By_Name | propagates at level 3 |
+| cb.adb:89:4:96:23 | Local_Reraised | propagates at level 0 |
+| cb.adb:89:4:96:23 | Local_Reraised | propagates at level 1 |
+| cb.adb:89:4:96:23 | Local_Reraised | propagates at level 2 |
+| cb.adb:89:4:96:23 | Local_Reraised | propagates at level 3 |
+| cb.adb:95:10:95:16 | raise | local Oops reraised |
+| cb.adb:98:4:105:32 | Local_Raised_In_Handler | propagates at level 0 |
+| cb.adb:98:4:105:32 | Local_Raised_In_Handler | propagates at level 1 |
+| cb.adb:98:4:105:32 | Local_Raised_In_Handler | propagates at level 2 |
+| cb.adb:98:4:105:32 | Local_Raised_In_Handler | propagates at level 3 |
+| cb.adb:104:10:104:21 | raise Oops | local Oops raised |
+| cb.adb:107:4:114:17 | In_Block | propagates at level 0 |
+| cb.adb:107:4:114:17 | In_Block | propagates at level 1 |
+| cb.adb:107:4:114:17 | In_Block | propagates at level 2 |
+| cb.adb:107:4:114:17 | In_Block | propagates at level 3 |
+| cb.adb:110:10:110:14 | Oops | local Oops unhandled |
+| cb.adb:116:4:119:19 | Propagates | propagates at level 0 |
+| cb.adb:116:4:119:19 | Propagates | propagates at level 1 |
+| cb.adb:116:4:119:19 | Propagates | propagates at level 2 |
+| cb.adb:116:4:119:19 | Propagates | propagates at level 3 |
+| cb.adb:130:4:130:32 | Register (...) | passes Propagates for Callback |
+| cb.adb:131:4:131:26 | Register (...) | passes Safe for Callback |
+| cb.ads:6:4:6:44 | Exported_Pragma | exported c |
+| cb.ads:9:4:10:71 | Exported_Aspect | exported c |
+| cb.ads:12:4:12:42 | Exported_Safe | exported c |
+| cb.ads:15:4:15:28 | Exported_Null | exported c |

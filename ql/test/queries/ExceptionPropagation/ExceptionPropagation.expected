@@ -1,0 +1,8 @@
+| cb.adb:7:4:10:24 | Exported_Pragma | $@ is exported with convention C but can propagate an exception: end it with a when others handler that does not raise. | cb.ads:6:4:6:44 | Exported_Pragma | Exported_Pragma |
+| cb.adb:12:4:18:24 | Exported_Aspect | $@ is exported with convention C but can propagate an exception: end it with a when others handler that does not raise. | cb.ads:9:4:10:71 | Exported_Aspect | Exported_Aspect |
+| cb.adb:38:14:38:25 | Unsafe_Task | Task $@ can let an exception out, and would then end silently: end its body with a when others handler that does not raise. | cb.adb:38:14:38:25 | Unsafe_Task | Unsafe_Task |
+| cb.adb:45:14:45:28 | Reporting_Task | Task $@ can let an exception out, and would then end silently: end its body with a when others handler that does not raise. | cb.adb:45:14:45:28 | Reporting_Task | Reporting_Task |
+| cb.adb:66:7:66:11 | Oops | Local exception $@ is not handled where it is declared, so it can escape its scope. | cb.adb:66:7:66:11 | Oops | Oops |
+| cb.adb:95:10:95:16 | raise | This re-raises local exception $@ out of its scope. | cb.adb:90:7:90:11 | Oops | Oops |
+| cb.adb:104:10:104:21 | raise Oops | This raises local exception $@ out of its scope. | cb.adb:99:7:99:11 | Oops | Oops |
+| cb.adb:110:10:110:14 | Oops | Local exception $@ is not handled where it is declared, so it can escape its scope. | cb.adb:110:10:110:14 | Oops | Oops |

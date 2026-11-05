@@ -20,6 +20,7 @@
 
 import ada
 import codeql.ada.adacontrol.DirectlyAccessedGlobals
+import codeql.ada.adacontrol.Generated
 
 /** Gets why an access outside a dedicated callable is reported, in words. */
 string describe(string reason) {
@@ -49,9 +50,7 @@ string accessors(Variable v, string mode) {
 from AdaNode site, string msg, Variable v
 where
   site.fromSource() and
-  not exists(string path |
-    site.getLocation().hasLocationInfo(path, _, _, _, _) and path.regexpMatch(".*/b(__|~)[^/]*")
-  ) and
+  not isBinderGenerated(site) and
   (
     exists(string reason |
       DirectlyAccessedGlobals::undedicatedAccess(v, site, reason) and

@@ -826,3 +826,61 @@ the files the GNAT binder generates (`b__*.adb`, `b~*.adb`), whose elaboration f
 package-body globals set by `adainit` and `adafinal` by design. The operations of one
 protected object, and the `accept` statements of one task, count as one accessor, as
 AdaControl's "the same single protected object" requires.
+
+### Duplicate_Initialization_Calls
+
+`ada/duplicate-initialization-calls`, library `DuplicateInitializationCalls`. The
+procedures are those named by the data extension `initializationProcedure` (AdaControl's
+`<entity>` list), or, with no row, those of the source named `Init` or `Initialize`
+(`isInitializationProcedure(s, configured)`). `pattern(s)` is AdaControl's:
+
+| Pattern | Profile | Reported |
+|---|---|---|
+| `in` | only `in` parameters | a call passing the same static values as an earlier one (`callKey`, `duplicate`); for a named procedure, a call passing a value that is not static (`nonStaticActual`) |
+| `out` | exactly one `out` parameter, no `in out` one | a call passing the same variable as an earlier one (`outParameter`, `duplicate`); for named procedures only |
+
+A named procedure that fits neither pattern is reported itself. A parameter left to its
+default counts with its default value. Static values (`staticKey`) are literals,
+possibly negated or qualified, and names of enumeration literals, named numbers and
+constants, compared by entity rather than by value. The `out` variable is compared with
+`Assignments::sameName` (the same variable, component, or element at static indices).
+Each duplicate is reported against the first call in the source (by file, line, column)
+that it repeats. Without a setting, the `out` pattern is left out: a procedure that just
+happens to be named `Init` is often meant to initialize a context again once it is used
+(libkeccak's `Init (Ctx, ...)` in its tests).
+
+### Exception_Propagation
+
+`ada/exception-propagation`, library `ExceptionPropagation`. A subprogram or task body
+`b` is non-propagating at level `level` (`isNonPropagating(b, level)`) when it has a
+`when others` handler, no handler raises (`handlerRaises`: a `raise` statement or
+expression, `Raise_Exception`, `Reraise_Occurrence`), and no declaration of its
+declarative part propagates at that level; a null procedure never propagates.
+`canPropagate(b, level)` is the opposite.
+
+| `<level>` | `declarationPropagates(d, level)` |
+|---|---|
+| 0 | never |
+| 1 | `d` calls a function or an operator (`isFunctionCall`), unless it is a named number or a scalar type declaration |
+| 2 | also when it uses a variable or a parameter (`isVariableUse`) |
+| 3 | also when it is an object declaration |
+
+Only what is evaluated when `d` is elaborated counts: not default parameters, bodies,
+generics, task or protected types, or component defaults.
+
+| Subrule | Library | Default |
+|---|---|---|
+| `task` | `canPropagate(t, level)` for each task body | yes, level 0 |
+| `interface`, `<convention>` | `isExported(s, convention)`: pragma `Export` or `Interface`, or the aspects `Export` and `Convention` | yes, every convention, level 0 |
+| `parameter`, `<entity>` | `passesSubprogram(c, p, s)`: `s'Access`, `'Unchecked_Access`, `'Unrestricted_Access` or `'Address` passed for parameter `p` | the parameters of the data extension `callbackParameter`, level 0 |
+| `local_exception` | `localExceptionEscapes(e, b, site, reason)`: `unhandled`, `reraised`, `raised` | yes |
+| `declaration` | `declarationPropagates(d, level)` | no |
+
+A local exception is one declared in a block, a subprogram, entry or task body. Its
+`catcher` is the handler naming it, else the `when others` one; it escapes when there is
+none, when that handler re-raises (`raise;`, `Reraise_Occurrence`), or when any handler
+raises it explicitly (`raise E`, `Raise_Exception (E'Identity, ...)`). As in AdaControl,
+calls of other subprograms that raise it are not followed. Left out of `parameter`:
+generic formal subprograms, and call-backs registered through an access type's formal.
+The query leaves out the files the GNAT binder generates, whose `adainit` is exported
+without a handler.

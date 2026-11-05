@@ -1,0 +1,8 @@
+| devices.ads:8:4:8:51 | Initialize_Both | Initialization procedure $@ has neither only in parameters nor exactly one out parameter and no in out one. | devices.ads:8:4:8:51 | Initialize_Both | Initialize_Both |
+| test.adb:9:4:9:18 | Init (...) | This call of Init passes the same values as $@. | test.adb:7:4:7:12 | Init (...) | an earlier call |
+| test.adb:11:4:11:20 | Init (...) | This call of Init passes the same values as $@. | test.adb:7:4:7:12 | Init (...) | an earlier call |
+| test.adb:13:4:13:23 | Init (...) | This call of Init passes the same values as $@. | test.adb:12:4:12:23 | Init (...) | an earlier call |
+| test.adb:14:4:14:15 | Init (...) | This call of initialization procedure Init passes a value for $@ that is not static. | devices.ads:5:20:5:24 | Port | Port |
+| test.adb:15:4:15:15 | Init (...) | This call of initialization procedure Init passes a value for $@ that is not static. | devices.ads:5:20:5:24 | Port | Port |
+| test.adb:18:4:18:19 | Initialize (...) | This call of Initialize initializes the same object as $@. | test.adb:16:4:16:19 | Initialize (...) | an earlier call |
+| test.adb:20:4:20:18 | Init_Other (...) | This call of Init_Other passes the same values as $@. | test.adb:19:4:19:18 | Init_Other (...) | an earlier call |

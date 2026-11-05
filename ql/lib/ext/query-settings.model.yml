@@ -8,3 +8,16 @@ extensions:
       pack: peter-villadsen/ada-all
       extensible: cyclomaticComplexityThreshold
     data: []
+  # ada/duplicate-initialization-calls (codeql/ada/adacontrol/Settings.qll): the
+  # initialization procedures, by qualified name; procedures named Init or Initialize
+  # when there is no row.
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: initializationProcedure
+    data: []
+  # ada/exception-propagation (codeql/ada/adacontrol/Settings.qll): call-back
+  # parameters, as [subprogram's qualified name, parameter name]; none by default.
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: callbackParameter
+    data: []

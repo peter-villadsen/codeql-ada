@@ -1,0 +1,3 @@
+| test.adb:9:4:9:18 | Init (...) | This call of Init passes the same values as $@. | test.adb:7:4:7:12 | Init (...) | an earlier call |
+| test.adb:11:4:11:20 | Init (...) | This call of Init passes the same values as $@. | test.adb:7:4:7:12 | Init (...) | an earlier call |
+| test.adb:13:4:13:23 | Init (...) | This call of Init passes the same values as $@. | test.adb:12:4:12:23 | Init (...) | an earlier call |

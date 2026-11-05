@@ -230,6 +230,14 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
 - **`ada/directly-accessed-globals`** (`Directly_Accessed_Globals`): variables of package
   bodies accessed outside a subprogram, protected object or task dedicated to them, or by
   more than one reader or writer. The kind of each accessor is in the library.
+- **`ada/duplicate-initialization-calls`** (`Duplicate_Initialization_Calls`): a second
+  call of an initialization procedure with the same static values, or, for a procedure
+  with one `out` parameter, for the same object. The procedures are set with the data
+  extension `initializationProcedure`; without it, those named `Init` or `Initialize`.
+- **`ada/exception-propagation`** (`Exception_Propagation`): tasks and exported
+  subprograms that can let an exception out, call-backs that can (set with the data
+  extension `callbackParameter`), and local exceptions that can escape their scope. The
+  levels and the `declaration` subrule are in the library.
 
 
 ## 0.3.0 (2026-10-11)

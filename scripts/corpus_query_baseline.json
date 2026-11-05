@@ -17,9 +17,11 @@
    "ada/derivations": 0,
    "ada/direct-recursion": 0,
    "ada/directly-accessed-globals": 0,
+   "ada/duplicate-initialization-calls": 0,
    "ada/empty-loop-body": 0,
    "ada/entities": 0,
    "ada/entity-inside-exception": 0,
+   "ada/exception-propagation": 0,
    "ada/exception-swallowing": 0,
    "ada/expressions": 0,
    "ada/float-equality": 0,
@@ -96,9 +98,11 @@
    "ada/derivations": 0,
    "ada/direct-recursion": 17,
    "ada/directly-accessed-globals": 9,
+   "ada/duplicate-initialization-calls": 1,
    "ada/empty-loop-body": 0,
    "ada/entities": 4,
    "ada/entity-inside-exception": 0,
+   "ada/exception-propagation": 2,
    "ada/exception-swallowing": 2,
    "ada/expressions": 0,
    "ada/float-equality": 0,
@@ -155,7 +159,7 @@
    "ada/warnings-off": 4,
    "ada/with-clauses": 9
   },
-  "total": 1539
+  "total": 1542
  },
  "gpr2": {
   "results": {
@@ -175,9 +179,11 @@
    "ada/derivations": 2,
    "ada/direct-recursion": 78,
    "ada/directly-accessed-globals": 104,
+   "ada/duplicate-initialization-calls": 0,
    "ada/empty-loop-body": 1,
    "ada/entities": 51,
    "ada/entity-inside-exception": 0,
+   "ada/exception-propagation": 43,
    "ada/exception-swallowing": 3,
    "ada/expressions": 0,
    "ada/float-equality": 0,
@@ -234,7 +240,7 @@
    "ada/warnings-off": 36,
    "ada/with-clauses": 44
   },
-  "total": 7788
+  "total": 7831
  },
  "libadalang-tools": {
   "results": {
@@ -254,9 +260,11 @@
    "ada/derivations": 11,
    "ada/direct-recursion": 18,
    "ada/directly-accessed-globals": 65,
+   "ada/duplicate-initialization-calls": 0,
    "ada/empty-loop-body": 49,
    "ada/entities": 90,
    "ada/entity-inside-exception": 0,
+   "ada/exception-propagation": 9,
    "ada/exception-swallowing": 0,
    "ada/expressions": 0,
    "ada/float-equality": 2,
@@ -313,7 +321,7 @@
    "ada/warnings-off": 55,
    "ada/with-clauses": 3
   },
-  "total": 3521
+  "total": 3530
  },
  "libkeccak": {
   "results": {
@@ -333,9 +341,11 @@
    "ada/derivations": 0,
    "ada/direct-recursion": 0,
    "ada/directly-accessed-globals": 0,
+   "ada/duplicate-initialization-calls": 0,
    "ada/empty-loop-body": 0,
    "ada/entities": 0,
    "ada/entity-inside-exception": 0,
+   "ada/exception-propagation": 0,
    "ada/exception-swallowing": 0,
    "ada/expressions": 0,
    "ada/float-equality": 0,

@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 74 queries are tested on a
+The project is pre-1.0. The extractor, the library and 76 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -557,9 +557,11 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/derivations` | Overriding operation without indicator | recommendation |
 | `ada/direct-recursion` | Direct recursion | recommendation |
 | `ada/directly-accessed-globals` | Global variable accessed directly | recommendation |
+| `ada/duplicate-initialization-calls` | Duplicate initialization call | warning |
 | `ada/empty-loop-body` | Empty loop body | warning |
 | `ada/entities` | Use of an unchecked access attribute | warning |
 | `ada/entity-inside-exception` | Entry call in an exception handler | warning |
+| `ada/exception-propagation` | Exception can propagate | warning |
 | `ada/exception-swallowing` | Exception handler swallows all exceptions | warning |
 | `ada/expressions` | Unary minus applied to mod or rem | warning |
 | `ada/float-equality` | Floating-point equality comparison | warning |
@@ -622,14 +624,16 @@ Each query's `@description` (in `ql/src/queries/`) says what it flags and why.
 
 ### Configuring queries
 
-Some queries have a setting that a team may want to change: so far, the limit of
-`ada/cyclomatic-complexity`. A setting is a CodeQL *data extension*, the mechanism CodeQL
+Some queries have a setting that a team may want to change: the limit of
+`ada/cyclomatic-complexity`, and the entities two AdaControl-parity queries check. A setting is a CodeQL *data extension*, the mechanism CodeQL
 for Java and C# use for their models of libraries: the rows of an *extensible predicate*,
 written in YAML. When there are no rows, the query uses its default.
 
 | Query | Extensible predicate | Default | With several rows |
 |---|---|---|---|
 | `ada/cyclomatic-complexity` | `cyclomaticComplexityThreshold(int limit)` | 10 | the smallest applies |
+| `ada/duplicate-initialization-calls` | `initializationProcedure(string qualifiedName)` | procedures named `Init` or `Initialize` with only `in` parameters | each is checked |
+| `ada/exception-propagation` | `callbackParameter(string subprogram, string parameter)` | none | each is checked |
 
 To change a setting, make a *model pack*: a directory, say `ada-settings`, with two
 files. `qlpack.yml` names the pack and the pack it configures:
