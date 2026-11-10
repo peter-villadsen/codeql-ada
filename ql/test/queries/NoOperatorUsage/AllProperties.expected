@@ -1,0 +1,13 @@
+| types.ads:2:4:2:33 | Count | range | arithmetic |
+| types.ads:2:4:2:33 | Count | range | relational |
+| types.ads:3:4:3:36 | Color_Code | range | no arithmetic |
+| types.ads:3:4:3:36 | Color_Code | range | relational |
+| types.ads:4:4:4:27 | Flags | mod | logical |
+| types.ads:4:4:4:27 | Flags | mod | no arithmetic |
+| types.ads:5:4:5:27 | Word | mod | arithmetic |
+| types.ads:5:4:5:27 | Word | mod | relational |
+| types.ads:7:4:7:32 | Index | range | indexing |
+| types.ads:7:4:7:32 | Index | range | no arithmetic |
+| types.ads:10:4:10:30 | Derived | range | no arithmetic |
+| types.ads:11:4:11:30 | Exp | range | no arithmetic |
+| types.ads:14:4:14:31 | Id | range | no arithmetic |

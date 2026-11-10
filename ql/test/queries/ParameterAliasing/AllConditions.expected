@@ -1,0 +1,17 @@
+| test.adb:10:4:10:15 | Swap (...) | X | Y | certain | false |
+| test.adb:10:4:10:15 | Swap (...) | X | Y | certain | true |
+| test.adb:11:4:11:25 | Swap (...) | X | Y | certain | false |
+| test.adb:11:4:11:25 | Swap (...) | X | Y | certain | true |
+| test.adb:14:4:14:19 | Swap (...) | X | Y | certain | false |
+| test.adb:14:4:14:19 | Swap (...) | X | Y | certain | true |
+| test.adb:15:4:15:23 | Swap (...) | X | Y | certain | false |
+| test.adb:15:4:15:23 | Swap (...) | X | Y | certain | true |
+| test.adb:17:4:17:23 | Swap (...) | X | Y | possible | false |
+| test.adb:17:4:17:23 | Swap (...) | X | Y | possible | true |
+| test.adb:18:4:18:23 | Swap (...) | X | Y | unlikely | false |
+| test.adb:18:4:18:23 | Swap (...) | X | Y | unlikely | true |
+| test.adb:19:4:19:19 | Update (...) | R | V | certain | false |
+| test.adb:19:4:19:19 | Update (...) | R | V | certain | true |
+| test.adb:20:4:20:15 | Copy (...) | From | To | certain | true |
+| test.adb:22:9:22:20 | Bump (...) | X | Y | certain | false |
+| test.adb:22:9:22:20 | Bump (...) | X | Y | certain | true |

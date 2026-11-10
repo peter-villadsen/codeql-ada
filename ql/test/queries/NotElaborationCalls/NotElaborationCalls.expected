@@ -1,0 +1,3 @@
+| registry.adb:15:7:15:24 | Register (...) | This call of Register may happen after elaboration. |
+| registry.adb:16:18:16:33 | new ... | This allocator may run after elaboration. |
+| registry.adb:21:7:21:25 | Register (...) | This call of Register may happen after elaboration. |

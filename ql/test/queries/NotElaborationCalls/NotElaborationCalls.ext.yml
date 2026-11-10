@@ -1,0 +1,9 @@
+# A team's elaboration-only subprograms, as a model pack would set them
+# (docs/user-guide.md, "Configuring queries"): Registry.Register, and allocators.
+extensions:
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: notElaborationCall
+    data:
+      - ["registry.register"]
+      - ["new"]

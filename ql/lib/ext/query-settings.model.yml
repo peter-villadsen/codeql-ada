@@ -27,3 +27,10 @@ extensions:
       pack: peter-villadsen/ada-all
       extensible: maxCallDepth
     data: []
+  # ada/not-elaboration-calls (codeql/ada/adacontrol/Settings.qll): the subprograms,
+  # by qualified name, or "new" for allocators, to call only during elaboration; none
+  # by default.
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: notElaborationCall
+    data: []

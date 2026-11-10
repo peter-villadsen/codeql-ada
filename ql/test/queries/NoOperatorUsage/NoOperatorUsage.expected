@@ -1,0 +1,6 @@
+| types.ads:3:4:3:36 | Color_Code | No arithmetic operator is used on integer type Color_Code: could it be an enumeration type? |
+| types.ads:4:4:4:27 | Flags | No arithmetic operator is used on integer type Flags but logical ones: could it be an array of Booleans? |
+| types.ads:7:4:7:32 | Index | No arithmetic operator is used on integer type Index: could it be an enumeration type? |
+| types.ads:10:4:10:30 | Derived | No arithmetic operator is used on integer type Derived: could it be an enumeration type? |
+| types.ads:11:4:11:30 | Exp | No arithmetic operator is used on integer type Exp: could it be an enumeration type? |
+| types.ads:14:4:14:31 | Id | No arithmetic operator is used on integer type Id: could it be an enumeration type? |

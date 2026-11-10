@@ -252,6 +252,19 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   are in the library.
 - **`ada/max-call-depth`** (`Max_Call_Depth`): calls whose chain of calls is deeper than
   the data extension `maxCallDepth` allows (15 by default).
+- **`ada/movable-accept-statements`** (`Movable_Accept_Statements`): statements at the
+  end of an `accept` body that could follow the rendezvous. `possible` is in the
+  library.
+- **`ada/no-operator-usage`** (`No_Operator_Usage`): integer types on which no
+  arithmetic operator is used. The `relational`, `logical` and `indexing` filters are
+  in the library.
+- **`ada/not-elaboration-calls`** (`Not_Elaboration_Calls`): calls of the subprograms
+  named with the data extension `notElaborationCall`, and allocators (`new`), that may
+  run after elaboration.
+- **`ada/parameter-aliasing`** (`Parameter_Aliasing`): calls that pass the same
+  variable, or a part of it, for two `out` or `in out` parameters. `possible`,
+  `unlikely` and `with_in` are in the library. The overlap of names is shared with
+  `ada/generic-aliasing` (`adacontrol/Overlaps.qll`).
 
 
 ## 0.3.0 (2026-10-11)

@@ -1,0 +1,10 @@
+| listeners.adb:7:13:7:29 | Listen_FD := ... | not movable: parameter |
+| server.adb:21:16:21:26 | Last := ... | not movable: parameter |
+| server.adb:22:16:22:35 | Count := ... | certain |
+| server.adb:22:16:22:35 | Count := ... | possible |
+| server.adb:23:16:23:45 | Ada.Text_IO.Put_Line (...); | certain |
+| server.adb:23:16:23:45 | Ada.Text_IO.Put_Line (...); | possible |
+| server.adb:27:16:27:31 | Log := ... | possible |
+| server.adb:29:16:29:27 | V := ... | not movable: parameter |
+| server.adb:37:16:37:27 | Count := ... | possible |
+| server.adb:38:16:38:26 | delay ... | not movable: synchronization |

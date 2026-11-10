@@ -1,0 +1,11 @@
+| main.adb:3:1:6:10 | Main | may run outside elaboration |
+| main.adb:5:4:5:17 | Registry.Late | call outside elaboration |
+| registry.adb:15:7:15:24 | Register (...) | call outside elaboration |
+| registry.adb:16:18:16:33 | new ... | allocator outside elaboration |
+| registry.adb:21:7:21:25 | Register (...) | call outside elaboration |
+| registry.adb:25:4:25:21 | Register (...) | elaboration code |
+| registry.adb:26:4:26:9 | Setup | elaboration code |
+| registry.ads:3:4:3:39 | Register | may run outside elaboration |
+| registry.ads:5:4:5:19 | Late | may run outside elaboration |
+| registry.ads:6:4:6:27 | Never_Called | may run outside elaboration |
+| registry.ads:7:25:7:40 | new ... | elaboration code |

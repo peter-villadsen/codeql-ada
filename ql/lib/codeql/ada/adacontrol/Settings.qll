@@ -27,3 +27,11 @@ extensible predicate callbackParameter(string subprogram, string parameter);
  * none, the limit is 15.
  */
 extensible predicate maxCallDepth(int limit);
+
+/**
+ * Holds if `entity` is a subprogram (by qualified name, `Pack.Init`; case not
+ * significant), or `new` for allocators, that `ada/not-elaboration-calls` allows only
+ * while library packages are elaborated: AdaControl's `<entity>` and `new` of
+ * `Not_Elaboration_Calls`. With no rows, nothing is reported.
+ */
+extensible predicate notElaborationCall(string entity);

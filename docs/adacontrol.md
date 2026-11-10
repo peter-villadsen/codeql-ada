@@ -1013,3 +1013,81 @@ every call above the limit along it. Left out: entry calls (a task entry is alwa
 depth 1 in AdaControl), the `<entity>` list of subprograms assumed to call nothing, and
 `Count_Expr_Fun_Calls` `off`. Calls through access-to-subprogram values and dispatching
 calls count as calls of their static target, or not at all when they have none.
+
+### Movable_Accept_Statements
+
+`ada/movable-accept-statements`, library `MovableAcceptStatements`. A statement of an
+`accept` body is not movable (`nonMovable(s, a, reason)`) when it, or a statement in it,
+synchronizes (`synchronization`: `delay`, `accept`, `select`, `requeue`, `abort`, an
+entry call), references a parameter of the `accept` (`parameter`), or leaves the body
+(`jump`: `return`, `raise`, `goto`, an `exit` of a loop around it). A reference to a
+parameter may resolve to the entry declaration's formal, or, when the parameter's type
+is not in the database, not at all; `referencesParameter` matches those by name.
+
+| Subrule | Library | Default |
+|---|---|---|
+| `certain` | `certain(s, a)`: the statements after the last one that is not movable | yes, the first of them per `accept` |
+| `possible` | `possible(s, a)`: movable statements that reference no variable depending on a parameter (`dependsOnParameter`: referenced in a statement with a parameter, or with such a variable) | no |
+
+`null` statements are not reported. Left out: the `<entity>` list (statements using
+given entities, such as a logging procedure, are not movable), and the exception
+handlers of the `accept` body, whose statements are not checked.
+
+### No_Operator_Usage
+
+`ada/no-operator-usage`, library `NoOperatorUsage`. The types are the integer types of
+the source (`isIntegerType(t, category)`, `range` or `mod`), by their full declaration;
+a subtype, or a private view, is the same type (`root(t)`), a derived type is a type of
+its own. An operator is used on a type when an operand or its result is of it; the
+exponent of `**` does not count. Predefined and user-defined operators are not told
+apart, as in AdaControl.
+
+| Parameter | Library | Default |
+|---|---|---|
+| (the rule) | `noArithmetic(t, category)`: no `+`, `-`, `*`, `/`, `mod`, `rem`, `**`, `abs` | every integer type |
+| `relational` | `usesRelational(t)`: `<`, `<=`, `>`, `>=`, `in`, `not in` | `ignore` |
+| `logical` | `usesLogical(t)`: `and`, `or`, `xor` | `ignore`; the message says when a modular type has them |
+| `indexing` | `isIndex(t)`: an index of an array type | `ignore` |
+
+The `not` and `report` modifiers are conditions in your query.
+
+### Not_Elaboration_Calls
+
+`ada/not-elaboration-calls`, library `NotElaborationCalls`. The subprograms, and `new`
+for allocators, are named with the data extension `notElaborationCall` (AdaControl's
+`<entity>` and `new`); with no row, the query reports nothing. Elaboration code
+(`isElaborationCode(n)`) is in the declarations or statements of a package, outside any
+body, and not in a place evaluated later: a parameter's default, a component's default,
+an aspect, a generic formal part. A subprogram may run outside elaboration
+(`mayRunOutside(s)`) when it has no call in the database, its `'Access` or `'Address` is
+taken, or one of its calls may (`runsOutside(n)`): a call outside elaboration code, in a
+task, entry or protected body, or in a subprogram that may.
+
+| Parameter | Library |
+|---|---|
+| `<entity>` | `callOutside(c, s)` |
+| `new` | `allocatorOutside(a)` |
+
+A call of an instance of a generic subprogram is a call of the generic, and renamings
+are followed. Left out: entry calls, and calls through access-to-subprogram values and
+dispatching calls, as in AdaControl.
+
+### Parameter_Aliasing
+
+`ada/parameter-aliasing`, library `ParameterAliasing`: `aliasing(c, p, q, condition,
+withIn)` for parameters `p` and `q` of call `c` whose actuals overlap, at least one of
+them `out` or `in out`. The overlap is `Generic_Aliasing`'s (`codeql.ada.adacontrol.Overlaps`):
+
+| `<level>` | Actuals |
+|---|---|
+| `certain` | the same variable, or one a part of the other at the same (as written) indices |
+| `possible` | elements or slices of one array at an index that is not static |
+| `unlikely` | `.all` of two access values of one type |
+
+| Parameter | Library | Default |
+|---|---|---|
+| `certain`, `possible`, `unlikely` | `condition` | `certain` |
+| `with_in` | `withIn = true`: also `in` parameters, unless of a by-copy (elementary) type (`isByCopy`) | no |
+
+Function calls are checked too. Left out, as for `Generic_Aliasing`: implicit
+dereferences (`P.Field`), and renamings, which are not followed to the object renamed.

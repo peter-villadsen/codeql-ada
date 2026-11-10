@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 80 queries are tested on a
+The project is pre-1.0. The extractor, the library and 84 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -584,10 +584,14 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/max-primitives` | Type with too many primitive operations | recommendation |
 | `ada/max-size` | Subprogram body too long | recommendation |
 | `ada/max-statement-nesting` | Statements nested too deeply | recommendation |
+| `ada/movable-accept-statements` | Statement could follow the rendezvous | recommendation |
 | `ada/naming-convention` | Identifier not in Ada case | recommendation |
+| `ada/no-operator-usage` | Integer type without arithmetic | recommendation |
+| `ada/not-elaboration-calls` | Call outside elaboration | warning |
 | `ada/not-selected-name` | Generic type name used without its package | recommendation |
 | `ada/object-declarations` | Variable with an address but not volatile | warning |
 | `ada/open-without-close` | Open without Close | warning |
+| `ada/parameter-aliasing` | Same variable for two parameters | warning |
 | `ada/parameter-declarations` | Too many parameters | recommendation |
 | `ada/path-injection` | Uncontrolled data used in path expression | error |
 | `ada/positional-associations` | Positional actuals of the same type | recommendation |
@@ -629,7 +633,7 @@ Each query's `@description` (in `ql/src/queries/`) says what it flags and why.
 ### Configuring queries
 
 Some queries have a setting that a team may want to change: the limit of
-`ada/cyclomatic-complexity`, the entities two AdaControl-parity queries check, and the limit of `ada/max-call-depth`. A setting is a CodeQL *data extension*, the mechanism CodeQL
+`ada/cyclomatic-complexity`, the entities three AdaControl-parity queries check, and the limit of `ada/max-call-depth`. A setting is a CodeQL *data extension*, the mechanism CodeQL
 for Java and C# use for their models of libraries: the rows of an *extensible predicate*,
 written in YAML. When there are no rows, the query uses its default.
 
@@ -639,6 +643,7 @@ written in YAML. When there are no rows, the query uses its default.
 | `ada/duplicate-initialization-calls` | `initializationProcedure(string qualifiedName)` | procedures named `Init` or `Initialize` with only `in` parameters | each is checked |
 | `ada/exception-propagation` | `callbackParameter(string subprogram, string parameter)` | none | each is checked |
 | `ada/max-call-depth` | `maxCallDepth(int limit)` | 15 | the smallest applies |
+| `ada/not-elaboration-calls` | `notElaborationCall(string entity)` | none | each is checked |
 
 To change a setting, make a *model pack*: a directory, say `ada-settings`, with two
 files. `qlpack.yml` names the pack and the pack it configures:
