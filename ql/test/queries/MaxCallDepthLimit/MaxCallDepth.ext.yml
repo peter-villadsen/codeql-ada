@@ -1,0 +1,8 @@
+# A team's limit, as a model pack would set it (docs/user-guide.md, "Configuring
+# queries"): calls deeper than 2.
+extensions:
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: maxCallDepth
+    data:
+      - [2]

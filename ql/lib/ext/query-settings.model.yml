@@ -21,3 +21,9 @@ extensions:
       pack: peter-villadsen/ada-all
       extensible: callbackParameter
     data: []
+  # ada/max-call-depth (codeql/ada/adacontrol/Settings.qll): the largest call depth
+  # allowed; 15 when there is no row.
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: maxCallDepth
+    data: []

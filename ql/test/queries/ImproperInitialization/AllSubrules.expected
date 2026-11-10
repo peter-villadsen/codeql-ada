@@ -1,0 +1,32 @@
+| init.adb:30:10:30:17 | return | return before V is assigned |
+| init.adb:30:10:30:17 | return | return before V is assigned (parts) |
+| init.adb:80:7:80:8 | B | variable not safely initialized |
+| init.adb:80:7:80:8 | B | variable not safely initialized (parts) |
+| init.adb:82:7:82:8 | D | redundant initializer |
+| init.adb:85:7:85:8 | R | skipped: limited |
+| init.adb:88:12:88:13 | C | read of C before assignment |
+| init.adb:88:12:88:13 | C | read of C before assignment (parts) |
+| init.adb:100:7:100:8 | P | skipped: access |
+| init.adb:100:7:100:8 | P | variable not safely initialized |
+| init.adb:100:7:100:8 | P | variable not safely initialized (parts) |
+| init.adb:101:7:101:8 | L | skipped: limited |
+| init.adb:113:14:113:15 | P | read of P before assignment |
+| init.adb:115:14:115:15 | Q | read of Q before assignment |
+| init.adb:116:12:116:13 | Q | read of Q before assignment |
+| init.adb:120:7:120:8 | A | variable not safely initialized |
+| init.adb:125:21:125:22 | A | read of A before assignment |
+| init.adb:148:7:148:8 | P | skipped: access |
+| init.adb:152:12:152:13 | X | read of X before assignment |
+| init.adb:152:12:152:13 | X | read of X before assignment (parts) |
+| init.adb:158:12:158:13 | Q | read of Q before assignment |
+| init.adb:158:12:158:13 | Q | read of Q before assignment (parts) |
+| init.adb:174:12:174:13 | V | read of V before assignment |
+| init.adb:174:12:174:13 | V | read of V before assignment (parts) |
+| init.adb:174:16:174:17 | W | read of W before assignment |
+| init.adb:174:16:174:17 | W | read of W before assignment (parts) |
+| init.ads:10:24:10:25 | V | out_parameter not safely initialized |
+| init.ads:10:24:10:25 | V | out_parameter not safely initialized (parts) |
+| init.ads:12:25:12:26 | V | out_parameter not safely initialized |
+| init.ads:12:25:12:26 | V | out_parameter not safely initialized (parts) |
+| init.ads:15:27:15:28 | V | out_parameter not safely initialized |
+| init.ads:15:27:15:28 | V | out_parameter not safely initialized (parts) |

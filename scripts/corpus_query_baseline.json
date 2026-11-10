@@ -32,11 +32,13 @@
    "ada/hardcoded-credential": 0,
    "ada/header-comments": 0,
    "ada/identical-operands": 0,
+   "ada/improper-initialization": 0,
    "ada/indirect-recursion": 0,
    "ada/instantiations": 0,
    "ada/insufficient-parameters": 0,
    "ada/local-access": 0,
    "ada/local-hiding": 0,
+   "ada/max-call-depth": 0,
    "ada/max-expression-items": 0,
    "ada/max-nesting": 0,
    "ada/max-primitives": 0,
@@ -115,11 +117,13 @@
    "ada/hardcoded-credential": 0,
    "ada/header-comments": 482,
    "ada/identical-operands": 0,
+   "ada/improper-initialization": 1,
    "ada/indirect-recursion": 10,
    "ada/instantiations": 0,
    "ada/insufficient-parameters": 28,
    "ada/local-access": 18,
    "ada/local-hiding": 71,
+   "ada/max-call-depth": 0,
    "ada/max-expression-items": 0,
    "ada/max-nesting": 0,
    "ada/max-primitives": 6,
@@ -163,7 +167,7 @@
    "ada/warnings-off": 4,
    "ada/with-clauses": 9
   },
-  "total": 1542
+  "total": 1543
  },
  "gpr2": {
   "results": {
@@ -198,11 +202,13 @@
    "ada/hardcoded-credential": 0,
    "ada/header-comments": 1217,
    "ada/identical-operands": 0,
+   "ada/improper-initialization": 15,
    "ada/indirect-recursion": 148,
    "ada/instantiations": 7,
    "ada/insufficient-parameters": 74,
    "ada/local-access": 77,
    "ada/local-hiding": 368,
+   "ada/max-call-depth": 23,
    "ada/max-expression-items": 5,
    "ada/max-nesting": 1,
    "ada/max-primitives": 16,
@@ -246,7 +252,7 @@
    "ada/warnings-off": 36,
    "ada/with-clauses": 44
   },
-  "total": 7834
+  "total": 7872
  },
  "libadalang-tools": {
   "results": {
@@ -281,11 +287,13 @@
    "ada/hardcoded-credential": 0,
    "ada/header-comments": 330,
    "ada/identical-operands": 0,
+   "ada/improper-initialization": 11,
    "ada/indirect-recursion": 4,
    "ada/instantiations": 3,
    "ada/insufficient-parameters": 4,
    "ada/local-access": 70,
    "ada/local-hiding": 144,
+   "ada/max-call-depth": 5,
    "ada/max-expression-items": 3,
    "ada/max-nesting": 2,
    "ada/max-primitives": 6,
@@ -329,7 +337,7 @@
    "ada/warnings-off": 55,
    "ada/with-clauses": 3
   },
-  "total": 3530
+  "total": 3546
  },
  "libkeccak": {
   "results": {
@@ -364,11 +372,13 @@
    "ada/hardcoded-credential": 0,
    "ada/header-comments": 0,
    "ada/identical-operands": 0,
+   "ada/improper-initialization": 2,
    "ada/indirect-recursion": 0,
    "ada/instantiations": 7,
    "ada/insufficient-parameters": 1,
    "ada/local-access": 1,
    "ada/local-hiding": 1,
+   "ada/max-call-depth": 0,
    "ada/max-expression-items": 0,
    "ada/max-nesting": 0,
    "ada/max-primitives": 0,
@@ -412,6 +422,6 @@
    "ada/warnings-off": 0,
    "ada/with-clauses": 1
   },
-  "total": 253
+  "total": 255
  }
 }

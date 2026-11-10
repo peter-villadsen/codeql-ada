@@ -942,3 +942,74 @@ AdaControl, calls through access-to-subprogram values and dispatching calls are 
 to access nothing, and the Ada library is not followed (its bodies are not in the
 database). Left out: atomic types (only objects declared atomic count), and accesses
 through renamings and `'Access` values.
+
+### Improper_Initialization
+
+`ada/improper-initialization`, library `ImproperInitialization`. The rule checks a
+design pattern, not data flow: in a subprogram body, local variables and `out`
+parameters (`isTarget(target, b, kind)`) get their value in the *initial sequence*, the
+statements before the first non-trivial one (`initialEnd(b)`, `firstNonTrivial(b)`).
+Trivial (`not isNonTrivial(s)`) are `null`, assignments, procedure calls, `return`,
+`raise`, and `if`, `case` and extended `return` statements made only of trivial
+statements; a loop, a block, a `goto` label are not. A target is assigned by a statement
+(`assigns(s, target, parts)`) that assigns it as a whole or passes it for an `out`
+parameter (not `in out`) of any call, also in an `if` condition or a `case` selector,
+or by an `if` with an `else` or a `case` whose every branch assigns it or ends with
+`return`, `raise` or `goto`; a read in a
+branch comes after its `if` condition (`precededByAssign`). An `out` actual in the
+initial value of a declaration (`R : constant T := F (Target)`) assigns it before the
+statements (`assignedInDeclarations`). An actual of a call the extractor does not
+resolve, or of `'Asm_Output`, may be an output and counts as assigning. In AdaControl assigning a component or an element does not count
+(`parts` = `false`); with `parts` = `true` it does. A name the extractor leaves
+unresolved but spelled like the target (the target of an assignment whose value does not
+resolve) counts as the target. The prefix of `'First`, `'Last`, `'Length`, `'Range`,
+`'Size`, `'Address`, `'Access` and the like is not a read (`isRead`).
+
+| Subrule | Library | Default |
+|---|---|---|
+| `variable`, `out_parameter`: uses | `readBeforeAssign(n, target, b, parts)`: a read in the initial sequence not preceded by an assignment (`precededByAssign`) | yes, with `parts` |
+| `out_parameter`: returns | `returnBeforeAssign(r, p, b, parts)`: a `return` of the initial sequence that may leave `p` unassigned | yes, with `parts` |
+| `out_parameter`, never assigned | `notSafelyInitialized(p, b, "out_parameter", parts)` in a body with no non-trivial statement | yes, with `parts` |
+| `variable`, `out_parameter` | `notSafelyInitialized(target, b, kind, parts)`: no initial value, not assigned in the initial sequence | no: 1144 corpus results, a design pattern (a variable first set in a loop is not a mistake) |
+| `initialized_variable` | `redundantInitializer(v, b)`: an initial value replaced in the initial sequence before any read | no: 291 corpus results, a style preference |
+| `access`, `limited` extras | `isSkipped(target, extra)`: targets of access types or types holding access values, and of limited types, which the query leaves out | no |
+
+The query reports what is likely a mistake rather than a departure from the pattern, and
+counts assignments to parts: AdaControl's whole-assignment rule reports every record or
+array initialized component by component (`P.A := 1; P.B := P.A;`) as read before it is
+assigned. It checks a target only when its type is known to have no default value
+(`hasNoDefault(t)`: scalars and arrays of them; records, private types and containers may
+be initialized by default, which AdaControl lists as its own false positives) and it is
+not aliased (`isAliased`: its `'Access` or `'Address` is taken, or it is an overlay or
+imported). AdaControl's subrules as written gave 1356 corpus results, most of them the
+design pattern, component-wise initialization and default-initialized objects.
+
+A variable that is never read is left to `ada/unused-local`. An `out` parameter of a body
+whose statements are all trivial and end with `raise` is not reported: `out` parameters
+are not passed back when an exception propagates. Left out: the `package` and `return`
+extras (package variables, extended-return objects), entry and task bodies, and
+dispatching calls and attribute procedures, which AdaControl also does not count as
+initializing. AdaControl's own `access` extra covers access types and arrays of them;
+`isSkipped` also skips records with access components.
+
+### Max_Call_Depth
+
+`ada/max-call-depth`, library `MaxCallDepth`: `callDepth(c)` is the depth of call `c`, the
+number of frames it stacks: 1 for a subprogram that calls nothing, 1 plus the deepest
+call in the body otherwise (`depth(s)`). A subprogram without a body in the database
+(imported, from the Ada library) counts 1, and a recursive one (`isRecursive(s)`, the
+`finite` subrule) is not followed; either makes the depth a minimum (`isExactCall(c)`
+does not hold), reported as "at least". Predefined operators count 0. Calls of
+expression functions count, AdaControl's `Count_Expr_Fun_Calls` `on`. Depths are
+computed up to `maxComputedDepth()` (100).
+
+| Parameter | Library | Default |
+|---|---|---|
+| `<allowed depth>` | `tooDeep(c, limit)` | the data extension `maxCallDepth`, else 15 |
+| `finite` | `isRecursive(c.getTarget())` | no: `ada/direct-recursion` and `ada/indirect-recursion` report recursion |
+
+Each call over the limit is reported, as in AdaControl, so a deep chain is reported at
+every call above the limit along it. Left out: entry calls (a task entry is always
+depth 1 in AdaControl), the `<entity>` list of subprograms assumed to call nothing, and
+`Count_Expr_Fun_Calls` `off`. Calls through access-to-subprogram values and dispatching
+calls count as calls of their static target, or not at all when they have none.

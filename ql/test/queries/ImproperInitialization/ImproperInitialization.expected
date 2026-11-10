@@ -1,0 +1,4 @@
+| init.adb:30:10:30:17 | return | This return may leave out parameter $@ unassigned. | init.ads:11:28:11:29 | V | V |
+| init.adb:88:12:88:13 | C | $@ is read before it is assigned. | init.adb:81:7:81:8 | C | C |
+| init.adb:174:16:174:17 | W | $@ is read before it is assigned. | init.adb:172:7:172:8 | W | W |
+| init.ads:12:25:12:26 | V | Out parameter V is never assigned in $@. | init.adb:35:4:38:18 | Never_Out | its subprogram |

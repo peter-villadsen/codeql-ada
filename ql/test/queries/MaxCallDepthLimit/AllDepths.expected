@@ -1,0 +1,12 @@
+| depth.adb:14:7:14:11 | Leaf | 1 | exact |  |
+| depth.adb:19:7:19:10 | Mid | 2 | exact |  |
+| depth.adb:24:7:24:10 | Ext | 1 | minimum |  |
+| depth.adb:25:7:25:33 | Ada.Text_IO.Put_Line (...) | 1 | minimum |  |
+| depth.adb:30:7:30:18 | Uses_Import | 2 | minimum |  |
+| depth.adb:36:10:36:21 | Rec (...) | 1 | minimum | recursive |
+| depth.adb:42:7:42:14 | Rec (...) | 1 | minimum | recursive |
+| depth.adb:51:4:51:7 | Top | 3 | exact |  |
+| depth.adb:52:4:52:19 | Uses_Import_Top | 3 | minimum |  |
+| depth.adb:53:4:53:13 | Calls_Rec | 2 | minimum |  |
+| depth.adb:54:12:54:21 | Twice (...) | 2 | exact |  |
+| depth.ads:10:52:10:62 | Sum (...) | 1 | exact |  |

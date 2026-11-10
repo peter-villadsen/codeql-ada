@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 78 queries are tested on a
+The project is pre-1.0. The extractor, the library and 80 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -572,11 +572,13 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/hardcoded-credential` | Hardcoded credential | error |
 | `ada/header-comments` | Missing header comment | recommendation |
 | `ada/identical-operands` | Identical operands in boolean expression | warning |
+| `ada/improper-initialization` | Variable or out parameter used before it is assigned | warning |
 | `ada/indirect-recursion` | Indirect recursion | recommendation |
 | `ada/instantiations` | Duplicate unchecked instantiation | recommendation |
 | `ada/insufficient-parameters` | Insufficient parameters | recommendation |
 | `ada/local-access` | Access value of a local entity | recommendation |
 | `ada/local-hiding` | Declaration hides an outer one | recommendation |
+| `ada/max-call-depth` | Call chain too deep | recommendation |
 | `ada/max-expression-items` | Expression with too many items | recommendation |
 | `ada/max-nesting` | Declarations nested too deeply | recommendation |
 | `ada/max-primitives` | Type with too many primitive operations | recommendation |
@@ -627,7 +629,7 @@ Each query's `@description` (in `ql/src/queries/`) says what it flags and why.
 ### Configuring queries
 
 Some queries have a setting that a team may want to change: the limit of
-`ada/cyclomatic-complexity`, and the entities two AdaControl-parity queries check. A setting is a CodeQL *data extension*, the mechanism CodeQL
+`ada/cyclomatic-complexity`, the entities two AdaControl-parity queries check, and the limit of `ada/max-call-depth`. A setting is a CodeQL *data extension*, the mechanism CodeQL
 for Java and C# use for their models of libraries: the rows of an *extensible predicate*,
 written in YAML. When there are no rows, the query uses its default.
 
@@ -636,6 +638,7 @@ written in YAML. When there are no rows, the query uses its default.
 | `ada/cyclomatic-complexity` | `cyclomaticComplexityThreshold(int limit)` | 10 | the smallest applies |
 | `ada/duplicate-initialization-calls` | `initializationProcedure(string qualifiedName)` | procedures named `Init` or `Initialize` with only `in` parameters | each is checked |
 | `ada/exception-propagation` | `callbackParameter(string subprogram, string parameter)` | none | each is checked |
+| `ada/max-call-depth` | `maxCallDepth(int limit)` | 15 | the smallest applies |
 
 To change a setting, make a *model pack*: a directory, say `ada-settings`, with two
 files. `qlpack.yml` names the pack and the pack it configures:

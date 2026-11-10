@@ -245,6 +245,13 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   more than one task or protected object, directly or through the subprograms they call
   (`multiple_non_atomic`). The other subrules, and subprograms as roots, are in the
   library.
+- **`ada/improper-initialization`** (`Improper_Initialization`): reads of local
+  variables and `out` parameters before they are assigned, `return`s before an `out`
+  parameter is, and `out` parameters never assigned. AdaControl's design-pattern
+  checks (assigned before the first non-trivial statement, redundant initial values)
+  are in the library.
+- **`ada/max-call-depth`** (`Max_Call_Depth`): calls whose chain of calls is deeper than
+  the data extension `maxCallDepth` allows (15 by default).
 
 
 ## 0.3.0 (2026-10-11)

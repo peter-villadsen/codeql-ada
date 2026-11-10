@@ -1,0 +1,2 @@
+| depth.adb:51:4:51:7 | Top | This call of $@ has a depth of 3 (limit 2). | depth.ads:4:4:4:18 | Top | Top |
+| depth.adb:52:4:52:19 | Uses_Import_Top | This call of $@ has a depth of at least 3 (limit 2). | depth.ads:6:4:6:30 | Uses_Import_Top | Uses_Import_Top |

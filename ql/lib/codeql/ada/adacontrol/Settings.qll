@@ -20,3 +20,10 @@ extensible predicate initializationProcedure(string qualifiedName);
  * `'Access` or `'Address`, is reported. With no rows, nothing is.
  */
 extensible predicate callbackParameter(string subprogram, string parameter);
+
+/**
+ * Holds if `limit` is the largest call depth `ada/max-call-depth` allows, AdaControl's
+ * `<allowed depth>` of `Max_Call_Depth`. With several rows, the smallest applies; with
+ * none, the limit is 15.
+ */
+extensible predicate maxCallDepth(int limit);
