@@ -1,0 +1,13 @@
+# The subrules a team enables, as a model pack would set them.
+extensions:
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: styleCheck
+    data:
+      - ["parameter_order", ""]
+      - ["formal_parameter_order", ""]
+      - ["renamed_entity", ""]
+      - ["casing_identifier", "titlecase"]
+      - ["no_closing_name", "3"]
+      - ["default_in", ""]
+      - ["exposed_literal", "2"]

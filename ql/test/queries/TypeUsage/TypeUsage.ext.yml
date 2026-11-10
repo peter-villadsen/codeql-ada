@@ -1,0 +1,10 @@
+# A team's type usages to review, as a model pack would name them.
+extensions:
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: typeUsage
+    data:
+      - ["'Pos", "()", "representation"]
+      - ["'Image", "shapes.color", ""]
+      - ["index", "mod", ""]
+      - ["'Size", "record", "not size"]

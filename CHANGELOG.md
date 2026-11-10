@@ -265,6 +265,31 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   variable, or a part of it, for two `out` or `in out` parameters. `possible`,
   `unlikely` and `with_in` are in the library. The overlap of names is shared with
   `ada/generic-aliasing` (`adacontrol/Overlaps.qll`).
+- **`ada/potentially-blocking-operations`** (`Potentially_Blocking_Operations`):
+  `delay`, `select`, `accept` and `abort` statements, entry calls, task creations and
+  input-output calls that protected operations perform, directly or through calls.
+  Further blocking subprograms are named with the data extension `blockingSubprogram`.
+- **`ada/reduceable-scope`** (`Reduceable_Scope`): declarations that could move to an
+  inner scope or to the package body, and local declarations that are not used.
+  `no_blocks` and `to_body` alone are in the library.
+- **`ada/side-effect-parameters`** (`Side_Effect_Parameters`): calls, operators and
+  instantiations whose actuals call two functions with side effects of one group
+  (data extension `sideEffectFunction`).
+- **`ada/style`** (`Style`): the casing subrules, `default_in`, `exposed_literal`,
+  `multiple_elements`, `no_closing_name`, `numeric_literal`, `parameter_order`,
+  `formal_parameter_order` and `renamed_entity`, chosen with the data extension
+  `styleCheck`.
+- **`ada/type-usage`** (`Type_Usage`): attributes of, and array indexes by, the types
+  named with the data extension `typeUsage`.
+- **`ada/unnecessary-use-clause`** (`Unnecessary_Use_Clause`): `use` clauses that are
+  unused, used only for qualified names, operators or primitives, nested in another, or
+  movable to the body.
+- **`ada/unsafe-elaboration`** (`Unsafe_Elaboration`): library packages whose
+  elaboration calls or instantiates another unit without `pragma Elaborate_All`.
+- **`ada/unsafe-paired-calls`** (`Unsafe_Paired_Calls`): paired calls (lock and unlock,
+  named with the data extension `pairedCalls`) outside the safe pattern.
+- **`ada/usage`** (`Usage`): entities used, or not, as the data extension `usage`
+  names: variables written but never read, subprograms never called, and so on.
 
 
 ## 0.3.0 (2026-10-11)

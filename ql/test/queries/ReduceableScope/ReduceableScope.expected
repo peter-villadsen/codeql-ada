@@ -1,0 +1,5 @@
+| pkg.adb:4:4:4:29 | Helper | The subprogram Helper could be declared in $@. | pkg.adb:21:4:37:12 | Run | subprogram Run |
+| pkg.adb:6:4:6:30 | Local_Kind | The type Local_Kind could be declared in $@. | pkg.adb:21:4:37:12 | Run | subprogram Run |
+| pkg.adb:8:4:8:9 | Total | The variable Total could be declared in $@. | pkg.adb:39:4:44:8 | declare ... | block |
+| pkg.adb:10:4:10:14 | Never_Used | The variable $@ is not used. | pkg.adb:10:4:10:14 | Never_Used | Never_Used |
+| pkg.ads:3:4:3:18 | Internal_Limit | The constant Internal_Limit is used only in the body of package $@, where it could be declared. | pkg.ads:1:1:8:9 | Pkg | Pkg |

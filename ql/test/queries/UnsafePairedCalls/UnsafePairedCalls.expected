@@ -1,0 +1,7 @@
+| users.adb:40:7:40:12 | Lock; | This opening call is not the first statement of a sequence. |
+| users.adb:41:7:41:14 | Unlock; | This closing call does not close an opening call in the safe pattern. |
+| users.adb:46:7:46:12 | Lock; | This opening call has no 'when others' handler in its sequence. |
+| users.adb:53:7:53:12 | Lock; | This opening call has a return, exit or goto that leaves without closing. |
+| users.adb:66:7:66:12 | Lock; | This opening call has a handler that does not close. |
+| users.adb:79:7:79:17 | Seize (...); | This opening call has another call of the pair in its sequence; is not closed by the last statement of its sequence. |
+| users.adb:81:7:81:19 | Release (...); | This closing call does not close an opening call in the safe pattern. |

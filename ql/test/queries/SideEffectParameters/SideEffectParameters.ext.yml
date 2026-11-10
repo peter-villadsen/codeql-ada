@@ -1,0 +1,10 @@
+# Two groups of interfering functions, as a model pack would name them: Next_Id and
+# Next_Seq interfere with each other; Random only with itself.
+extensions:
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: sideEffectFunction
+    data:
+      - ["counters.next_id", "ids"]
+      - ["counters.next_seq", "ids"]
+      - ["counters.random", "rand"]

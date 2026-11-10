@@ -1091,3 +1091,192 @@ them `out` or `in out`. The overlap is `Generic_Aliasing`'s (`codeql.ada.adacont
 
 Function calls are checked too. Left out, as for `Generic_Aliasing`: implicit
 dereferences (`P.Field`), and renamings, which are not followed to the object renamed.
+
+### Potentially_Blocking_Operations
+
+`ada/potentially-blocking-operations`, library `PotentiallyBlockingOperations`. From
+each operation of a protected body (`protectedOperation(p)`: its subprogram and entry
+bodies), `reaches(op, b)` follows calls (`Call.getTarget()`) to the bodies in the
+database; `blocking(p, op, n, kind)` is a potentially blocking operation `n` in a body
+reached: a `delay`, `select`, `accept` or `abort` statement, an entry call, the
+creation of a task (an object of a task type), or a call of a blocking subprogram
+(`isBlockingSubprogram`): a subprogram of a language-defined input-output package
+(`Ada.Text_IO` and its siblings and instances, `Sequential_IO`, `Direct_IO`,
+`Streams.Stream_IO`), or one named with the data extension `blockingSubprogram`. The
+query reports each operation once per protected body.
+
+Left out: external calls and requeues back to the same protected object, and remote
+calls. As in AdaControl, calls through access-to-subprogram values, dispatching calls
+and calls of generic formal subprograms are not followed.
+
+### Reduceable_Scope
+
+`ada/reduceable-scope`, library `ReduceableScope`. An entity (`category(e)`: `variable`,
+`constant`, `subprogram`, `type`, `package`, `exception`, `generic`) is declared in a
+`region`: a scope (`isScope`: a subprogram, entry, task or package body, or a block) or
+a package spec. Its references (`reference(e)`) are the names that resolve to it outside
+its own declarations, and the identifiers spelled like it that did not resolve, in its
+region, which may be references extraction could not resolve. A reference is in a scope
+when it is in its declarations or statements (`inScope`), not in a parameter profile.
+
+| Subrule | Library | Default |
+|---|---|---|
+| (inner scope) | `innerScope(e, s, blocks)`: the innermost scope holding every reference; `blocks` false is `no_blocks` | yes, blocks included |
+| `to_body` | `toBody(e, p)`: declared in package spec `p`, referenced only in its body | yes |
+| (unused) | `unused(e)`: declared in a scope and never referenced | yes |
+
+Not moved to an inner scope, as in AdaControl: initialized objects and constants, task
+objects, entities whose `'Access` or `'Address` is taken, and primitive operations of
+tagged types. Further, a variable moves only into a block or a package body, not into a
+subprogram, entry or task body, nor into a loop, where it would no longer keep its value
+between calls or iterations. Not reported at all: exported entities (`Export`), and the
+GNAT binder's files. Not reported as unused: entities marked `Unreferenced`, and objects
+initialized by a call, kept for the call's effect. Deferred constants and their
+completions do not move to the body. As in AdaControl, `to_body` assumes the database
+holds the whole program: a visible declaration used only in its package body may still
+be used by a client outside the database. Left out: `use`, `use_type` and
+`use_all_type` (see `Unnecessary_Use_Clause`, `movable`).
+
+### Side_Effect_Parameters
+
+`ada/side-effect-parameters`, library `SideEffectParameters`. The functions with side
+effects are named with the data extension `sideEffectFunction(function, group)`: the
+functions of one group interfere with each other and with themselves, as the functions
+given in one use of the AdaControl rule do. `interfering(site, c1, c2)` holds for a call,
+an operator or a generic instantiation `site` whose actuals (`actual(site)`; an
+operator's operands) call two of them, `c1` and `c2`, neither inside the other, and
+`site` is the innermost place mixing them. With no row, the query reports nothing.
+
+A call of an instance of a generic function is a call of the generic, and renamings are
+followed. Left out, as in AdaControl: defaulted parameters. Also left out: a
+parameterless function named alone as a generic actual, which may be the actual of a
+formal subprogram rather than a call.
+
+### Style
+
+`ada/style`, library `Style`. The subrules that can be checked on the tree; the query
+checks those named with the data extension `styleCheck(subrule, parameter)`, or, with no
+row, its defaults.
+
+| Subrule | Library | Parameter | Default |
+|---|---|---|---|
+| `casing_identifier` | `originalCasing(n)`: a reference, or a completion's name, spelled otherwise than its declaration | `original`, or `uppercase`, `lowercase`, `titlecase` | `original` |
+| `casing_attribute`, `casing_pragma`, `casing_aspect` | `casedWord(n, element)` | a casing | `titlecase` |
+| `casing_number`, `casing_exponent` | `casedWord(n, element)`: the extended digits of a based literal, the `E` of an exponent | a casing | `uppercase` |
+| `default_in` | `defaultIn(p)`: a parameter or generic formal object without mode; access parameters are not reported | none | no |
+| `exposed_literal` | `exposedLiteral(l)`: an integer or real literal outside a constant or named number declaration | an allowed value; `0`, `1`, `0.0`, `1.0` when none is given | no |
+| `multiple_elements` | `multipleElements(a, b, flexible)`: a clause, pragma, declaration, statement or handler on the line where the one before it ends | `flexible`: `with P; use P;` on one line is accepted | `flexible` |
+| `no_closing_name` | `noClosingName(c, lines)`: a unit, body, task or protected definition without a name after `end` | the largest number of lines allowed without it | every one |
+| `numeric_literal` | `numericLiteral(l, blockSize)`: a decimal literal whose integer part is not grouped by underscores | the block size | 3 |
+| `parameter_order` | `parameterOrder(p, mode, previous)`: `in` or `access`, then `in_out`, `out`, `defaulted_in` | none | no |
+| `formal_parameter_order` | `formalParameterOrder(f, mode, previous)`: `type`; `in`, `defaulted_in`, `access`; `in_out`; `procedure`, `function`; `package` | none | no |
+| `renamed_entity` | `renamedEntity(n, r)`: an entity used by its original name where renaming `r` is visible | none | no |
+
+AdaControl's defaults also check `default_in` and `exposed_literal`, and
+`multiple_elements` strictly; on the corpus, most projects follow neither, so the query
+checks them only when a row names them. Several rows for one casing subrule accept any
+of their casings. Left out: `casing_keyword` and `compound_statement`, which need the
+tokens of keywords, which the extractor does not keep; the `keywords` of
+`multiple_elements` (`begin`, `end`, `then` on their own line), for the same reason; the
+orders of `parameter_order` and `formal_parameter_order` other than the default; based
+literals for `numeric_literal`; the places and the character and string kinds of
+`exposed_literal`.
+
+### Type_Usage
+
+`ada/type-usage`, library `TypeUsage`. The uses to report are named with the data
+extension `typeUsage(usage, type, aspect)`: `usage` is `index` or an attribute
+(`'Image`); `type` is a category or a qualified type name (`matches(t, type)`: the type,
+or one it derives from, through subtypes and derivations); `aspect` is empty, or
+`representation`, `pack`, `size` or `component_size`, optionally preceded by `not`
+(`satisfies(t, aspect)`, `hasAspect(t, aspect)`), checked on the matched type. With no
+row, the query reports nothing.
+
+| Usage | Library |
+|---|---|
+| `'<attribute>` | `attributeUse(a, t, attribute)`: an attribute reference with type `t` as prefix |
+| `index` | `indexUse(array, index, t)`: an index of array type `array`, of type `t` |
+
+Left out: the `<>` category.
+
+### Unnecessary_Use_Clause
+
+`ada/unnecessary-use-clause`, library `UnnecessaryUseClause`. Each name of a clause is
+checked on its own, in the clause's scope (`inScopeOf`): the rest of its compilation
+unit, the body of a spec and their subunits for a context clause; the rest of its
+declarative region, and the body of a package spec, for a declaration. A use of a
+package (`usesPackage(u, name, r, direct, kind)`) is a name that resolves to a
+declaration of its visible part or to a child unit of it; it is direct when it is not a
+selector; an operator is used directly when an operand is of a type of the package, or
+when the package declares it. An identifier that did not resolve, spelled like a
+declaration of the package, counts as a direct use. A use of a type (`usesType`) is an
+operator with an operand of it, and, for `use all type`, a primitive operation or
+enumeration literal of it used directly.
+
+| Subrule | Library (`unnecessary(u, name, subrule)`) |
+|---|---|
+| `unused` | no use of the package (or the type's operators) in the scope |
+| `qualified` | every use is a selector (`P.X`) |
+| `operator` | only operators are used directly: `use type` would do |
+| `primitive` | only primitive operations and enumeration literals of the package's types: `use all type` would do |
+| `nested` | `nested(u, name)`: in the scope of another clause for the same package or type, or inside the package |
+| `movable` | a clause of a package spec whose direct uses are all in the body |
+
+All subrules are reported. Two instances of one generic are two packages for `nested`,
+but their uses are not told apart: a use of one counts for the other. Left out:
+`Max_Replacements`.
+
+### Unsafe_Elaboration
+
+`ada/unsafe-elaboration`, library `UnsafeElaboration`. A library package, generic or not
+(`isLibraryPackage`), is elaborated by its elaboration code
+(`NotElaborationCalls::isElaborationCode`) in its spec and body, and, as in AdaControl,
+by the bodies of its tasks, which start during elaboration (`runsDuringElaboration`).
+Calls of the package's own subprograms are followed to their bodies. `unsafe(p, u,
+site)` holds when that code calls a subprogram, or instantiates a generic, of another
+library unit `u` (`usedUnit`) that is not language-defined (`Ada`, `System`,
+`Interfaces`) and that no `pragma Elaborate` or `Elaborate_All` of `p`'s spec or body
+names. The query reports the first such site per package and unit.
+
+GNAT's default, static elaboration model orders units so that most of these are safe;
+the rule asks for the pragma that makes the order explicit.
+
+### Unsafe_Paired_Calls
+
+`ada/unsafe-paired-calls`, library `UnsafePairedCalls`. The pairs are named with the
+data extension `pairedCalls(opening, closing, lockType)`; with a lock type, calls match
+(`matching(o, c)`) when they pass, for a parameter of that type, the same variable or
+the same value. `unsafeOpening(o, reason)` reports an opening call that is not the first
+statement of a handled sequence, or whose sequence does not end with a matching closing
+call (but for trailing `exit`, `return` and `null`), has no `when others` handler, has a
+handler without a closing call, has a `return`, `exit` or `goto` leaving it that does
+not follow a closing call, or calls the pair elsewhere outside nested sequences.
+`unsafeClosing(c)` reports a closing call that closes no opening call in the safe
+pattern (`closesSafely`). With no row, the query reports nothing.
+
+Left out: `Conditionals_Allowed` (openings and closings wrapped in an `if` on a
+constant); renamings are always followed (`Name_As_Given` off).
+
+### Usage
+
+`ada/usage`, library `Usage`. The entities to report are named with the data extension
+`usage(entityClass, conditions)`: a class (`entityClass(e)`: `variable`, `constant`,
+`in_parameter`, `out_parameter`, `in_out_parameter`, `type`, `procedure`, `function`,
+`exception`, `task`, `protected`, `generic`; `object` is variables and constants, `all`
+everything) and a comma-separated list of conditions, each a usage keyword or a place,
+optionally preceded by `not` (`satisfies(e, item)`). With no row, the query reports
+nothing.
+
+| Keyword | `holds(e, keyword)` |
+|---|---|
+| `read`, `written` | a reference reads or writes it (`DirectlyAccessedGlobals::written`); the prefix of `'Access` or `'Address`, and an identifier spelled like it that did not resolve, do both |
+| `initialized` | a variable with an initial value or of an access type; a parameter with a default |
+| `used` | a type that is referenced |
+| `called`, `accessed` | a subprogram called, or whose `'Access` or `'Address` is taken; a task or protected object whose entries or operations are called from outside |
+| `raised`, `handled` | an exception raised (also by `Raise_Exception (E'Identity)`), or named by a handler |
+| `aborted` | a task named by an `abort` statement, or an object of a task type |
+| `instantiated` | a generic instantiated |
+| `from_visible`, `from_private`, `from_spec` | declared in the visible part, the private part, or either, of a package spec |
+
+The message lists the usage of the entity (`description(e)`), and says when a variable
+could be a constant. Left out: `from_task_guard`.

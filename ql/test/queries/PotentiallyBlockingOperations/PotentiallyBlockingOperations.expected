@@ -1,0 +1,5 @@
+| monitor.adb:21:7:21:31 | Ada.Text_IO.Put_Line (...) | This call of Put_Line is potentially blocking, and runs in an operation of protected $@. | monitor.adb:60:4:80:15 | Shared | Shared |
+| monitor.adb:31:7:31:19 | Server.Start | This entry call is potentially blocking, and runs in an operation of protected $@. | monitor.adb:60:4:80:15 | Shared | Shared |
+| monitor.adb:35:7:35:18 | W | This task creation is potentially blocking, and runs in an operation of protected $@. | monitor.adb:60:4:80:15 | Shared | Shared |
+| monitor.adb:42:7:42:17 | delay ... | This delay statement is potentially blocking, and runs in an operation of protected $@. | monitor.adb:60:4:80:15 | Shared | Shared |
+| monitor.adb:66:10:66:31 | Locks.Wait_For_Device | This call of Wait_For_Device is potentially blocking, and runs in an operation of protected $@. | monitor.adb:60:4:80:15 | Shared | Shared |

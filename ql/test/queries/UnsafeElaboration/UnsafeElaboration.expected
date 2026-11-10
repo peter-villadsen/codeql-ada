@@ -1,0 +1,3 @@
+| indirect.adb:5:14:5:26 | Util.Compute | The elaboration of package Indirect uses unit Util here, with no pragma Elaborate_All for it. |
+| tables.ads:3:31:3:43 | Util.Compute | The elaboration of package Tables uses unit Util here, with no pragma Elaborate_All for it. |
+| workers.adb:5:22:5:34 | Util.Compute | The elaboration of package Workers uses unit Util here, with no pragma Elaborate_All for it. |

@@ -1,0 +1,15 @@
+| orders.adb:1:10:1:17 | Text_IO | Style (casing_identifier): 'Text_IO' does not have the required casing. |
+| orders.adb:3:12:3:15 | TIO | Style (casing_identifier): 'TIO' does not have the required casing. |
+| orders.adb:3:28:3:35 | Text_IO | Style (casing_identifier): 'Text_IO' does not have the required casing. |
+| orders.adb:4:91:4:92 | 0 | Style (exposed_literal): The literal 0 is not in a constant declaration. |
+| orders.adb:6:28:6:29 | 3 | Style (exposed_literal): The literal 3 is not in a constant declaration. |
+| orders.adb:7:7:7:18 | Ada.Text_IO | Style (renamed_entity): This entity is renamed as TIO, but used by its original name. |
+| orders.adb:7:11:7:18 | Text_IO | Style (casing_identifier): 'Text_IO' does not have the required casing. |
+| orders.adb:8:7:8:10 | TIO | Style (casing_identifier): 'TIO' does not have the required casing. |
+| orders.adb:10:4:13:8 | Bad | Style (no_closing_name): This construct has no name after its 'end'. |
+| orders.adb:10:36:10:50 | A | Style (parameter_order): A parameter of mode in follows one of mode out. |
+| orders.adb:15:24:15:35 | X | Style (default_in): The mode 'in' is implicit. |
+| orders.ads:2:91:2:92 | 0 | Style (exposed_literal): The literal 0 is not in a constant declaration. |
+| orders.ads:3:36:3:50 | A | Style (parameter_order): A parameter of mode in follows one of mode out. |
+| orders.ads:6:7:6:28 | GenericFormalTypeDecl | Style (formal_parameter_order): A generic formal type follows a formal procedure. |
+| orders.ads:9:14:9:24 | short_name | Style (casing_identifier): 'short_name' does not have the required casing. |

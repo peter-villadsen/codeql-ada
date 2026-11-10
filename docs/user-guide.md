@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 84 queries are tested on a
+The project is pre-1.0. The extractor, the library and 93 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -597,30 +597,39 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/positional-associations` | Positional actuals of the same type | recommendation |
 | `ada/pragma-suppress` | Suppressed runtime checks | warning |
 | `ada/pragmas` | Pragma applying to several overloaded entities | recommendation |
+| `ada/potentially-blocking-operations` | Potentially blocking operation in protected operation | warning |
 | `ada/raise-predefined-exception` | Raising a predefined exception | recommendation |
 | `ada/record-declarations` | Uninitialized discrete record component | recommendation |
+| `ada/reduceable-scope` | Declaration could have a smaller scope | recommendation |
 | `ada/renaming-declarations` | Renaming in the scope of the renamed entity | recommendation |
 | `ada/representation-clauses` | Incomplete record representation clause | warning |
 | `ada/return-statements` | Too many return statements | recommendation |
 | `ada/return-type` | Function returning an anonymous access type | recommendation |
 | `ada/self-comparison` | Self-comparison | warning |
+| `ada/side-effect-parameters` | Actuals call interfering functions | warning |
 | `ada/silent-exceptions` | Exception silently handled by when others | warning |
 | `ada/simplifiable-expressions` | Simplifiable expression | recommendation |
 | `ada/simplifiable-statements` | Simplifiable statement | recommendation |
 | `ada/spark-mode-off` | SPARK_Mode disabled | warning |
 | `ada/sql-injection` | SQL query built from user-controlled sources | error |
 | `ada/statements` | Backward goto or null case others | recommendation |
+| `ada/style` | Style | recommendation |
 | `ada/terminating-tasks` | Terminating task | recommendation |
 | `ada/todo-comment` | TODO/FIXME comment | recommendation |
 | `ada/type-initial-values` | Record type without an initial value constant | recommendation |
+| `ada/type-usage` | Use of a type through an attribute or as an index | recommendation |
 | `ada/unchecked-conversion` | Use of Unchecked_Conversion | warning |
 | `ada/unchecked-deallocation` | Use of Unchecked_Deallocation | warning |
 | `ada/unit-pattern` | Several tagged types in one package | recommendation |
 | `ada/units` | Unreferenced library package | recommendation |
+| `ada/unnecessary-use-clause` | Unnecessary use clause | recommendation |
 | `ada/unreachable-statement` | Unreachable statement | warning |
+| `ada/unsafe-elaboration` | Elaboration depends on elaboration order | recommendation |
+| `ada/unsafe-paired-calls` | Paired calls not in the safe pattern | warning |
 | `ada/unused-parameter` | Unused parameter | recommendation |
 | `ada/unused-local` | Unused local object | recommendation |
 | `ada/unused-with-clause` | Unused with clause | recommendation |
+| `ada/usage` | Entity usage | recommendation |
 | `ada/use-clauses` | Use clause in a context clause | recommendation |
 | `ada/useless-if` | Useless if statement | warning |
 | `ada/warnings-off` | Blanket disabling of compiler warnings | recommendation |
@@ -633,7 +642,7 @@ Each query's `@description` (in `ql/src/queries/`) says what it flags and why.
 ### Configuring queries
 
 Some queries have a setting that a team may want to change: the limit of
-`ada/cyclomatic-complexity`, the entities three AdaControl-parity queries check, and the limit of `ada/max-call-depth`. A setting is a CodeQL *data extension*, the mechanism CodeQL
+`ada/cyclomatic-complexity`, the entities and options of the AdaControl-parity queries (`docs/adacontrol.md`), and the limit of `ada/max-call-depth`. A setting is a CodeQL *data extension*, the mechanism CodeQL
 for Java and C# use for their models of libraries: the rows of an *extensible predicate*,
 written in YAML. When there are no rows, the query uses its default.
 
@@ -644,6 +653,12 @@ written in YAML. When there are no rows, the query uses its default.
 | `ada/exception-propagation` | `callbackParameter(string subprogram, string parameter)` | none | each is checked |
 | `ada/max-call-depth` | `maxCallDepth(int limit)` | 15 | the smallest applies |
 | `ada/not-elaboration-calls` | `notElaborationCall(string entity)` | none | each is checked |
+| `ada/potentially-blocking-operations` | `blockingSubprogram(string qualifiedName)` | the input-output packages' subprograms | each is blocking |
+| `ada/side-effect-parameters` | `sideEffectFunction(string function, string group)` | none | functions of one group interfere |
+| `ada/style` | `styleCheck(string subrule, string parameter)` | the casing subrules, `multiple_elements` (`flexible`), `no_closing_name`, `numeric_literal` | each is checked |
+| `ada/type-usage` | `typeUsage(string usage, string type, string aspect)` | none | each is checked |
+| `ada/unsafe-paired-calls` | `pairedCalls(string opening, string closing, string lockType)` | none | each is checked |
+| `ada/usage` | `usage(string entityClass, string conditions)` | none | each is checked |
 
 To change a setting, make a *model pack*: a directory, say `ada-settings`, with two
 files. `qlpack.yml` names the pack and the pack it configures:

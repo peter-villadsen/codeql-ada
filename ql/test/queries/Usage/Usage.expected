@@ -1,0 +1,14 @@
+| store.adb:3:4:3:8 | Seed | Variable Seed: initialized, read, not written; could be declared constant. |
+| store.adb:4:4:4:9 | Never | Variable Never: not initialized, read, not written. |
+| store.adb:14:4:14:5 | F | Variable F: initialized, read, not written; could be declared constant. |
+| store.adb:18:22:18:23 | A | In out parameter A: not initialized, read, not written. |
+| store.adb:18:62:18:63 | C | Out parameter C: not initialized, not read, not written. |
+| store.adb:29:4:29:14 | SingleTaskDecl | Task Idle: not aborted, not called. |
+| store.ads:3:4:3:14 | Unused_Max | Constant Unused_Max: not read. |
+| store.ads:5:4:5:32 | Orphan | Type Orphan: not used. |
+| store.ads:7:4:7:24 | Forgotten | Procedure Forgotten: not accessed, not called. |
+| store.ads:8:4:8:49 | Double | Function Double: accessed, not called. |
+| store.ads:10:4:10:8 | Fail | Exception Fail: not handled, raised. |
+| store.ads:12:4:13:18 | Gen | Generic Gen: not instantiated. |
+| store.ads:14:4:16:14 | Guard | Protected Guard: called. |
+| store.ads:18:4:18:10 | Hidden | Variable Hidden: initialized, read, not written; could be declared constant. |

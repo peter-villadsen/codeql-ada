@@ -1,0 +1,7 @@
+| client.adb:2:17:2:22 | Tools | Unused: nothing in its scope uses Tools. |
+| client.adb:4:8:4:16 | Geometry | Nested: Geometry is already visible here. |
+| holder.ads:1:17:1:22 | Tools | Movable: Tools is used only in the body, where the clause could be. |
+| ops_user.adb:1:20:1:28 | Geometry | Operator: only operators of Geometry are used directly; use type would do. |
+| prim_user.adb:1:20:1:28 | Geometry | Primitive: only primitive operations of types of Geometry are used directly; use all type would do. |
+| qualified_user.adb:1:17:1:22 | Tools | Qualified: every use of Tools is qualified. |
+| types_user.adb:4:13:4:27 | Geometry.Color | Unused: nothing in its scope uses Geometry.Color. |

@@ -34,3 +34,41 @@ extensions:
       pack: peter-villadsen/ada-all
       extensible: notElaborationCall
     data: []
+  # ada/potentially-blocking-operations (codeql/ada/adacontrol/Settings.qll): further
+  # potentially blocking subprograms, by qualified name; the language-defined
+  # input-output packages' always are.
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: blockingSubprogram
+    data: []
+  # ada/side-effect-parameters (codeql/ada/adacontrol/Settings.qll): functions with
+  # side effects, as [qualified name, group]; none by default.
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: sideEffectFunction
+    data: []
+  # ada/type-usage (codeql/ada/adacontrol/Settings.qll): uses of types to report, as
+  # [usage ("index" or "'Attribute"), type (category or qualified name), aspect
+  # condition ("" or "[not] representation|pack|size|component_size")]; none by default.
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: typeUsage
+    data: []
+  # ada/unsafe-paired-calls (codeql/ada/adacontrol/Settings.qll): paired procedures, as
+  # [opening, closing, lock type or ""], by qualified name; none by default.
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: pairedCalls
+    data: []
+  # ada/usage (codeql/ada/adacontrol/Settings.qll): the entities to report, as [class,
+  # conditions ("written, not read", "not called, from_spec")]; none by default.
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: usage
+    data: []
+  # ada/style (codeql/ada/adacontrol/Settings.qll): the subrules to check, as
+  # [subrule, parameter]; the query's default subrules when there is no row.
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: styleCheck
+    data: []

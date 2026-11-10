@@ -1,0 +1,10 @@
+| layout.adb:2:4:2:34 | pragma suppress | Style (casing_pragma): 'suppress' does not have the required casing. |
+| layout.adb:4:14:4:17 | put | Style (casing_identifier): 'put' is declared as 'Put'. |
+| layout.adb:5:25:5:42 | Z | Style (multiple_elements): This element is on the same line as the one before it. |
+| layout.adb:8:12:8:25 | Integer'image | Style (casing_attribute): 'image' does not have the required casing. |
+| layout.adb:9:12:9:21 | max_count | Style (casing_identifier): 'max_count' is declared as 'Max_Count'. |
+| layout.adb:10:8:10:11 | Put | Style (casing_identifier): 'Put' is declared as 'put'. |
+| layout.adb:12:4:15:8 | Get | Style (no_closing_name): This construct has no name after its 'end'. |
+| layout.ads:3:36:3:41 | 10000 | Style (numeric_literal): The digits of 10000 are not grouped by 3. |
+| layout.ads:5:23:5:29 | 16#ff# | Style (casing_number): 'ff' does not have the required casing. |
+| layout.ads:6:30:6:35 | 1.0e3 | Style (casing_exponent): 'e' does not have the required casing. |

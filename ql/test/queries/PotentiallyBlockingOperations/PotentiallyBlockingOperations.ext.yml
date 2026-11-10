@@ -1,0 +1,7 @@
+# A team's own blocking subprogram, as a model pack would name it.
+extensions:
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: blockingSubprogram
+    data:
+      - ["locks.wait_for_device"]

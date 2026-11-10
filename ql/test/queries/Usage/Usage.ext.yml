@@ -1,0 +1,17 @@
+# The usages a team reviews, as a model pack would name them.
+extensions:
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: usage
+    data:
+      - ["variable", "not written"]
+      - ["in_out_parameter", "not written"]
+      - ["out_parameter", "not written"]
+      - ["constant", "not read"]
+      - ["type", "not used"]
+      - ["procedure", "not called, from_spec"]
+      - ["function", "accessed"]
+      - ["exception", "raised, not handled"]
+      - ["task", "not called"]
+      - ["protected", "called"]
+      - ["generic", "not instantiated"]

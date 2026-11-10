@@ -1,0 +1,6 @@
+| shapes.ads:16:25:16:29 | SubtypeIndication | Type Byte is an index of array type Table. |
+| shapes.ads:17:40:17:53 | UnconstrainedArrayIndex | Type Byte is an index of array type Grid. |
+| shapes.ads:19:48:19:59 | Light'Image | Attribute 'Image of type Light. |
+| shapes.ads:20:52:20:62 | Warm'Image | Attribute 'Image of type Warm. |
+| shapes.ads:21:47:21:55 | Code'Pos | Attribute 'Pos of type Code. |
+| shapes.ads:23:33:23:43 | Point'Size | Attribute 'Size of type Point. |

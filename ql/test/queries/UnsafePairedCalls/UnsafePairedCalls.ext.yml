@@ -1,0 +1,8 @@
+# Two pairs, as a model pack would name them: a global lock, and a semaphore per object.
+extensions:
+  - addsTo:
+      pack: peter-villadsen/ada-all
+      extensible: pairedCalls
+    data:
+      - ["locking.lock", "locking.unlock", ""]
+      - ["locking.seize", "locking.release", "locking.semaphore"]
