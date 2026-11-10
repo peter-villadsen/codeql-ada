@@ -26,6 +26,8 @@
    "ada/expressions": 0,
    "ada/float-equality": 0,
    "ada/function-missing-return": 0,
+   "ada/generic-aliasing": 0,
+   "ada/global-references": 0,
    "ada/goto-statement": 0,
    "ada/hardcoded-credential": 0,
    "ada/header-comments": 0,
@@ -107,6 +109,8 @@
    "ada/expressions": 0,
    "ada/float-equality": 0,
    "ada/function-missing-return": 0,
+   "ada/generic-aliasing": 0,
+   "ada/global-references": 0,
    "ada/goto-statement": 9,
    "ada/hardcoded-credential": 0,
    "ada/header-comments": 482,
@@ -188,6 +192,8 @@
    "ada/expressions": 0,
    "ada/float-equality": 0,
    "ada/function-missing-return": 1,
+   "ada/generic-aliasing": 0,
+   "ada/global-references": 3,
    "ada/goto-statement": 566,
    "ada/hardcoded-credential": 0,
    "ada/header-comments": 1217,
@@ -240,7 +246,7 @@
    "ada/warnings-off": 36,
    "ada/with-clauses": 44
   },
-  "total": 7831
+  "total": 7834
  },
  "libadalang-tools": {
   "results": {
@@ -269,6 +275,8 @@
    "ada/expressions": 0,
    "ada/float-equality": 2,
    "ada/function-missing-return": 2,
+   "ada/generic-aliasing": 0,
+   "ada/global-references": 0,
    "ada/goto-statement": 36,
    "ada/hardcoded-credential": 0,
    "ada/header-comments": 330,
@@ -350,6 +358,8 @@
    "ada/expressions": 0,
    "ada/float-equality": 0,
    "ada/function-missing-return": 0,
+   "ada/generic-aliasing": 0,
+   "ada/global-references": 0,
    "ada/goto-statement": 0,
    "ada/hardcoded-credential": 0,
    "ada/header-comments": 0,

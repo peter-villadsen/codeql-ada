@@ -60,7 +60,7 @@ running a compiler, which is what makes an extractor without a build possible.
 
 ### Status
 
-The project is pre-1.0. The extractor, the library and 76 queries are tested on a
+The project is pre-1.0. The extractor, the library and 78 queries are tested on a
 five-project corpus of real Ada code, but the database format can still change between
 releases, so expect to rebuild databases when you upgrade.
 [known-limitations.md](known-limitations.md) lists what doesn't work yet. Bug reports,
@@ -566,6 +566,8 @@ The queries in `peter-villadsen/ada-queries`:
 | `ada/expressions` | Unary minus applied to mod or rem | warning |
 | `ada/float-equality` | Floating-point equality comparison | warning |
 | `ada/function-missing-return` | Function missing return | error |
+| `ada/generic-aliasing` | Same actual for two generic formals | warning |
+| `ada/global-references` | Global variable shared between tasks | warning |
 | `ada/goto-statement` | Goto statement | recommendation |
 | `ada/hardcoded-credential` | Hardcoded credential | error |
 | `ada/header-comments` | Missing header comment | recommendation |

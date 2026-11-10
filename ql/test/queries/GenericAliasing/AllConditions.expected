@@ -1,0 +1,13 @@
+| test.adb:10:4:10:43 | Swap_Same | 0 | 1 | variable | certain |
+| test.adb:11:4:11:54 | Swap_Named | 0 | 1 | variable | certain |
+| test.adb:13:4:13:49 | Update_Part | 0 | 1 | variable | certain |
+| test.adb:16:4:16:53 | Swap_Comps_Same | 0 | 1 | variable | certain |
+| test.adb:17:4:17:52 | Swap_Elems | 0 | 1 | variable | certain |
+| test.adb:19:4:19:50 | Swap_Dyn | 0 | 1 | variable | possible |
+| test.adb:20:4:20:52 | Swap_Deref | 0 | 1 | variable | unlikely |
+| test.adb:21:4:21:57 | Swap_Deref_Same | 0 | 1 | variable | certain |
+| test.adb:25:4:25:53 | Pair_Same | 0 | 1 | type | certain |
+| test.adb:28:4:28:55 | Pair_Base | 0 | 1 | type | certain |
+| test.adb:31:4:31:49 | Both_Same | 0 | 1 | subprogram | certain |
+| test.adb:32:4:32:58 | Both_Renamed | 0 | 1 | subprogram | certain |
+| test.adb:37:4:37:61 | Packs_Same | 0 | 1 | package | certain |

@@ -238,6 +238,13 @@ query checks, and what is left out. The queries carry the tag `adacontrol`.
   subprograms that can let an exception out, call-backs that can (set with the data
   extension `callbackParameter`), and local exceptions that can escape their scope. The
   levels and the `declaration` subrule are in the library.
+- **`ada/generic-aliasing`** (`Generic_Aliasing`): instantiations that give the same
+  variable, or a part of it, for two `in out` formal objects. The `possible` and
+  `unlikely` conditions, and types, subprograms and packages, are in the library.
+- **`ada/global-references`** (`Global_References`): variables written and accessed by
+  more than one task or protected object, directly or through the subprograms they call
+  (`multiple_non_atomic`). The other subrules, and subprograms as roots, are in the
+  library.
 
 
 ## 0.3.0 (2026-10-11)

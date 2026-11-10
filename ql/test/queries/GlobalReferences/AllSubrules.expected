@@ -1,0 +1,65 @@
+| shared.adb:5:7:5:14 | Counter | write of Counter for A |
+| shared.adb:5:7:5:14 | Counter | write of Counter for Bump |
+| shared.adb:5:18:5:25 | Counter | read of Counter for A |
+| shared.adb:5:18:5:25 | Counter | read of Counter for Bump |
+| shared.adb:10:14:10:19 | Total | read of Total for Get_Total |
+| shared.adb:10:14:10:19 | Total | read of Total for Guard |
+| shared.adb:10:14:10:19 | Total | read of Total for Read |
+| shared.adb:15:7:15:16 | Only_Proc | write of Only_Proc for Main_Only |
+| shared.adb:15:7:15:16 | Only_Proc | write of Only_Proc for Set_Only |
+| shared.adb:15:7:15:16 | Only_Proc | write of Only_Proc for Workers |
+| shared.adb:15:20:15:29 | Only_Proc | read of Only_Proc for Main_Only |
+| shared.adb:15:20:15:29 | Only_Proc | read of Only_Proc for Set_Only |
+| shared.adb:15:20:15:29 | Only_Proc | read of Only_Proc for Workers |
+| shared.ads:2:4:2:11 | Counter | multiple |
+| shared.ads:2:4:2:11 | Counter | multiple_non_atomic |
+| shared.ads:2:4:2:11 | Counter | procedure Bump reads it |
+| shared.ads:2:4:2:11 | Counter | procedure Bump writes it |
+| shared.ads:2:4:2:11 | Counter | task A reads it |
+| shared.ads:2:4:2:11 | Counter | task A writes it |
+| shared.ads:2:4:2:11 | Counter | task B reads it |
+| shared.ads:2:4:2:11 | Counter | task B writes it |
+| shared.ads:3:4:3:9 | Limit | multiple |
+| shared.ads:3:4:3:9 | Limit | multiple_non_atomic |
+| shared.ads:3:4:3:9 | Limit | task A reads it |
+| shared.ads:3:4:3:9 | Limit | task B reads it |
+| shared.ads:4:4:4:8 | Flag | multiple |
+| shared.ads:4:4:4:8 | Flag | task A writes it |
+| shared.ads:4:4:4:8 | Flag | task B reads it |
+| shared.ads:5:4:5:9 | Flag2 | multiple |
+| shared.ads:5:4:5:9 | Flag2 | multiple_non_atomic |
+| shared.ads:5:4:5:9 | Flag2 | protected Guard writes it |
+| shared.ads:5:4:5:9 | Flag2 | task B writes it |
+| shared.ads:6:4:6:9 | Total | function Get_Total reads it |
+| shared.ads:6:4:6:9 | Total | function Read reads it |
+| shared.ads:6:4:6:9 | Total | multiple |
+| shared.ads:6:4:6:9 | Total | multiple_non_atomic |
+| shared.ads:6:4:6:9 | Total | protected Guard reads it |
+| shared.ads:6:4:6:9 | Total | task A writes it |
+| shared.ads:7:4:7:12 | Per_Type | multiple |
+| shared.ads:7:4:7:12 | Per_Type | multiple_non_atomic |
+| shared.ads:7:4:7:12 | Per_Type | task Worker reads it |
+| shared.ads:7:4:7:12 | Per_Type | task Worker writes it |
+| shared.ads:8:4:8:13 | Only_Proc | multiple |
+| shared.ads:8:4:8:13 | Only_Proc | multiple_non_atomic |
+| shared.ads:8:4:8:13 | Only_Proc | procedure Main_Only reads it |
+| shared.ads:8:4:8:13 | Only_Proc | procedure Main_Only writes it |
+| shared.ads:8:4:8:13 | Only_Proc | procedure Set_Only reads it |
+| shared.ads:8:4:8:13 | Only_Proc | procedure Set_Only writes it |
+| shared.ads:8:4:8:13 | Only_Proc | procedure Workers reads it |
+| shared.ads:8:4:8:13 | Only_Proc | procedure Workers writes it |
+| workers.adb:26:10:26:15 | Flag2 | write of Flag2 for B |
+| workers.adb:26:10:26:15 | Flag2 | write of Flag2 for Guard |
+| workers.adb:39:24:39:29 | Limit | read of Limit for A |
+| workers.adb:40:7:40:11 | Flag | write of Flag for A |
+| workers.adb:41:7:41:12 | Total | write of Total for A |
+| workers.adb:47:7:47:14 | Counter | write of Counter for B |
+| workers.adb:47:18:47:25 | Counter | read of Counter for B |
+| workers.adb:48:10:48:14 | Flag | read of Flag for B |
+| workers.adb:48:24:48:29 | Limit | read of Limit for B |
+| workers.adb:49:10:49:15 | Flag2 | write of Flag2 for B |
+| workers.adb:54:4:57:15 | Worker | type root |
+| workers.adb:56:7:56:15 | Per_Type | write of Per_Type for Worker |
+| workers.adb:56:19:56:27 | Per_Type | read of Per_Type for Worker |
+| workers.adb:62:7:62:20 | Nested_Global | procedure Inner writes it |
+| workers.adb:66:10:66:23 | Nested_Global | write of Nested_Global for Inner |

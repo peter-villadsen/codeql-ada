@@ -884,3 +884,61 @@ calls of other subprograms that raise it are not followed. Left out of `paramete
 generic formal subprograms, and call-backs registered through an access type's formal.
 The query leaves out the files the GNAT binder generates, whose `adainit` is exported
 without a handler.
+
+### Generic_Aliasing
+
+`ada/generic-aliasing`, library `GenericAliasing`: `aliasing(inst, i, j, kind,
+condition)` for formals `i < j` of instantiation `inst`, of kind `kind`
+(`formalKind(formal)`), whose actuals alias with `condition`, the strongest that applies.
+
+| `<kind>` | Formals | `certain` | `possible` | `unlikely` |
+|---|---|---|---|---|
+| `variable` | `in out` formal objects | the same object, or one a part of the other: a component, or an element at the same index (as written) | an element or slice of the same array at an index that is not static | `.all` of two access values of the same type |
+| `type` | formal types | the same type, or the same attribute of it (`T'Base`, `T'Class`) | | |
+| `subprogram` | formal subprograms | the same subprogram, through renamings | | |
+| `package` | formal packages | the same instance, through renamings | | |
+
+The query reports `certain variable`. AdaControl's default, `certain` for every kind,
+gives 12 corpus results, none a mistake: maps from a type to the same type
+(`Indefinite_Ordered_Maps (String, String)`) and sets whose `"="` and
+`Equivalent_Elements` are one function. An `in` formal object
+is a copy and is not checked. Elements at different static indices (`A (1)`, `A (2)`)
+and different components do not alias. A subprogram actual must be in the source:
+predefined operators (`"+"`) of different types resolve alike, which is AdaControl's
+documented limitation, so they are left out. Left out: `possible` and `unlikely` for
+subprograms (`Ptr.all` of access-to-subprogram values), implicit dereferences
+(`P.Field` with `P` an access value), and a type and its subtype.
+
+### Global_References
+
+`ada/global-references`, library `GlobalReferences`. The roots (`rootKind(r)`) are
+`function` and `procedure` (a subprogram of the source with a body), `task` (a task
+body) and `protected` (a protected body); `isTypeRoot(r)` holds for the body of a task or
+protected type. Each root starts in its bodies (`rootBody(r)`: the subprogram's body, the
+task body, the bodies of the protected operations and entries) and reaches the bodies
+they call (`calls(b, callee)`: subprogram calls and protected entry calls, `reaches(r,
+b)`).
+
+An access belongs to the innermost subprogram, entry or task body around it
+(`bodyOf(n)`); `directAccess(b, v, n, mode)` reads or writes a variable declared outside
+`b`, classified as for `Directly_Accessed_Globals`. `accesses(b, v, mode)` adds what the
+bodies `b` calls access, except the variables declared in `b`: a variable of an
+enclosing subprogram is global to a nested one, not to the subprogram itself.
+Constants, renamings, loop variables, protected components and objects of task or
+protected types are not checked (`isVariable(v)`).
+
+| Subrule | Library | Default |
+|---|---|---|
+| `all` | `referenceSite(r, v, n, mode)`, `reference(r, v, mode)` | no |
+| `read`, `written` | `reference(r, v, "read")`, `reference(r, v, "write")` | no |
+| `multiple` | `GlobalReferencesMultiple<isRoot>::multiple(v)`: more than one root, or a task or protected type | no |
+| `multiple_non_atomic` | `GlobalReferencesMultiple<isRoot>::multipleNonAtomic(v)`: `multiple`, except an atomic variable (`Atomic`, `Atomic_Components`) written by one root at most | yes, roots `task` and `protected` |
+
+`GlobalReferencesMultiple` takes AdaControl's list of roots as a predicate; for an
+`<entity>`, hold for that subprogram, task or protected body. The query also requires
+one root to write the variable: a variable that tasks only read is set before they
+start, during elaboration. It leaves out the files the GNAT binder generates. As in
+AdaControl, calls through access-to-subprogram values and dispatching calls are assumed
+to access nothing, and the Ada library is not followed (its bodies are not in the
+database). Left out: atomic types (only objects declared atomic count), and accesses
+through renamings and `'Access` values.

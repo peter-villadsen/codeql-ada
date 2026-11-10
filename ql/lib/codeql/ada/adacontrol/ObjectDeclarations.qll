@@ -59,7 +59,7 @@ module ObjectDeclarations {
 
   /** Holds if the aspect or pragma `name` (`volatile`, `address`, ...) applies to object `d`. */
   bindingset[name]
-  private predicate hasAspectOrPragma(Raw::ObjectDecl d, string name) {
+  predicate hasAspectOrPragma(Raw::ObjectDecl d, string name) {
     exists(Raw::AspectAssoc a | a = d.getAspects().getAspectAssocs().getChild(_) |
       a.getId().(Raw::Name).getText().toLowerCase() = name and
       not a.getExpr().(Raw::Name).getText().toLowerCase() = "false"

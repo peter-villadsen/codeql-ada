@@ -128,7 +128,7 @@ module DirectlyAccessedGlobals {
    * a single object. The extractor does not pair these bodies with their declarations;
    * a type and its body have the same qualified name.
    */
-  private predicate isTypeBody(Raw::AdaNode b) {
+  predicate isTypeBody(Raw::AdaNode b) {
     (b instanceof Raw::ProtectedBody or b instanceof Raw::TaskBody) and
     exists(Raw::BasicDecl d |
       ada_body_part(d, b) or d.getQualifiedName() = b.(Raw::BasicDecl).getQualifiedName()
@@ -165,7 +165,7 @@ module DirectlyAccessedGlobals {
   }
 
   /** Holds if `n` is the target of an `'Access`-like or `'Address` attribute: an alias the rule cannot follow. */
-  private predicate isAliased(Raw::Name n) {
+  predicate isAliased(Raw::Name n) {
     exists(Raw::AttributeRef a | a.getPrefix() = n |
       a.getAttribute().getValue().toLowerCase() =
         ["access", "unchecked_access", "unrestricted_access", "address"]
@@ -182,7 +182,7 @@ module DirectlyAccessedGlobals {
    * or `in out` parameter (`inOut` true for `in out`), or the prefix of a component or
    * element that is written. Not through a dereference.
    */
-  private predicate written(Raw::Name n, boolean inOut) {
+  predicate written(Raw::Name n, boolean inOut) {
     n = any(Raw::AssignStmt s).getDest() and inOut = false
     or
     exists(Call c, Parameter p | n = c.getArgumentFor(p) |

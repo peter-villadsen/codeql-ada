@@ -1,0 +1,4 @@
+| shared.ads:2:4:2:11 | Counter | Global variable Counter is accessed by task A (read, written), task B (read, written). |
+| shared.ads:5:4:5:9 | Flag2 | Global variable Flag2 is accessed by protected Guard (written), task B (written). |
+| shared.ads:6:4:6:9 | Total | Global variable Total is accessed by protected Guard (read), task A (written). |
+| shared.ads:7:4:7:12 | Per_Type | Global variable Per_Type is accessed by task type Worker (read, written). |

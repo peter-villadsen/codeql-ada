@@ -1,0 +1,6 @@
+| test.adb:10:40:10:41 | I | The same variable is given for formal Y as for formal X ($@). | test.adb:10:37:10:38 | I | I |
+| test.adb:11:43:11:44 | J | The same variable is given for formal Y as for formal X ($@). | test.adb:11:51:11:52 | J | J |
+| test.adb:13:44:13:47 | R.A | The same variable is given for formal Y as for formal X ($@). | test.adb:13:41:13:42 | R | R |
+| test.adb:16:48:16:51 | R.A | The same variable is given for formal Y as for formal X ($@). | test.adb:16:43:16:46 | R.A | R.A |
+| test.adb:17:45:17:50 | A (...) | The same variable is given for formal Y as for formal X ($@). | test.adb:17:38:17:43 | A (...) | A (...) |
+| test.adb:21:50:21:55 | P.all | The same variable is given for formal Y as for formal X ($@). | test.adb:21:43:21:48 | P.all | P.all |
