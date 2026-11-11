@@ -4215,3 +4215,28 @@ ada_comments(
   string text: string ref,
   int location: @location_default ref
 );
+
+/*- Ada tokens: every token of a source file but whitespace, in order, comments
+    included; not extracted for predefined files -*/
+
+#keyset[file, index]
+ada_tokens(
+  unique int id: @ada_token,
+  int file: @file ref,
+  int index: int ref,
+  string kind: string ref,
+  string text: string ref,
+  int location: @location_default ref
+);
+
+/*- Ada source lines: the text of every line of a source file, without its
+    line terminator; not extracted for predefined files -*/
+
+#keyset[file, line]
+ada_source_lines(
+  unique int id: @ada_source_line,
+  int file: @file ref,
+  int line: int ref,
+  string text: string ref,
+  int location: @location_default ref
+);

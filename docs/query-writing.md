@@ -141,6 +141,8 @@ D-027) add what a 1:1 mirror can't:
 | `AdaNode.getAnEnclosingBody()` / `getEnclosingUnit()` | Any subprogram body around the node, at any depth / the containing compilation unit |
 | `File.isPredefined()` | The file is a predefined pseudo-source |
 | `Comment` | Source comments: token trivia in Libadalang, not AST nodes, so a separate hand-written relation (`ada_comments`), not part of the node tree |
+| `Token` | Every token of a source file, in order (`ada_tokens`): reserved words with the casing written, delimiters, literals, comments; not whitespace. For rules on the layout of the source, such as the casing of keywords |
+| `SourceLine` | Every line of a source file, without its terminator (`ada_source_lines`). For rules on lines: length, blank lines, trailing spaces, characters |
 
 Results show what a node is: a declaration by its name (`Free_All`), an
 expression by a short rendering (`F.Length`, `Append (...)`, `... = ...`), a

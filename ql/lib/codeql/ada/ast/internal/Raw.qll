@@ -53,6 +53,71 @@ module Raw {
     override string toString() { result = "Comment" }
   }
 
+  /**
+   * A token of a source file: a reserved word, an identifier, a literal, a
+   * delimiter or a comment, in the order of the file. Whitespace is not a token
+   * (`SourceLine` has it), and tokens are not extracted for predefined files.
+   */
+  class Token extends @ada_token {
+    /** Gets the file this token is in. */
+    File getFile() { ada_tokens(this, result, _, _, _, _) }
+
+    /** Gets the 0-based position of this token in its file. */
+    int getIndex() { ada_tokens(this, _, result, _, _, _) }
+
+    /**
+     * Gets the kind of this token, as Libadalang names it: `Identifier`,
+     * `Comment`, `Integer`, `String`, a reserved word (`Begin`, `If`, `End`) or
+     * a delimiter (`Semicolon`, `Arrow`, `Assign`).
+     */
+    string getKind() { ada_tokens(this, _, _, result, _, _) }
+
+    /** Gets the text of this token, as written. */
+    string getText() { ada_tokens(this, _, _, _, result, _) }
+
+    /** Gets the location of this token. */
+    Location getLocation() { ada_tokens(this, _, _, _, _, result) }
+
+    /** Gets the token after this one in its file. */
+    Token getNext() {
+      exists(File f, int i | ada_tokens(this, f, i, _, _, _) | ada_tokens(result, f, i + 1, _, _, _))
+    }
+
+    /** Gets the token before this one in its file. */
+    Token getPrevious() { result.getNext() = this }
+
+    /** Holds if this token is a comment (trivia, not part of the syntax). */
+    predicate isComment() { this.getKind() = "Comment" }
+
+    string toString() { result = this.getText() }
+  }
+
+  /**
+   * A line of a source file, without its line terminator. Lines are not
+   * extracted for predefined files.
+   */
+  class SourceLine extends @ada_source_line {
+    /** Gets the file this line is in. */
+    File getFile() { ada_source_lines(this, result, _, _, _) }
+
+    /** Gets the 1-based number of this line. */
+    int getLineNumber() { ada_source_lines(this, _, result, _, _) }
+
+    /** Gets the text of this line, without its line terminator. */
+    string getText() { ada_source_lines(this, _, _, result, _) }
+
+    /** Gets the location of this line, from its first character to its last. */
+    Location getLocation() { ada_source_lines(this, _, _, _, result) }
+
+    /** Gets the number of characters of this line. */
+    int getLength() { result = this.getText().length() }
+
+    /** Holds if this line is empty or holds only spaces and tabs. */
+    predicate isBlank() { this.getText().regexpMatch("[ \\t]*") }
+
+    string toString() { result = this.getText() }
+  }
+
   class AdaNode extends @ada_ast_node, Ext::AdaNodeExt {
     string getAPrimaryQlClass() { result = "AdaNode" }
 

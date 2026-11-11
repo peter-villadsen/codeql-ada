@@ -278,7 +278,7 @@
    "ada/unchecked-deallocation": 72,
    "ada/unit-pattern": 117,
    "ada/units": 232,
-   "ada/unnecessary-use-clause": 385,
+   "ada/unnecessary-use-clause": 386,
    "ada/unreachable-statement": 4,
    "ada/unsafe-elaboration": 50,
    "ada/unsafe-paired-calls": 0,
@@ -291,7 +291,7 @@
    "ada/warnings-off": 36,
    "ada/with-clauses": 44
   },
-  "total": 10057
+  "total": 10058
  },
  "libadalang-tools": {
   "results": {

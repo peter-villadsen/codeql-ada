@@ -185,7 +185,7 @@ class Extractor:
         self._walkable = {}
         self.stats = {"nodes": 0, "xref": 0, "types": 0, "diags": 0,
                       "nameres_errors": 0, "comments": 0, "body_part": 0,
-                      "body_part_syntactic": 0}
+                      "body_part_syntactic": 0, "tokens": 0, "lines": 0}
 
     def emit_file_tree(self, w: TrapWriter, path: str) -> str:
         """files() row plus folder chain; returns the file label."""
@@ -242,21 +242,60 @@ class Extractor:
         if unit.root is not None:
             self.walk(w, file_lbl, path, unit.root, None, 0)
 
-        self.emit_comments(w, file_lbl, path, unit)
+        self.emit_tokens(w, file_lbl, path, unit, with_tokens=not predefined)
+        if not predefined:
+            self.emit_lines(w, file_lbl, path, unit)
 
         name = path.replace(":", "_").replace("/", "_") + ".trap"
         (trap_dir / name).write_text(w.text(), encoding="utf-8")
 
-    def emit_comments(self, w, file_lbl, path, unit: lal.AnalysisUnit):
-        """Comment trivia isn't part of the AST tree; walk tokens directly."""
+    def emit_tokens(self, w, file_lbl, path, unit: lal.AnalysisUnit,
+                    with_tokens: bool):
+        """Walk the unit's tokens: comment trivia, which isn't part of the AST
+        tree, goes to `ada_comments`; with `with_tokens` (not for predefined
+        files, to keep the database small), every token but whitespace (the
+        source lines hold it) and the end-of-file one goes to `ada_tokens`,
+        numbered in order."""
         tok = unit.first_token
+        index = 0
         while tok is not None:
-            if tok.is_trivia and tok.kind == "Comment":
+            kind = str(tok.kind)
+            if tok.is_trivia and kind == "Comment":
                 loc = self.location(w, file_lbl, path, tok)
                 c = w.fresh()
                 w.row("ada_comments", c, q(tok.text), loc)
                 self.stats["comments"] += 1
+            if with_tokens and kind not in ("Termination", "Whitespace"):
+                loc = self.location(w, file_lbl, path, tok)
+                t = w.fresh()
+                w.row("ada_tokens", t, file_lbl, str(index), q(kind),
+                      q(tok.text), loc)
+                self.stats["tokens"] += 1
+                index += 1
             tok = tok.next
+
+    def emit_lines(self, w, file_lbl, path, unit: lal.AnalysisUnit):
+        """The text of every source line, without its terminator (LF, or CR
+        LF): what line-oriented rules (line length, blank lines, characters)
+        read. A last line without terminator counts; the empty string after a
+        final terminator does not."""
+        text = unit.text or ""
+        lines = text.split("\n")
+        if lines and lines[-1] == "":
+            lines.pop()
+        for n, line in enumerate(lines, start=1):
+            if line.endswith("\r"):
+                line = line[:-1]
+            end = max(len(line), 1)
+            key = f"loc,{path},{n},1,{n},{end}"
+            known = key in w.labels
+            loc = w.label(key)
+            if not known:
+                w.row("locations_default", loc, file_lbl,
+                      str(n), "1", str(n), str(end))
+            ln = w.fresh()
+            w.row("ada_source_lines", ln, file_lbl, str(n), q(line), loc)
+            self.stats["lines"] += 1
 
     def walk(self, w, file_lbl, path, node, parent_lbl, index):
         kind = node.kind_name
@@ -634,7 +673,8 @@ def main() -> int:
     max_jobs = int(option("jobs") or str(os.cpu_count() or 1))
     totals = dict.fromkeys(
         ("nodes", "xref", "types", "diags", "nameres_errors", "comments",
-         "body_part", "body_part_syntactic", "predefined_files"), 0)
+         "body_part", "body_part_syntactic", "tokens", "lines",
+         "predefined_files"), 0)
 
     results, jobs = run_pass(_extract_one, files, max_jobs,
                              (gpr, files, runtime, None, trap_dir, archive_dir))

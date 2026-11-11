@@ -4,8 +4,9 @@
 
 The control-flow graph is now built on the shared `codeql.controlflow.ControlFlowGraph`
 library, as CodeQL for Java's and C#'s are, instead of `codeql.controlflow.Cfg`, which
-GitHub means to delete (D-029; `docs/cfg-migration-plan.md`). The database format and the
-extractor are unchanged.
+GitHub means to delete (D-029; `docs/cfg-migration-plan.md`). The extractor now records
+the tokens and the lines of the source (D-038), so databases built with 0.3.0 must be
+rebuilt.
 
 ### Container image
 
@@ -26,7 +27,22 @@ extractor are unchanged.
 - **The user guide** has sections on analyzing code built with GNAT and with DDC-I Ada (or
   another non-GNAT compiler): no compiler is needed, a file may hold several units.
 
+### Tokens and source lines
+
+- **`Token`** (`ada_tokens`): every token of a source file, in order, comments included,
+  whitespace not, with its Libadalang kind (`Begin`, `Identifier`, `Semicolon`, ...), its
+  text as written and its location; `getNext()` and `getPrevious()` walk the file.
+- **`SourceLine`** (`ada_source_lines`): every line of a source file, without its
+  terminator, with `getLineNumber()`, `getText()`, `getLength()` and `isBlank()`.
+- Neither is extracted for predefined files. On the corpus, extraction takes no longer
+  and gpr2's database gains about 800,000 tokens and 211,000 lines. They are what the
+  AdaControl rules on the layout of the source need: `Characters`, `Max_Blank_Lines`,
+  `Max_Line_Length`, and `Style`'s `casing_keyword` and `compound_statement` (#77).
+
 ### Breaking changes
+
+- **The database format changed** (`ada_tokens`, `ada_source_lines`): rebuild databases
+  created with 0.3.0.
 
 - **The CFG API is `codeql.ada.controlflow.ControlFlowGraph`**, with Java's names:
   `ControlFlowNode`, `ControlFlow::EntryNode`, `ControlFlow::NormalExitNode`,

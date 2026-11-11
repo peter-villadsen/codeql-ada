@@ -39,7 +39,7 @@ STATS_RE = re.compile(
 )
 
 # Fields tracked in the baseline / compared run-over-run.
-TRACKED_FIELDS = ("files", "nodes", "xref", "types", "diags", "nameres_errors")
+TRACKED_FIELDS = ("files", "nodes", "xref", "types", "diags", "nameres_errors", "tokens", "lines")
 
 
 def load_json(path: Path):

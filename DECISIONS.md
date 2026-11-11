@@ -402,3 +402,19 @@ recommended Windows path, with WSL kept as the alternative. Microsoft's
 a bind-mounted Windows folder extracts about 4.6× slower than the container's own file
 system (as `/mnt/c` under WSL), so the user guide gives a copy-in, copy-out form for large
 trees. Native Windows extraction (D-010) stays deferred.
+
+## D-038 (2026-11-10) — The extractor records tokens and source lines
+Some rules are about the source as written rather than its tree: the casing of reserved
+words, where `begin` and `then` stand, line length, blank lines, trailing spaces, control
+characters. Libadalang has all of it (its token stream; the unit's text), the database had
+none. Two hand-written tables, like `ada_comments`, outside the generated node tables:
+`ada_tokens(id, file, index, kind, text, location)`, every token of a file in order with
+Libadalang's kind name, comments included and whitespace left out (the lines hold it), and
+`ada_source_lines(id, file, line, text, location)`, every line without its LF or CR LF
+terminator, a last line without terminator included. QL: `Token` and `SourceLine` in
+`Raw`. Predefined files (D-026) get neither, to keep databases small; rules on layout are
+about the project's own code. A token's location keeps Libadalang's end column, one past
+its last character, like every AST node's; a line's location ends on its last character.
+On the corpus, extraction time is unchanged (gpr2 72.8 s before, 67.5 s after) and gpr2's
+database gains about 800,000 tokens and 211,000 lines. Databases built before must be
+rebuilt. `PrintTokens` and `PrintSourceLines` (`ql/test/extractor/`) guard the format.

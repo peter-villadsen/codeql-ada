@@ -91,6 +91,14 @@ exists(Call c |
   `"abc"` with quotes, so compare against `"\"abc\""`, or strip them.
 - **Comments are not in the tree.** They are `Comment` (`ada_comments`), with their
   own location.
+- **Tokens and source lines are not in the tree either.** `Token` (`ada_tokens`) is every
+  token of a file in order, comments included, whitespace not: `getKind()` is
+  Libadalang's token kind (`Identifier`, `Begin`, `Semicolon`, `Comment`, ...),
+  `getText()` the text as written, `getNext()` and `getPrevious()` its neighbours.
+  `SourceLine` (`ada_source_lines`) is every line, without its terminator (LF or CR LF):
+  `getLineNumber()`, `getText()`, `getLength()`, `isBlank()`. Neither is extracted for
+  predefined files. A token's end column, like an AST node's, is one past its last
+  character (Libadalang's convention); a line's is its last character.
 
 ## Compilation units and context clauses
 

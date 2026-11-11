@@ -3,8 +3,10 @@
     "diags": 0,
     "extractor_seconds": 5.0,
     "files": 16,
+    "lines": 2225,
     "nameres_errors": 0,
     "nodes": 17924,
+    "tokens": 7657,
     "types": 2931,
     "xref": 3455
   },
@@ -12,8 +14,10 @@
     "diags": 81,
     "extractor_seconds": 56.4,
     "files": 479,
+    "lines": 66952,
     "nameres_errors": 69480,
     "nodes": 443171,
+    "tokens": 275088,
     "types": 37793,
     "xref": 64169
   },
@@ -21,8 +25,10 @@
     "diags": 106,
     "extractor_seconds": 72.8,
     "files": 1718,
+    "lines": 210839,
     "nameres_errors": 93028,
     "nodes": 1140493,
+    "tokens": 802588,
     "types": 146992,
     "xref": 256192
   },
@@ -30,8 +36,10 @@
     "diags": 55,
     "extractor_seconds": 35.5,
     "files": 524,
+    "lines": 92197,
     "nameres_errors": 53924,
     "nodes": 527807,
+    "tokens": 352762,
     "types": 60441,
     "xref": 83789
   },
@@ -39,8 +47,10 @@
     "diags": 0,
     "extractor_seconds": 15.9,
     "files": 159,
+    "lines": 24131,
     "nameres_errors": 3017,
     "nodes": 153125,
+    "tokens": 99062,
     "types": 34453,
     "xref": 39907
   }
